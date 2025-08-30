@@ -4,6 +4,20 @@ import '../models/models.dart';
 /// These selectors compute XP, progress percentages, streaks, and other derived data
 
 class Selectors {
+  // =============================================================================
+  // Constants for game mechanics
+  // =============================================================================
+  
+  /// XP required per level
+  static const int xpPerLevel = 100;
+  
+  /// Streak thresholds for different motivational messages
+  static const int streakWeekThreshold = 7;
+  static const int streakMomentumThreshold = 3;
+  
+  /// Progress percentage thresholds for motivational messages
+  static const double progressNearCompleteThreshold = 0.8;
+  static const double progressHalfwayThreshold = 0.5;
   /// Calculate XP gained from progress events
   /// Note: XP calculation logic to be implemented based on event types
   static int calculateTotalXP(List<ProgressEvent> events) {
@@ -239,6 +253,11 @@ class Selectors {
     if (streak <= 7) return 1.1;   // 10% bonus for week streak
     if (streak <= 30) return 1.25; // 25% bonus for month streak
     return 1.5; // 50% bonus for 30+ day streak
+  }
+
+  /// Calculate user level from total XP
+  static int calculateLevel(int totalXP) {
+    return (totalXP / xpPerLevel).floor() + 1;
   }
 
   /// Helper to get day key for grouping events
