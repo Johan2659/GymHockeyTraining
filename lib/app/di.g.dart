@@ -8,7 +8,10 @@ part of 'di.dart';
 
 String _$loggerHash() => r'b94c177a5fd58a4cbaef0c9a09201ad239add09b';
 
-/// See also [logger].
+/// Dependency injection providers for the Hockey Gym app
+/// Provides singleton instances of repositories and data sources
+///
+/// Copied from [logger].
 @ProviderFor(logger)
 final loggerProvider = AutoDisposeProvider<Logger>.internal(
   logger,
@@ -22,77 +25,149 @@ final loggerProvider = AutoDisposeProvider<Logger>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LoggerRef = AutoDisposeProviderRef<Logger>;
-String _$secureStorageHash() => r'39b6a2355a8398a2c25bb6e7dd3111ede1fc9c9b';
+String _$localProgramSourceHash() =>
+    r'8befd95ceb34c6b7c0a0384ab0067d0853544fd5';
 
-/// See also [secureStorage].
-@ProviderFor(secureStorage)
-final secureStorageProvider =
-    AutoDisposeProvider<FlutterSecureStorage>.internal(
-  secureStorage,
-  name: r'secureStorageProvider',
+/// Provider for local program data source
+///
+/// Copied from [localProgramSource].
+@ProviderFor(localProgramSource)
+final localProgramSourceProvider =
+    AutoDisposeProvider<LocalProgramSource>.internal(
+  localProgramSource,
+  name: r'localProgramSourceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$secureStorageHash,
+      : _$localProgramSourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SecureStorageRef = AutoDisposeProviderRef<FlutterSecureStorage>;
-String _$profileBoxHash() => r'f93dc95fab94442a4fb62aaa951e9ae52f60bed8';
+typedef LocalProgramSourceRef = AutoDisposeProviderRef<LocalProgramSource>;
+String _$localProgressSourceHash() =>
+    r'351f520885ceda140602b3935c3a4ca69ca87953';
 
-/// See also [profileBox].
-@ProviderFor(profileBox)
-final profileBoxProvider =
-    AutoDisposeProvider<Box<Map<dynamic, dynamic>>>.internal(
-  profileBox,
-  name: r'profileBoxProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$profileBoxHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ProfileBoxRef = AutoDisposeProviderRef<Box<Map<dynamic, dynamic>>>;
-String _$programStateBoxHash() => r'72f514b9633d0e02dc2c972377646c2ac13dea4f';
-
-/// See also [programStateBox].
-@ProviderFor(programStateBox)
-final programStateBoxProvider =
-    AutoDisposeProvider<Box<Map<dynamic, dynamic>>>.internal(
-  programStateBox,
-  name: r'programStateBoxProvider',
+/// Provider for local progress data source
+///
+/// Copied from [localProgressSource].
+@ProviderFor(localProgressSource)
+final localProgressSourceProvider =
+    AutoDisposeProvider<LocalProgressSource>.internal(
+  localProgressSource,
+  name: r'localProgressSourceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$programStateBoxHash,
+      : _$localProgressSourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ProgramStateBoxRef = AutoDisposeProviderRef<Box<Map<dynamic, dynamic>>>;
-String _$progressEventsBoxHash() => r'7c626f613970f65bffe537837088baef5479ecd0';
+typedef LocalProgressSourceRef = AutoDisposeProviderRef<LocalProgressSource>;
+String _$localPrefsSourceHash() => r'4a00ea0fc0f6107b194d42906230ae5cf49f7d39';
 
-/// See also [progressEventsBox].
-@ProviderFor(progressEventsBox)
-final progressEventsBoxProvider =
-    AutoDisposeProvider<Box<Map<dynamic, dynamic>>>.internal(
-  progressEventsBox,
-  name: r'progressEventsBoxProvider',
+/// Provider for local preferences data source
+///
+/// Copied from [localPrefsSource].
+@ProviderFor(localPrefsSource)
+final localPrefsSourceProvider = AutoDisposeProvider<LocalPrefsSource>.internal(
+  localPrefsSource,
+  name: r'localPrefsSourceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$progressEventsBoxHash,
+      : _$localPrefsSourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ProgressEventsBoxRef
-    = AutoDisposeProviderRef<Box<Map<dynamic, dynamic>>>;
+typedef LocalPrefsSourceRef = AutoDisposeProviderRef<LocalPrefsSource>;
+String _$programRepositoryHash() => r'bfff7f44d765680d205f83dc7eca07dd967f3ae7';
+
+/// Provider for program repository
+///
+/// Copied from [programRepository].
+@ProviderFor(programRepository)
+final programRepositoryProvider =
+    AutoDisposeProvider<ProgramRepository>.internal(
+  programRepository,
+  name: r'programRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$programRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ProgramRepositoryRef = AutoDisposeProviderRef<ProgramRepository>;
+String _$progressRepositoryHash() =>
+    r'615024d507d2a0695ce53088ec0166de375096ca';
+
+/// Provider for progress repository
+///
+/// Copied from [progressRepository].
+@ProviderFor(progressRepository)
+final progressRepositoryProvider =
+    AutoDisposeProvider<ProgressRepository>.internal(
+  progressRepository,
+  name: r'progressRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$progressRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ProgressRepositoryRef = AutoDisposeProviderRef<ProgressRepository>;
+String _$programStateRepositoryHash() =>
+    r'455d129d7e50595b82d20aeec4c5d940ccd6ce2b';
+
+/// Provider for program state repository
+///
+/// Copied from [programStateRepository].
+@ProviderFor(programStateRepository)
+final programStateRepositoryProvider =
+    AutoDisposeProvider<ProgramStateRepository>.internal(
+  programStateRepository,
+  name: r'programStateRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$programStateRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ProgramStateRepositoryRef
+    = AutoDisposeProviderRef<ProgramStateRepository>;
+String _$profileRepositoryHash() => r'd0f6e1b8504449a53f25966ab342359841460726';
+
+/// Provider for profile repository
+///
+/// Copied from [profileRepository].
+@ProviderFor(profileRepository)
+final profileRepositoryProvider =
+    AutoDisposeProvider<ProfileRepository>.internal(
+  profileRepository,
+  name: r'profileRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$profileRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ProfileRepositoryRef = AutoDisposeProviderRef<ProfileRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

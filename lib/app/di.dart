@@ -1,10 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../core/repositories/repositories.dart';
+import '../data/repositories_impl/repositories_impl.dart';
+import '../data/datasources/datasources.dart';
+
 part 'di.g.dart';
+
+/// Dependency injection providers for the Hockey Gym app
+/// Provides singleton instances of repositories and data sources
+
+// =============================================================================
+// Core Services
+// =============================================================================
 
 // Logger provider
 @riverpod
@@ -21,28 +30,56 @@ Logger logger(Ref ref) {
   );
 }
 
-// Secure storage provider
+// =============================================================================
+// Data Sources
+// =============================================================================
+
+/// Provider for local program data source
 @riverpod
-FlutterSecureStorage secureStorage(Ref ref) {
-  return const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
-  );
+LocalProgramSource localProgramSource(Ref ref) {
+  return LocalProgramSource();
 }
 
-// Hive boxes providers
+/// Provider for local progress data source
 @riverpod
-Box<Map<dynamic, dynamic>> profileBox(Ref ref) {
-  return Hive.box<Map<dynamic, dynamic>>('profile');
+LocalProgressSource localProgressSource(Ref ref) {
+  return LocalProgressSource();
 }
 
+/// Provider for local preferences data source
 @riverpod
-Box<Map<dynamic, dynamic>> programStateBox(Ref ref) {
-  return Hive.box<Map<dynamic, dynamic>>('program_state');
+LocalPrefsSource localPrefsSource(Ref ref) {
+  return LocalPrefsSource();
 }
 
+// =============================================================================
+// Repository Implementations
+// =============================================================================
+
+/// Provider for program repository
 @riverpod
-Box<Map<dynamic, dynamic>> progressEventsBox(Ref ref) {
-  return Hive.box<Map<dynamic, dynamic>>('progress_events');
+ProgramRepository programRepository(Ref ref) {
+  final localSource = ref.watch(localProgramSourceProvider);
+  return ProgramRepositoryImpl(localSource: localSource);
+}
+
+/// Provider for progress repository
+@riverpod
+ProgressRepository progressRepository(Ref ref) {
+  final localSource = ref.watch(localProgressSourceProvider);
+  return ProgressRepositoryImpl(localSource: localSource);
+}
+
+/// Provider for program state repository
+@riverpod
+ProgramStateRepository programStateRepository(Ref ref) {
+  final localSource = ref.watch(localPrefsSourceProvider);
+  return ProgramStateRepositoryImpl(localSource: localSource);
+}
+
+/// Provider for profile repository
+@riverpod
+ProfileRepository profileRepository(Ref ref) {
+  final localSource = ref.watch(localPrefsSourceProvider);
+  return ProfileRepositoryImpl(localSource: localSource);
 }

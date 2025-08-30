@@ -56,20 +56,22 @@ class LocalProgressSource {
       
       final keys = await LocalKVStore.getKeys(HiveBoxes.progress);
       final progressKeys = keys
-          .where((key) => key.startsWith(_progressKeyPrefix))
+          .where((key) => key.startsWith(_progressKeyPrefix) && key != _counterKey)
           .toList();
       
       final events = <ProgressEvent>[];
       
       for (final key in progressKeys) {
         final eventJson = await LocalKVStore.read(HiveBoxes.progress, key);
-        if (eventJson != null) {
+        if (eventJson != null && eventJson.isNotEmpty) {
           try {
             final eventData = jsonDecode(eventJson) as Map<String, dynamic>;
             final event = ProgressEvent.fromJson(eventData);
             events.add(event);
           } catch (e) {
-            _logger.w('LocalProgressSource: Failed to parse event $key', error: e);
+            _logger.w('LocalProgressSource: Failed to parse event $key - skipping', error: e);
+            // Continue processing other events instead of failing
+            continue;
           }
         }
       }
@@ -167,7 +169,7 @@ class LocalProgressSource {
       
       final keys = await LocalKVStore.getKeys(HiveBoxes.progress);
       final progressKeys = keys
-          .where((key) => key.startsWith(_progressKeyPrefix))
+          .where((key) => key.startsWith(_progressKeyPrefix) && key != _counterKey)
           .toList();
       
       bool allSuccess = true;
