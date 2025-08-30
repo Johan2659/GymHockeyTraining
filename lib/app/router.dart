@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../features/hub/presentation/hub_screen.dart';
 import '../features/programs/presentation/programs_screen.dart';
+import '../features/programs/presentation/program_detail_screen.dart';
 import '../features/extras/presentation/extras_screen.dart';
 import '../features/progress/presentation/progress_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
@@ -49,6 +50,15 @@ GoRouter router(Ref ref) {
             builder: (context, state) => const ProfileScreen(),
           ),
         ],
+      ),
+      // Program detail route (fullscreen, no bottom nav)
+      GoRoute(
+        path: '/programs/:programId',
+        name: 'program-detail',
+        builder: (context, state) {
+          final programId = state.pathParameters['programId']!;
+          return ProgramDetailScreen(programId: programId);
+        },
       ),
       // Session player route (fullscreen, no bottom nav)
       GoRoute(
