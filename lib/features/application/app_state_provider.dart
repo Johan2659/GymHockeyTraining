@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../app/di.dart';
 import '../../core/models/models.dart';
 import '../../core/utils/selectors.dart';
+import '../../core/persistence/persistence_service.dart';
 
 part 'app_state_provider.g.dart';
 
@@ -141,6 +142,8 @@ Future<void> startProgramAction(Ref ref, String programId) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   final progressRepo = ref.read(progressRepositoryProvider);
 
+  PersistenceService.logStateChange('Starting program: $programId');
+
   final newState = ProgramState(
     activeProgramId: programId,
     currentWeek: 0,
@@ -193,10 +196,12 @@ Future<void> completeSessionAction(Ref ref) async {
   final currentState = await stateRepo.get();
   if (currentState?.activeProgramId == null) return;
 
+  PersistenceService.logStateChange('Completing session - Week: ${currentState!.currentWeek}, Session: ${currentState.currentSession}');
+
   final event = ProgressEvent(
     ts: DateTime.now(),
     type: ProgressEventType.sessionCompleted,
-    programId: currentState!.activeProgramId!,
+    programId: currentState.activeProgramId!,
     week: currentState.currentWeek,
     session: currentState.currentSession,
   );

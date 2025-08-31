@@ -8,6 +8,8 @@ import 'app/app.dart';
 import 'core/storage/hive_boxes.dart';
 import 'core/storage/migration_service.dart';
 import 'core/storage/secure_key_service.dart';
+import 'core/persistence/persistence_service.dart';
+import 'core/persistence/persistence_debugger.dart';
 
 /// Global logger instance
 final logger = Logger(
@@ -29,6 +31,12 @@ void main() async {
     
     // Initialize Hive with encryption
     await _initializeHive();
+    
+    // Initialize persistence service with schema versioning and fallback
+    await PersistenceService.initialize();
+    
+    // Debug: Check what data exists on startup
+    await PersistenceDebugger.debugStoredData();
     
     // Run migrations
     await MigrationService.ensureMigrations();

@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import '../../core/models/models.dart';
 import '../../core/storage/hive_boxes.dart';
 import '../../core/storage/local_kv_store.dart';
+import '../../core/persistence/persistence_service.dart';
 
 /// Local data source for user preferences and profile data
 /// Handles profile storage and program state management
@@ -16,12 +17,13 @@ class LocalPrefsSource {
   static final _profileController = StreamController<Profile?>.broadcast();
   static final _programStateController = StreamController<ProgramState?>.broadcast();
 
-  /// Gets the user profile
+  /// Gets the user profile with fallback support
   Future<Profile?> getProfile() async {
     try {
       _logger.d('LocalPrefsSource: Loading user profile');
       
-      final profileJson = await LocalKVStore.read(HiveBoxes.profile, _profileKey);
+      // Use PersistenceService for enhanced read with fallback
+      final profileJson = await PersistenceService.readWithFallback(HiveBoxes.profile, _profileKey);
       if (profileJson == null) {
         _logger.d('LocalPrefsSource: No profile found');
         return null;
@@ -40,13 +42,16 @@ class LocalPrefsSource {
     }
   }
 
-  /// Saves the user profile
+  /// Saves the user profile with enhanced persistence and fallback
   Future<bool> saveProfile(Profile profile) async {
     try {
       _logger.d('LocalPrefsSource: Saving user profile');
+      PersistenceService.logStateChange('User profile updated');
       
       final profileJson = jsonEncode(profile.toJson());
-      final success = await LocalKVStore.write(
+      
+      // Use PersistenceService for enhanced write with fallback
+      final success = await PersistenceService.writeWithFallback(
         HiveBoxes.profile,
         _profileKey,
         profileJson,
@@ -113,12 +118,13 @@ class LocalPrefsSource {
     return _profileController.stream;
   }
 
-  /// Gets the program state
+  /// Gets the program state with fallback support
   Future<ProgramState?> getProgramState() async {
     try {
       _logger.d('LocalPrefsSource: Loading program state');
       
-      final stateJson = await LocalKVStore.read(HiveBoxes.settings, _programStateKey);
+      // Use PersistenceService for enhanced read with fallback
+      final stateJson = await PersistenceService.readWithFallback(HiveBoxes.settings, _programStateKey);
       if (stateJson == null) {
         _logger.d('LocalPrefsSource: No program state found');
         return null;
@@ -137,13 +143,16 @@ class LocalPrefsSource {
     }
   }
 
-  /// Saves the program state
+  /// Saves the program state with enhanced persistence and fallback
   Future<bool> saveProgramState(ProgramState state) async {
     try {
       _logger.d('LocalPrefsSource: Saving program state');
+      PersistenceService.logStateChange('Program state updated - Week: ${state.currentWeek}, Session: ${state.currentSession}');
       
       final stateJson = jsonEncode(state.toJson());
-      final success = await LocalKVStore.write(
+      
+      // Use PersistenceService for enhanced write with fallback
+      final success = await PersistenceService.writeWithFallback(
         HiveBoxes.settings,
         _programStateKey,
         stateJson,
