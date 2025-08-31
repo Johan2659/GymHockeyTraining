@@ -38,7 +38,7 @@ class AppTheme {
       ),
 
       // Card
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         color: surfaceColor,
         elevation: 4,
       ),

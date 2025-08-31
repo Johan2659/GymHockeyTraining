@@ -1020,6 +1020,615 @@ class _CompleteExtraActionProviderElement
   int get xpReward => (origin as CompleteExtraActionProvider).xpReward;
 }
 
+String _$updateRoleActionHash() => r'5de21297127b6375e96a56021263f51c718cf403';
+
+/// Update role action provider
+///
+/// Copied from [updateRoleAction].
+@ProviderFor(updateRoleAction)
+const updateRoleActionProvider = UpdateRoleActionFamily();
+
+/// Update role action provider
+///
+/// Copied from [updateRoleAction].
+class UpdateRoleActionFamily extends Family<AsyncValue<bool>> {
+  /// Update role action provider
+  ///
+  /// Copied from [updateRoleAction].
+  const UpdateRoleActionFamily();
+
+  /// Update role action provider
+  ///
+  /// Copied from [updateRoleAction].
+  UpdateRoleActionProvider call(
+    UserRole role,
+  ) {
+    return UpdateRoleActionProvider(
+      role,
+    );
+  }
+
+  @override
+  UpdateRoleActionProvider getProviderOverride(
+    covariant UpdateRoleActionProvider provider,
+  ) {
+    return call(
+      provider.role,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'updateRoleActionProvider';
+}
+
+/// Update role action provider
+///
+/// Copied from [updateRoleAction].
+class UpdateRoleActionProvider extends AutoDisposeFutureProvider<bool> {
+  /// Update role action provider
+  ///
+  /// Copied from [updateRoleAction].
+  UpdateRoleActionProvider(
+    UserRole role,
+  ) : this._internal(
+          (ref) => updateRoleAction(
+            ref as UpdateRoleActionRef,
+            role,
+          ),
+          from: updateRoleActionProvider,
+          name: r'updateRoleActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$updateRoleActionHash,
+          dependencies: UpdateRoleActionFamily._dependencies,
+          allTransitiveDependencies:
+              UpdateRoleActionFamily._allTransitiveDependencies,
+          role: role,
+        );
+
+  UpdateRoleActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.role,
+  }) : super.internal();
+
+  final UserRole role;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(UpdateRoleActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UpdateRoleActionProvider._internal(
+        (ref) => create(ref as UpdateRoleActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        role: role,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _UpdateRoleActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UpdateRoleActionProvider && other.role == role;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, role.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin UpdateRoleActionRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `role` of this provider.
+  UserRole get role;
+}
+
+class _UpdateRoleActionProviderElement
+    extends AutoDisposeFutureProviderElement<bool> with UpdateRoleActionRef {
+  _UpdateRoleActionProviderElement(super.provider);
+
+  @override
+  UserRole get role => (origin as UpdateRoleActionProvider).role;
+}
+
+String _$updateUnitsActionHash() => r'c8b16d0807517a8440ca46c195fcf6d1e0e627b3';
+
+/// Update units action provider
+///
+/// Copied from [updateUnitsAction].
+@ProviderFor(updateUnitsAction)
+const updateUnitsActionProvider = UpdateUnitsActionFamily();
+
+/// Update units action provider
+///
+/// Copied from [updateUnitsAction].
+class UpdateUnitsActionFamily extends Family<AsyncValue<bool>> {
+  /// Update units action provider
+  ///
+  /// Copied from [updateUnitsAction].
+  const UpdateUnitsActionFamily();
+
+  /// Update units action provider
+  ///
+  /// Copied from [updateUnitsAction].
+  UpdateUnitsActionProvider call(
+    String units,
+  ) {
+    return UpdateUnitsActionProvider(
+      units,
+    );
+  }
+
+  @override
+  UpdateUnitsActionProvider getProviderOverride(
+    covariant UpdateUnitsActionProvider provider,
+  ) {
+    return call(
+      provider.units,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'updateUnitsActionProvider';
+}
+
+/// Update units action provider
+///
+/// Copied from [updateUnitsAction].
+class UpdateUnitsActionProvider extends AutoDisposeFutureProvider<bool> {
+  /// Update units action provider
+  ///
+  /// Copied from [updateUnitsAction].
+  UpdateUnitsActionProvider(
+    String units,
+  ) : this._internal(
+          (ref) => updateUnitsAction(
+            ref as UpdateUnitsActionRef,
+            units,
+          ),
+          from: updateUnitsActionProvider,
+          name: r'updateUnitsActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$updateUnitsActionHash,
+          dependencies: UpdateUnitsActionFamily._dependencies,
+          allTransitiveDependencies:
+              UpdateUnitsActionFamily._allTransitiveDependencies,
+          units: units,
+        );
+
+  UpdateUnitsActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.units,
+  }) : super.internal();
+
+  final String units;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(UpdateUnitsActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UpdateUnitsActionProvider._internal(
+        (ref) => create(ref as UpdateUnitsActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        units: units,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _UpdateUnitsActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UpdateUnitsActionProvider && other.units == units;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, units.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin UpdateUnitsActionRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `units` of this provider.
+  String get units;
+}
+
+class _UpdateUnitsActionProviderElement
+    extends AutoDisposeFutureProviderElement<bool> with UpdateUnitsActionRef {
+  _UpdateUnitsActionProviderElement(super.provider);
+
+  @override
+  String get units => (origin as UpdateUnitsActionProvider).units;
+}
+
+String _$updateLanguageActionHash() =>
+    r'54b19546e89c72beead6e26790c5cc3cea912782';
+
+/// Update language action provider
+///
+/// Copied from [updateLanguageAction].
+@ProviderFor(updateLanguageAction)
+const updateLanguageActionProvider = UpdateLanguageActionFamily();
+
+/// Update language action provider
+///
+/// Copied from [updateLanguageAction].
+class UpdateLanguageActionFamily extends Family<AsyncValue<bool>> {
+  /// Update language action provider
+  ///
+  /// Copied from [updateLanguageAction].
+  const UpdateLanguageActionFamily();
+
+  /// Update language action provider
+  ///
+  /// Copied from [updateLanguageAction].
+  UpdateLanguageActionProvider call(
+    String language,
+  ) {
+    return UpdateLanguageActionProvider(
+      language,
+    );
+  }
+
+  @override
+  UpdateLanguageActionProvider getProviderOverride(
+    covariant UpdateLanguageActionProvider provider,
+  ) {
+    return call(
+      provider.language,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'updateLanguageActionProvider';
+}
+
+/// Update language action provider
+///
+/// Copied from [updateLanguageAction].
+class UpdateLanguageActionProvider extends AutoDisposeFutureProvider<bool> {
+  /// Update language action provider
+  ///
+  /// Copied from [updateLanguageAction].
+  UpdateLanguageActionProvider(
+    String language,
+  ) : this._internal(
+          (ref) => updateLanguageAction(
+            ref as UpdateLanguageActionRef,
+            language,
+          ),
+          from: updateLanguageActionProvider,
+          name: r'updateLanguageActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$updateLanguageActionHash,
+          dependencies: UpdateLanguageActionFamily._dependencies,
+          allTransitiveDependencies:
+              UpdateLanguageActionFamily._allTransitiveDependencies,
+          language: language,
+        );
+
+  UpdateLanguageActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.language,
+  }) : super.internal();
+
+  final String language;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(UpdateLanguageActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UpdateLanguageActionProvider._internal(
+        (ref) => create(ref as UpdateLanguageActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        language: language,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _UpdateLanguageActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UpdateLanguageActionProvider && other.language == language;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, language.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin UpdateLanguageActionRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `language` of this provider.
+  String get language;
+}
+
+class _UpdateLanguageActionProviderElement
+    extends AutoDisposeFutureProviderElement<bool>
+    with UpdateLanguageActionRef {
+  _UpdateLanguageActionProviderElement(super.provider);
+
+  @override
+  String get language => (origin as UpdateLanguageActionProvider).language;
+}
+
+String _$updateThemeActionHash() => r'2c364e1036a81eea270a866c1a76ec2d83e9510e';
+
+/// Update theme action provider
+///
+/// Copied from [updateThemeAction].
+@ProviderFor(updateThemeAction)
+const updateThemeActionProvider = UpdateThemeActionFamily();
+
+/// Update theme action provider
+///
+/// Copied from [updateThemeAction].
+class UpdateThemeActionFamily extends Family<AsyncValue<bool>> {
+  /// Update theme action provider
+  ///
+  /// Copied from [updateThemeAction].
+  const UpdateThemeActionFamily();
+
+  /// Update theme action provider
+  ///
+  /// Copied from [updateThemeAction].
+  UpdateThemeActionProvider call(
+    String theme,
+  ) {
+    return UpdateThemeActionProvider(
+      theme,
+    );
+  }
+
+  @override
+  UpdateThemeActionProvider getProviderOverride(
+    covariant UpdateThemeActionProvider provider,
+  ) {
+    return call(
+      provider.theme,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'updateThemeActionProvider';
+}
+
+/// Update theme action provider
+///
+/// Copied from [updateThemeAction].
+class UpdateThemeActionProvider extends AutoDisposeFutureProvider<bool> {
+  /// Update theme action provider
+  ///
+  /// Copied from [updateThemeAction].
+  UpdateThemeActionProvider(
+    String theme,
+  ) : this._internal(
+          (ref) => updateThemeAction(
+            ref as UpdateThemeActionRef,
+            theme,
+          ),
+          from: updateThemeActionProvider,
+          name: r'updateThemeActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$updateThemeActionHash,
+          dependencies: UpdateThemeActionFamily._dependencies,
+          allTransitiveDependencies:
+              UpdateThemeActionFamily._allTransitiveDependencies,
+          theme: theme,
+        );
+
+  UpdateThemeActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.theme,
+  }) : super.internal();
+
+  final String theme;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(UpdateThemeActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UpdateThemeActionProvider._internal(
+        (ref) => create(ref as UpdateThemeActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        theme: theme,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _UpdateThemeActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UpdateThemeActionProvider && other.theme == theme;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, theme.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin UpdateThemeActionRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `theme` of this provider.
+  String get theme;
+}
+
+class _UpdateThemeActionProviderElement
+    extends AutoDisposeFutureProviderElement<bool> with UpdateThemeActionRef {
+  _UpdateThemeActionProviderElement(super.provider);
+
+  @override
+  String get theme => (origin as UpdateThemeActionProvider).theme;
+}
+
+String _$exportLogsActionHash() => r'9123c78896399972a371660221b791d7738a4c14';
+
+/// Export logs action provider
+///
+/// Copied from [exportLogsAction].
+@ProviderFor(exportLogsAction)
+final exportLogsActionProvider = AutoDisposeFutureProvider<String?>.internal(
+  exportLogsAction,
+  name: r'exportLogsActionProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$exportLogsActionHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ExportLogsActionRef = AutoDisposeFutureProviderRef<String?>;
+String _$deleteAccountActionHash() =>
+    r'185908ef147eb2646a0bbe61668a03c07957e812';
+
+/// Delete account action provider
+///
+/// Copied from [deleteAccountAction].
+@ProviderFor(deleteAccountAction)
+final deleteAccountActionProvider = AutoDisposeFutureProvider<bool>.internal(
+  deleteAccountAction,
+  name: r'deleteAccountActionProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$deleteAccountActionHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef DeleteAccountActionRef = AutoDisposeFutureProviderRef<bool>;
 String _$appStateHash() => r'1cf6dac6c5d3fba4ff445cfbaad637743e5725a1';
 
 /// Main app state provider that aggregates all state and provides action methods

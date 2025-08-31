@@ -5,7 +5,8 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
@@ -19,7 +20,7 @@ dependencies:
   riverpod_annotation: ^2.3.5
 
   # Navigation
-  go_router: ^14.2.7
+  go_router: ^14.8.1
 
   # Local Storage & Encryption
   hive: ^2.2.3
@@ -40,8 +41,9 @@ dev_dependencies:
 
   # Linting
   flutter_lints: ^5.0.0
-  custom_lint: ^0.6.7
-  riverpod_lint: ^2.3.13
+  # Temporarily disabled to resolve compilation issues
+  # custom_lint: ^0.6.7
+  # riverpod_lint: ^2.3.13
 
   # Code Generation
   build_runner: ^2.4.12

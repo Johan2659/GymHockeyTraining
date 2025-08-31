@@ -74,12 +74,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
       _logger.d('ProfileRepositoryImpl: Updating role to $role');
       
       final currentProfile = await get();
-      if (currentProfile == null) {
-        _logger.w('ProfileRepositoryImpl: No current profile to update');
-        return false;
-      }
+      final baseProfile = currentProfile ?? const Profile(
+        role: UserRole.attacker,
+        language: 'English',
+        units: 'kg',
+        theme: 'dark',
+      );
       
-      final updatedProfile = currentProfile.copyWith(role: role);
+      final updatedProfile = baseProfile.copyWith(role: role);
       return await save(updatedProfile);
       
     } catch (e, stackTrace) {
@@ -95,12 +97,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
       _logger.d('ProfileRepositoryImpl: Updating language to $language');
       
       final currentProfile = await get();
-      if (currentProfile == null) {
-        _logger.w('ProfileRepositoryImpl: No current profile to update');
-        return false;
-      }
+      final baseProfile = currentProfile ?? const Profile(
+        role: UserRole.attacker,
+        language: 'English',
+        units: 'kg',
+        theme: 'dark',
+      );
       
-      final updatedProfile = currentProfile.copyWith(language: language);
+      final updatedProfile = baseProfile.copyWith(language: language);
       return await save(updatedProfile);
       
     } catch (e, stackTrace) {
@@ -116,12 +120,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
       _logger.d('ProfileRepositoryImpl: Updating units to $units');
       
       final currentProfile = await get();
-      if (currentProfile == null) {
-        _logger.w('ProfileRepositoryImpl: No current profile to update');
-        return false;
-      }
+      final baseProfile = currentProfile ?? const Profile(
+        role: UserRole.attacker,
+        language: 'English',
+        units: 'kg',
+        theme: 'dark',
+      );
       
-      final updatedProfile = currentProfile.copyWith(units: units);
+      final updatedProfile = baseProfile.copyWith(units: units);
       return await save(updatedProfile);
       
     } catch (e, stackTrace) {
@@ -137,12 +143,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
       _logger.d('ProfileRepositoryImpl: Updating theme to $theme');
       
       final currentProfile = await get();
-      if (currentProfile == null) {
-        _logger.w('ProfileRepositoryImpl: No current profile to update');
-        return false;
-      }
+      final baseProfile = currentProfile ?? const Profile(
+        role: UserRole.attacker,
+        language: 'English',
+        units: 'kg',
+        theme: 'dark',
+      );
       
-      final updatedProfile = currentProfile.copyWith(theme: theme);
+      final updatedProfile = baseProfile.copyWith(theme: theme);
       return await save(updatedProfile);
       
     } catch (e, stackTrace) {

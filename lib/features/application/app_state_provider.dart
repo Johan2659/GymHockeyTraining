@@ -5,6 +5,7 @@ import '../../app/di.dart';
 import '../../core/models/models.dart';
 import '../../core/utils/selectors.dart';
 import '../../core/persistence/persistence_service.dart';
+import '../profile/application/profile_controller.dart';
 
 part 'app_state_provider.g.dart';
 
@@ -309,6 +310,91 @@ Future<void> completeExtraAction(Ref ref, String extraId, int xpReward) async {
   );
 
   await progressRepo.appendEvent(event);
+}
+
+// =============================================================================
+// Profile Action Providers
+// =============================================================================
+
+/// Update role action provider
+@riverpod
+Future<bool> updateRoleAction(Ref ref, UserRole role) async {
+  final profileController = ref.read(profileControllerProvider.notifier);
+  final success = await profileController.updateRole(role);
+  
+  if (success) {
+    // Invalidate providers that depend on profile data
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(availableProgramsProvider);
+  }
+  
+  return success;
+}
+
+/// Update units action provider
+@riverpod
+Future<bool> updateUnitsAction(Ref ref, String units) async {
+  final profileController = ref.read(profileControllerProvider.notifier);
+  final success = await profileController.updateUnits(units);
+  
+  if (success) {
+    ref.invalidate(userProfileProvider);
+  }
+  
+  return success;
+}
+
+/// Update language action provider
+@riverpod
+Future<bool> updateLanguageAction(Ref ref, String language) async {
+  final profileController = ref.read(profileControllerProvider.notifier);
+  final success = await profileController.updateLanguage(language);
+  
+  if (success) {
+    ref.invalidate(userProfileProvider);
+  }
+  
+  return success;
+}
+
+/// Update theme action provider
+@riverpod
+Future<bool> updateThemeAction(Ref ref, String theme) async {
+  final profileController = ref.read(profileControllerProvider.notifier);
+  final success = await profileController.updateTheme(theme);
+  
+  if (success) {
+    ref.invalidate(userProfileProvider);
+  }
+  
+  return success;
+}
+
+/// Export logs action provider
+@riverpod
+Future<String?> exportLogsAction(Ref ref) async {
+  final profileController = ref.read(profileControllerProvider.notifier);
+  return await profileController.exportLogs();
+}
+
+/// Delete account action provider
+@riverpod
+Future<bool> deleteAccountAction(Ref ref) async {
+  final profileController = ref.read(profileControllerProvider.notifier);
+  final success = await profileController.deleteAccount();
+  
+  if (success) {
+    // Invalidate all major providers after account deletion
+    ref.invalidate(progressEventsProvider);
+    ref.invalidate(programStateProvider);
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(currentXPProvider);
+    ref.invalidate(todayXPProvider);
+    ref.invalidate(currentStreakProvider);
+    ref.invalidate(percentCycleProvider);
+  }
+  
+  return success;
 }
 
 // =============================================================================
