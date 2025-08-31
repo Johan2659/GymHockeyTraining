@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:gymhockeytraining/core/services/logger_service.dart';
+import 'package:gymhockeytraining/core/persistence/persistence_service.dart';
 
 /// Test helpers for setting up the testing environment
 class TestHelpers {
@@ -8,13 +10,24 @@ class TestHelpers {
   static Future<void> initializeTestEnvironment() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     
-    // Initialize Hive with in-memory storage for tests
-    Hive.init('./test/');
+    // Initialize Hive with in-memory storage for tests FIRST
+    await Hive.initFlutter();
     
     // Open all required boxes
-    await Hive.openBox('user_profile');
-    await Hive.openBox('app_settings');
-    await Hive.openBox('progress_journal');
+    try {
+      await Hive.openBox('user_profile');
+      await Hive.openBox('app_settings'); 
+      await Hive.openBox('progress_journal');
+    } catch (e) {
+      // Boxes might already be open, ignore error
+      print('Boxes already open or failed to open: $e');
+    }
+    
+    // Initialize logger service for tests AFTER Hive is ready
+    await LoggerService.instance.initialize();
+    
+    // Initialize persistence service for tests
+    PersistenceService.initialize();
     
     // Initialize platform channels for testing
     const MethodChannel('plugins.flutter.io/path_provider')
