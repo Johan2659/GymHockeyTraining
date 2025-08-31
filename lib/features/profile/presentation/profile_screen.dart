@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/models/models.dart';
+import '../../../core/services/logger_service.dart';
 import '../../../app/theme.dart';
 import '../../application/app_state_provider.dart';
 
@@ -338,11 +339,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _exportLogs() async {
+    logInfo('User initiated log export');
     setState(() => _isLoading = true);
     
     try {
       final filePath = await ref.read(exportLogsActionProvider.future);
       if (filePath != null) {
+        logInfo('Log export successful', metadata: {'filePath': filePath});
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -358,6 +361,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           );
         }
       } else {
+        logWarning('Log export failed - no file path returned');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -366,6 +370,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           );
         }
+      }
+    } catch (e, stackTrace) {
+      logError('Log export failed with exception', error: e, stackTrace: stackTrace);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to export logs'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) {

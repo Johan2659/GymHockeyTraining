@@ -1,6 +1,7 @@
 import 'package:logger/logger.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/progress_repository.dart';
+import '../../core/services/logger_service.dart';
 import '../datasources/local_progress_source.dart';
 
 /// Implementation of ProgressRepository using local data source
@@ -15,19 +16,33 @@ class ProgressRepositoryImpl implements ProgressRepository {
   @override
   Future<bool> appendEvent(ProgressEvent event) async {
     try {
+      LoggerService.instance.debug('Appending progress event: ${event.type}', 
+        source: 'ProgressRepositoryImpl', metadata: {
+          'eventType': event.type.toString(),
+          'programId': event.programId,
+          'week': event.week,
+          'session': event.session,
+        });
       _logger.d('ProgressRepositoryImpl: Appending event: ${event.type}');
       
       final success = await _localSource.appendEvent(event);
       
       if (success) {
+        LoggerService.instance.info('Successfully appended progress event', 
+          source: 'ProgressRepositoryImpl', metadata: {'eventType': event.type.toString()});
         _logger.i('ProgressRepositoryImpl: Successfully appended progress event');
       } else {
+        LoggerService.instance.warning('Failed to append progress event', 
+          source: 'ProgressRepositoryImpl', metadata: {'eventType': event.type.toString()});
         _logger.e('ProgressRepositoryImpl: Failed to append progress event');
       }
       
       return success;
       
     } catch (e, stackTrace) {
+      LoggerService.instance.error('Error appending progress event', 
+        source: 'ProgressRepositoryImpl', error: e, stackTrace: stackTrace,
+        metadata: {'eventType': event.type.toString()});
       _logger.e('ProgressRepositoryImpl: Error appending progress event', 
                 error: e, stackTrace: stackTrace);
       return false;

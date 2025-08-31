@@ -31,7 +31,7 @@ class SecureKeyService {
       
       // Try to get existing key from secure storage first
       final existingKey = await _secureStorage.read(key: _keyStorageKey);
-      _logger.d('SecureKeyService: Secure storage returned key: ${existingKey?.substring(0, 8) ?? 'null'}...');
+      _logger.d('SecureKeyService: Secure storage returned key: ${existingKey != null ? '[KEY_PRESENT]' : 'null'}');
       
       if (existingKey != null && existingKey.isNotEmpty) {
         _logger.i('SecureKeyService: Found existing encryption key in secure storage');
@@ -50,7 +50,7 @@ class SecureKeyService {
       // Try fallback storage (SharedPreferences for development)
       final prefs = await SharedPreferences.getInstance();
       final fallbackKey = prefs.getString(_fallbackKeyStorageKey);
-      _logger.d('SecureKeyService: Fallback storage returned key: ${fallbackKey?.substring(0, 8) ?? 'null'}...');
+      _logger.d('SecureKeyService: Fallback storage returned key: ${fallbackKey != null ? '[KEY_PRESENT]' : 'null'}');
       
       if (fallbackKey != null && fallbackKey.isNotEmpty) {
         _logger.i('SecureKeyService: Found existing encryption key in fallback storage');

@@ -5,6 +5,7 @@ import '../../app/di.dart';
 import '../../core/models/models.dart';
 import '../../core/utils/selectors.dart';
 import '../../core/persistence/persistence_service.dart';
+import '../../core/services/logger_service.dart';
 import '../profile/application/profile_controller.dart';
 
 part 'app_state_provider.g.dart';
@@ -168,29 +169,42 @@ Future<Session?> nextSessionRef(Ref ref) async {
 /// Start program action provider
 @riverpod
 Future<void> startProgramAction(Ref ref, String programId) async {
-  final stateRepo = ref.read(programStateRepositoryProvider);
-  final progressRepo = ref.read(progressRepositoryProvider);
+  try {
+    LoggerService.instance.info('Starting program action', 
+      source: 'startProgramAction', metadata: {'programId': programId});
+    
+    final stateRepo = ref.read(programStateRepositoryProvider);
+    final progressRepo = ref.read(progressRepositoryProvider);
 
-  PersistenceService.logStateChange('Starting program: $programId');
+    PersistenceService.logStateChange('Starting program: $programId');
 
-  final newState = ProgramState(
-    activeProgramId: programId,
-    currentWeek: 0,
-    currentSession: 0,
-    completedExerciseIds: [],
-  );
+    final newState = ProgramState(
+      activeProgramId: programId,
+      currentWeek: 0,
+      currentSession: 0,
+      completedExerciseIds: [],
+    );
 
-  await stateRepo.save(newState);
+    await stateRepo.save(newState);
 
-  final event = ProgressEvent(
-    ts: DateTime.now(),
-    type: ProgressEventType.sessionStarted,
-    programId: programId,
-    week: 0,
-    session: 0,
-  );
+    final event = ProgressEvent(
+      ts: DateTime.now(),
+      type: ProgressEventType.sessionStarted,
+      programId: programId,
+      week: 0,
+      session: 0,
+    );
 
-  await progressRepo.appendEvent(event);
+    await progressRepo.appendEvent(event);
+    
+    LoggerService.instance.info('Program started successfully', 
+      source: 'startProgramAction', metadata: {'programId': programId});
+  } catch (e, stackTrace) {
+    LoggerService.instance.error('Failed to start program', 
+      source: 'startProgramAction', error: e, stackTrace: stackTrace,
+      metadata: {'programId': programId});
+    rethrow;
+  }
 }
 
 /// Mark exercise done action provider

@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../app/di.dart';
 import '../../../core/models/models.dart';
 import '../../../core/persistence/persistence_service.dart';
+import '../../../core/services/logger_service.dart';
 import '../../../core/storage/hive_boxes.dart';
 import '../../../core/storage/local_kv_store.dart';
 
@@ -47,10 +48,16 @@ class ProfileController extends _$ProfileController {
   /// Exports all logs to a JSON file
   Future<String?> exportLogs() async {
     try {
+      LoggerService.instance.info('Starting log export', source: 'ProfileController');
+      
+      // Export using LoggerService
+      await LoggerService.instance.exportLogs();
+      
+      // Also include progress events in a separate file for comprehensive export
       final progressRepo = ref.read(progressRepositoryProvider);
       final events = await progressRepo.getRecent(limit: 1000); // Get all events with high limit
       
-      // Create export data structure
+      // Create export data structure for progress events
       final exportData = {
         'export_timestamp': DateTime.now().toIso8601String(),
         'app_version': '1.0.0',
@@ -64,16 +71,20 @@ class ProfileController extends _$ProfileController {
       // Get documents directory
       final directory = await getApplicationDocumentsDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileName = 'hockey_gym_logs_$timestamp.json';
+      final fileName = 'hockey_gym_progress_$timestamp.json';
       final file = File('${directory.path}/$fileName');
       
       // Write file
       await file.writeAsString(jsonString);
       
+      LoggerService.instance.info('Logs exported successfully', 
+        source: 'ProfileController', metadata: {'fileName': fileName});
       PersistenceService.logStateChange('Logs exported to $fileName');
       return file.path;
       
-    } catch (e) {
+    } catch (e, stackTrace) {
+      LoggerService.instance.error('Failed to export logs', 
+        source: 'ProfileController', error: e, stackTrace: stackTrace);
       if (kDebugMode) {
         print('Error exporting logs: $e');
       }

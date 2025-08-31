@@ -10,6 +10,7 @@ import 'core/storage/migration_service.dart';
 import 'core/storage/secure_key_service.dart';
 import 'core/persistence/persistence_service.dart';
 import 'core/persistence/persistence_debugger.dart';
+import 'core/services/logger_service.dart';
 
 /// Global logger instance
 final logger = Logger(
@@ -32,6 +33,10 @@ void main() async {
     // Initialize Hive with encryption
     await _initializeHive();
     
+    // Initialize LoggerService for centralized logging
+    await LoggerService.instance.initialize();
+    LoggerService.instance.info('LoggerService initialized successfully', source: 'main');
+    
     // Initialize persistence service with schema versioning and fallback
     await PersistenceService.initialize();
     
@@ -42,6 +47,7 @@ void main() async {
     await MigrationService.ensureMigrations();
     
     logger.i('✅ App initialization complete');
+    LoggerService.instance.info('App initialization complete', source: 'main');
     
     runApp(
       const ProviderScope(
@@ -51,6 +57,13 @@ void main() async {
     
   } catch (e, stackTrace) {
     logger.f('💥 Failed to initialize app', error: e, stackTrace: stackTrace);
+    // Try to log with LoggerService if it's initialized
+    try {
+      LoggerService.instance.error('App initialization failed', 
+        source: 'main', error: e, stackTrace: stackTrace);
+    } catch (_) {
+      // LoggerService not available, continue with regular logger
+    }
     rethrow;
   }
 }

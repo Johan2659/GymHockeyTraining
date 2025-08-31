@@ -31,6 +31,7 @@ dependencies:
 
   # Utilities
   logger: ^2.4.0
+  share_plus: ^10.0.0
 
   # JSON Serialization
   json_annotation: ^4.9.0
