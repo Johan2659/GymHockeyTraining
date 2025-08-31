@@ -604,6 +604,182 @@ final completeBonusChallengeActionProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CompleteBonusChallengeActionRef = AutoDisposeFutureProviderRef<void>;
+String _$startSessionActionHash() =>
+    r'b933f2a6f4d05b478c97d07c2ba842100a96784e';
+
+/// Start session action provider
+///
+/// Copied from [startSessionAction].
+@ProviderFor(startSessionAction)
+const startSessionActionProvider = StartSessionActionFamily();
+
+/// Start session action provider
+///
+/// Copied from [startSessionAction].
+class StartSessionActionFamily extends Family<AsyncValue<void>> {
+  /// Start session action provider
+  ///
+  /// Copied from [startSessionAction].
+  const StartSessionActionFamily();
+
+  /// Start session action provider
+  ///
+  /// Copied from [startSessionAction].
+  StartSessionActionProvider call(
+    String programId,
+    int week,
+    int session,
+  ) {
+    return StartSessionActionProvider(
+      programId,
+      week,
+      session,
+    );
+  }
+
+  @override
+  StartSessionActionProvider getProviderOverride(
+    covariant StartSessionActionProvider provider,
+  ) {
+    return call(
+      provider.programId,
+      provider.week,
+      provider.session,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'startSessionActionProvider';
+}
+
+/// Start session action provider
+///
+/// Copied from [startSessionAction].
+class StartSessionActionProvider extends AutoDisposeFutureProvider<void> {
+  /// Start session action provider
+  ///
+  /// Copied from [startSessionAction].
+  StartSessionActionProvider(
+    String programId,
+    int week,
+    int session,
+  ) : this._internal(
+          (ref) => startSessionAction(
+            ref as StartSessionActionRef,
+            programId,
+            week,
+            session,
+          ),
+          from: startSessionActionProvider,
+          name: r'startSessionActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$startSessionActionHash,
+          dependencies: StartSessionActionFamily._dependencies,
+          allTransitiveDependencies:
+              StartSessionActionFamily._allTransitiveDependencies,
+          programId: programId,
+          week: week,
+          session: session,
+        );
+
+  StartSessionActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.programId,
+    required this.week,
+    required this.session,
+  }) : super.internal();
+
+  final String programId;
+  final int week;
+  final int session;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(StartSessionActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: StartSessionActionProvider._internal(
+        (ref) => create(ref as StartSessionActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        programId: programId,
+        week: week,
+        session: session,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _StartSessionActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is StartSessionActionProvider &&
+        other.programId == programId &&
+        other.week == week &&
+        other.session == session;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, programId.hashCode);
+    hash = _SystemHash.combine(hash, week.hashCode);
+    hash = _SystemHash.combine(hash, session.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin StartSessionActionRef on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `programId` of this provider.
+  String get programId;
+
+  /// The parameter `week` of this provider.
+  int get week;
+
+  /// The parameter `session` of this provider.
+  int get session;
+}
+
+class _StartSessionActionProviderElement
+    extends AutoDisposeFutureProviderElement<void> with StartSessionActionRef {
+  _StartSessionActionProviderElement(super.provider);
+
+  @override
+  String get programId => (origin as StartSessionActionProvider).programId;
+  @override
+  int get week => (origin as StartSessionActionProvider).week;
+  @override
+  int get session => (origin as StartSessionActionProvider).session;
+}
+
 String _$appStateHash() => r'1cf6dac6c5d3fba4ff445cfbaad637743e5725a1';
 
 /// Main app state provider that aggregates all state and provides action methods

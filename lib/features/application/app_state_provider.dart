@@ -239,6 +239,22 @@ Future<void> completeBonusChallengeAction(Ref ref) async {
   await progressRepo.appendEvent(event);
 }
 
+/// Start session action provider
+@riverpod
+Future<void> startSessionAction(Ref ref, String programId, int week, int session) async {
+  final progressRepo = ref.read(progressRepositoryProvider);
+
+  final event = ProgressEvent(
+    ts: DateTime.now(),
+    type: ProgressEventType.sessionStarted,
+    programId: programId,
+    week: week,
+    session: session,
+  );
+
+  await progressRepo.appendEvent(event);
+}
+
 // =============================================================================
 // App State Provider (Main SSOT)
 // =============================================================================

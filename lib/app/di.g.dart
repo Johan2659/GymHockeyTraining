@@ -86,6 +86,48 @@ final localPrefsSourceProvider = AutoDisposeProvider<LocalPrefsSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocalPrefsSourceRef = AutoDisposeProviderRef<LocalPrefsSource>;
+String _$localSessionSourceHash() =>
+    r'053317c35b413c46a845425e4628e00460b94110';
+
+/// Provider for local session data source
+///
+/// Copied from [localSessionSource].
+@ProviderFor(localSessionSource)
+final localSessionSourceProvider =
+    AutoDisposeProvider<LocalSessionSource>.internal(
+  localSessionSource,
+  name: r'localSessionSourceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$localSessionSourceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LocalSessionSourceRef = AutoDisposeProviderRef<LocalSessionSource>;
+String _$localExerciseSourceHash() =>
+    r'1e6d3159c423548952f48844d6e16921939143e3';
+
+/// Provider for local exercise data source
+///
+/// Copied from [localExerciseSource].
+@ProviderFor(localExerciseSource)
+final localExerciseSourceProvider =
+    AutoDisposeProvider<LocalExerciseSource>.internal(
+  localExerciseSource,
+  name: r'localExerciseSourceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$localExerciseSourceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LocalExerciseSourceRef = AutoDisposeProviderRef<LocalExerciseSource>;
 String _$programRepositoryHash() => r'bfff7f44d765680d205f83dc7eca07dd967f3ae7';
 
 /// Provider for program repository
@@ -169,5 +211,46 @@ final profileRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ProfileRepositoryRef = AutoDisposeProviderRef<ProfileRepository>;
+String _$sessionRepositoryHash() => r'61ec10af5f7090875f86f501f562076d3657b581';
+
+/// Provider for session repository
+///
+/// Copied from [sessionRepository].
+@ProviderFor(sessionRepository)
+final sessionRepositoryProvider =
+    AutoDisposeProvider<SessionRepository>.internal(
+  sessionRepository,
+  name: r'sessionRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$sessionRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SessionRepositoryRef = AutoDisposeProviderRef<SessionRepository>;
+String _$exerciseRepositoryHash() =>
+    r'5e753dd7bff1036ca19a5c2c1a21aad22af0ee5a';
+
+/// Provider for exercise repository
+///
+/// Copied from [exerciseRepository].
+@ProviderFor(exerciseRepository)
+final exerciseRepositoryProvider =
+    AutoDisposeProvider<ExerciseRepository>.internal(
+  exerciseRepository,
+  name: r'exerciseRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$exerciseRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ExerciseRepositoryRef = AutoDisposeProviderRef<ExerciseRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

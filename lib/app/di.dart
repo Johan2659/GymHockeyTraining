@@ -52,6 +52,18 @@ LocalPrefsSource localPrefsSource(Ref ref) {
   return LocalPrefsSource();
 }
 
+/// Provider for local session data source
+@riverpod
+LocalSessionSource localSessionSource(Ref ref) {
+  return LocalSessionSource();
+}
+
+/// Provider for local exercise data source
+@riverpod
+LocalExerciseSource localExerciseSource(Ref ref) {
+  return LocalExerciseSource();
+}
+
 // =============================================================================
 // Repository Implementations
 // =============================================================================
@@ -82,4 +94,18 @@ ProgramStateRepository programStateRepository(Ref ref) {
 ProfileRepository profileRepository(Ref ref) {
   final localSource = ref.watch(localPrefsSourceProvider);
   return ProfileRepositoryImpl(localSource: localSource);
+}
+
+/// Provider for session repository
+@riverpod
+SessionRepository sessionRepository(Ref ref) {
+  final localSource = ref.watch(localSessionSourceProvider);
+  return SessionRepositoryImpl(localSource: localSource);
+}
+
+/// Provider for exercise repository
+@riverpod
+ExerciseRepository exerciseRepository(Ref ref) {
+  final localSource = ref.watch(localExerciseSourceProvider);
+  return ExerciseRepositoryImpl(localSource: localSource);
 }

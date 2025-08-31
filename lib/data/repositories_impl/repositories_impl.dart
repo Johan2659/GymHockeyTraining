@@ -6,3 +6,5 @@ export 'program_repository_impl.dart';
 export 'progress_repository_impl.dart';
 export 'program_state_repository_impl.dart';
 export 'profile_repository_impl.dart';
+export 'session_repository_impl.dart';
+export 'exercise_repository_impl.dart';
