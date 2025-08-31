@@ -1,42 +1,908 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProgressScreen extends StatelessWidget {
+import '../../../app/theme.dart';
+import '../../../core/models/models.dart';
+import '../../../core/utils/selectors.dart';
+import '../../application/app_state_provider.dart';
+
+class ProgressScreen extends ConsumerWidget {
   const ProgressScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appStateAsync = ref.watch(appStateProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Progress'),
+        backgroundColor: AppTheme.surfaceColor,
+        foregroundColor: AppTheme.onSurfaceColor,
       ),
-      body: const Center(
+      body: appStateAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(
+                'Error loading progress data',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                error.toString(),
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+        data: (appState) => _buildProgressContent(context, appState),
+      ),
+    );
+  }
+
+  Widget _buildProgressContent(BuildContext context, AppStateData appState) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header stats row
+          Row(
+            children: [
+              Expanded(child: _buildXPCard(context, appState)),
+              const SizedBox(width: 12),
+              Expanded(child: _buildStreakCard(context, appState)),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Cycle completion
+          _buildCycleProgressCard(context, appState),
+          
+          const SizedBox(height: 24),
+          
+          // Weekly streak visualization
+          _buildWeeklyStreakSection(context, appState),
+          
+          const SizedBox(height: 24),
+          
+          // Personal Records section
+          _buildPersonalRecordsSection(context, appState),
+          
+          const SizedBox(height: 24),
+          
+          // Progress Timeline
+          _buildProgressTimelineSection(context, appState),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildXPCard(BuildContext context, AppStateData appState) {
+    final level = Selectors.calculateLevel(appState.currentXP);
+    final xpInCurrentLevel = appState.currentXP % Selectors.xpPerLevel;
+    final progressToNextLevel = xpInCurrentLevel / Selectors.xpPerLevel;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              Icons.trending_up,
-              size: 64,
-              color: Color(0xFF2D7BFF), // Primary color
+            Row(
+              children: [
+                Icon(Icons.star, color: AppTheme.accentColor, size: 20),
+                const SizedBox(width: 6),
+                Text(
+                  'Level $level',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 8),
             Text(
-              'Progress Tracking',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              '${appState.currentXP} XP',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: AppTheme.primaryColor,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
+            LinearProgressIndicator(
+              value: progressToNextLevel,
+              backgroundColor: Colors.grey[700],
+              valueColor: AlwaysStoppedAnimation(AppTheme.accentColor),
+            ),
+            const SizedBox(height: 4),
             Text(
-              'TODO: Implement progress tracking and journaling',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
+              '${Selectors.xpPerLevel - xpInCurrentLevel} XP to Level ${level + 1}',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey[400],
               ),
             ),
+            if (appState.todayXP > 0) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '+${appState.todayXP} today',
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildStreakCard(BuildContext context, AppStateData appState) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.local_fire_department, 
+                  color: appState.currentStreak > 0 ? Colors.orange : Colors.grey,
+                  size: 20,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'Streak',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${appState.currentStreak} days',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: appState.currentStreak > 0 ? Colors.orange : Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _getStreakMessage(appState.currentStreak),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey[400],
+              ),
+            ),
+            if (appState.xpMultiplier > 1.0) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${((appState.xpMultiplier - 1) * 100).toInt()}% XP Bonus',
+                  style: const TextStyle(
+                    color: Colors.orange,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCycleProgressCard(BuildContext context, AppStateData appState) {
+    final percentComplete = (appState.percentCycle * 100).toInt();
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.track_changes, color: AppTheme.primaryColor, size: 20),
+                const SizedBox(width: 6),
+                Text(
+                  'Current Program',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                Text(
+                  '$percentComplete%',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (appState.activeProgram != null) ...[
+              Text(
+                appState.activeProgram!.title,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 12),
+              LinearProgressIndicator(
+                value: appState.percentCycle,
+                backgroundColor: Colors.grey[700],
+                valueColor: AlwaysStoppedAnimation(AppTheme.primaryColor),
+                minHeight: 8,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _getCycleProgressMessage(appState.percentCycle),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[400],
+                ),
+              ),
+            ] else ...[
+              Text(
+                'No active program',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[400],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Start a program to track your progress',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeeklyStreakSection(BuildContext context, AppStateData appState) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Weekly Activity',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: _buildWeeklyActivityChart(context, appState),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWeeklyActivityChart(BuildContext context, AppStateData appState) {
+    final now = DateTime.now();
+    final weekStart = now.subtract(Duration(days: now.weekday - 1));
+    final days = List.generate(7, (index) => weekStart.add(Duration(days: index)));
+    
+    // Group events by day
+    final eventsByDay = <String, int>{};
+    for (final event in appState.events) {
+      final dayKey = _formatDateKey(event.ts);
+      eventsByDay[dayKey] = (eventsByDay[dayKey] ?? 0) + 1;
+    }
+
+    return Column(
+      children: [
+        Row(
+          children: days.map((day) {
+            final dayKey = _formatDateKey(day);
+            final hasActivity = eventsByDay.containsKey(dayKey);
+            final isToday = _formatDateKey(day) == _formatDateKey(now);
+            
+            return Expanded(
+              child: Column(
+                children: [
+                  Text(
+                    _formatWeekday(day),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[400],
+                      fontSize: 10,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: hasActivity 
+                          ? AppTheme.accentColor
+                          : Colors.grey[700],
+                      border: isToday 
+                          ? Border.all(color: AppTheme.primaryColor, width: 2)
+                          : null,
+                    ),
+                    child: hasActivity
+                        ? Icon(
+                            Icons.check,
+                            color: AppTheme.backgroundColor,
+                            size: 14,
+                          )
+                        : null,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${day.day}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: isToday ? AppTheme.primaryColor : Colors.grey[400],
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPersonalRecordsSection(BuildContext context, AppStateData appState) {
+    final prData = _calculatePersonalRecords(appState.events);
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Personal Records',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (prData.isEmpty) ...[
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.emoji_events,
+                      size: 48,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'No records yet',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Start training to track your personal bests!',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[500],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ] else ...[
+          ...prData.entries.take(5).map((entry) => _buildPersonalRecordCard(
+            context,
+            entry.key,
+            entry.value,
+          )),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildPersonalRecordCard(BuildContext context, String category, Map<String, dynamic> record) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Icon(
+          Icons.emoji_events,
+          color: AppTheme.accentColor,
+        ),
+        title: Text(
+          _getCategoryDisplayName(category),
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(_formatPersonalRecord(record)),
+        trailing: Text(
+          _formatShortDate(record['date'] as DateTime),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.grey[400],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgressTimelineSection(BuildContext context, AppStateData appState) {
+    // Process events to combine session completions with their bonus challenges
+    final combinedEvents = _processCombinedMilestones(appState.events);
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recent Activity',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (combinedEvents.isEmpty) ...[
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.timeline,
+                      size: 48,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'No milestones yet',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Complete sessions and challenges to see your achievements here',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[500],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ] else ...[
+          Card(
+            child: Column(
+              children: [
+                ...combinedEvents.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final eventInfo = entry.value;
+                  final isLast = index == combinedEvents.length - 1;
+                  
+                  return _buildCombinedTimelineItem(context, eventInfo, isLast);
+                }),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // Combined timeline processing methods
+  List<Map<String, dynamic>> _processCombinedMilestones(List<ProgressEvent> events) {
+    final milestoneEvents = events
+        .where((event) => 
+            event.type == ProgressEventType.sessionCompleted ||
+            event.type == ProgressEventType.bonusDone ||
+            event.type == ProgressEventType.extraCompleted)
+        .toList();
+
+    final combinedEvents = <Map<String, dynamic>>[];
+    final processedBonuses = <ProgressEvent>{};
+
+    for (final event in milestoneEvents) {
+      if (event.type == ProgressEventType.sessionCompleted) {
+        // Look for bonus challenge completed in the same session
+        final matchingBonus = milestoneEvents
+            .where((e) => 
+                e.type == ProgressEventType.bonusDone &&
+                e.programId == event.programId &&
+                e.week == event.week &&
+                e.session == event.session &&
+                !processedBonuses.contains(e))
+            .cast<ProgressEvent?>()
+            .firstWhere((e) => e != null, orElse: () => null);
+
+        combinedEvents.add({
+          'type': 'session_with_bonus',
+          'sessionEvent': event,
+          'bonusEvent': matchingBonus,
+          'timestamp': event.ts,
+        });
+
+        if (matchingBonus != null) {
+          processedBonuses.add(matchingBonus);
+        }
+      } else if (event.type == ProgressEventType.extraCompleted) {
+        // Extra challenges are always shown separately
+        combinedEvents.add({
+          'type': 'extra',
+          'event': event,
+          'timestamp': event.ts,
+        });
+      }
+      // Skip standalone bonus events as they're combined with sessions
+    }
+
+    // Sort by timestamp (newest first)
+    combinedEvents.sort((a, b) => (b['timestamp'] as DateTime).compareTo(a['timestamp'] as DateTime));
+    
+    return combinedEvents.take(10).toList();
+  }
+
+  Widget _buildCombinedTimelineItem(BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
+    if (eventInfo['type'] == 'session_with_bonus') {
+      return _buildSessionWithBonusItem(context, eventInfo, isLast);
+    } else {
+      return _buildExtraItem(context, eventInfo, isLast);
+    }
+  }
+
+  Widget _buildSessionWithBonusItem(BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
+    final sessionEvent = eventInfo['sessionEvent'] as ProgressEvent;
+    final bonusEvent = eventInfo['bonusEvent'] as ProgressEvent?;
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: isLast ? null : Border(
+          bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Main session icon
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppTheme.accentColor.withOpacity(0.2),
+            ),
+            child: Icon(Icons.check_circle, color: AppTheme.accentColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        'Training Session Completed!',
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (bonusEvent != null) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.star, color: Colors.orange, size: 12),
+                            const SizedBox(width: 2),
+                            Text(
+                              'BONUS',
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _getSessionSubtitle(sessionEvent, bonusEvent),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[400],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            _formatTime(sessionEvent.ts),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExtraItem(BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
+    final event = eventInfo['event'] as ProgressEvent;
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: isLast ? null : Border(
+          bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.purple.withOpacity(0.2),
+            ),
+            child: Icon(Icons.bolt, color: Colors.purple, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Extra Challenge Completed!',
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _getEventSubtitle(event),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[400],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            _formatTime(event.ts),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getSessionSubtitle(ProgressEvent sessionEvent, ProgressEvent? bonusEvent) {
+    final parts = <String>[];
+    
+    if (sessionEvent.week > 0 || sessionEvent.session > 0) {
+      parts.add('Week ${sessionEvent.week + 1}, Session ${sessionEvent.session + 1}');
+    }
+    
+    if (bonusEvent != null) {
+      parts.add('Bonus Challenge Completed');
+    }
+    
+    return parts.join(' • ');
+  }
+
+  // Helper methods
+  String _getStreakMessage(int streak) {
+    if (streak == 0) return 'Start your streak today!';
+    if (streak == 1) return 'Great start! Keep it going';
+    if (streak < 7) return 'Building momentum';
+    if (streak < 30) return 'Week streak achieved!';
+    return 'Amazing dedication!';
+  }
+
+  String _getCycleProgressMessage(double progress) {
+    if (progress < 0.25) return 'Just getting started';
+    if (progress < 0.5) return 'Making good progress';
+    if (progress < 0.75) return 'More than halfway there!';
+    if (progress < 1.0) return 'Almost complete!';
+    return 'Program completed!';
+  }
+
+  Map<String, Map<String, dynamic>> _calculatePersonalRecords(List<ProgressEvent> events) {
+    final records = <String, Map<String, dynamic>>{};
+    
+    // Group by exercise categories and track session counts with dates
+    final sessionsByProgram = <String, Map<String, dynamic>>{};
+    final exercisesByCategory = <String, Map<String, dynamic>>{};
+    
+    for (final event in events) {
+      if (event.type == ProgressEventType.sessionCompleted) {
+        final programId = event.programId;
+        if (!sessionsByProgram.containsKey(programId)) {
+          sessionsByProgram[programId] = {'count': 0, 'date': event.ts};
+        }
+        sessionsByProgram[programId]!['count'] = (sessionsByProgram[programId]!['count'] as int) + 1;
+        // Keep the most recent date for this program
+        final currentDate = sessionsByProgram[programId]!['date'] as DateTime;
+        if (event.ts.isAfter(currentDate)) {
+          sessionsByProgram[programId]!['date'] = event.ts;
+        }
+      } else if (event.type == ProgressEventType.exerciseDone && event.exerciseId != null) {
+        final category = _getExerciseCategory(event.exerciseId!);
+        if (!exercisesByCategory.containsKey(category)) {
+          exercisesByCategory[category] = {'count': 0, 'date': event.ts};
+        }
+        exercisesByCategory[category]!['count'] = (exercisesByCategory[category]!['count'] as int) + 1;
+        // Keep the most recent date for this category
+        final currentDate = exercisesByCategory[category]!['date'] as DateTime;
+        if (event.ts.isAfter(currentDate)) {
+          exercisesByCategory[category]!['date'] = event.ts;
+        }
+      }
+    }
+    
+    // Find the best records
+    if (sessionsByProgram.isNotEmpty) {
+      final bestProgram = sessionsByProgram.entries
+          .reduce((a, b) => (a.value['count'] as int) > (b.value['count'] as int) ? a : b);
+      records['Sessions'] = {
+        'count': bestProgram.value['count'],
+        'program': bestProgram.key,
+        'date': bestProgram.value['date'],
+      };
+    }
+    
+    if (exercisesByCategory.isNotEmpty) {
+      final bestCategory = exercisesByCategory.entries
+          .reduce((a, b) => (a.value['count'] as int) > (b.value['count'] as int) ? a : b);
+      records[bestCategory.key] = {
+        'count': bestCategory.value['count'],
+        'date': bestCategory.value['date'],
+      };
+    }
+    
+    return records;
+  }
+
+  String _getExerciseCategory(String exerciseId) {
+    // Hockey-specific categorization based on actual exercise IDs
+    if (exerciseId.contains('sprint') || exerciseId.contains('acceleration') || exerciseId.contains('explosive')) {
+      return 'Speed';
+    }
+    if (exerciseId.contains('shooting') || exerciseId.contains('shots') || exerciseId.contains('accuracy')) {
+      return 'Shooting';
+    }
+    if (exerciseId.contains('stick') || exerciseId.contains('handling') || exerciseId.contains('control')) {
+      return 'Stickhandling';
+    }
+    if (exerciseId.contains('plyometric') || exerciseId.contains('jumps') || exerciseId.contains('battle')) {
+      return 'Power';
+    }
+    if (exerciseId.contains('warmup') || exerciseId.contains('cooldown') || exerciseId.contains('stretch')) {
+      return 'Conditioning';
+    }
+    if (exerciseId.contains('direction') || exerciseId.contains('cone') || exerciseId.contains('weaving')) {
+      return 'Agility';
+    }
+    return 'Training';
+  }
+
+  String _getCategoryDisplayName(String category) {
+    switch (category) {
+      case 'Sessions': return 'Training Sessions';
+      case 'Speed': return 'Speed Training';
+      case 'Shooting': return 'Shooting Practice';
+      case 'Stickhandling': return 'Stickhandling';
+      case 'Power': return 'Power Training';
+      case 'Conditioning': return 'Conditioning';
+      case 'Agility': return 'Agility Training';
+      case 'Training': return 'General Training';
+      default: return category;
+    }
+  }
+
+  String _formatPersonalRecord(Map<String, dynamic> record) {
+    if (record.containsKey('program')) {
+      final programName = _getProgramDisplayName(record['program']);
+      return '${record['count']} sessions in $programName';
+    }
+    return '${record['count']} completed';
+  }
+
+  String _getProgramDisplayName(String programId) {
+    switch (programId.toLowerCase()) {
+      case 'hockey_attacker_v1':
+        return 'Hockey Attacker V1';
+      case 'hockey_defender_v1':
+        return 'Hockey Defender V1';
+      case 'hockey_goalie_v1':
+        return 'Hockey Goalie V1';
+      case 'hockey_elite_v1':
+        return 'Hockey Elite V1';
+      case 'hockey_beginner_v1':
+        return 'Hockey Beginner V1';
+      case 'hockey_intermediate_v1':
+        return 'Hockey Intermediate V1';
+      case 'hockey_advanced_v1':
+        return 'Hockey Advanced V1';
+      case 'hockey_pro_v1':
+        return 'Hockey Pro V1';
+      default:
+        // Convert snake_case to Title Case as fallback
+        return programId
+            .split('_')
+            .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+            .join(' ');
+    }
+  }
+
+  String _getEventSubtitle(ProgressEvent event) {
+    final parts = <String>[];
+    
+    if (event.exerciseId != null) {
+      parts.add(event.exerciseId!.replaceAll('_', ' ').toUpperCase());
+    }
+    
+    if (event.week > 0 || event.session > 0) {
+      parts.add('Week ${event.week + 1}, Session ${event.session + 1}');
+    }
+    
+    if (event.type == ProgressEventType.extraCompleted && event.payload?['xp_reward'] != null) {
+      parts.add('+${event.payload!['xp_reward']} XP');
+    }
+    
+    return parts.join(' • ');
+  }
+
+  // Date formatting helper methods
+  String _formatDateKey(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  String _formatWeekday(DateTime date) {
+    const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return weekdays[date.weekday - 1];
+  }
+
+  String _formatShortDate(DateTime date) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${months[date.month - 1]} ${date.day}';
+  }
+
+  String _formatTime(DateTime date) {
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 }
