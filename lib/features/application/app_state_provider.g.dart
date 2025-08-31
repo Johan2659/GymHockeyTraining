@@ -84,6 +84,86 @@ final availableProgramsProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AvailableProgramsRef = AutoDisposeFutureProviderRef<List<Program>>;
+String _$availableExtrasHash() => r'8109c166d2c8b223db97dda4632a6a4d2c69b289';
+
+/// Available extras provider
+///
+/// Copied from [availableExtras].
+@ProviderFor(availableExtras)
+final availableExtrasProvider =
+    AutoDisposeFutureProvider<List<ExtraItem>>.internal(
+  availableExtras,
+  name: r'availableExtrasProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$availableExtrasHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AvailableExtrasRef = AutoDisposeFutureProviderRef<List<ExtraItem>>;
+String _$expressWorkoutsHash() => r'c2b3860733773d4b60826e5fc72fcb9a98c21fd2';
+
+/// Express workouts provider
+///
+/// Copied from [expressWorkouts].
+@ProviderFor(expressWorkouts)
+final expressWorkoutsProvider =
+    AutoDisposeFutureProvider<List<ExtraItem>>.internal(
+  expressWorkouts,
+  name: r'expressWorkoutsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$expressWorkoutsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ExpressWorkoutsRef = AutoDisposeFutureProviderRef<List<ExtraItem>>;
+String _$bonusChallengesHash() => r'e2c1bd9d8c2cc1b42d26986f59d0d8427c026b8b';
+
+/// Bonus challenges provider
+///
+/// Copied from [bonusChallenges].
+@ProviderFor(bonusChallenges)
+final bonusChallengesProvider =
+    AutoDisposeFutureProvider<List<ExtraItem>>.internal(
+  bonusChallenges,
+  name: r'bonusChallengesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$bonusChallengesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef BonusChallengesRef = AutoDisposeFutureProviderRef<List<ExtraItem>>;
+String _$mobilityRecoveryHash() => r'67aa8059dd77e1d56ba2557368ee70c3d9fde5dd';
+
+/// Mobility & recovery provider
+///
+/// Copied from [mobilityRecovery].
+@ProviderFor(mobilityRecovery)
+final mobilityRecoveryProvider =
+    AutoDisposeFutureProvider<List<ExtraItem>>.internal(
+  mobilityRecovery,
+  name: r'mobilityRecoveryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mobilityRecoveryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MobilityRecoveryRef = AutoDisposeFutureProviderRef<List<ExtraItem>>;
 String _$activeProgramHash() => r'39c2c2d39eba686edf957c9169db24848c11b1ab';
 
 /// Current active program provider
@@ -214,7 +294,7 @@ final nextSessionRefProvider = AutoDisposeFutureProvider<Session?>.internal(
 // ignore: unused_element
 typedef NextSessionRefRef = AutoDisposeFutureProviderRef<Session?>;
 String _$startProgramActionHash() =>
-    r'75417f5b8f3901d9fc07bda60ba87d602fa26a04';
+    r'7bdfa3c70cb52b7dbe0719475a778060aa82e013';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -524,7 +604,7 @@ class _MarkExerciseDoneActionProviderElement
 }
 
 String _$completeSessionActionHash() =>
-    r'a2499d286a6397250649b982eca17579dfec07c8';
+    r'9459202fc241f7c2ca0fc2ecd6aebbd80339967d';
 
 /// Complete session action provider
 ///
@@ -778,6 +858,166 @@ class _StartSessionActionProviderElement
   int get week => (origin as StartSessionActionProvider).week;
   @override
   int get session => (origin as StartSessionActionProvider).session;
+}
+
+String _$completeExtraActionHash() =>
+    r'94d2105925bc6c42cfd8b59053eebe91e962e0f0';
+
+/// Complete extra action provider
+///
+/// Copied from [completeExtraAction].
+@ProviderFor(completeExtraAction)
+const completeExtraActionProvider = CompleteExtraActionFamily();
+
+/// Complete extra action provider
+///
+/// Copied from [completeExtraAction].
+class CompleteExtraActionFamily extends Family<AsyncValue<void>> {
+  /// Complete extra action provider
+  ///
+  /// Copied from [completeExtraAction].
+  const CompleteExtraActionFamily();
+
+  /// Complete extra action provider
+  ///
+  /// Copied from [completeExtraAction].
+  CompleteExtraActionProvider call(
+    String extraId,
+    int xpReward,
+  ) {
+    return CompleteExtraActionProvider(
+      extraId,
+      xpReward,
+    );
+  }
+
+  @override
+  CompleteExtraActionProvider getProviderOverride(
+    covariant CompleteExtraActionProvider provider,
+  ) {
+    return call(
+      provider.extraId,
+      provider.xpReward,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'completeExtraActionProvider';
+}
+
+/// Complete extra action provider
+///
+/// Copied from [completeExtraAction].
+class CompleteExtraActionProvider extends AutoDisposeFutureProvider<void> {
+  /// Complete extra action provider
+  ///
+  /// Copied from [completeExtraAction].
+  CompleteExtraActionProvider(
+    String extraId,
+    int xpReward,
+  ) : this._internal(
+          (ref) => completeExtraAction(
+            ref as CompleteExtraActionRef,
+            extraId,
+            xpReward,
+          ),
+          from: completeExtraActionProvider,
+          name: r'completeExtraActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$completeExtraActionHash,
+          dependencies: CompleteExtraActionFamily._dependencies,
+          allTransitiveDependencies:
+              CompleteExtraActionFamily._allTransitiveDependencies,
+          extraId: extraId,
+          xpReward: xpReward,
+        );
+
+  CompleteExtraActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.extraId,
+    required this.xpReward,
+  }) : super.internal();
+
+  final String extraId;
+  final int xpReward;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(CompleteExtraActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: CompleteExtraActionProvider._internal(
+        (ref) => create(ref as CompleteExtraActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        extraId: extraId,
+        xpReward: xpReward,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _CompleteExtraActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CompleteExtraActionProvider &&
+        other.extraId == extraId &&
+        other.xpReward == xpReward;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, extraId.hashCode);
+    hash = _SystemHash.combine(hash, xpReward.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin CompleteExtraActionRef on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `extraId` of this provider.
+  String get extraId;
+
+  /// The parameter `xpReward` of this provider.
+  int get xpReward;
+}
+
+class _CompleteExtraActionProviderElement
+    extends AutoDisposeFutureProviderElement<void> with CompleteExtraActionRef {
+  _CompleteExtraActionProviderElement(super.provider);
+
+  @override
+  String get extraId => (origin as CompleteExtraActionProvider).extraId;
+  @override
+  int get xpReward => (origin as CompleteExtraActionProvider).xpReward;
 }
 
 String _$appStateHash() => r'1cf6dac6c5d3fba4ff445cfbaad637743e5725a1';

@@ -47,6 +47,34 @@ Future<List<Program>> availablePrograms(Ref ref) {
   return repository.getAll();
 }
 
+/// Available extras provider
+@riverpod
+Future<List<ExtraItem>> availableExtras(Ref ref) {
+  final repository = ref.watch(extrasRepositoryProvider);
+  return repository.getAll();
+}
+
+/// Express workouts provider
+@riverpod
+Future<List<ExtraItem>> expressWorkouts(Ref ref) {
+  final repository = ref.watch(extrasRepositoryProvider);
+  return repository.getByType(ExtraType.expressWorkout);
+}
+
+/// Bonus challenges provider
+@riverpod
+Future<List<ExtraItem>> bonusChallenges(Ref ref) {
+  final repository = ref.watch(extrasRepositoryProvider);
+  return repository.getByType(ExtraType.bonusChallenge);
+}
+
+/// Mobility & recovery provider
+@riverpod
+Future<List<ExtraItem>> mobilityRecovery(Ref ref) {
+  final repository = ref.watch(extrasRepositoryProvider);
+  return repository.getByType(ExtraType.mobilityRecovery);
+}
+
 /// Current active program provider
 @riverpod
 Future<Program?> activeProgram(Ref ref) async {
@@ -255,6 +283,29 @@ Future<void> startSessionAction(Ref ref, String programId, int week, int session
     programId: programId,
     week: week,
     session: session,
+  );
+
+  await progressRepo.appendEvent(event);
+}
+
+/// Complete extra action provider
+@riverpod
+Future<void> completeExtraAction(Ref ref, String extraId, int xpReward) async {
+  final progressRepo = ref.read(progressRepositoryProvider);
+
+  PersistenceService.logStateChange('Completing extra: $extraId with XP reward: $xpReward');
+
+  final event = ProgressEvent(
+    ts: DateTime.now(),
+    type: ProgressEventType.extraCompleted,
+    programId: extraId, // Using extraId as programId for extras
+    week: 0, // Extras don't have weeks
+    session: 0, // Extras don't have sessions
+    exerciseId: extraId,
+    payload: {
+      'xp_reward': xpReward,
+      'extra_type': 'extra_completion',
+    },
   );
 
   await progressRepo.appendEvent(event);

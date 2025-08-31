@@ -7,6 +7,7 @@ import '../features/hub/presentation/hub_screen.dart';
 import '../features/programs/presentation/programs_screen.dart';
 import '../features/programs/presentation/program_detail_screen.dart';
 import '../features/extras/presentation/extras_screen.dart';
+import '../features/extras/presentation/extra_detail_screen.dart';
 import '../features/progress/presentation/progress_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/session/presentation/session_player_screen.dart';
@@ -73,6 +74,15 @@ GoRouter router(Ref ref) {
             week: week,
             session: session,
           );
+        },
+      ),
+      // Extra detail route (fullscreen, no bottom nav)
+      GoRoute(
+        path: '/extras/:extraId',
+        name: 'extra-detail',
+        builder: (context, state) {
+          final extraId = state.pathParameters['extraId']!;
+          return ExtraDetailScreen(extraId: extraId);
         },
       ),
     ],

@@ -140,6 +140,7 @@ const _$ProgressEventTypeEnumMap = {
   ProgressEventType.exerciseDone: 'exercise_done',
   ProgressEventType.sessionCompleted: 'session_completed',
   ProgressEventType.bonusDone: 'bonus_done',
+  ProgressEventType.extraCompleted: 'extra_completed',
 };
 
 Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
@@ -169,3 +170,31 @@ Map<String, dynamic> _$XPToJson(XP instance) => <String, dynamic>{
       'level': instance.level,
       'lastRewards': instance.lastRewards,
     };
+
+ExtraItem _$ExtraItemFromJson(Map<String, dynamic> json) => ExtraItem(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String,
+      type: $enumDecode(_$ExtraTypeEnumMap, json['type']),
+      xpReward: (json['xpReward'] as num).toInt(),
+      duration: (json['duration'] as num).toInt(),
+      blocks: ExtraItem._blocksFromJson(json['blocks'] as List),
+      difficulty: json['difficulty'] as String?,
+    );
+
+Map<String, dynamic> _$ExtraItemToJson(ExtraItem instance) => <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'description': instance.description,
+      'type': _$ExtraTypeEnumMap[instance.type]!,
+      'xpReward': instance.xpReward,
+      'duration': instance.duration,
+      'blocks': ExtraItem._blocksToJson(instance.blocks),
+      'difficulty': instance.difficulty,
+    };
+
+const _$ExtraTypeEnumMap = {
+  ExtraType.expressWorkout: 'express_workout',
+  ExtraType.bonusChallenge: 'bonus_challenge',
+  ExtraType.mobilityRecovery: 'mobility_recovery',
+};

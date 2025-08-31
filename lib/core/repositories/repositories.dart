@@ -8,3 +8,4 @@ export 'program_state_repository.dart';
 export 'profile_repository.dart';
 export 'session_repository.dart';
 export 'exercise_repository.dart';
+export 'extras_repository.dart';

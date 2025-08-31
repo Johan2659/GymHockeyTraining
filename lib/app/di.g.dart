@@ -128,6 +128,26 @@ final localExerciseSourceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocalExerciseSourceRef = AutoDisposeProviderRef<LocalExerciseSource>;
+String _$localExtrasSourceHash() => r'1c3463255405da04fea29a938dea8cbf231da6e4';
+
+/// Provider for local extras data source
+///
+/// Copied from [localExtrasSource].
+@ProviderFor(localExtrasSource)
+final localExtrasSourceProvider =
+    AutoDisposeProvider<LocalExtrasSource>.internal(
+  localExtrasSource,
+  name: r'localExtrasSourceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$localExtrasSourceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LocalExtrasSourceRef = AutoDisposeProviderRef<LocalExtrasSource>;
 String _$programRepositoryHash() => r'bfff7f44d765680d205f83dc7eca07dd967f3ae7';
 
 /// Provider for program repository
@@ -252,5 +272,24 @@ final exerciseRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ExerciseRepositoryRef = AutoDisposeProviderRef<ExerciseRepository>;
+String _$extrasRepositoryHash() => r'13d9b0d381eb1210f0bee03888e95b588052a28a';
+
+/// Provider for extras repository
+///
+/// Copied from [extrasRepository].
+@ProviderFor(extrasRepository)
+final extrasRepositoryProvider = AutoDisposeProvider<ExtrasRepository>.internal(
+  extrasRepository,
+  name: r'extrasRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$extrasRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ExtrasRepositoryRef = AutoDisposeProviderRef<ExtrasRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

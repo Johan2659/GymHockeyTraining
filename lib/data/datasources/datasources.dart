@@ -7,3 +7,4 @@ export 'local_progress_source.dart';
 export 'local_prefs_source.dart';
 export 'local_session_source.dart';
 export 'local_exercise_source.dart';
+export 'local_extras_source.dart';

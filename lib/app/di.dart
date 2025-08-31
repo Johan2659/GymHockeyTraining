@@ -64,6 +64,12 @@ LocalExerciseSource localExerciseSource(Ref ref) {
   return LocalExerciseSource();
 }
 
+/// Provider for local extras data source
+@riverpod
+LocalExtrasSource localExtrasSource(Ref ref) {
+  return LocalExtrasSource();
+}
+
 // =============================================================================
 // Repository Implementations
 // =============================================================================
@@ -108,4 +114,11 @@ SessionRepository sessionRepository(Ref ref) {
 ExerciseRepository exerciseRepository(Ref ref) {
   final localSource = ref.watch(localExerciseSourceProvider);
   return ExerciseRepositoryImpl(localSource: localSource);
+}
+
+/// Provider for extras repository
+@riverpod
+ExtrasRepository extrasRepository(Ref ref) {
+  final localSource = ref.watch(localExtrasSourceProvider);
+  return ExtrasRepositoryImpl(localSource: localSource);
 }

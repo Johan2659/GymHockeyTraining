@@ -27,6 +27,18 @@ enum ProgressEventType {
   sessionCompleted,
   @JsonValue('bonus_done')
   bonusDone,
+  @JsonValue('extra_completed')
+  extraCompleted,
+}
+
+/// Extra type enum for different categories of extras
+enum ExtraType {
+  @JsonValue('express_workout')
+  expressWorkout,
+  @JsonValue('bonus_challenge')
+  bonusChallenge,
+  @JsonValue('mobility_recovery')
+  mobilityRecovery,
 }
 
 /// Exercise model representing a single exercise
@@ -319,4 +331,46 @@ class XP {
       lastRewards: lastRewards ?? this.lastRewards,
     );
   }
+}
+
+/// Extra item model representing bonus content like express workouts, challenges, etc.
+@JsonSerializable()
+class ExtraItem {
+  const ExtraItem({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.type,
+    required this.xpReward,
+    required this.duration,
+    required this.blocks,
+    this.difficulty,
+  });
+
+  final String id;
+  final String title;
+  final String description;
+  final ExtraType type;
+  final int xpReward;
+  final int duration; // in minutes
+  @JsonKey(fromJson: _blocksFromJson, toJson: _blocksToJson)
+  final List<ExerciseBlock> blocks;
+  final String? difficulty; // 'easy', 'medium', 'hard'
+
+  factory ExtraItem.fromJson(Map<String, dynamic> json) => _$ExtraItemFromJson(json);
+  Map<String, dynamic> toJson() => _$ExtraItemToJson(this);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ExtraItem && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  static List<ExerciseBlock> _blocksFromJson(List<dynamic> json) =>
+      json.map((e) => ExerciseBlock.fromJson(e as Map<String, dynamic>)).toList();
+
+  static List<Map<String, dynamic>> _blocksToJson(List<ExerciseBlock> blocks) =>
+      blocks.map((e) => e.toJson()).toList();
 }

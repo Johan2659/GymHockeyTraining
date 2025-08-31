@@ -32,6 +32,10 @@ class Selectors {
           return total + 25;
         case ProgressEventType.sessionStarted:
           return total + 5;
+        case ProgressEventType.extraCompleted:
+          // For extras, get XP reward from payload or use default
+          final xpReward = event.payload?['xp_reward'] as int? ?? 50;
+          return total + xpReward;
       }
     });
   }
@@ -56,6 +60,10 @@ class Selectors {
               return total + 25;
             case ProgressEventType.sessionStarted:
               return total + 5;
+            case ProgressEventType.extraCompleted:
+              // For extras, get XP reward from payload or use default
+              final xpReward = event.payload?['xp_reward'] as int? ?? 50;
+              return total + xpReward;
           }
         });
   }
