@@ -30,4 +30,7 @@ abstract class PerformanceAnalyticsRepository {
   
   /// Update training intensity data
   Future<void> updateIntensityData(IntensityDataPoint dataPoint);
+  
+  /// Clear all performance analytics data
+  Future<bool> clear();
 }

@@ -26,4 +26,8 @@ abstract class ProgressRepository {
   /// Clears all progress events (use with caution!)
   /// Mainly for testing or user data reset
   Future<bool> clearAll();
+
+  /// Deletes all progress events for a specific program
+  /// Used when user wants to delete progress data for a specific program
+  Future<bool> deleteByProgram(String programId);
 }

@@ -198,6 +198,56 @@ class LocalProgressSource {
     }
   }
 
+  /// Deletes all progress events for a specific program
+  Future<bool> deleteEventsByProgram(String programId) async {
+    try {
+      _logger.w('LocalProgressSource: Deleting events for program: $programId');
+      
+      final keys = await LocalKVStore.getKeys(HiveBoxes.progress);
+      final progressKeys = keys
+          .where((key) => key.startsWith(_progressKeyPrefix) && key != _counterKey)
+          .toList();
+      
+      bool allSuccess = true;
+      int deletedCount = 0;
+      
+      for (final key in progressKeys) {
+        final eventJson = await LocalKVStore.read(HiveBoxes.progress, key);
+        if (eventJson != null && eventJson.isNotEmpty) {
+          try {
+            final eventData = jsonDecode(eventJson) as Map<String, dynamic>;
+            final event = ProgressEvent.fromJson(eventData);
+            
+            // Delete if this event belongs to the specified program
+            if (event.programId == programId) {
+              final success = await LocalKVStore.delete(HiveBoxes.progress, key);
+              if (success) {
+                deletedCount++;
+              } else {
+                allSuccess = false;
+                _logger.w('LocalProgressSource: Failed to delete key: $key');
+              }
+            }
+          } catch (e) {
+            _logger.w('LocalProgressSource: Failed to parse event $key - skipping', error: e);
+          }
+        }
+      }
+      
+      if (allSuccess) {
+        _logger.w('LocalProgressSource: Successfully deleted $deletedCount events for program $programId');
+        _notifyProgressChanged();
+      }
+      
+      return allSuccess;
+      
+    } catch (e, stackTrace) {
+      _logger.e('LocalProgressSource: Failed to delete events for program $programId', 
+                error: e, stackTrace: stackTrace);
+      return false;
+    }
+  }
+
   /// Gets the next counter value for unique key generation
   Future<int> _getNextCounter() async {
     try {

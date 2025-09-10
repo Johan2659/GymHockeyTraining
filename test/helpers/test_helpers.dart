@@ -32,6 +32,15 @@ class TestHelpers {
     // Initialize platform channels for testing
     const MethodChannel('plugins.flutter.io/path_provider')
         .setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'getApplicationDocumentsDirectory') {
+        return './test/documents/';
+      }
+      if (methodCall.method == 'getTemporaryDirectory') {
+        return './test/temp/';
+      }
+      if (methodCall.method == 'getApplicationSupportDirectory') {
+        return './test/support/';
+      }
       return './test/';
     });
     

@@ -331,4 +331,44 @@ class PerformanceAnalyticsRepositoryImpl implements PerformanceAnalyticsReposito
     
     return duration.clamp(15, 120); // Between 15 and 120 minutes
   }
+
+  @override
+  Future<bool> clear() async {
+    try {
+      LoggerService.instance.warning('Clearing performance analytics data', source: 'PerformanceAnalyticsRepository');
+      
+      // We'll clear by saving a reset analytics object
+      final resetAnalytics = PerformanceAnalytics(
+        categoryProgress: <ExerciseCategory, double>{
+          for (final category in ExerciseCategory.values) category: 0.0,
+        },
+        weeklyStats: const WeeklyStats(
+          totalSessions: 0,
+          totalExercises: 0,
+          totalTrainingTime: 0,
+          avgSessionDuration: 0.0,
+          completionRate: 0.0,
+          xpEarned: 0,
+        ),
+        streakData: const StreakData(
+          currentStreak: 0,
+          longestStreak: 0,
+          weeklyGoal: 3,
+          weeklyProgress: 0,
+          lastTrainingDate: null,
+        ),
+        personalBests: <String, PersonalBest>{},
+        intensityTrends: <IntensityDataPoint>[],
+        lastUpdated: DateTime.now(),
+      );
+      
+      await save(resetAnalytics);
+      LoggerService.instance.info('Performance analytics cleared successfully', source: 'PerformanceAnalyticsRepository');
+      return true;
+      
+    } catch (e) {
+      LoggerService.instance.error('Failed to clear performance analytics', error: e, source: 'PerformanceAnalyticsRepository');
+      return false;
+    }
+  }
 }

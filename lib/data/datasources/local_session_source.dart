@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:logger/logger.dart';
 import '../../core/models/models.dart';
+import 'attacker_program_data.dart';
 
 /// Local data source for sessions using embedded JSON data
 /// Provides session definitions and exercise blocks
@@ -178,6 +179,12 @@ class LocalSessionSource {
     try {
       _logger.d('LocalSessionSource: Loading session with ID: $id');
       
+      // Check if it's a new attacker program session
+      if (id.startsWith('attacker_w')) {
+        return await AttackerProgramData.getSessionById(id);
+      }
+      
+      // Check legacy sessions
       final sessionJson = _sessionData[id];
       if (sessionJson == null) {
         _logger.w('LocalSessionSource: Session not found: $id');

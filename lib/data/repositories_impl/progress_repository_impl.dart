@@ -133,4 +133,26 @@ class ProgressRepositoryImpl implements ProgressRepository {
       return false;
     }
   }
+
+  @override
+  Future<bool> deleteByProgram(String programId) async {
+    try {
+      _logger.w('ProgressRepositoryImpl: Deleting events for program: $programId');
+      
+      final success = await _localSource.deleteEventsByProgram(programId);
+      
+      if (success) {
+        _logger.w('ProgressRepositoryImpl: Successfully deleted events for program $programId');
+      } else {
+        _logger.e('ProgressRepositoryImpl: Failed to delete events for program $programId');
+      }
+      
+      return success;
+      
+    } catch (e, stackTrace) {
+      _logger.e('ProgressRepositoryImpl: Error deleting events for program $programId', 
+                error: e, stackTrace: stackTrace);
+      return false;
+    }
+  }
 }

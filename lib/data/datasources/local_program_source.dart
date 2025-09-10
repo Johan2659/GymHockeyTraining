@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:logger/logger.dart';
 import '../../core/models/models.dart';
+import 'attacker_program_data.dart';
 
 /// Local data source for static program definitions
-/// Loads programs from embedded JSON data
+/// Loads programs from embedded JSON data and dedicated program classes
 class LocalProgramSource {
   static final _logger = Logger();
   
@@ -41,10 +42,23 @@ class LocalProgramSource {
       
       final programs = <Program>[];
       
-      // Load attacker program
-      final attackerProgram = await _loadAttackerProgram();
+      // Load new attacker program
+      final attackerProgram = await AttackerProgramData.getAttackerProgram();
       if (attackerProgram != null) {
         programs.add(attackerProgram);
+      }
+      
+      // Load new defender program
+      // TODO: Uncomment when DefenderProgramData is created
+      // final defenderProgram = await DefenderProgramData.getDefenderProgram();
+      // if (defenderProgram != null) {
+      //   programs.add(defenderProgram);
+      // }
+      
+      // Load legacy attacker program for compatibility
+      final legacyAttackerProgram = await _loadLegacyAttackerProgram();
+      if (legacyAttackerProgram != null) {
+        programs.add(legacyAttackerProgram);
       }
       
       // Additional programs can be added here in the future
@@ -64,8 +78,12 @@ class LocalProgramSource {
     try {
       _logger.d('LocalProgramSource: Loading program with ID: $id');
       
+      if (id == 'hockey_attacker_2025') {
+        return await AttackerProgramData.getAttackerProgram();
+      }
+      
       if (id == 'hockey_attacker_v1') {
-        return await _loadAttackerProgram();
+        return await _loadLegacyAttackerProgram();
       }
       
       _logger.w('LocalProgramSource: Program not found: $id');
@@ -98,17 +116,17 @@ class LocalProgramSource {
     }
   }
 
-  /// Loads the attacker program from JSON
-  Future<Program?> _loadAttackerProgram() async {
+  /// Loads the legacy attacker program from JSON
+  Future<Program?> _loadLegacyAttackerProgram() async {
     try {
       final jsonData = jsonDecode(_attackerProgramJson) as Map<String, dynamic>;
       final program = Program.fromJson(jsonData);
       
-      _logger.d('LocalProgramSource: Successfully loaded attacker program');
+      _logger.d('LocalProgramSource: Successfully loaded legacy attacker program');
       return program;
       
     } catch (e, stackTrace) {
-      _logger.e('LocalProgramSource: Failed to parse attacker program JSON', 
+      _logger.e('LocalProgramSource: Failed to parse legacy attacker program JSON', 
                 error: e, stackTrace: stackTrace);
       return null;
     }

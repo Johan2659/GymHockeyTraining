@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../application/app_state_provider.dart';
 import '../../../core/utils/selectors.dart';
+import '../../programs/presentation/program_management_dialog.dart';
 
 class HubScreen extends ConsumerWidget {
   const HubScreen({super.key});
@@ -123,11 +124,36 @@ class HubScreen extends ConsumerWidget {
                   size: 24,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  'Active Program',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    'Active Program',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                ),
+                PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  onSelected: (value) {
+                    if (value == 'stop') {
+                      _showStopProgramDialog(context);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'stop',
+                      child: Row(
+                        children: [
+                          Icon(Icons.stop_circle_outlined, color: Colors.orange),
+                          SizedBox(width: 8),
+                          Text('Stop Program'),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -517,4 +543,13 @@ class HubScreen extends ConsumerWidget {
     ];
 
     return messages[data.currentXP % messages.length];
-  }}
+  }
+
+  /// Shows the stop program dialog
+  void _showStopProgramDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const ProgramManagementDialog(),
+    );
+  }
+}
