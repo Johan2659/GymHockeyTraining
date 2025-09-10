@@ -164,6 +164,127 @@ final mobilityRecoveryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MobilityRecoveryRef = AutoDisposeFutureProviderRef<List<ExtraItem>>;
+String _$performanceAnalyticsHash() =>
+    r'5a3eeb1ea2eb38109d62a5c2e6fcfc97799d2ae4';
+
+/// Performance analytics provider
+///
+/// Copied from [performanceAnalytics].
+@ProviderFor(performanceAnalytics)
+final performanceAnalyticsProvider =
+    AutoDisposeFutureProvider<PerformanceAnalytics?>.internal(
+  performanceAnalytics,
+  name: r'performanceAnalyticsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$performanceAnalyticsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef PerformanceAnalyticsRef
+    = AutoDisposeFutureProviderRef<PerformanceAnalytics?>;
+String _$categoryProgressHash() => r'2be8d69d54c16e3da3ccc59e0b44051e9703177f';
+
+/// Current category progress provider
+///
+/// Copied from [categoryProgress].
+@ProviderFor(categoryProgress)
+final categoryProgressProvider =
+    AutoDisposeFutureProvider<Map<ExerciseCategory, double>>.internal(
+  categoryProgress,
+  name: r'categoryProgressProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$categoryProgressHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CategoryProgressRef
+    = AutoDisposeFutureProviderRef<Map<ExerciseCategory, double>>;
+String _$weeklyStatsHash() => r'4f2fb924e75036428599973ec68f82a52200eef5';
+
+/// Weekly training stats provider
+///
+/// Copied from [weeklyStats].
+@ProviderFor(weeklyStats)
+final weeklyStatsProvider = AutoDisposeFutureProvider<WeeklyStats?>.internal(
+  weeklyStats,
+  name: r'weeklyStatsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$weeklyStatsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef WeeklyStatsRef = AutoDisposeFutureProviderRef<WeeklyStats?>;
+String _$streakDataHash() => r'310af29deb5412cf46da605a39c26130dd2293e4';
+
+/// Streak data provider
+///
+/// Copied from [streakData].
+@ProviderFor(streakData)
+final streakDataProvider = AutoDisposeFutureProvider<StreakData?>.internal(
+  streakData,
+  name: r'streakDataProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$streakDataHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef StreakDataRef = AutoDisposeFutureProviderRef<StreakData?>;
+String _$personalBestsHash() => r'c4c79d644182e27fcb9ac8211035a59334fc5761';
+
+/// Personal bests provider
+///
+/// Copied from [personalBests].
+@ProviderFor(personalBests)
+final personalBestsProvider =
+    AutoDisposeFutureProvider<Map<String, PersonalBest>>.internal(
+  personalBests,
+  name: r'personalBestsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$personalBestsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef PersonalBestsRef
+    = AutoDisposeFutureProviderRef<Map<String, PersonalBest>>;
+String _$intensityTrendsHash() => r'5fad025b6b0afb8efec52d10467947535b8c5e22';
+
+/// Training intensity trends provider
+///
+/// Copied from [intensityTrends].
+@ProviderFor(intensityTrends)
+final intensityTrendsProvider =
+    AutoDisposeFutureProvider<List<IntensityDataPoint>>.internal(
+  intensityTrends,
+  name: r'intensityTrendsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$intensityTrendsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef IntensityTrendsRef
+    = AutoDisposeFutureProviderRef<List<IntensityDataPoint>>;
 String _$activeProgramHash() => r'39c2c2d39eba686edf957c9169db24848c11b1ab';
 
 /// Current active program provider
@@ -294,7 +415,7 @@ final nextSessionRefProvider = AutoDisposeFutureProvider<Session?>.internal(
 // ignore: unused_element
 typedef NextSessionRefRef = AutoDisposeFutureProviderRef<Session?>;
 String _$startProgramActionHash() =>
-    r'7bdfa3c70cb52b7dbe0719475a778060aa82e013';
+    r'696205d1cfc800bbec7f1750cbeab450477ce88a';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -458,7 +579,7 @@ class _StartProgramActionProviderElement
 }
 
 String _$markExerciseDoneActionHash() =>
-    r'7ac0f498557fca19600ca65e1eacfd88beee1fe5';
+    r'7fe5f242927371fc4910ef9f225cea08d7327496';
 
 /// Mark exercise done action provider
 ///
@@ -604,7 +725,7 @@ class _MarkExerciseDoneActionProviderElement
 }
 
 String _$completeSessionActionHash() =>
-    r'9459202fc241f7c2ca0fc2ecd6aebbd80339967d';
+    r'41a463538cdfb53dad79eda81279855d80b12c72';
 
 /// Complete session action provider
 ///
@@ -1629,6 +1750,28 @@ final deleteAccountActionProvider = AutoDisposeFutureProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DeleteAccountActionRef = AutoDisposeFutureProviderRef<bool>;
+String _$initializePerformanceAnalyticsActionHash() =>
+    r'be9bc07d7023181c0c24df57ae612c924831e16c';
+
+/// Initialize performance analytics action provider
+///
+/// Copied from [initializePerformanceAnalyticsAction].
+@ProviderFor(initializePerformanceAnalyticsAction)
+final initializePerformanceAnalyticsActionProvider =
+    AutoDisposeFutureProvider<void>.internal(
+  initializePerformanceAnalyticsAction,
+  name: r'initializePerformanceAnalyticsActionProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$initializePerformanceAnalyticsActionHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef InitializePerformanceAnalyticsActionRef
+    = AutoDisposeFutureProviderRef<void>;
 String _$appStateHash() => r'1cf6dac6c5d3fba4ff445cfbaad637743e5725a1';
 
 /// Main app state provider that aggregates all state and provides action methods

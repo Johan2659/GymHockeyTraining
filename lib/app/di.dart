@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../core/repositories/repositories.dart';
 import '../data/repositories_impl/repositories_impl.dart';
 import '../data/datasources/datasources.dart';
+import '../data/datasources/local_performance_source.dart';
 
 part 'di.g.dart';
 
@@ -70,6 +71,12 @@ LocalExtrasSource localExtrasSource(Ref ref) {
   return LocalExtrasSource();
 }
 
+/// Provider for local performance analytics data source
+@riverpod
+LocalPerformanceSource localPerformanceSource(Ref ref) {
+  return LocalPerformanceSource();
+}
+
 // =============================================================================
 // Repository Implementations
 // =============================================================================
@@ -121,4 +128,11 @@ ExerciseRepository exerciseRepository(Ref ref) {
 ExtrasRepository extrasRepository(Ref ref) {
   final localSource = ref.watch(localExtrasSourceProvider);
   return ExtrasRepositoryImpl(localSource: localSource);
+}
+
+/// Provider for performance analytics repository
+@riverpod
+PerformanceAnalyticsRepository performanceAnalyticsRepository(Ref ref) {
+  final dataSource = ref.watch(localPerformanceSourceProvider);
+  return PerformanceAnalyticsRepositoryImpl(dataSource: dataSource);
 }

@@ -9,7 +9,7 @@ part of 'models.dart';
 Exercise _$ExerciseFromJson(Map<String, dynamic> json) => Exercise(
       id: json['id'] as String,
       name: json['name'] as String,
-      category: json['category'] as String,
+      category: $enumDecode(_$ExerciseCategoryEnumMap, json['category']),
       sets: (json['sets'] as num).toInt(),
       reps: (json['reps'] as num).toInt(),
       duration: (json['duration'] as num?)?.toInt(),
@@ -22,7 +22,7 @@ Exercise _$ExerciseFromJson(Map<String, dynamic> json) => Exercise(
 Map<String, dynamic> _$ExerciseToJson(Exercise instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'category': instance.category,
+      'category': _$ExerciseCategoryEnumMap[instance.category]!,
       'sets': instance.sets,
       'reps': instance.reps,
       'duration': instance.duration,
@@ -31,6 +31,21 @@ Map<String, dynamic> _$ExerciseToJson(Exercise instance) => <String, dynamic>{
       'gymAltId': instance.gymAltId,
       'homeAltId': instance.homeAltId,
     };
+
+const _$ExerciseCategoryEnumMap = {
+  ExerciseCategory.strength: 'strength',
+  ExerciseCategory.power: 'power',
+  ExerciseCategory.speed: 'speed',
+  ExerciseCategory.agility: 'agility',
+  ExerciseCategory.conditioning: 'conditioning',
+  ExerciseCategory.technique: 'technique',
+  ExerciseCategory.balance: 'balance',
+  ExerciseCategory.flexibility: 'flexibility',
+  ExerciseCategory.warmup: 'warmup',
+  ExerciseCategory.recovery: 'recovery',
+  ExerciseCategory.stickSkills: 'stick_skills',
+  ExerciseCategory.gameSituation: 'game_situation',
+};
 
 ExerciseBlock _$ExerciseBlockFromJson(Map<String, dynamic> json) =>
     ExerciseBlock(
@@ -198,3 +213,109 @@ const _$ExtraTypeEnumMap = {
   ExtraType.bonusChallenge: 'bonus_challenge',
   ExtraType.mobilityRecovery: 'mobility_recovery',
 };
+
+PerformanceAnalytics _$PerformanceAnalyticsFromJson(
+        Map<String, dynamic> json) =>
+    PerformanceAnalytics(
+      categoryProgress: (json['categoryProgress'] as Map<String, dynamic>).map(
+        (k, e) => MapEntry(
+            $enumDecode(_$ExerciseCategoryEnumMap, k), (e as num).toDouble()),
+      ),
+      weeklyStats: PerformanceAnalytics._weeklyStatsFromJson(
+          json['weeklyStats'] as Map<String, dynamic>),
+      streakData: PerformanceAnalytics._streakDataFromJson(
+          json['streakData'] as Map<String, dynamic>),
+      personalBests: PerformanceAnalytics._personalBestsFromJson(
+          json['personalBests'] as Map<String, dynamic>),
+      intensityTrends: PerformanceAnalytics._intensityTrendsFromJson(
+          json['intensityTrends'] as List),
+      lastUpdated: DateTime.parse(json['lastUpdated'] as String),
+    );
+
+Map<String, dynamic> _$PerformanceAnalyticsToJson(
+        PerformanceAnalytics instance) =>
+    <String, dynamic>{
+      'categoryProgress': instance.categoryProgress
+          .map((k, e) => MapEntry(_$ExerciseCategoryEnumMap[k]!, e)),
+      'weeklyStats':
+          PerformanceAnalytics._weeklyStatsToJson(instance.weeklyStats),
+      'streakData': PerformanceAnalytics._streakDataToJson(instance.streakData),
+      'personalBests':
+          PerformanceAnalytics._personalBestsToJson(instance.personalBests),
+      'intensityTrends':
+          PerformanceAnalytics._intensityTrendsToJson(instance.intensityTrends),
+      'lastUpdated': instance.lastUpdated.toIso8601String(),
+    };
+
+WeeklyStats _$WeeklyStatsFromJson(Map<String, dynamic> json) => WeeklyStats(
+      totalSessions: (json['totalSessions'] as num).toInt(),
+      totalExercises: (json['totalExercises'] as num).toInt(),
+      totalTrainingTime: (json['totalTrainingTime'] as num).toInt(),
+      avgSessionDuration: (json['avgSessionDuration'] as num).toDouble(),
+      completionRate: (json['completionRate'] as num).toDouble(),
+      xpEarned: (json['xpEarned'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$WeeklyStatsToJson(WeeklyStats instance) =>
+    <String, dynamic>{
+      'totalSessions': instance.totalSessions,
+      'totalExercises': instance.totalExercises,
+      'totalTrainingTime': instance.totalTrainingTime,
+      'avgSessionDuration': instance.avgSessionDuration,
+      'completionRate': instance.completionRate,
+      'xpEarned': instance.xpEarned,
+    };
+
+StreakData _$StreakDataFromJson(Map<String, dynamic> json) => StreakData(
+      currentStreak: (json['currentStreak'] as num).toInt(),
+      longestStreak: (json['longestStreak'] as num).toInt(),
+      weeklyGoal: (json['weeklyGoal'] as num).toInt(),
+      weeklyProgress: (json['weeklyProgress'] as num).toInt(),
+      lastTrainingDate: json['lastTrainingDate'] == null
+          ? null
+          : DateTime.parse(json['lastTrainingDate'] as String),
+    );
+
+Map<String, dynamic> _$StreakDataToJson(StreakData instance) =>
+    <String, dynamic>{
+      'currentStreak': instance.currentStreak,
+      'longestStreak': instance.longestStreak,
+      'weeklyGoal': instance.weeklyGoal,
+      'weeklyProgress': instance.weeklyProgress,
+      'lastTrainingDate': instance.lastTrainingDate?.toIso8601String(),
+    };
+
+PersonalBest _$PersonalBestFromJson(Map<String, dynamic> json) => PersonalBest(
+      exerciseId: json['exerciseId'] as String,
+      exerciseName: json['exerciseName'] as String,
+      bestValue: (json['bestValue'] as num).toDouble(),
+      unit: json['unit'] as String,
+      achievedAt: DateTime.parse(json['achievedAt'] as String),
+      programId: json['programId'] as String,
+    );
+
+Map<String, dynamic> _$PersonalBestToJson(PersonalBest instance) =>
+    <String, dynamic>{
+      'exerciseId': instance.exerciseId,
+      'exerciseName': instance.exerciseName,
+      'bestValue': instance.bestValue,
+      'unit': instance.unit,
+      'achievedAt': instance.achievedAt.toIso8601String(),
+      'programId': instance.programId,
+    };
+
+IntensityDataPoint _$IntensityDataPointFromJson(Map<String, dynamic> json) =>
+    IntensityDataPoint(
+      date: DateTime.parse(json['date'] as String),
+      intensity: (json['intensity'] as num).toDouble(),
+      volume: (json['volume'] as num).toInt(),
+      duration: (json['duration'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$IntensityDataPointToJson(IntensityDataPoint instance) =>
+    <String, dynamic>{
+      'date': instance.date.toIso8601String(),
+      'intensity': instance.intensity,
+      'volume': instance.volume,
+      'duration': instance.duration,
+    };

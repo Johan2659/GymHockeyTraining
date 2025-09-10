@@ -299,7 +299,7 @@ void main() {
         const exercise = Exercise(
           id: 'sprint_30m',
           name: '30m Sprint',
-          category: 'Speed',
+          category: ExerciseCategory.speed,
           sets: 3,
           reps: 1,
           duration: 30,
@@ -327,7 +327,7 @@ void main() {
         const exercise = Exercise(
           id: 'simple_exercise',
           name: 'Simple Exercise',
-          category: 'General',
+          category: ExerciseCategory.strength,
           sets: 1,
           reps: 10,
           youtubeQuery: 'basic exercise',

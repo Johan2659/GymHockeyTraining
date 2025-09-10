@@ -77,6 +77,93 @@ Future<List<ExtraItem>> mobilityRecovery(Ref ref) {
   return repository.getByType(ExtraType.mobilityRecovery);
 }
 
+/// Performance analytics provider
+@riverpod
+Future<PerformanceAnalytics?> performanceAnalytics(Ref ref) async {
+  final repository = ref.watch(performanceAnalyticsRepositoryProvider);
+  try {
+    final existing = await repository.get();
+    if (existing != null) {
+      return existing;
+    }
+    
+    // Create default analytics if none exist
+    final defaultAnalytics = PerformanceAnalytics(
+      weeklyStats: WeeklyStats(
+        totalSessions: 0,
+        totalExercises: 0,
+        totalTrainingTime: 0,
+        avgSessionDuration: 0.0,
+        completionRate: 0.0,
+        xpEarned: 0,
+      ),
+      categoryProgress: <ExerciseCategory, double>{
+        for (final category in ExerciseCategory.values) category: 0.0,
+      },
+      streakData: StreakData(
+        currentStreak: 0,
+        longestStreak: 0,
+        weeklyGoal: 3,
+        weeklyProgress: 0,
+        lastTrainingDate: null,
+      ),
+      personalBests: <String, PersonalBest>{},
+      intensityTrends: <IntensityDataPoint>[],
+      lastUpdated: DateTime.now(),
+    );
+    
+    await repository.save(defaultAnalytics);
+    return defaultAnalytics;
+  } catch (e) {
+    LoggerService.instance.error('Failed to get performance analytics', error: e, source: 'AppStateProvider');
+    return null;
+  }
+}
+
+/// Current category progress provider
+@riverpod
+Future<Map<ExerciseCategory, double>> categoryProgress(Ref ref) async {
+  final analytics = await ref.watch(performanceAnalyticsProvider.future);
+  return analytics?.categoryProgress ?? <ExerciseCategory, double>{
+    for (final category in ExerciseCategory.values) category: 0.0,
+  };
+}
+
+/// Weekly training stats provider
+@riverpod
+Future<WeeklyStats?> weeklyStats(Ref ref) async {
+  final analytics = await ref.watch(performanceAnalyticsProvider.future);
+  return analytics?.weeklyStats ?? WeeklyStats(
+    totalSessions: 0,
+    totalExercises: 0,
+    totalTrainingTime: 0,
+    avgSessionDuration: 0.0,
+    completionRate: 0.0,
+    xpEarned: 0,
+  );
+}
+
+/// Streak data provider
+@riverpod
+Future<StreakData?> streakData(Ref ref) async {
+  final analytics = await ref.watch(performanceAnalyticsProvider.future);
+  return analytics?.streakData;
+}
+
+/// Personal bests provider
+@riverpod
+Future<Map<String, PersonalBest>> personalBests(Ref ref) async {
+  final analytics = await ref.watch(performanceAnalyticsProvider.future);
+  return analytics?.personalBests ?? <String, PersonalBest>{};
+}
+
+/// Training intensity trends provider
+@riverpod
+Future<List<IntensityDataPoint>> intensityTrends(Ref ref) async {
+  final analytics = await ref.watch(performanceAnalyticsProvider.future);
+  return analytics?.intensityTrends ?? <IntensityDataPoint>[];
+}
+
 /// Current active program provider
 @riverpod
 Future<Program?> activeProgram(Ref ref) async {
@@ -212,6 +299,7 @@ Future<void> startProgramAction(Ref ref, String programId) async {
 Future<void> markExerciseDoneAction(Ref ref, String exerciseId) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   final progressRepo = ref.read(progressRepositoryProvider);
+  final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
 
   final currentState = await stateRepo.get();
   if (currentState?.activeProgramId == null) return;
@@ -228,6 +316,19 @@ Future<void> markExerciseDoneAction(Ref ref, String exerciseId) async {
   );
 
   await progressRepo.appendEvent(event);
+
+  // Update performance analytics
+  try {
+    // For now, we'll assume a default category - in a real app, you'd look up the exercise
+    await analyticsRepo.updateCategoryProgress(
+      exerciseId, 
+      ExerciseCategory.strength, // Default category
+      currentState.activeProgramId!,
+    );
+  } catch (e) {
+    LoggerService.instance.warning('Failed to update performance analytics', 
+      source: 'markExerciseDoneAction', error: e);
+  }
 }
 
 /// Complete session action provider
@@ -235,6 +336,7 @@ Future<void> markExerciseDoneAction(Ref ref, String exerciseId) async {
 Future<void> completeSessionAction(Ref ref) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   final progressRepo = ref.read(progressRepositoryProvider);
+  final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
 
   final currentState = await stateRepo.get();
   if (currentState?.activeProgramId == null) return;
@@ -251,6 +353,21 @@ Future<void> completeSessionAction(Ref ref) async {
 
   await progressRepo.appendEvent(event);
   await stateRepo.updateCurrentSession(currentState.currentSession + 1);
+
+  // Update performance analytics with session completion
+  try {
+    final events = await progressRepo.getRecent(limit: 1000); // Get all recent events
+    final programs = await ref.read(programRepositoryProvider).getAll();
+    final updatedAnalytics = await analyticsRepo.calculateAnalytics(
+      events, 
+      programs, 
+      currentState,
+    );
+    await analyticsRepo.save(updatedAnalytics);
+  } catch (e) {
+    LoggerService.instance.warning('Failed to update performance analytics after session completion', 
+      source: 'completeSessionAction', error: e);
+  }
 }
 
 /// Pause program action provider
@@ -409,6 +526,49 @@ Future<bool> deleteAccountAction(Ref ref) async {
   }
   
   return success;
+}
+
+/// Initialize performance analytics action provider
+@riverpod
+Future<void> initializePerformanceAnalyticsAction(Ref ref) async {
+  try {
+    final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
+    final existing = await analyticsRepo.get();
+    
+    // Only initialize if analytics don't exist
+    if (existing == null) {
+      final initialAnalytics = PerformanceAnalytics(
+        categoryProgress: <ExerciseCategory, double>{
+          for (ExerciseCategory category in ExerciseCategory.values) category: 0.0,
+        },
+        weeklyStats: const WeeklyStats(
+          totalSessions: 0,
+          totalExercises: 0,
+          totalTrainingTime: 0,
+          avgSessionDuration: 0.0,
+          completionRate: 0.0,
+          xpEarned: 0,
+        ),
+        streakData: const StreakData(
+          currentStreak: 0,
+          longestStreak: 0,
+          weeklyGoal: 3,
+          weeklyProgress: 0,
+          lastTrainingDate: null,
+        ),
+        personalBests: <String, PersonalBest>{},
+        intensityTrends: <IntensityDataPoint>[],
+        lastUpdated: DateTime.now(),
+      );
+      
+      await analyticsRepo.save(initialAnalytics);
+      LoggerService.instance.info('Performance analytics initialized', 
+        source: 'initializePerformanceAnalyticsAction');
+    }
+  } catch (e) {
+    LoggerService.instance.error('Failed to initialize performance analytics', 
+      source: 'initializePerformanceAnalyticsAction', error: e);
+  }
 }
 
 // =============================================================================

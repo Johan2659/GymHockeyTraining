@@ -7,7 +7,7 @@ void main() {
       const exercise = Exercise(
         id: 'ex1',
         name: 'Push-ups',
-        category: 'Upper Body',
+        category: ExerciseCategory.strength,
         sets: 3,
         reps: 10,
         duration: 30,

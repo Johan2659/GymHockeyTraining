@@ -40,12 +40,12 @@ class ProgressScreen extends ConsumerWidget {
             ],
           ),
         ),
-        data: (appState) => _buildProgressContent(context, appState),
+        data: (appState) => _buildProgressContent(context, ref, appState),
       ),
     );
   }
 
-  Widget _buildProgressContent(BuildContext context, AppStateData appState) {
+  Widget _buildProgressContent(BuildContext context, WidgetRef ref, AppStateData appState) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -64,6 +64,16 @@ class ProgressScreen extends ConsumerWidget {
           
           // Cycle completion
           _buildCycleProgressCard(context, appState),
+          
+          const SizedBox(height: 24),
+          
+          // Category Progress section
+          _buildCategoryProgressSection(context, ref),
+          
+          const SizedBox(height: 24),
+          
+          // Weekly Stats section
+          _buildWeeklyStatsSection(context, ref),
           
           const SizedBox(height: 24),
           
@@ -904,5 +914,267 @@ class ProgressScreen extends ConsumerWidget {
     final hour = date.hour.toString().padLeft(2, '0');
     final minute = date.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
+  }
+
+  // =============================================================================
+  // Performance Analytics Sections
+  // =============================================================================
+
+  Widget _buildCategoryProgressSection(BuildContext context, WidgetRef ref) {
+    final categoryProgressAsync = ref.watch(categoryProgressProvider);
+    
+    return categoryProgressAsync.when(
+      loading: () => const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+      error: (error, stack) => const SizedBox.shrink(),
+      data: (categoryProgress) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.category, color: AppTheme.primaryColor, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Training Categories',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ...ExerciseCategory.values.map((category) {
+                final progress = categoryProgress[category] ?? 0.0;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _getExerciseCategoryDisplayName(category),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          Text(
+                            '${(progress * 100).toInt()}%',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: _getCategoryColor(category),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          _getCategoryColor(category),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeeklyStatsSection(BuildContext context, WidgetRef ref) {
+    final weeklyStatsAsync = ref.watch(weeklyStatsProvider);
+    
+    return weeklyStatsAsync.when(
+      loading: () => const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+      error: (error, stack) => const SizedBox.shrink(),
+      data: (weeklyStats) {
+        if (weeklyStats == null) return const SizedBox.shrink();
+        
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.calendar_today, color: AppTheme.primaryColor, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'This Week',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatTile(
+                        context,
+                        'Sessions',
+                        weeklyStats.totalSessions.toString(),
+                        Icons.fitness_center,
+                        AppTheme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildStatTile(
+                        context,
+                        'Exercises',
+                        weeklyStats.totalExercises.toString(),
+                        Icons.list_alt,
+                        AppTheme.accentColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatTile(
+                        context,
+                        'Training Time',
+                        '${weeklyStats.totalTrainingTime}min',
+                        Icons.timer,
+                        Colors.orange,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildStatTile(
+                        context,
+                        'XP Earned',
+                        '+${weeklyStats.xpEarned}',
+                        Icons.star,
+                        Colors.amber,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatTile(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // =============================================================================
+  // Helper Methods for Categories
+  // =============================================================================
+
+  String _getExerciseCategoryDisplayName(ExerciseCategory category) {
+    switch (category) {
+      case ExerciseCategory.strength:
+        return 'Strength';
+      case ExerciseCategory.power:
+        return 'Power';
+      case ExerciseCategory.speed:
+        return 'Speed';
+      case ExerciseCategory.agility:
+        return 'Agility';
+      case ExerciseCategory.conditioning:
+        return 'Conditioning';
+      case ExerciseCategory.technique:
+        return 'Technique';
+      case ExerciseCategory.balance:
+        return 'Balance';
+      case ExerciseCategory.flexibility:
+        return 'Flexibility';
+      case ExerciseCategory.warmup:
+        return 'Warmup';
+      case ExerciseCategory.recovery:
+        return 'Recovery';
+      case ExerciseCategory.stickSkills:
+        return 'Stick Skills';
+      case ExerciseCategory.gameSituation:
+        return 'Game Situation';
+    }
+  }
+
+  Color _getCategoryColor(ExerciseCategory category) {
+    switch (category) {
+      case ExerciseCategory.strength:
+        return Colors.red;
+      case ExerciseCategory.power:
+        return Colors.orange;
+      case ExerciseCategory.speed:
+        return Colors.blue;
+      case ExerciseCategory.agility:
+        return Colors.green;
+      case ExerciseCategory.conditioning:
+        return Colors.purple;
+      case ExerciseCategory.technique:
+        return Colors.indigo;
+      case ExerciseCategory.balance:
+        return Colors.teal;
+      case ExerciseCategory.flexibility:
+        return Colors.pink;
+      case ExerciseCategory.warmup:
+        return Colors.amber;
+      case ExerciseCategory.recovery:
+        return Colors.lightGreen;
+      case ExerciseCategory.stickSkills:
+        return Colors.deepOrange;
+      case ExerciseCategory.gameSituation:
+        return Colors.cyan;
+    }
   }
 }

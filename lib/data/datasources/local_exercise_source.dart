@@ -13,7 +13,7 @@ class LocalExerciseSource {
 {
   "id": "ex_warmup_skate",
   "name": "Dynamic Skating Warmup",
-  "category": "Warmup",
+  "category": "warmup",
   "sets": 1,
   "reps": 10,
   "duration": 300,
@@ -25,7 +25,7 @@ class LocalExerciseSource {
 {
   "id": "ex_warmup_jog",
   "name": "Light Jogging",
-  "category": "Warmup",
+  "category": "warmup",
   "sets": 1,
   "reps": 1,
   "duration": 300,
@@ -37,7 +37,7 @@ class LocalExerciseSource {
 {
   "id": "ex_warmup_shadowbox",
   "name": "Shadow Boxing",
-  "category": "Warmup",
+  "category": "warmup",
   "sets": 3,
   "reps": 20,
   "rest": 30,
@@ -48,7 +48,7 @@ class LocalExerciseSource {
 {
   "id": "ex_cone_weaving",
   "name": "Cone Weaving Drills",
-  "category": "Agility",
+  "category": "agility",
   "sets": 3,
   "reps": 5,
   "rest": 90,
@@ -59,7 +59,7 @@ class LocalExerciseSource {
 {
   "id": "ex_sprint_intervals",
   "name": "Sprint Intervals",
-  "category": "Speed",
+  "category": "speed",
   "sets": 4,
   "reps": 30,
   "duration": 30,
@@ -71,7 +71,7 @@ class LocalExerciseSource {
 {
   "id": "ex_cooldown_stretch",
   "name": "Cool Down Stretching",
-  "category": "Recovery",
+  "category": "recovery",
   "sets": 1,
   "reps": 1,
   "duration": 600,
@@ -83,7 +83,7 @@ class LocalExerciseSource {
 {
   "id": "ex_stick_handling_figure8",
   "name": "Stick Handling Figure 8s",
-  "category": "Stick Skills",
+  "category": "stick_skills",
   "sets": 3,
   "reps": 10,
   "rest": 60,
@@ -94,7 +94,7 @@ class LocalExerciseSource {
 {
   "id": "ex_shooting_accuracy",
   "name": "Shooting Accuracy",
-  "category": "Stick Skills",
+  "category": "stick_skills",
   "sets": 3,
   "reps": 10,
   "rest": 90,
@@ -105,7 +105,7 @@ class LocalExerciseSource {
 {
   "id": "ex_plyometric_jumps",
   "name": "Plyometric Jump Training",
-  "category": "Power",
+  "category": "power",
   "sets": 4,
   "reps": 8,
   "rest": 120,
@@ -116,7 +116,7 @@ class LocalExerciseSource {
 {
   "id": "ex_explosive_starts",
   "name": "Explosive Start Practice",
-  "category": "Speed",
+  "category": "speed",
   "sets": 5,
   "reps": 3,
   "rest": 90,
@@ -127,7 +127,7 @@ class LocalExerciseSource {
 {
   "id": "ex_acceleration_drills",
   "name": "Acceleration Drills",
-  "category": "Speed",
+  "category": "speed",
   "sets": 4,
   "reps": 5,
   "rest": 120,
@@ -138,7 +138,7 @@ class LocalExerciseSource {
 {
   "id": "ex_direction_changes",
   "name": "Quick Direction Changes",
-  "category": "Agility",
+  "category": "agility",
   "sets": 3,
   "reps": 8,
   "rest": 90,
@@ -149,7 +149,7 @@ class LocalExerciseSource {
 {
   "id": "ex_one_handed_control",
   "name": "One-Handed Stick Control",
-  "category": "Stick Skills",
+  "category": "stick_skills",
   "sets": 3,
   "reps": 15,
   "rest": 60,
@@ -160,7 +160,7 @@ class LocalExerciseSource {
 {
   "id": "ex_backhand_shots",
   "name": "Backhand Shot Practice",
-  "category": "Stick Skills",
+  "category": "stick_skills",
   "sets": 3,
   "reps": 12,
   "rest": 90,
@@ -171,7 +171,7 @@ class LocalExerciseSource {
 {
   "id": "ex_breakaway_practice",
   "name": "Breakaway Simulation",
-  "category": "Game Situation",
+  "category": "game_situation",
   "sets": 5,
   "reps": 3,
   "rest": 120,
@@ -182,7 +182,7 @@ class LocalExerciseSource {
 {
   "id": "ex_battle_drills",
   "name": "Puck Battle Drills",
-  "category": "Game Situation",
+  "category": "game_situation",
   "sets": 4,
   "reps": 5,
   "rest": 90,
@@ -242,7 +242,7 @@ class LocalExerciseSource {
       
       final allExercises = await getAllExercises();
       final categoryExercises = allExercises
-          .where((exercise) => exercise.category.toLowerCase() == category.toLowerCase())
+          .where((exercise) => exercise.category.name.toLowerCase() == category.toLowerCase())
           .toList();
       
       _logger.d('LocalExerciseSource: Found ${categoryExercises.length} exercises for category $category');
@@ -266,7 +266,7 @@ class LocalExerciseSource {
       final searchResults = allExercises
           .where((exercise) =>
               exercise.name.toLowerCase().contains(lowercaseQuery) ||
-              exercise.category.toLowerCase().contains(lowercaseQuery))
+              exercise.category.name.toLowerCase().contains(lowercaseQuery))
           .toList();
       
       _logger.d('LocalExerciseSource: Found ${searchResults.length} exercises matching query');

@@ -41,6 +41,34 @@ enum ExtraType {
   mobilityRecovery,
 }
 
+/// Exercise category enum for tracking performance metrics
+enum ExerciseCategory {
+  @JsonValue('strength')
+  strength,
+  @JsonValue('power')
+  power,
+  @JsonValue('speed')
+  speed,
+  @JsonValue('agility')
+  agility,
+  @JsonValue('conditioning')
+  conditioning,
+  @JsonValue('technique')
+  technique,
+  @JsonValue('balance')
+  balance,
+  @JsonValue('flexibility')
+  flexibility,
+  @JsonValue('warmup')
+  warmup,
+  @JsonValue('recovery')
+  recovery,
+  @JsonValue('stick_skills')
+  stickSkills,
+  @JsonValue('game_situation')
+  gameSituation,
+}
+
 /// Exercise model representing a single exercise
 @JsonSerializable()
 class Exercise {
@@ -59,7 +87,7 @@ class Exercise {
 
   final String id;
   final String name;
-  final String category;
+  final ExerciseCategory category;
   final int sets;
   final int reps;
   final int? duration; // in seconds
@@ -373,4 +401,171 @@ class ExtraItem {
 
   static List<Map<String, dynamic>> _blocksToJson(List<ExerciseBlock> blocks) =>
       blocks.map((e) => e.toJson()).toList();
+}
+
+/// Performance analytics model for tracking progress across exercise categories
+@JsonSerializable()
+class PerformanceAnalytics {
+  const PerformanceAnalytics({
+    required this.categoryProgress,
+    required this.weeklyStats,
+    required this.streakData,
+    required this.personalBests,
+    required this.intensityTrends,
+    required this.lastUpdated,
+  });
+
+  /// Progress percentage per exercise category (0.0 to 1.0)
+  final Map<ExerciseCategory, double> categoryProgress;
+  
+  /// Weekly training statistics
+  @JsonKey(fromJson: _weeklyStatsFromJson, toJson: _weeklyStatsToJson)
+  final WeeklyStats weeklyStats;
+  
+  /// Streak information
+  @JsonKey(fromJson: _streakDataFromJson, toJson: _streakDataToJson)
+  final StreakData streakData;
+  
+  /// Personal bests for specific exercises
+  @JsonKey(fromJson: _personalBestsFromJson, toJson: _personalBestsToJson)
+  final Map<String, PersonalBest> personalBests;
+  
+  /// Training intensity trends over time
+  @JsonKey(fromJson: _intensityTrendsFromJson, toJson: _intensityTrendsToJson)
+  final List<IntensityDataPoint> intensityTrends;
+  
+  /// Last time analytics were calculated
+  final DateTime lastUpdated;
+
+  factory PerformanceAnalytics.fromJson(Map<String, dynamic> json) => _$PerformanceAnalyticsFromJson(json);
+  Map<String, dynamic> toJson() => _$PerformanceAnalyticsToJson(this);
+
+  PerformanceAnalytics copyWith({
+    Map<ExerciseCategory, double>? categoryProgress,
+    WeeklyStats? weeklyStats,
+    StreakData? streakData,
+    Map<String, PersonalBest>? personalBests,
+    List<IntensityDataPoint>? intensityTrends,
+    DateTime? lastUpdated,
+  }) {
+    return PerformanceAnalytics(
+      categoryProgress: categoryProgress ?? this.categoryProgress,
+      weeklyStats: weeklyStats ?? this.weeklyStats,
+      streakData: streakData ?? this.streakData,
+      personalBests: personalBests ?? this.personalBests,
+      intensityTrends: intensityTrends ?? this.intensityTrends,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+    );
+  }
+
+  // Custom serialization helpers for nested objects
+  static WeeklyStats _weeklyStatsFromJson(Map<String, dynamic> json) =>
+      WeeklyStats.fromJson(json);
+
+  static Map<String, dynamic> _weeklyStatsToJson(WeeklyStats stats) =>
+      stats.toJson();
+
+  static StreakData _streakDataFromJson(Map<String, dynamic> json) =>
+      StreakData.fromJson(json);
+
+  static Map<String, dynamic> _streakDataToJson(StreakData data) =>
+      data.toJson();
+
+  static Map<String, PersonalBest> _personalBestsFromJson(Map<String, dynamic> json) =>
+      json.map((k, e) => MapEntry(k, PersonalBest.fromJson(e as Map<String, dynamic>)));
+
+  static Map<String, dynamic> _personalBestsToJson(Map<String, PersonalBest> bests) =>
+      bests.map((k, e) => MapEntry(k, e.toJson()));
+
+  static List<IntensityDataPoint> _intensityTrendsFromJson(List<dynamic> json) =>
+      json.map((e) => IntensityDataPoint.fromJson(e as Map<String, dynamic>)).toList();
+
+  static List<Map<String, dynamic>> _intensityTrendsToJson(List<IntensityDataPoint> trends) =>
+      trends.map((e) => e.toJson()).toList();
+}
+
+/// Weekly training statistics
+@JsonSerializable()
+class WeeklyStats {
+  const WeeklyStats({
+    required this.totalSessions,
+    required this.totalExercises,
+    required this.totalTrainingTime,
+    required this.avgSessionDuration,
+    required this.completionRate,
+    required this.xpEarned,
+  });
+
+  final int totalSessions;
+  final int totalExercises;
+  final int totalTrainingTime; // in minutes
+  final double avgSessionDuration; // in minutes
+  final double completionRate; // 0.0 to 1.0
+  final int xpEarned;
+
+  factory WeeklyStats.fromJson(Map<String, dynamic> json) => _$WeeklyStatsFromJson(json);
+  Map<String, dynamic> toJson() => _$WeeklyStatsToJson(this);
+}
+
+/// Streak data for tracking consistency
+@JsonSerializable()
+class StreakData {
+  const StreakData({
+    required this.currentStreak,
+    required this.longestStreak,
+    required this.weeklyGoal,
+    required this.weeklyProgress,
+    required this.lastTrainingDate,
+  });
+
+  final int currentStreak; // days
+  final int longestStreak; // days
+  final int weeklyGoal; // sessions per week
+  final int weeklyProgress; // sessions completed this week
+  final DateTime? lastTrainingDate;
+
+  factory StreakData.fromJson(Map<String, dynamic> json) => _$StreakDataFromJson(json);
+  Map<String, dynamic> toJson() => _$StreakDataToJson(this);
+}
+
+/// Personal best record for an exercise
+@JsonSerializable()
+class PersonalBest {
+  const PersonalBest({
+    required this.exerciseId,
+    required this.exerciseName,
+    required this.bestValue,
+    required this.unit,
+    required this.achievedAt,
+    required this.programId,
+  });
+
+  final String exerciseId;
+  final String exerciseName;
+  final double bestValue; // weight, reps, time, etc.
+  final String unit; // 'kg', 'reps', 'seconds', etc.
+  final DateTime achievedAt;
+  final String programId;
+
+  factory PersonalBest.fromJson(Map<String, dynamic> json) => _$PersonalBestFromJson(json);
+  Map<String, dynamic> toJson() => _$PersonalBestToJson(this);
+}
+
+/// Intensity data point for tracking training load over time
+@JsonSerializable()
+class IntensityDataPoint {
+  const IntensityDataPoint({
+    required this.date,
+    required this.intensity,
+    required this.volume,
+    required this.duration,
+  });
+
+  final DateTime date;
+  final double intensity; // 1.0 to 10.0 scale
+  final int volume; // total exercises completed
+  final int duration; // session duration in minutes
+
+  factory IntensityDataPoint.fromJson(Map<String, dynamic> json) => _$IntensityDataPointFromJson(json);
+  Map<String, dynamic> toJson() => _$IntensityDataPointToJson(this);
 }
