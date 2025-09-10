@@ -188,6 +188,61 @@ class LocalExerciseSource {
   "rest": 90,
   "youtubeQuery": "hockey puck battle drills"
 }
+''',
+    'ex_squat': '''
+{
+  "id": "ex_squat",
+  "name": "Squat",
+  "category": "strength",
+  "sets": 3,
+  "reps": 8,
+  "rest": 120,
+  "youtubeQuery": "squat form technique"
+}
+''',
+    'ex_bench_press': '''
+{
+  "id": "ex_bench_press",
+  "name": "Développé Couché (Bench Press)",
+  "category": "strength",
+  "sets": 3,
+  "reps": 8,
+  "rest": 120,
+  "youtubeQuery": "bench press form technique"
+}
+''',
+    'ex_deadlift': '''
+{
+  "id": "ex_deadlift",
+  "name": "Deadlift",
+  "category": "strength",
+  "sets": 3,
+  "reps": 5,
+  "rest": 180,
+  "youtubeQuery": "deadlift form technique"
+}
+''',
+    'ex_overhead_press': '''
+{
+  "id": "ex_overhead_press",
+  "name": "Military Press",
+  "category": "strength",
+  "sets": 3,
+  "reps": 8,
+  "rest": 120,
+  "youtubeQuery": "overhead press form technique"
+}
+''',
+    'ex_pull_ups': '''
+{
+  "id": "ex_pull_ups",
+  "name": "Pull-ups",
+  "category": "strength",
+  "sets": 3,
+  "reps": 8,
+  "rest": 90,
+  "youtubeQuery": "pull ups form technique"
+}
 '''
   };
 

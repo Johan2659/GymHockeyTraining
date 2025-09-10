@@ -67,8 +67,8 @@ class ProgressScreen extends ConsumerWidget {
           
           const SizedBox(height: 24),
           
-          // Category Progress section
-          _buildCategoryProgressSection(context, ref),
+          // Training Balance Stats section
+          _buildTrainingBalanceSection(context, ref),
           
           const SizedBox(height: 24),
           
@@ -377,7 +377,60 @@ class ProgressScreen extends ConsumerWidget {
   }
 
   Widget _buildPersonalRecordsSection(BuildContext context, AppStateData appState) {
-    final prData = _calculatePersonalRecords(appState.events);
+    return Consumer(
+      builder: (context, ref, child) {
+        final personalBestsAsync = ref.watch(personalBestsProvider);
+        
+        return personalBestsAsync.when(
+          data: (personalBests) => _buildPersonalRecordsContent(context, personalBests),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => _buildPersonalRecordsContent(context, <String, PersonalBest>{}),
+        );
+      },
+    );
+  }
+
+  Widget _buildPersonalRecordsContent(BuildContext context, Map<String, PersonalBest> personalBests) {
+    // Priority exercises for display (motivational strength exercises)
+    final priorityExercises = [
+      'ex_squat',
+      'ex_bench_press', 
+      'ex_deadlift',
+      'ex_overhead_press',
+      'ex_pull_ups',
+      'ex_barbell_row',
+      'ex_dumbbell_press',
+      'ex_weighted_chin_ups',
+    ];
+    
+    // Filter and sort personal bests by priority - focus on weight/performance metrics
+    final displayBests = <String, PersonalBest>{};
+    
+    // First add priority exercises if they exist
+    for (final exerciseId in priorityExercises) {
+      if (personalBests.containsKey(exerciseId)) {
+        final best = personalBests[exerciseId]!;
+        // Only show exercises with meaningful performance metrics
+        if (best.unit == 'kg' || best.unit == 'lbs' || best.unit == 'reps') {
+          displayBests[exerciseId] = best;
+        }
+      }
+    }
+    
+    // Then add other exercises with weight/performance metrics (excluding warmup/mobility)
+    for (final entry in personalBests.entries) {
+      if (!priorityExercises.contains(entry.key) && 
+          (entry.value.unit == 'kg' || entry.value.unit == 'lbs' || entry.value.unit == 'reps')) {
+        // Filter out non-performance oriented exercises
+        final exerciseName = entry.value.exerciseName.toLowerCase();
+        if (!exerciseName.contains('stretch') && 
+            !exerciseName.contains('mobility') && 
+            !exerciseName.contains('foam') &&
+            !exerciseName.contains('warm')) {
+          displayBests[entry.key] = entry.value;
+        }
+      }
+    }
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,7 +442,7 @@ class ProgressScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 12),
-        if (prData.isEmpty) ...[
+        if (displayBests.isEmpty) ...[
           Card(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -397,20 +450,20 @@ class ProgressScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     Icon(
-                      Icons.emoji_events,
+                      Icons.fitness_center,
                       size: 48,
                       color: Colors.grey[600],
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'No records yet',
+                      'No performance records yet',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Colors.grey[400],
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Start training to track your personal bests!',
+                      'Complete strength exercises to track your max lifts!',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.grey[500],
                       ),
@@ -422,36 +475,12 @@ class ProgressScreen extends ConsumerWidget {
             ),
           ),
         ] else ...[
-          ...prData.entries.take(5).map((entry) => _buildPersonalRecordCard(
+          ...displayBests.entries.take(5).map((entry) => _buildPersonalBestCard(
             context,
-            entry.key,
             entry.value,
           )),
         ],
       ],
-    );
-  }
-
-  Widget _buildPersonalRecordCard(BuildContext context, String category, Map<String, dynamic> record) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Icon(
-          Icons.emoji_events,
-          color: AppTheme.accentColor,
-        ),
-        title: Text(
-          _getCategoryDisplayName(category),
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Text(_formatPersonalRecord(record)),
-        trailing: Text(
-          _formatShortDate(record['date'] as DateTime),
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.grey[400],
-          ),
-        ),
-      ),
     );
   }
 
@@ -748,134 +777,6 @@ class ProgressScreen extends ConsumerWidget {
     return 'Program completed!';
   }
 
-  Map<String, Map<String, dynamic>> _calculatePersonalRecords(List<ProgressEvent> events) {
-    final records = <String, Map<String, dynamic>>{};
-    
-    // Group by exercise categories and track session counts with dates
-    final sessionsByProgram = <String, Map<String, dynamic>>{};
-    final exercisesByCategory = <String, Map<String, dynamic>>{};
-    
-    for (final event in events) {
-      if (event.type == ProgressEventType.sessionCompleted) {
-        final programId = event.programId;
-        if (!sessionsByProgram.containsKey(programId)) {
-          sessionsByProgram[programId] = {'count': 0, 'date': event.ts};
-        }
-        sessionsByProgram[programId]!['count'] = (sessionsByProgram[programId]!['count'] as int) + 1;
-        // Keep the most recent date for this program
-        final currentDate = sessionsByProgram[programId]!['date'] as DateTime;
-        if (event.ts.isAfter(currentDate)) {
-          sessionsByProgram[programId]!['date'] = event.ts;
-        }
-      } else if (event.type == ProgressEventType.exerciseDone && event.exerciseId != null) {
-        final category = _getExerciseCategory(event.exerciseId!);
-        if (!exercisesByCategory.containsKey(category)) {
-          exercisesByCategory[category] = {'count': 0, 'date': event.ts};
-        }
-        exercisesByCategory[category]!['count'] = (exercisesByCategory[category]!['count'] as int) + 1;
-        // Keep the most recent date for this category
-        final currentDate = exercisesByCategory[category]!['date'] as DateTime;
-        if (event.ts.isAfter(currentDate)) {
-          exercisesByCategory[category]!['date'] = event.ts;
-        }
-      }
-    }
-    
-    // Find the best records
-    if (sessionsByProgram.isNotEmpty) {
-      final bestProgram = sessionsByProgram.entries
-          .reduce((a, b) => (a.value['count'] as int) > (b.value['count'] as int) ? a : b);
-      records['Sessions'] = {
-        'count': bestProgram.value['count'],
-        'program': bestProgram.key,
-        'date': bestProgram.value['date'],
-      };
-    }
-    
-    if (exercisesByCategory.isNotEmpty) {
-      final bestCategory = exercisesByCategory.entries
-          .reduce((a, b) => (a.value['count'] as int) > (b.value['count'] as int) ? a : b);
-      records[bestCategory.key] = {
-        'count': bestCategory.value['count'],
-        'date': bestCategory.value['date'],
-      };
-    }
-    
-    return records;
-  }
-
-  String _getExerciseCategory(String exerciseId) {
-    // Hockey-specific categorization based on actual exercise IDs
-    if (exerciseId.contains('sprint') || exerciseId.contains('acceleration') || exerciseId.contains('explosive')) {
-      return 'Speed';
-    }
-    if (exerciseId.contains('shooting') || exerciseId.contains('shots') || exerciseId.contains('accuracy')) {
-      return 'Shooting';
-    }
-    if (exerciseId.contains('stick') || exerciseId.contains('handling') || exerciseId.contains('control')) {
-      return 'Stickhandling';
-    }
-    if (exerciseId.contains('plyometric') || exerciseId.contains('jumps') || exerciseId.contains('battle')) {
-      return 'Power';
-    }
-    if (exerciseId.contains('warmup') || exerciseId.contains('cooldown') || exerciseId.contains('stretch')) {
-      return 'Conditioning';
-    }
-    if (exerciseId.contains('direction') || exerciseId.contains('cone') || exerciseId.contains('weaving')) {
-      return 'Agility';
-    }
-    return 'Training';
-  }
-
-  String _getCategoryDisplayName(String category) {
-    switch (category) {
-      case 'Sessions': return 'Training Sessions';
-      case 'Speed': return 'Speed Training';
-      case 'Shooting': return 'Shooting Practice';
-      case 'Stickhandling': return 'Stickhandling';
-      case 'Power': return 'Power Training';
-      case 'Conditioning': return 'Conditioning';
-      case 'Agility': return 'Agility Training';
-      case 'Training': return 'General Training';
-      default: return category;
-    }
-  }
-
-  String _formatPersonalRecord(Map<String, dynamic> record) {
-    if (record.containsKey('program')) {
-      final programName = _getProgramDisplayName(record['program']);
-      return '${record['count']} sessions in $programName';
-    }
-    return '${record['count']} completed';
-  }
-
-  String _getProgramDisplayName(String programId) {
-    switch (programId.toLowerCase()) {
-      case 'hockey_attacker_v1':
-        return 'Hockey Attacker V1';
-      case 'hockey_defender_v1':
-        return 'Hockey Defender V1';
-      case 'hockey_goalie_v1':
-        return 'Hockey Goalie V1';
-      case 'hockey_elite_v1':
-        return 'Hockey Elite V1';
-      case 'hockey_beginner_v1':
-        return 'Hockey Beginner V1';
-      case 'hockey_intermediate_v1':
-        return 'Hockey Intermediate V1';
-      case 'hockey_advanced_v1':
-        return 'Hockey Advanced V1';
-      case 'hockey_pro_v1':
-        return 'Hockey Pro V1';
-      default:
-        // Convert snake_case to Title Case as fallback
-        return programId
-            .split('_')
-            .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
-            .join(' ');
-    }
-  }
-
   String _getEventSubtitle(ProgressEvent event) {
     final parts = <String>[];
     
@@ -920,8 +821,17 @@ class ProgressScreen extends ConsumerWidget {
   // Performance Analytics Sections
   // =============================================================================
 
-  Widget _buildCategoryProgressSection(BuildContext context, WidgetRef ref) {
+  Widget _buildTrainingBalanceSection(BuildContext context, WidgetRef ref) {
     final categoryProgressAsync = ref.watch(categoryProgressProvider);
+    
+    // Define the main training categories for balance calculation
+    final mainCategories = [
+      ExerciseCategory.strength,
+      ExerciseCategory.power,
+      ExerciseCategory.speed,
+      ExerciseCategory.agility,
+      ExerciseCategory.conditioning,
+    ];
     
     return categoryProgressAsync.when(
       loading: () => const Card(
@@ -931,64 +841,190 @@ class ProgressScreen extends ConsumerWidget {
         ),
       ),
       error: (error, stack) => const SizedBox.shrink(),
-      data: (categoryProgress) => Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.category, color: AppTheme.primaryColor, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Training Categories',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              ...ExerciseCategory.values.map((category) {
-                final progress = categoryProgress[category] ?? 0.0;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _getExerciseCategoryDisplayName(category),
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          Text(
-                            '${(progress * 100).toInt()}%',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: _getCategoryColor(category),
-                            ),
-                          ),
-                        ],
+      data: (categoryProgress) {
+        // Calculate the total progress across main categories
+        double totalProgress = 0.0;
+        final categoryValues = <ExerciseCategory, double>{};
+        
+        for (final category in mainCategories) {
+          final progress = categoryProgress[category] ?? 0.0;
+          categoryValues[category] = progress;
+          totalProgress += progress;
+        }
+        
+        // Calculate percentages (normalize to 100%)
+        final categoryPercentages = <ExerciseCategory, double>{};
+        if (totalProgress > 0) {
+          for (final category in mainCategories) {
+            categoryPercentages[category] = (categoryValues[category]! / totalProgress) * 100;
+          }
+        } else {
+          // If no progress, show equal distribution
+          for (final category in mainCategories) {
+            categoryPercentages[category] = 20.0; // 100% / 5 categories
+          }
+        }
+        
+        // Calculate balance score (how close to equal distribution)
+        final idealPercentage = 20.0; // 100% / 5 categories
+        double balanceScore = 0.0;
+        for (final category in mainCategories) {
+          final deviation = (categoryPercentages[category]! - idealPercentage).abs();
+          balanceScore += (20.0 - deviation) / 20.0; // Normalize to 0-1
+        }
+        balanceScore = (balanceScore / mainCategories.length) * 100; // Convert to percentage
+        
+        // Determine balance quality
+        String balanceQuality;
+        Color balanceColor;
+        IconData balanceIcon;
+        
+        if (balanceScore >= 80) {
+          balanceQuality = 'Excellent';
+          balanceColor = Colors.green;
+          balanceIcon = Icons.check_circle;
+        } else if (balanceScore >= 60) {
+          balanceQuality = 'Good';
+          balanceColor = Colors.orange;
+          balanceIcon = Icons.warning;
+        } else {
+          balanceQuality = 'Needs Improvement';
+          balanceColor = Colors.red;
+          balanceIcon = Icons.error;
+        }
+        
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.analytics, color: AppTheme.primaryColor, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Training Balance',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 4),
-                      LinearProgressIndicator(
-                        value: progress,
-                        backgroundColor: Colors.grey[300],
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          _getCategoryColor(category),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                
+                // Balance Score
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: balanceColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: balanceColor.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(balanceIcon, color: balanceColor, size: 24),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Balance Score: ${balanceScore.toInt()}%',
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: balanceColor,
+                              ),
+                            ),
+                            Text(
+                              balanceQuality,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: balanceColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                );
-              }).toList(),
-            ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Category Distribution
+                Text(
+                  'Training Distribution',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                
+                ...mainCategories.map((category) {
+                  final percentage = categoryPercentages[category] ?? 0.0;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: _getCategoryColor(category),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _getExerciseCategoryDisplayName(category),
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '${percentage.toInt()}%',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: _getCategoryColor(category),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                
+                if (balanceScore < 80) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.lightbulb, color: Colors.blue, size: 16),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Tip: Try to balance your training across all categories for optimal development',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -1176,5 +1212,100 @@ class ProgressScreen extends ConsumerWidget {
       case ExerciseCategory.gameSituation:
         return Colors.cyan;
     }
+  }
+
+  Widget _buildPersonalBestCard(BuildContext context, PersonalBest personalBest) {
+    IconData icon;
+    Color iconColor;
+    String subtitle;
+    
+    // Set icon, color and subtitle based on exercise type
+    if (personalBest.unit == 'kg' || personalBest.unit == 'lbs') {
+      icon = Icons.fitness_center;
+      iconColor = Colors.orange;
+      subtitle = 'Max Weight • ${_formatShortDate(personalBest.achievedAt)}';
+    } else if (personalBest.unit == 'reps') {
+      icon = Icons.repeat;
+      iconColor = Colors.blue;
+      subtitle = 'Max Reps • ${_formatShortDate(personalBest.achievedAt)}';
+    } else {
+      icon = Icons.timer;
+      iconColor = Colors.green;
+      subtitle = 'Best Time • ${_formatShortDate(personalBest.achievedAt)}';
+    }
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      elevation: 2,
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: iconColor,
+            size: 28,
+          ),
+        ),
+        title: Text(
+          personalBest.exerciseName,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.grey[600],
+          ),
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  personalBest.bestValue.toStringAsFixed(
+                    personalBest.unit == 'kg' || personalBest.unit == 'lbs' ? 1 : 0
+                  ),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: iconColor,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  personalBest.unit,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: iconColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            if (personalBest.unit == 'kg' || personalBest.unit == 'lbs') ...[
+              const SizedBox(height: 2),
+              Text(
+                'PR',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: iconColor,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }
