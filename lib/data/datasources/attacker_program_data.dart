@@ -6,11 +6,11 @@ import '../../core/models/models.dart';
 /// Follows the specified structure with strength focus, hypertrophy, and power phases
 class AttackerProgramData {
   static final _logger = Logger();
-  
+
   // =============================================================================
   // WEEK 1-2 SESSIONS (Strength Focus)
   // =============================================================================
-  
+
   static const String _week1Session1 = '''
 {
   "id": "attacker_w1_s1",
@@ -259,7 +259,7 @@ class AttackerProgramData {
   // =============================================================================
   // WEEK 3-4 SESSIONS (Hypertrophy/Capacity Focus)
   // =============================================================================
-  
+
   static const String _week3Session1 = '''
 {
   "id": "attacker_w3_s1",
@@ -522,7 +522,7 @@ class AttackerProgramData {
   // =============================================================================
   // WEEK 5 SESSIONS (Power & Max Strength - Taper)
   // =============================================================================
-  
+
   static const String _week5Session1 = '''
 {
   "id": "attacker_w5_s1",
@@ -649,7 +649,7 @@ class AttackerProgramData {
   // =============================================================================
   // PROGRAM DEFINITION
   // =============================================================================
-  
+
   static const String _attackerProgram = '''
 {
   "id": "hockey_attacker_2025",
@@ -703,32 +703,31 @@ class AttackerProgramData {
   // =============================================================================
   // PUBLIC METHODS
   // =============================================================================
-  
+
   /// Gets the complete attacker program
   static Future<Program?> getAttackerProgram() async {
     try {
       _logger.d('AttackerProgramData: Loading attacker program');
-      
+
       final jsonData = jsonDecode(_attackerProgram) as Map<String, dynamic>;
       final program = Program.fromJson(jsonData);
-      
+
       _logger.i('AttackerProgramData: Successfully loaded attacker program');
       return program;
-      
     } catch (e, stackTrace) {
-      _logger.e('AttackerProgramData: Failed to load attacker program', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('AttackerProgramData: Failed to load attacker program',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
-  
+
   /// Gets all sessions for the attacker program
   static Future<List<Session>> getAllSessions() async {
     try {
       _logger.d('AttackerProgramData: Loading all sessions');
-      
+
       final sessions = <Session>[];
-      
+
       // Session data map
       final sessionData = {
         'attacker_w1_s1': _week1Session1,
@@ -747,29 +746,28 @@ class AttackerProgramData {
         'attacker_w5_s2': _week5Session2,
         'attacker_w5_s3': _week5Session3,
       };
-      
+
       for (final entry in sessionData.entries) {
         final session = await _loadSession(entry.key, entry.value);
         if (session != null) {
           sessions.add(session);
         }
       }
-      
+
       _logger.i('AttackerProgramData: Loaded ${sessions.length} sessions');
       return sessions;
-      
     } catch (e, stackTrace) {
-      _logger.e('AttackerProgramData: Failed to load sessions', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('AttackerProgramData: Failed to load sessions',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
-  
+
   /// Gets a specific session by ID
   static Future<Session?> getSessionById(String id) async {
     try {
       _logger.d('AttackerProgramData: Loading session with ID: $id');
-      
+
       // Session data map
       final sessionData = {
         'attacker_w1_s1': _week1Session1,
@@ -788,38 +786,37 @@ class AttackerProgramData {
         'attacker_w5_s2': _week5Session2,
         'attacker_w5_s3': _week5Session3,
       };
-      
+
       final sessionJson = sessionData[id];
       if (sessionJson == null) {
         _logger.w('AttackerProgramData: Session not found: $id');
         return null;
       }
-      
+
       return await _loadSession(id, sessionJson);
-      
     } catch (e, stackTrace) {
-      _logger.e('AttackerProgramData: Failed to load session $id', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('AttackerProgramData: Failed to load session $id',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
-  
+
   // =============================================================================
   // PRIVATE METHODS
   // =============================================================================
-  
+
   /// Loads a session from JSON string
   static Future<Session?> _loadSession(String id, String jsonString) async {
     try {
       final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
       final session = Session.fromJson(jsonData);
-      
-      _logger.d('AttackerProgramData: Successfully loaded session: ${session.title}');
+
+      _logger.d(
+          'AttackerProgramData: Successfully loaded session: ${session.title}');
       return session;
-      
     } catch (e, stackTrace) {
-      _logger.e('AttackerProgramData: Failed to parse session JSON for $id', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('AttackerProgramData: Failed to parse session JSON for $id',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }

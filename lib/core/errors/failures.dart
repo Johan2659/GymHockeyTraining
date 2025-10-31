@@ -1,16 +1,16 @@
 /// Failure base class for error handling
 abstract class Failure {
   const Failure(this.message);
-  
+
   final String message;
-  
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Failure && 
-      runtimeType == other.runtimeType &&
-      message == other.message;
-  
+      other is Failure &&
+          runtimeType == other.runtimeType &&
+          message == other.message;
+
   @override
   int get hashCode => message.hashCode;
 }

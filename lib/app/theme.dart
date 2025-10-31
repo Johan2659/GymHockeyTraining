@@ -5,7 +5,7 @@ class AppTheme {
   static const Color backgroundColor = Color(0xFF0B0E11);
   static const Color primaryColor = Color(0xFF2D7BFF);
   static const Color accentColor = Color(0xFF39FF14);
-  
+
   // Additional dark theme colors
   static const Color surfaceColor = Color(0xFF1A1D21);
   static const Color onSurfaceColor = Color(0xFFFFFFFF);
@@ -15,7 +15,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      
+
       // Color scheme
       colorScheme: const ColorScheme.dark(
         surface: backgroundColor,

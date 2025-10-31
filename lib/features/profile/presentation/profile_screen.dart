@@ -20,11 +20,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(userProfileProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile & Settings'),
-        centerTitle: true,
+        backgroundColor: AppTheme.surfaceColor,
+        foregroundColor: AppTheme.onSurfaceColor,
       ),
       body: profileAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -63,16 +64,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // Header
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundColor: AppTheme.primaryColor,
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppTheme.primaryColor.withOpacity(0.2),
+                    ),
                     child: Icon(
                       _getRoleIcon(role),
-                      size: 32,
-                      color: Colors.white,
+                      size: 24,
+                      color: AppTheme.primaryColor,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -82,14 +87,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         Text(
                           _getRoleDisplayName(role),
-                          style: Theme.of(context).textTheme.headlineSmall,
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Hockey Training Profile',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[400],
+                                  ),
                         ),
                       ],
                     ),
@@ -98,18 +107,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Settings Section
           Text(
             'Settings',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
-          const SizedBox(height: 16),
-          
+          const SizedBox(height: 12),
+
           // Role Selection
           _buildSettingCard(
             title: 'Role',
@@ -117,7 +126,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             icon: Icons.sports_hockey,
             onTap: () => _showRoleSelector(context, role),
           ),
-          
+
           // Units Selection
           _buildSettingCard(
             title: 'Units',
@@ -125,7 +134,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             icon: Icons.scale,
             onTap: () => _showUnitsSelector(context, units),
           ),
-          
+
           // Language Selection
           _buildSettingCard(
             title: 'Language',
@@ -133,7 +142,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             icon: Icons.language,
             onTap: () => _showLanguageSelector(context, language),
           ),
-          
+
           // Theme Selection
           _buildSettingCard(
             title: 'Theme',
@@ -141,18 +150,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             icon: Icons.palette,
             onTap: () => _showThemeSelector(context, theme),
           ),
-          
-          const SizedBox(height: 32),
-          
+
+          const SizedBox(height: 24),
+
           // Actions Section
           Text(
             'Actions',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
-          const SizedBox(height: 16),
-          
+          const SizedBox(height: 12),
+
           // Export Logs Button
           _buildActionCard(
             title: 'Export Logs',
@@ -161,7 +170,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             color: Colors.blue,
             onTap: _isLoading ? null : () => _exportLogs(),
           ),
-          
+
           // Delete Account Button
           _buildActionCard(
             title: 'Delete Account',
@@ -170,7 +179,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             color: Colors.red,
             onTap: _isLoading ? null : () => _deleteAccount(),
           ),
-          
+
           const SizedBox(height: 24),
         ],
       ),
@@ -186,10 +195,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Icon(icon, color: AppTheme.primaryColor),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: AppTheme.primaryColor.withOpacity(0.2),
+          ),
+          child: Icon(icon, color: AppTheme.primaryColor, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+        ),
+        trailing: Icon(Icons.chevron_right, color: AppTheme.primaryColor, size: 20),
         onTap: onTap,
       ),
     );
@@ -205,36 +229,54 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Icon(icon, color: color),
-        title: Text(title),
-        subtitle: Text(subtitle, style: TextStyle(fontSize: 12)),
-        trailing: _isLoading 
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: color.withOpacity(0.2),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+        ),
+        trailing: _isLoading
             ? const SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : Icon(Icons.chevron_right, color: color),
+            : Icon(Icons.chevron_right, color: color, size: 20),
         onTap: onTap,
         enabled: onTap != null,
       ),
     );
   }
 
-  Future<void> _showRoleSelector(BuildContext context, UserRole currentRole) async {
+  Future<void> _showRoleSelector(
+      BuildContext context, UserRole currentRole) async {
     final newRole = await showDialog<UserRole>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Select Role'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: UserRole.values.map((role) => RadioListTile<UserRole>(
-            title: Text(_getRoleDisplayName(role)),
-            subtitle: Text(_getRoleDescription(role)),
-            value: role,
-            groupValue: currentRole,
-            onChanged: (value) => Navigator.pop(context, value),
-          )).toList(),
+          children: UserRole.values
+              .map((role) => RadioListTile<UserRole>(
+                    title: Text(_getRoleDisplayName(role)),
+                    subtitle: Text(_getRoleDescription(role)),
+                    value: role,
+                    groupValue: currentRole,
+                    onChanged: (value) => Navigator.pop(context, value),
+                  ))
+              .toList(),
         ),
         actions: [
           TextButton(
@@ -244,13 +286,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
-    
+
     if (newRole != null && newRole != currentRole) {
       await ref.read(updateRoleActionProvider(newRole).future);
     }
   }
 
-  Future<void> _showUnitsSelector(BuildContext context, String currentUnits) async {
+  Future<void> _showUnitsSelector(
+      BuildContext context, String currentUnits) async {
     const units = ['kg', 'lbs'];
     final newUnits = await showDialog<String>(
       context: context,
@@ -258,13 +301,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         title: const Text('Select Units'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: units.map((unit) => RadioListTile<String>(
-            title: Text(unit.toUpperCase()),
-            subtitle: Text(unit == 'kg' ? 'Kilograms' : 'Pounds'),
-            value: unit,
-            groupValue: currentUnits,
-            onChanged: (value) => Navigator.pop(context, value),
-          )).toList(),
+          children: units
+              .map((unit) => RadioListTile<String>(
+                    title: Text(unit.toUpperCase()),
+                    subtitle: Text(unit == 'kg' ? 'Kilograms' : 'Pounds'),
+                    value: unit,
+                    groupValue: currentUnits,
+                    onChanged: (value) => Navigator.pop(context, value),
+                  ))
+              .toList(),
         ),
         actions: [
           TextButton(
@@ -274,13 +319,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
-    
+
     if (newUnits != null && newUnits != currentUnits) {
       await ref.read(updateUnitsActionProvider(newUnits).future);
     }
   }
 
-  Future<void> _showLanguageSelector(BuildContext context, String currentLanguage) async {
+  Future<void> _showLanguageSelector(
+      BuildContext context, String currentLanguage) async {
     const languages = ['English', 'French', 'Spanish', 'German'];
     final newLanguage = await showDialog<String>(
       context: context,
@@ -288,12 +334,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         title: const Text('Select Language'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: languages.map((language) => RadioListTile<String>(
-            title: Text(language),
-            value: language,
-            groupValue: currentLanguage,
-            onChanged: (value) => Navigator.pop(context, value),
-          )).toList(),
+          children: languages
+              .map((language) => RadioListTile<String>(
+                    title: Text(language),
+                    value: language,
+                    groupValue: currentLanguage,
+                    onChanged: (value) => Navigator.pop(context, value),
+                  ))
+              .toList(),
         ),
         actions: [
           TextButton(
@@ -303,13 +351,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
-    
+
     if (newLanguage != null && newLanguage != currentLanguage) {
       await ref.read(updateLanguageActionProvider(newLanguage).future);
     }
   }
 
-  Future<void> _showThemeSelector(BuildContext context, String currentTheme) async {
+  Future<void> _showThemeSelector(
+      BuildContext context, String currentTheme) async {
     const themes = ['light', 'dark', 'system'];
     final newTheme = await showDialog<String>(
       context: context,
@@ -317,12 +366,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         title: const Text('Select Theme'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: themes.map((theme) => RadioListTile<String>(
-            title: Text(_getThemeDisplayName(theme)),
-            value: theme,
-            groupValue: currentTheme,
-            onChanged: (value) => Navigator.pop(context, value),
-          )).toList(),
+          children: themes
+              .map((theme) => RadioListTile<String>(
+                    title: Text(_getThemeDisplayName(theme)),
+                    value: theme,
+                    groupValue: currentTheme,
+                    onChanged: (value) => Navigator.pop(context, value),
+                  ))
+              .toList(),
         ),
         actions: [
           TextButton(
@@ -332,7 +383,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
-    
+
     if (newTheme != null && newTheme != currentTheme) {
       await ref.read(updateThemeActionProvider(newTheme).future);
     }
@@ -341,7 +392,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _exportLogs() async {
     logInfo('User initiated log export');
     setState(() => _isLoading = true);
-    
+
     try {
       final filePath = await ref.read(exportLogsActionProvider.future);
       if (filePath != null) {
@@ -372,7 +423,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         }
       }
     } catch (e, stackTrace) {
-      logError('Log export failed with exception', error: e, stackTrace: stackTrace);
+      logError('Log export failed with exception',
+          error: e, stackTrace: stackTrace);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -414,7 +466,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
-    
+
     if (confirmed == true) {
       // Second confirmation
       final doubleConfirmed = await showDialog<bool>(
@@ -438,10 +490,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ],
         ),
       );
-      
+
       if (doubleConfirmed == true) {
         setState(() => _isLoading = true);
-        
+
         try {
           final success = await ref.read(deleteAccountActionProvider.future);
           if (success) {

@@ -34,7 +34,7 @@ void main() {
 
     test('UserRole enum serialization', () {
       const role = UserRole.attacker;
-      
+
       expect(role.name, equals('attacker'));
     });
 

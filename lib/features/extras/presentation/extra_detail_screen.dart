@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../app/di.dart';
+import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
 import '../../application/app_state_provider.dart';
 
@@ -38,7 +39,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
   Future<void> _logExtraStart() async {
     if (_extraStarted) return;
     _extraStarted = true;
-    
+
     try {
       debugPrint('Extra started: ${widget.extraId}');
     } catch (error) {
@@ -53,21 +54,21 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
     final exercisesAsync = ref.watch(_exercisesProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color(0xFF1B365D),
-        foregroundColor: Colors.white,
+        backgroundColor: AppTheme.surfaceColor,
+        foregroundColor: AppTheme.onSurfaceColor,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               extraAsync.value?.title ?? 'Loading...',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               _getTypeDisplayName(extraAsync.value?.type),
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              style:
+                  const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
             ),
           ],
         ),
@@ -107,54 +108,57 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
               Text(
                 error.toString(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                 textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
-        data: (extra) => extra == null 
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.search_off,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Extra not found',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'The requested extra could not be found.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        data: (extra) => extra == null
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.search_off,
+                      size: 64,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    Text(
+                      'Extra not found',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'The requested extra could not be found.',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+            : exercisesAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(
+                  child: Text('Failed to load exercises: $error'),
+                ),
+                data: (exercises) =>
+                    _buildExtraContent(context, extra, exercises),
               ),
-            )
-          : exercisesAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(
-                child: Text('Failed to load exercises: $error'),
-              ),
-              data: (exercises) => _buildExtraContent(context, extra, exercises),
-            ),
       ),
     );
   }
 
-  Widget _buildExtraContent(BuildContext context, ExtraItem extra, List<Exercise> exercises) {
+  Widget _buildExtraContent(
+      BuildContext context, ExtraItem extra, List<Exercise> exercises) {
     // Create a map for quick exercise lookups
     final exerciseMap = {for (var ex in exercises) ex.id: ex};
-    
+
     // Get the exercises for this extra
     final extraExercises = extra.blocks
         .map((block) => exerciseMap[block.exerciseId])
@@ -171,90 +175,84 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
       children: [
         // Header with progress
         Container(
-          color: Colors.white,
           padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Row(
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          extra.description,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.schedule,
-                              size: 16,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${extra.duration} min',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Icon(
-                              Icons.emoji_events,
-                              size: 16,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '+${extra.xpReward} XP',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.amber[700],
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Progress bar
-              Row(
-                children: [
-                  Expanded(
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
                   Text(
-                    '$completedCount/$totalCount',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    extra.description,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.schedule,
+                        size: 16,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${extra.duration} min',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[400],
+                            ),
+                      ),
+                      const SizedBox(width: 16),
+                      Icon(
+                        Icons.emoji_events,
+                        size: 16,
+                        color: AppTheme.accentColor,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '+${extra.xpReward} XP',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppTheme.accentColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // Progress bar
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          backgroundColor: Colors.grey[700],
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            isCompleted ? Colors.green : AppTheme.primaryColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        '$completedCount/$totalCount',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
         // Exercise list
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: extraExercises.length,
             itemBuilder: (context, index) {
               final exercise = extraExercises[index];
               final isCompleted = _completedExercises.contains(exercise.id);
-              
+
               return _ExerciseCard(
                 exercise: exercise,
                 isCompleted: isCompleted,
@@ -265,29 +263,34 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
         ),
         // Complete button
         if (isCompleted && !_isCompleting)
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _completeExtra,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: Text(
-                  'Complete Extra (+${extra.xpReward} XP)',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          SafeArea(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _completeExtra,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text(
+                    'Complete Extra (+${extra.xpReward} XP)',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ),
           ),
         if (_isCompleting)
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: const Center(
-              child: CircularProgressIndicator(),
+          SafeArea(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
           ),
       ],
@@ -306,7 +309,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
 
   Future<void> _completeExtra() async {
     if (_isCompleting) return;
-    
+
     setState(() {
       _isCompleting = true;
     });
@@ -314,8 +317,9 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
     try {
       final extra = await ref.read(_extraProvider(widget.extraId).future);
       if (extra != null) {
-        await ref.read(completeExtraActionProvider(widget.extraId, extra.xpReward).future);
-        
+        await ref.read(
+            completeExtraActionProvider(widget.extraId, extra.xpReward).future);
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -405,73 +409,85 @@ class _ExerciseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: onCompleted,
-              child: Container(
-                width: 32,
-                height: 32,
+      child: InkWell(
+        onTap: onCompleted,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isCompleted ? Colors.green : Colors.grey[300],
+                  color: isCompleted
+                      ? AppTheme.accentColor
+                      : AppTheme.backgroundColor,
+                  border: Border.all(
+                    color:
+                        isCompleted ? AppTheme.accentColor : Colors.grey[700]!,
+                    width: 2,
+                  ),
                 ),
-                child: Icon(
-                  isCompleted ? Icons.check : Icons.circle_outlined,
-                  color: isCompleted ? Colors.white : Colors.grey[600],
-                  size: 20,
-                ),
+                child: isCompleted
+                    ? Icon(
+                        Icons.check,
+                        color: AppTheme.backgroundColor,
+                        size: 16,
+                      )
+                    : null,
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    exercise.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      decoration: isCompleted ? TextDecoration.lineThrough : null,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      exercise.name,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            decoration: isCompleted
+                                ? TextDecoration.lineThrough
+                                : null,
+                          ),
+                      softWrap: true,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      if (exercise.sets > 0) ...[
-                        Text(
-                          '${exercise.sets} sets',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        if (exercise.sets > 0)
+                          Text(
+                            '${exercise.sets} sets',
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey[400],
+                                    ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                      if (exercise.reps > 0) ...[
-                        Text(
-                          '${exercise.reps} reps',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        if (exercise.reps > 0)
+                          Text(
+                            '${exercise.reps} reps',
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey[400],
+                                    ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                      if (exercise.duration != null) ...[
-                        Text(
-                          '${exercise.duration}s',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        if (exercise.duration != null)
+                          Text(
+                            '${exercise.duration}s',
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey[400],
+                                    ),
                           ),
-                        ),
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

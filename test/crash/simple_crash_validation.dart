@@ -8,23 +8,25 @@ void main() {
   group('Simple Crash Validation - Requirement 4', () {
     setUpAll(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
-      
+
       // Mock platform channels
       const MethodChannel('plugins.flutter.io/path_provider')
           .setMockMethodCallHandler((MethodCall methodCall) async => './test/');
       const MethodChannel('plugins.it_nomads.com/flutter_secure_storage')
           .setMockMethodCallHandler((MethodCall methodCall) async => null);
       const MethodChannel('plugins.flutter.io/shared_preferences')
-          .setMockMethodCallHandler((MethodCall methodCall) async => <String, Object>{});
-      
+          .setMockMethodCallHandler(
+              (MethodCall methodCall) async => <String, Object>{});
+
       // Initialize Hive
       await Hive.initFlutter();
       await Hive.openBox('user_profile');
     });
 
-    test('✅ Requirement 4: App handles box closure gracefully (no crash)', () async {
+    test('✅ Requirement 4: App handles box closure gracefully (no crash)',
+        () async {
       print('\n🧪 TESTING: Simulated crash handling...');
-      
+
       // Step 1: Normal operation
       const profile = Profile(
         role: UserRole.attacker,
@@ -55,14 +57,14 @@ void main() {
       }
 
       // Step 4: Should return null instead of crashing
-      expect(profileAfterCrash, isNull, 
-        reason: 'Should return null when storage unavailable, not crash');
+      expect(profileAfterCrash, isNull,
+          reason: 'Should return null when storage unavailable, not crash');
       print('✅ SAFE FALLBACK: Returned null instead of throwing exception');
 
       // Step 5: App should handle save attempts gracefully too
       const newProfile = Profile(
         role: UserRole.defender,
-        language: 'fr', 
+        language: 'fr',
         units: 'imperial',
         theme: 'light',
       );

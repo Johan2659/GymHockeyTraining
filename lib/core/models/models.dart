@@ -96,7 +96,8 @@ class Exercise {
   final String? gymAltId;
   final String? homeAltId;
 
-  factory Exercise.fromJson(Map<String, dynamic> json) => _$ExerciseFromJson(json);
+  factory Exercise.fromJson(Map<String, dynamic> json) =>
+      _$ExerciseFromJson(json);
   Map<String, dynamic> toJson() => _$ExerciseToJson(this);
 
   @override
@@ -121,7 +122,8 @@ class ExerciseBlock {
   final String? swapGymId;
   final String? swapHomeId;
 
-  factory ExerciseBlock.fromJson(Map<String, dynamic> json) => _$ExerciseBlockFromJson(json);
+  factory ExerciseBlock.fromJson(Map<String, dynamic> json) =>
+      _$ExerciseBlockFromJson(json);
   Map<String, dynamic> toJson() => _$ExerciseBlockToJson(this);
 
   @override
@@ -151,7 +153,8 @@ class Session {
   final List<ExerciseBlock> blocks;
   final String bonusChallenge;
 
-  factory Session.fromJson(Map<String, dynamic> json) => _$SessionFromJson(json);
+  factory Session.fromJson(Map<String, dynamic> json) =>
+      _$SessionFromJson(json);
   Map<String, dynamic> toJson() => _$SessionToJson(this);
 
   @override
@@ -162,8 +165,9 @@ class Session {
   @override
   int get hashCode => id.hashCode;
 
-  static List<ExerciseBlock> _blocksFromJson(List<dynamic> json) =>
-      json.map((e) => ExerciseBlock.fromJson(e as Map<String, dynamic>)).toList();
+  static List<ExerciseBlock> _blocksFromJson(List<dynamic> json) => json
+      .map((e) => ExerciseBlock.fromJson(e as Map<String, dynamic>))
+      .toList();
 
   static List<Map<String, dynamic>> _blocksToJson(List<ExerciseBlock> blocks) =>
       blocks.map((e) => e.toJson()).toList();
@@ -208,7 +212,8 @@ class Program {
   @JsonKey(fromJson: _weeksFromJson, toJson: _weeksToJson)
   final List<Week> weeks;
 
-  factory Program.fromJson(Map<String, dynamic> json) => _$ProgramFromJson(json);
+  factory Program.fromJson(Map<String, dynamic> json) =>
+      _$ProgramFromJson(json);
   Map<String, dynamic> toJson() => _$ProgramToJson(this);
 
   @override
@@ -243,7 +248,8 @@ class ProgramState {
   final List<String> completedExerciseIds;
   final DateTime? pausedAt;
 
-  factory ProgramState.fromJson(Map<String, dynamic> json) => _$ProgramStateFromJson(json);
+  factory ProgramState.fromJson(Map<String, dynamic> json) =>
+      _$ProgramStateFromJson(json);
   Map<String, dynamic> toJson() => _$ProgramStateToJson(this);
 
   ProgramState copyWith({
@@ -284,7 +290,8 @@ class ProgressEvent {
   final String? exerciseId;
   final Map<String, dynamic>? payload;
 
-  factory ProgressEvent.fromJson(Map<String, dynamic> json) => _$ProgressEventFromJson(json);
+  factory ProgressEvent.fromJson(Map<String, dynamic> json) =>
+      _$ProgressEventFromJson(json);
   Map<String, dynamic> toJson() => _$ProgressEventToJson(this);
 
   @override
@@ -314,7 +321,8 @@ class Profile {
   final String? units;
   final String? theme;
 
-  factory Profile.fromJson(Map<String, dynamic> json) => _$ProfileFromJson(json);
+  factory Profile.fromJson(Map<String, dynamic> json) =>
+      _$ProfileFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 
   Profile copyWith({
@@ -385,7 +393,8 @@ class ExtraItem {
   final List<ExerciseBlock> blocks;
   final String? difficulty; // 'easy', 'medium', 'hard'
 
-  factory ExtraItem.fromJson(Map<String, dynamic> json) => _$ExtraItemFromJson(json);
+  factory ExtraItem.fromJson(Map<String, dynamic> json) =>
+      _$ExtraItemFromJson(json);
   Map<String, dynamic> toJson() => _$ExtraItemToJson(this);
 
   @override
@@ -396,8 +405,9 @@ class ExtraItem {
   @override
   int get hashCode => id.hashCode;
 
-  static List<ExerciseBlock> _blocksFromJson(List<dynamic> json) =>
-      json.map((e) => ExerciseBlock.fromJson(e as Map<String, dynamic>)).toList();
+  static List<ExerciseBlock> _blocksFromJson(List<dynamic> json) => json
+      .map((e) => ExerciseBlock.fromJson(e as Map<String, dynamic>))
+      .toList();
 
   static List<Map<String, dynamic>> _blocksToJson(List<ExerciseBlock> blocks) =>
       blocks.map((e) => e.toJson()).toList();
@@ -417,27 +427,28 @@ class PerformanceAnalytics {
 
   /// Progress percentage per exercise category (0.0 to 1.0)
   final Map<ExerciseCategory, double> categoryProgress;
-  
+
   /// Weekly training statistics
   @JsonKey(fromJson: _weeklyStatsFromJson, toJson: _weeklyStatsToJson)
   final WeeklyStats weeklyStats;
-  
+
   /// Streak information
   @JsonKey(fromJson: _streakDataFromJson, toJson: _streakDataToJson)
   final StreakData streakData;
-  
+
   /// Personal bests for specific exercises
   @JsonKey(fromJson: _personalBestsFromJson, toJson: _personalBestsToJson)
   final Map<String, PersonalBest> personalBests;
-  
+
   /// Training intensity trends over time
   @JsonKey(fromJson: _intensityTrendsFromJson, toJson: _intensityTrendsToJson)
   final List<IntensityDataPoint> intensityTrends;
-  
+
   /// Last time analytics were calculated
   final DateTime lastUpdated;
 
-  factory PerformanceAnalytics.fromJson(Map<String, dynamic> json) => _$PerformanceAnalyticsFromJson(json);
+  factory PerformanceAnalytics.fromJson(Map<String, dynamic> json) =>
+      _$PerformanceAnalyticsFromJson(json);
   Map<String, dynamic> toJson() => _$PerformanceAnalyticsToJson(this);
 
   PerformanceAnalytics copyWith({
@@ -471,16 +482,23 @@ class PerformanceAnalytics {
   static Map<String, dynamic> _streakDataToJson(StreakData data) =>
       data.toJson();
 
-  static Map<String, PersonalBest> _personalBestsFromJson(Map<String, dynamic> json) =>
-      json.map((k, e) => MapEntry(k, PersonalBest.fromJson(e as Map<String, dynamic>)));
+  static Map<String, PersonalBest> _personalBestsFromJson(
+          Map<String, dynamic> json) =>
+      json.map((k, e) =>
+          MapEntry(k, PersonalBest.fromJson(e as Map<String, dynamic>)));
 
-  static Map<String, dynamic> _personalBestsToJson(Map<String, PersonalBest> bests) =>
+  static Map<String, dynamic> _personalBestsToJson(
+          Map<String, PersonalBest> bests) =>
       bests.map((k, e) => MapEntry(k, e.toJson()));
 
-  static List<IntensityDataPoint> _intensityTrendsFromJson(List<dynamic> json) =>
-      json.map((e) => IntensityDataPoint.fromJson(e as Map<String, dynamic>)).toList();
+  static List<IntensityDataPoint> _intensityTrendsFromJson(
+          List<dynamic> json) =>
+      json
+          .map((e) => IntensityDataPoint.fromJson(e as Map<String, dynamic>))
+          .toList();
 
-  static List<Map<String, dynamic>> _intensityTrendsToJson(List<IntensityDataPoint> trends) =>
+  static List<Map<String, dynamic>> _intensityTrendsToJson(
+          List<IntensityDataPoint> trends) =>
       trends.map((e) => e.toJson()).toList();
 }
 
@@ -503,7 +521,8 @@ class WeeklyStats {
   final double completionRate; // 0.0 to 1.0
   final int xpEarned;
 
-  factory WeeklyStats.fromJson(Map<String, dynamic> json) => _$WeeklyStatsFromJson(json);
+  factory WeeklyStats.fromJson(Map<String, dynamic> json) =>
+      _$WeeklyStatsFromJson(json);
   Map<String, dynamic> toJson() => _$WeeklyStatsToJson(this);
 }
 
@@ -524,7 +543,8 @@ class StreakData {
   final int weeklyProgress; // sessions completed this week
   final DateTime? lastTrainingDate;
 
-  factory StreakData.fromJson(Map<String, dynamic> json) => _$StreakDataFromJson(json);
+  factory StreakData.fromJson(Map<String, dynamic> json) =>
+      _$StreakDataFromJson(json);
   Map<String, dynamic> toJson() => _$StreakDataToJson(this);
 }
 
@@ -547,7 +567,8 @@ class PersonalBest {
   final DateTime achievedAt;
   final String programId;
 
-  factory PersonalBest.fromJson(Map<String, dynamic> json) => _$PersonalBestFromJson(json);
+  factory PersonalBest.fromJson(Map<String, dynamic> json) =>
+      _$PersonalBestFromJson(json);
   Map<String, dynamic> toJson() => _$PersonalBestToJson(this);
 }
 
@@ -566,6 +587,112 @@ class IntensityDataPoint {
   final int volume; // total exercises completed
   final int duration; // session duration in minutes
 
-  factory IntensityDataPoint.fromJson(Map<String, dynamic> json) => _$IntensityDataPointFromJson(json);
+  factory IntensityDataPoint.fromJson(Map<String, dynamic> json) =>
+      _$IntensityDataPointFromJson(json);
   Map<String, dynamic> toJson() => _$IntensityDataPointToJson(this);
+}
+
+/// Single set performance data
+@JsonSerializable()
+class ExerciseSetPerformance {
+  const ExerciseSetPerformance({
+    required this.setNumber,
+    required this.reps,
+    this.weight,
+    this.completed,
+    this.notes,
+  });
+
+  final int setNumber; // 1, 2, 3, etc.
+  final int reps; // actual reps performed
+  final double? weight; // weight used (in kg or lbs)
+  final bool? completed; // whether this set was completed
+  final String? notes; // optional notes for this set
+
+  factory ExerciseSetPerformance.fromJson(Map<String, dynamic> json) =>
+      _$ExerciseSetPerformanceFromJson(json);
+  Map<String, dynamic> toJson() => _$ExerciseSetPerformanceToJson(this);
+
+  ExerciseSetPerformance copyWith({
+    int? setNumber,
+    int? reps,
+    double? weight,
+    bool? completed,
+    String? notes,
+  }) {
+    return ExerciseSetPerformance(
+      setNumber: setNumber ?? this.setNumber,
+      reps: reps ?? this.reps,
+      weight: weight ?? this.weight,
+      completed: completed ?? this.completed,
+      notes: notes ?? this.notes,
+    );
+  }
+}
+
+/// Complete exercise performance for a single exercise in a session
+@JsonSerializable()
+class ExercisePerformance {
+  const ExercisePerformance({
+    required this.id,
+    required this.exerciseId,
+    required this.exerciseName,
+    required this.programId,
+    required this.week,
+    required this.session,
+    required this.timestamp,
+    required this.sets,
+    this.duration,
+    this.notes,
+  });
+
+  final String id; // unique ID for this performance record
+  final String exerciseId;
+  final String exerciseName;
+  final String programId;
+  final int week;
+  final int session;
+  final DateTime timestamp;
+  @JsonKey(fromJson: _setsFromJson, toJson: _setsToJson)
+  final List<ExerciseSetPerformance> sets;
+  final int? duration; // total time spent on exercise in seconds
+  final String? notes; // overall notes for this exercise
+
+  factory ExercisePerformance.fromJson(Map<String, dynamic> json) =>
+      _$ExercisePerformanceFromJson(json);
+  Map<String, dynamic> toJson() => _$ExercisePerformanceToJson(this);
+
+  ExercisePerformance copyWith({
+    String? id,
+    String? exerciseId,
+    String? exerciseName,
+    String? programId,
+    int? week,
+    int? session,
+    DateTime? timestamp,
+    List<ExerciseSetPerformance>? sets,
+    int? duration,
+    String? notes,
+  }) {
+    return ExercisePerformance(
+      id: id ?? this.id,
+      exerciseId: exerciseId ?? this.exerciseId,
+      exerciseName: exerciseName ?? this.exerciseName,
+      programId: programId ?? this.programId,
+      week: week ?? this.week,
+      session: session ?? this.session,
+      timestamp: timestamp ?? this.timestamp,
+      sets: sets ?? this.sets,
+      duration: duration ?? this.duration,
+      notes: notes ?? this.notes,
+    );
+  }
+
+  static List<ExerciseSetPerformance> _setsFromJson(List<dynamic> json) => json
+      .map((e) => ExerciseSetPerformance.fromJson(e as Map<String, dynamic>))
+      .toList();
+
+  static List<Map<String, dynamic>> _setsToJson(
+          List<ExerciseSetPerformance> sets) =>
+      sets.map((e) => e.toJson()).toList();
 }

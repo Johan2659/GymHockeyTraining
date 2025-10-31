@@ -53,7 +53,8 @@ void main() {
     test('should create initial performance analytics', () {
       final analytics = PerformanceAnalytics(
         categoryProgress: <ExerciseCategory, double>{
-          for (ExerciseCategory category in ExerciseCategory.values) category: 0.0,
+          for (ExerciseCategory category in ExerciseCategory.values)
+            category: 0.0,
         },
         weeklyStats: const WeeklyStats(
           totalSessions: 0,

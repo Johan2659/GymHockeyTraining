@@ -86,7 +86,7 @@ Future<PerformanceAnalytics?> performanceAnalytics(Ref ref) async {
     if (existing != null) {
       return existing;
     }
-    
+
     // Create default analytics if none exist
     final defaultAnalytics = PerformanceAnalytics(
       weeklyStats: WeeklyStats(
@@ -111,11 +111,12 @@ Future<PerformanceAnalytics?> performanceAnalytics(Ref ref) async {
       intensityTrends: <IntensityDataPoint>[],
       lastUpdated: DateTime.now(),
     );
-    
+
     await repository.save(defaultAnalytics);
     return defaultAnalytics;
   } catch (e) {
-    LoggerService.instance.error('Failed to get performance analytics', error: e, source: 'AppStateProvider');
+    LoggerService.instance.error('Failed to get performance analytics',
+        error: e, source: 'AppStateProvider');
     return null;
   }
 }
@@ -124,23 +125,25 @@ Future<PerformanceAnalytics?> performanceAnalytics(Ref ref) async {
 @riverpod
 Future<Map<ExerciseCategory, double>> categoryProgress(Ref ref) async {
   final analytics = await ref.watch(performanceAnalyticsProvider.future);
-  return analytics?.categoryProgress ?? <ExerciseCategory, double>{
-    for (final category in ExerciseCategory.values) category: 0.0,
-  };
+  return analytics?.categoryProgress ??
+      <ExerciseCategory, double>{
+        for (final category in ExerciseCategory.values) category: 0.0,
+      };
 }
 
 /// Weekly training stats provider
 @riverpod
 Future<WeeklyStats?> weeklyStats(Ref ref) async {
   final analytics = await ref.watch(performanceAnalyticsProvider.future);
-  return analytics?.weeklyStats ?? WeeklyStats(
-    totalSessions: 0,
-    totalExercises: 0,
-    totalTrainingTime: 0,
-    avgSessionDuration: 0.0,
-    completionRate: 0.0,
-    xpEarned: 0,
-  );
+  return analytics?.weeklyStats ??
+      WeeklyStats(
+        totalSessions: 0,
+        totalExercises: 0,
+        totalTrainingTime: 0,
+        avgSessionDuration: 0.0,
+        completionRate: 0.0,
+        xpEarned: 0,
+      );
 }
 
 /// Streak data provider
@@ -167,11 +170,29 @@ Future<List<IntensityDataPoint>> intensityTrends(Ref ref) async {
 /// Current active program provider
 @riverpod
 Future<Program?> activeProgram(Ref ref) async {
-  final state = await ref.watch(programStateProvider.future);
-  if (state?.activeProgramId == null) return null;
+  try {
+    final state = await ref.watch(programStateProvider.future);
+    if (state?.activeProgramId == null) return null;
 
-  final repository = ref.watch(programRepositoryProvider);
-  return repository.getById(state!.activeProgramId!);
+    final repository = ref.watch(programRepositoryProvider);
+    final program = await repository.getById(state!.activeProgramId!);
+    
+    // Additional safety check
+    if (program == null) {
+      LoggerService.instance.warning('Active program not found', 
+          source: 'activeProgramProvider', 
+          metadata: {'programId': state.activeProgramId});
+      return null;
+    }
+    
+    return program;
+  } catch (e, stackTrace) {
+    LoggerService.instance.error('Failed to get active program',
+        source: 'activeProgramProvider',
+        error: e,
+        stackTrace: stackTrace);
+    return null;
+  }
 }
 
 // =============================================================================
@@ -231,7 +252,8 @@ Future<Session?> nextSessionRef(Ref ref) async {
     ),
   );
 
-  if (activeProgram.weeks.isEmpty || state!.currentWeek >= activeProgram.weeks.length) {
+  if (activeProgram.weeks.isEmpty ||
+      state!.currentWeek >= activeProgram.weeks.length) {
     return null;
   }
 
@@ -257,9 +279,9 @@ Future<Session?> nextSessionRef(Ref ref) async {
 @riverpod
 Future<void> startProgramAction(Ref ref, String programId) async {
   try {
-    LoggerService.instance.info('Starting program action', 
-      source: 'startProgramAction', metadata: {'programId': programId});
-    
+    LoggerService.instance.info('Starting program action',
+        source: 'startProgramAction', metadata: {'programId': programId});
+
     final stateRepo = ref.read(programStateRepositoryProvider);
     final progressRepo = ref.read(progressRepositoryProvider);
 
@@ -283,13 +305,15 @@ Future<void> startProgramAction(Ref ref, String programId) async {
     );
 
     await progressRepo.appendEvent(event);
-    
-    LoggerService.instance.info('Program started successfully', 
-      source: 'startProgramAction', metadata: {'programId': programId});
+
+    LoggerService.instance.info('Program started successfully',
+        source: 'startProgramAction', metadata: {'programId': programId});
   } catch (e, stackTrace) {
-    LoggerService.instance.error('Failed to start program', 
-      source: 'startProgramAction', error: e, stackTrace: stackTrace,
-      metadata: {'programId': programId});
+    LoggerService.instance.error('Failed to start program',
+        source: 'startProgramAction',
+        error: e,
+        stackTrace: stackTrace,
+        metadata: {'programId': programId});
     rethrow;
   }
 }
@@ -321,13 +345,13 @@ Future<void> markExerciseDoneAction(Ref ref, String exerciseId) async {
   try {
     // For now, we'll assume a default category - in a real app, you'd look up the exercise
     await analyticsRepo.updateCategoryProgress(
-      exerciseId, 
+      exerciseId,
       ExerciseCategory.strength, // Default category
       currentState.activeProgramId!,
     );
   } catch (e) {
-    LoggerService.instance.warning('Failed to update performance analytics', 
-      source: 'markExerciseDoneAction', error: e);
+    LoggerService.instance.warning('Failed to update performance analytics',
+        source: 'markExerciseDoneAction', error: e);
   }
 }
 
@@ -341,7 +365,8 @@ Future<void> completeSessionAction(Ref ref) async {
   final currentState = await stateRepo.get();
   if (currentState?.activeProgramId == null) return;
 
-  PersistenceService.logStateChange('Completing session - Week: ${currentState!.currentWeek}, Session: ${currentState.currentSession}');
+  PersistenceService.logStateChange(
+      'Completing session - Week: ${currentState!.currentWeek}, Session: ${currentState.currentSession}');
 
   final event = ProgressEvent(
     ts: DateTime.now(),
@@ -356,17 +381,20 @@ Future<void> completeSessionAction(Ref ref) async {
 
   // Update performance analytics with session completion
   try {
-    final events = await progressRepo.getRecent(limit: 1000); // Get all recent events
+    final events =
+        await progressRepo.getRecent(limit: 1000); // Get all recent events
     final programs = await ref.read(programRepositoryProvider).getAll();
     final updatedAnalytics = await analyticsRepo.calculateAnalytics(
-      events, 
-      programs, 
+      events,
+      programs,
       currentState,
     );
     await analyticsRepo.save(updatedAnalytics);
   } catch (e) {
-    LoggerService.instance.warning('Failed to update performance analytics after session completion', 
-      source: 'completeSessionAction', error: e);
+    LoggerService.instance.warning(
+        'Failed to update performance analytics after session completion',
+        source: 'completeSessionAction',
+        error: e);
   }
 }
 
@@ -406,7 +434,8 @@ Future<void> completeBonusChallengeAction(Ref ref) async {
 
 /// Start session action provider
 @riverpod
-Future<void> startSessionAction(Ref ref, String programId, int week, int session) async {
+Future<void> startSessionAction(
+    Ref ref, String programId, int week, int session) async {
   final progressRepo = ref.read(progressRepositoryProvider);
 
   final event = ProgressEvent(
@@ -425,7 +454,8 @@ Future<void> startSessionAction(Ref ref, String programId, int week, int session
 Future<void> completeExtraAction(Ref ref, String extraId, int xpReward) async {
   final progressRepo = ref.read(progressRepositoryProvider);
 
-  PersistenceService.logStateChange('Completing extra: $extraId with XP reward: $xpReward');
+  PersistenceService.logStateChange(
+      'Completing extra: $extraId with XP reward: $xpReward');
 
   final event = ProgressEvent(
     ts: DateTime.now(),
@@ -443,6 +473,44 @@ Future<void> completeExtraAction(Ref ref, String extraId, int xpReward) async {
   await progressRepo.appendEvent(event);
 }
 
+/// Save exercise performance action provider
+@riverpod
+Future<bool> saveExercisePerformanceAction(
+    Ref ref, ExercisePerformance performance) async {
+  try {
+    final performanceRepo = ref.read(exercisePerformanceRepositoryProvider);
+    final success = await performanceRepo.save(performance);
+
+    if (success) {
+      LoggerService.instance.info('Exercise performance saved',
+          source: 'saveExercisePerformanceAction',
+          metadata: {
+            'exerciseId': performance.exerciseId,
+            'sets': performance.sets.length
+          });
+    }
+
+    return success;
+  } catch (e) {
+    LoggerService.instance.error('Failed to save exercise performance',
+        source: 'saveExercisePerformanceAction', error: e);
+    return false;
+  }
+}
+
+/// Get last performance for exercise provider
+@riverpod
+Future<ExercisePerformance?> lastPerformance(Ref ref, String exerciseId) async {
+  try {
+    final performanceRepo = ref.read(exercisePerformanceRepositoryProvider);
+    return await performanceRepo.getLastPerformance(exerciseId);
+  } catch (e) {
+    LoggerService.instance.error('Failed to get last performance',
+        source: 'lastPerformanceProvider', error: e);
+    return null;
+  }
+}
+
 // =============================================================================
 // Profile Action Providers
 // =============================================================================
@@ -452,13 +520,13 @@ Future<void> completeExtraAction(Ref ref, String extraId, int xpReward) async {
 Future<bool> updateRoleAction(Ref ref, UserRole role) async {
   final profileController = ref.read(profileControllerProvider.notifier);
   final success = await profileController.updateRole(role);
-  
+
   if (success) {
     // Invalidate providers that depend on profile data
     ref.invalidate(userProfileProvider);
     ref.invalidate(availableProgramsProvider);
   }
-  
+
   return success;
 }
 
@@ -467,11 +535,11 @@ Future<bool> updateRoleAction(Ref ref, UserRole role) async {
 Future<bool> updateUnitsAction(Ref ref, String units) async {
   final profileController = ref.read(profileControllerProvider.notifier);
   final success = await profileController.updateUnits(units);
-  
+
   if (success) {
     ref.invalidate(userProfileProvider);
   }
-  
+
   return success;
 }
 
@@ -480,11 +548,11 @@ Future<bool> updateUnitsAction(Ref ref, String units) async {
 Future<bool> updateLanguageAction(Ref ref, String language) async {
   final profileController = ref.read(profileControllerProvider.notifier);
   final success = await profileController.updateLanguage(language);
-  
+
   if (success) {
     ref.invalidate(userProfileProvider);
   }
-  
+
   return success;
 }
 
@@ -493,11 +561,11 @@ Future<bool> updateLanguageAction(Ref ref, String language) async {
 Future<bool> updateThemeAction(Ref ref, String theme) async {
   final profileController = ref.read(profileControllerProvider.notifier);
   final success = await profileController.updateTheme(theme);
-  
+
   if (success) {
     ref.invalidate(userProfileProvider);
   }
-  
+
   return success;
 }
 
@@ -513,7 +581,7 @@ Future<String?> exportLogsAction(Ref ref) async {
 Future<bool> deleteAccountAction(Ref ref) async {
   final profileController = ref.read(profileControllerProvider.notifier);
   final success = await profileController.deleteAccount();
-  
+
   if (success) {
     // Invalidate all major providers after account deletion
     ref.invalidate(progressEventsProvider);
@@ -524,7 +592,7 @@ Future<bool> deleteAccountAction(Ref ref) async {
     ref.invalidate(currentStreakProvider);
     ref.invalidate(percentCycleProvider);
   }
-  
+
   return success;
 }
 
@@ -534,12 +602,13 @@ Future<void> initializePerformanceAnalyticsAction(Ref ref) async {
   try {
     final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
     final existing = await analyticsRepo.get();
-    
+
     // Only initialize if analytics don't exist
     if (existing == null) {
       final initialAnalytics = PerformanceAnalytics(
         categoryProgress: <ExerciseCategory, double>{
-          for (ExerciseCategory category in ExerciseCategory.values) category: 0.0,
+          for (ExerciseCategory category in ExerciseCategory.values)
+            category: 0.0,
         },
         weeklyStats: const WeeklyStats(
           totalSessions: 0,
@@ -560,14 +629,14 @@ Future<void> initializePerformanceAnalyticsAction(Ref ref) async {
         intensityTrends: <IntensityDataPoint>[],
         lastUpdated: DateTime.now(),
       );
-      
+
       await analyticsRepo.save(initialAnalytics);
-      LoggerService.instance.info('Performance analytics initialized', 
-        source: 'initializePerformanceAnalyticsAction');
+      LoggerService.instance.info('Performance analytics initialized',
+          source: 'initializePerformanceAnalyticsAction');
     }
   } catch (e) {
-    LoggerService.instance.error('Failed to initialize performance analytics', 
-      source: 'initializePerformanceAnalyticsAction', error: e);
+    LoggerService.instance.error('Failed to initialize performance analytics',
+        source: 'initializePerformanceAnalyticsAction', error: e);
   }
 }
 
@@ -659,7 +728,8 @@ class AppStateData {
 // =============================================================================
 
 extension SelectorsExt on Selectors {
-  static double calculatePercentCycle(ProgramState? state, List<Program> programs) {
+  static double calculatePercentCycle(
+      ProgramState? state, List<Program> programs) {
     if (state?.activeProgramId == null) return 0.0;
 
     final activeProgram = programs.firstWhere(
@@ -675,7 +745,8 @@ extension SelectorsExt on Selectors {
     if (activeProgram.weeks.isEmpty) return 0.0;
 
     final totalSessions = activeProgram.weeks.fold<int>(
-      0, (sum, week) => sum + week.sessions.length,
+      0,
+      (sum, week) => sum + week.sessions.length,
     );
     if (totalSessions == 0) return 0.0;
 

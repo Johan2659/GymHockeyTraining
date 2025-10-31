@@ -31,7 +31,7 @@ class ExampleStorageService {
   Future<Profile?> loadProfile() async {
     final data = _profileBox.get(_profileKey);
     if (data == null || data['data'] == null) return null;
-    
+
     final jsonString = data['data'] as String;
     final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
     return Profile.fromJson(jsonData);
@@ -47,7 +47,7 @@ class ExampleStorageService {
   Future<ProgramState?> loadProgramState() async {
     final data = _programStateBox.get(_programStateKey);
     if (data == null || data['data'] == null) return null;
-    
+
     final jsonString = data['data'] as String;
     final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
     return ProgramState.fromJson(jsonData);
@@ -63,7 +63,7 @@ class ExampleStorageService {
   Future<XP?> loadXP() async {
     final data = _profileBox.get(_xpKey);
     if (data == null || data['data'] == null) return null;
-    
+
     final jsonString = data['data'] as String;
     final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
     return XP.fromJson(jsonData);
@@ -79,7 +79,7 @@ class ExampleStorageService {
   /// Load all progress events from Hive
   Future<List<ProgressEvent>> loadProgressEvents() async {
     final events = <ProgressEvent>[];
-    
+
     for (final value in _progressEventsBox.values) {
       if (value['data'] != null) {
         final jsonString = value['data'] as String;
@@ -87,7 +87,7 @@ class ExampleStorageService {
         events.add(ProgressEvent.fromJson(jsonData));
       }
     }
-    
+
     // Sort by timestamp
     events.sort((a, b) => a.ts.compareTo(b.ts));
     return events;

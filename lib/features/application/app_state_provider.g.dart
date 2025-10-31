@@ -285,7 +285,7 @@ final intensityTrendsProvider =
 // ignore: unused_element
 typedef IntensityTrendsRef
     = AutoDisposeFutureProviderRef<List<IntensityDataPoint>>;
-String _$activeProgramHash() => r'39c2c2d39eba686edf957c9169db24848c11b1ab';
+String _$activeProgramHash() => r'ad104f1697f9e84b4b4f34ac5088b36cedd685f4';
 
 /// Current active program provider
 ///
@@ -1139,6 +1139,298 @@ class _CompleteExtraActionProviderElement
   String get extraId => (origin as CompleteExtraActionProvider).extraId;
   @override
   int get xpReward => (origin as CompleteExtraActionProvider).xpReward;
+}
+
+String _$saveExercisePerformanceActionHash() =>
+    r'86d91c3ede436a69247061251f8405c845725804';
+
+/// Save exercise performance action provider
+///
+/// Copied from [saveExercisePerformanceAction].
+@ProviderFor(saveExercisePerformanceAction)
+const saveExercisePerformanceActionProvider =
+    SaveExercisePerformanceActionFamily();
+
+/// Save exercise performance action provider
+///
+/// Copied from [saveExercisePerformanceAction].
+class SaveExercisePerformanceActionFamily extends Family<AsyncValue<bool>> {
+  /// Save exercise performance action provider
+  ///
+  /// Copied from [saveExercisePerformanceAction].
+  const SaveExercisePerformanceActionFamily();
+
+  /// Save exercise performance action provider
+  ///
+  /// Copied from [saveExercisePerformanceAction].
+  SaveExercisePerformanceActionProvider call(
+    ExercisePerformance performance,
+  ) {
+    return SaveExercisePerformanceActionProvider(
+      performance,
+    );
+  }
+
+  @override
+  SaveExercisePerformanceActionProvider getProviderOverride(
+    covariant SaveExercisePerformanceActionProvider provider,
+  ) {
+    return call(
+      provider.performance,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'saveExercisePerformanceActionProvider';
+}
+
+/// Save exercise performance action provider
+///
+/// Copied from [saveExercisePerformanceAction].
+class SaveExercisePerformanceActionProvider
+    extends AutoDisposeFutureProvider<bool> {
+  /// Save exercise performance action provider
+  ///
+  /// Copied from [saveExercisePerformanceAction].
+  SaveExercisePerformanceActionProvider(
+    ExercisePerformance performance,
+  ) : this._internal(
+          (ref) => saveExercisePerformanceAction(
+            ref as SaveExercisePerformanceActionRef,
+            performance,
+          ),
+          from: saveExercisePerformanceActionProvider,
+          name: r'saveExercisePerformanceActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$saveExercisePerformanceActionHash,
+          dependencies: SaveExercisePerformanceActionFamily._dependencies,
+          allTransitiveDependencies:
+              SaveExercisePerformanceActionFamily._allTransitiveDependencies,
+          performance: performance,
+        );
+
+  SaveExercisePerformanceActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.performance,
+  }) : super.internal();
+
+  final ExercisePerformance performance;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(SaveExercisePerformanceActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SaveExercisePerformanceActionProvider._internal(
+        (ref) => create(ref as SaveExercisePerformanceActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        performance: performance,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _SaveExercisePerformanceActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SaveExercisePerformanceActionProvider &&
+        other.performance == performance;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, performance.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin SaveExercisePerformanceActionRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `performance` of this provider.
+  ExercisePerformance get performance;
+}
+
+class _SaveExercisePerformanceActionProviderElement
+    extends AutoDisposeFutureProviderElement<bool>
+    with SaveExercisePerformanceActionRef {
+  _SaveExercisePerformanceActionProviderElement(super.provider);
+
+  @override
+  ExercisePerformance get performance =>
+      (origin as SaveExercisePerformanceActionProvider).performance;
+}
+
+String _$lastPerformanceHash() => r'98c966f10523f5524e0dcf4280061a563e6c144d';
+
+/// Get last performance for exercise provider
+///
+/// Copied from [lastPerformance].
+@ProviderFor(lastPerformance)
+const lastPerformanceProvider = LastPerformanceFamily();
+
+/// Get last performance for exercise provider
+///
+/// Copied from [lastPerformance].
+class LastPerformanceFamily extends Family<AsyncValue<ExercisePerformance?>> {
+  /// Get last performance for exercise provider
+  ///
+  /// Copied from [lastPerformance].
+  const LastPerformanceFamily();
+
+  /// Get last performance for exercise provider
+  ///
+  /// Copied from [lastPerformance].
+  LastPerformanceProvider call(
+    String exerciseId,
+  ) {
+    return LastPerformanceProvider(
+      exerciseId,
+    );
+  }
+
+  @override
+  LastPerformanceProvider getProviderOverride(
+    covariant LastPerformanceProvider provider,
+  ) {
+    return call(
+      provider.exerciseId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'lastPerformanceProvider';
+}
+
+/// Get last performance for exercise provider
+///
+/// Copied from [lastPerformance].
+class LastPerformanceProvider
+    extends AutoDisposeFutureProvider<ExercisePerformance?> {
+  /// Get last performance for exercise provider
+  ///
+  /// Copied from [lastPerformance].
+  LastPerformanceProvider(
+    String exerciseId,
+  ) : this._internal(
+          (ref) => lastPerformance(
+            ref as LastPerformanceRef,
+            exerciseId,
+          ),
+          from: lastPerformanceProvider,
+          name: r'lastPerformanceProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$lastPerformanceHash,
+          dependencies: LastPerformanceFamily._dependencies,
+          allTransitiveDependencies:
+              LastPerformanceFamily._allTransitiveDependencies,
+          exerciseId: exerciseId,
+        );
+
+  LastPerformanceProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.exerciseId,
+  }) : super.internal();
+
+  final String exerciseId;
+
+  @override
+  Override overrideWith(
+    FutureOr<ExercisePerformance?> Function(LastPerformanceRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: LastPerformanceProvider._internal(
+        (ref) => create(ref as LastPerformanceRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        exerciseId: exerciseId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<ExercisePerformance?> createElement() {
+    return _LastPerformanceProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LastPerformanceProvider && other.exerciseId == exerciseId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, exerciseId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin LastPerformanceRef on AutoDisposeFutureProviderRef<ExercisePerformance?> {
+  /// The parameter `exerciseId` of this provider.
+  String get exerciseId;
+}
+
+class _LastPerformanceProviderElement
+    extends AutoDisposeFutureProviderElement<ExercisePerformance?>
+    with LastPerformanceRef {
+  _LastPerformanceProviderElement(super.provider);
+
+  @override
+  String get exerciseId => (origin as LastPerformanceProvider).exerciseId;
 }
 
 String _$updateRoleActionHash() => r'5de21297127b6375e96a56021263f51c718cf403';

@@ -5,7 +5,8 @@ import 'package:gymhockeytraining/features/profile/presentation/profile_screen.d
 
 void main() {
   group('ProfileScreen Tests', () {
-    testWidgets('should display profile screen with default settings', (tester) async {
+    testWidgets('should display profile screen with default settings',
+        (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -21,20 +22,21 @@ void main() {
       expect(find.text('Profile & Settings'), findsOneWidget);
       expect(find.text('Settings'), findsOneWidget);
       expect(find.text('Actions'), findsOneWidget);
-      
+
       // Verify setting cards are present
       expect(find.text('Role'), findsOneWidget);
       expect(find.text('Units'), findsOneWidget);
       expect(find.text('Language'), findsOneWidget);
       expect(find.text('Theme'), findsOneWidget);
-      
+
       // Verify action buttons are present
       expect(find.text('Reset Progress'), findsOneWidget);
       expect(find.text('Export Logs'), findsOneWidget);
       expect(find.text('Delete Account'), findsOneWidget);
     });
 
-    testWidgets('should show role selector dialog when role setting is tapped', (tester) async {
+    testWidgets('should show role selector dialog when role setting is tapped',
+        (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -57,7 +59,8 @@ void main() {
       expect(find.text('Referee'), findsOneWidget);
     });
 
-    testWidgets('should show confirmation dialog for reset progress', (tester) async {
+    testWidgets('should show confirmation dialog for reset progress',
+        (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -74,12 +77,16 @@ void main() {
 
       // Verify confirmation dialog
       expect(find.text('Reset Progress'), findsNWidgets(2)); // Title and button
-      expect(find.text('Are you sure you want to reset all your training progress?'), findsOneWidget);
+      expect(
+          find.text(
+              'Are you sure you want to reset all your training progress?'),
+          findsOneWidget);
       expect(find.text('Cancel'), findsOneWidget);
       expect(find.text('Reset'), findsOneWidget);
     });
 
-    testWidgets('should show confirmation dialog for delete account', (tester) async {
+    testWidgets('should show confirmation dialog for delete account',
+        (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -96,7 +103,8 @@ void main() {
 
       // Verify confirmation dialog
       expect(find.text('Delete Account'), findsNWidgets(2)); // Title and button
-      expect(find.textContaining('This will permanently delete ALL your data'), findsOneWidget);
+      expect(find.textContaining('This will permanently delete ALL your data'),
+          findsOneWidget);
       expect(find.text('Cancel'), findsOneWidget);
     });
   });

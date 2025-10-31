@@ -9,26 +9,26 @@ class TestHelpers {
   /// Initialize the test environment with required services
   static Future<void> initializeTestEnvironment() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    
+
     // Initialize Hive with in-memory storage for tests FIRST
     await Hive.initFlutter();
-    
+
     // Open all required boxes
     try {
       await Hive.openBox('user_profile');
-      await Hive.openBox('app_settings'); 
+      await Hive.openBox('app_settings');
       await Hive.openBox('progress_journal');
     } catch (e) {
       // Boxes might already be open, ignore error
       print('Boxes already open or failed to open: $e');
     }
-    
+
     // Initialize logger service for tests AFTER Hive is ready
     await LoggerService.instance.initialize();
-    
+
     // Initialize persistence service for tests
     PersistenceService.initialize();
-    
+
     // Initialize platform channels for testing
     const MethodChannel('plugins.flutter.io/path_provider')
         .setMockMethodCallHandler((MethodCall methodCall) async {
@@ -43,7 +43,7 @@ class TestHelpers {
       }
       return './test/';
     });
-    
+
     // Mock flutter_secure_storage
     const MethodChannel('plugins.it_nomads.com/flutter_secure_storage')
         .setMockMethodCallHandler((MethodCall methodCall) async {
@@ -65,7 +65,7 @@ class TestHelpers {
       return null;
     });
   }
-  
+
   /// Clean up after tests
   static Future<void> cleanup() async {
     // Close and clear all boxes
@@ -88,7 +88,7 @@ class TestHelpers {
     } catch (e) {
       // Ignore cleanup errors in tests
     }
-    
+
     await Hive.deleteFromDisk();
   }
 }

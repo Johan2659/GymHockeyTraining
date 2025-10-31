@@ -13,14 +13,16 @@ class LocalPerformanceSource {
     try {
       final box = await _getBox();
       final data = box.get(_analyticsKey) as String?;
-      
+
       if (data == null) return null;
-      
+
       final json = jsonDecode(data) as Map<String, dynamic>;
       return PerformanceAnalytics.fromJson(json);
     } catch (e) {
-      LoggerService.instance.error('Failed to get performance analytics from storage', 
-        source: 'LocalPerformanceSource', error: e);
+      LoggerService.instance.error(
+          'Failed to get performance analytics from storage',
+          source: 'LocalPerformanceSource',
+          error: e);
       return null;
     }
   }
@@ -31,8 +33,10 @@ class LocalPerformanceSource {
       final json = analytics.toJson();
       await box.put(_analyticsKey, jsonEncode(json));
     } catch (e) {
-      LoggerService.instance.error('Failed to save performance analytics to storage', 
-        source: 'LocalPerformanceSource', error: e);
+      LoggerService.instance.error(
+          'Failed to save performance analytics to storage',
+          source: 'LocalPerformanceSource',
+          error: e);
       rethrow;
     }
   }
@@ -43,12 +47,12 @@ class LocalPerformanceSource {
         try {
           final data = box.get(_analyticsKey) as String?;
           if (data == null) return null;
-          
+
           final json = jsonDecode(data) as Map<String, dynamic>;
           return PerformanceAnalytics.fromJson(json);
         } catch (e) {
-          LoggerService.instance.error('Failed to watch performance analytics', 
-            source: 'LocalPerformanceSource', error: e);
+          LoggerService.instance.error('Failed to watch performance analytics',
+              source: 'LocalPerformanceSource', error: e);
           return null;
         }
       });

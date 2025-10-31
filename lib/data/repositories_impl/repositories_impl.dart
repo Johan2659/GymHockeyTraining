@@ -10,3 +10,4 @@ export 'session_repository_impl.dart';
 export 'exercise_repository_impl.dart';
 export 'extras_repository_impl.dart';
 export 'performance_analytics_repository_impl.dart';
+export 'exercise_performance_repository_impl.dart';

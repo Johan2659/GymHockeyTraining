@@ -8,13 +8,13 @@ import 'dart:io';
 void main() async {
   print('🔍 Performance Analytics Implementation Verification');
   print('=' * 60);
-  
+
   await verifyModels();
   await verifyDataSources();
   await verifyRepositories();
   await verifyProviders();
   await verifyUI();
-  
+
   print('\n✅ Performance Analytics verification completed successfully!');
   print('\n📊 New Features Available:');
   print('   • Exercise category progress tracking (8 categories)');
@@ -29,15 +29,15 @@ void main() async {
 
 Future<void> verifyModels() async {
   print('\n📋 Verifying Models...');
-  
+
   final files = [
     'lib/core/models/models.dart',
   ];
-  
+
   for (final file in files) {
     if (await File(file).exists()) {
       final content = await File(file).readAsString();
-      
+
       // Check for new enums and classes
       final checks = [
         'enum ExerciseCategory',
@@ -47,7 +47,7 @@ Future<void> verifyModels() async {
         'class PersonalBest',
         'class IntensityDataPoint',
       ];
-      
+
       for (final check in checks) {
         if (content.contains(check)) {
           print('   ✅ $check found');
@@ -63,22 +63,22 @@ Future<void> verifyModels() async {
 
 Future<void> verifyDataSources() async {
   print('\n📦 Verifying Data Sources...');
-  
+
   final files = [
     'lib/data/datasources/local_performance_source.dart',
   ];
-  
+
   for (final file in files) {
     if (await File(file).exists()) {
       final content = await File(file).readAsString();
-      
+
       final checks = [
         'class LocalPerformanceSource',
         'getPerformanceAnalytics',
         'savePerformanceAnalytics',
         'watchPerformanceAnalytics',
       ];
-      
+
       for (final check in checks) {
         if (content.contains(check)) {
           print('   ✅ $check found');
@@ -94,23 +94,23 @@ Future<void> verifyDataSources() async {
 
 Future<void> verifyRepositories() async {
   print('\n🏛️ Verifying Repositories...');
-  
+
   final files = [
     'lib/core/repositories/performance_analytics_repository.dart',
     'lib/data/repositories_impl/performance_analytics_repository_impl.dart',
   ];
-  
+
   for (final file in files) {
     if (await File(file).exists()) {
       final content = await File(file).readAsString();
-      
+
       final checks = [
         'PerformanceAnalyticsRepository',
         'calculateAnalytics',
         'updateCategoryProgress',
         'recordPersonalBest',
       ];
-      
+
       for (final check in checks) {
         if (content.contains(check)) {
           print('   ✅ $check found in ${file.split('/').last}');
@@ -126,22 +126,22 @@ Future<void> verifyRepositories() async {
 
 Future<void> verifyProviders() async {
   print('\n🔌 Verifying Providers...');
-  
+
   final files = [
     'lib/app/di.g.dart',
     'lib/features/application/app_state_provider.g.dart',
   ];
-  
+
   for (final file in files) {
     if (await File(file).exists()) {
       final content = await File(file).readAsString();
-      
+
       if (file.contains('di.g.dart')) {
         final checks = [
           'performanceAnalyticsRepositoryProvider',
           'localPerformanceSourceProvider',
         ];
-        
+
         for (final check in checks) {
           if (content.contains(check)) {
             print('   ✅ $check found');
@@ -150,7 +150,7 @@ Future<void> verifyProviders() async {
           }
         }
       }
-      
+
       if (file.contains('app_state_provider.g.dart')) {
         final checks = [
           'performanceAnalyticsProvider',
@@ -159,7 +159,7 @@ Future<void> verifyProviders() async {
           'streakDataProvider',
           'initializePerformanceAnalyticsActionProvider',
         ];
-        
+
         for (final check in checks) {
           if (content.contains(check)) {
             print('   ✅ $check found');
@@ -176,12 +176,12 @@ Future<void> verifyProviders() async {
 
 Future<void> verifyUI() async {
   print('\n🎨 Verifying UI Integration...');
-  
+
   final file = 'lib/features/progress/presentation/progress_screen.dart';
-  
+
   if (await File(file).exists()) {
     final content = await File(file).readAsString();
-    
+
     final checks = [
       '_buildCategoryProgressSection',
       '_buildWeeklyStatsSection',
@@ -190,7 +190,7 @@ Future<void> verifyUI() async {
       'categoryProgressProvider',
       'weeklyStatsProvider',
     ];
-    
+
     for (final check in checks) {
       if (content.contains(check)) {
         print('   ✅ $check found');

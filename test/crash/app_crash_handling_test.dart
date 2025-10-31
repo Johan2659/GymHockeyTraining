@@ -13,7 +13,7 @@ void main() {
 
     setUpAll(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
-      
+
       // Mock all required platform channels
       const MethodChannel('plugins.flutter.io/path_provider')
           .setMockMethodCallHandler((MethodCall methodCall) async {
@@ -52,10 +52,10 @@ void main() {
             return null;
         }
       });
-      
+
       // Initialize Hive for testing
       await Hive.initFlutter();
-      
+
       // Open test boxes
       try {
         await Hive.openBox('user_profile');
@@ -78,9 +78,12 @@ void main() {
     tearDownAll(() async {
       // Clean up test boxes
       try {
-        if (Hive.isBoxOpen('user_profile')) await Hive.box('user_profile').clear();
-        if (Hive.isBoxOpen('app_settings')) await Hive.box('app_settings').clear();
-        if (Hive.isBoxOpen('progress_journal')) await Hive.box('progress_journal').clear();
+        if (Hive.isBoxOpen('user_profile'))
+          await Hive.box('user_profile').clear();
+        if (Hive.isBoxOpen('app_settings'))
+          await Hive.box('app_settings').clear();
+        if (Hive.isBoxOpen('progress_journal'))
+          await Hive.box('progress_journal').clear();
       } catch (e) {
         print('Cleanup: $e');
       }
@@ -110,7 +113,8 @@ void main() {
 
         // App should handle closed box gracefully - no crashes
         final profileAfterCrash = await prefsSource.getProfile();
-        expect(profileAfterCrash, isNull, reason: 'Should return null when box is closed, not crash');
+        expect(profileAfterCrash, isNull,
+            reason: 'Should return null when box is closed, not crash');
 
         // App should be able to save new profile after crash (graceful recovery)
         const newProfile = Profile(
@@ -128,7 +132,7 @@ void main() {
 
       test('should handle progress journal box crash gracefully', () async {
         final progressSource = LocalProgressSource();
-        
+
         // Create initial progress event
         final event = ProgressEvent(
           ts: DateTime.now(),
@@ -149,7 +153,8 @@ void main() {
 
         // App should handle closed box gracefully
         final eventsAfterCrash = await progressSource.getAllEvents();
-        expect(eventsAfterCrash, isEmpty, reason: 'Should return empty list when box is closed, not crash');
+        expect(eventsAfterCrash, isEmpty,
+            reason: 'Should return empty list when box is closed, not crash');
 
         // App should handle new event writes gracefully after crash
         final newEvent = ProgressEvent(
@@ -188,7 +193,8 @@ void main() {
 
         // App should handle closed box gracefully
         final stateAfterCrash = await prefsSource.getProgramState();
-        expect(stateAfterCrash, isNull, reason: 'Should return null when box is closed, not crash');
+        expect(stateAfterCrash, isNull,
+            reason: 'Should return null when box is closed, not crash');
 
         // App should handle state saves gracefully after crash
         const newState = ProgramState(
@@ -207,8 +213,9 @@ void main() {
     group('Provider-Level Crash Simulation', () {
       test('should handle app state provider crashes gracefully', () async {
         // Start with working app state
-        await container.read(startProgramActionProvider('crash_test_program').future);
-        
+        await container
+            .read(startProgramActionProvider('crash_test_program').future);
+
         final initialState = await container.read(programStateProvider.future);
         expect(initialState?.activeProgramId, equals('crash_test_program'));
 
@@ -225,21 +232,30 @@ void main() {
         container = ProviderContainer();
 
         // App state providers should handle storage failures gracefully
-        final stateAfterCrash = await container.read(programStateProvider.future);
-        expect(stateAfterCrash, isNull, reason: 'Should return null when storage is unavailable');
+        final stateAfterCrash =
+            await container.read(programStateProvider.future);
+        expect(stateAfterCrash, isNull,
+            reason: 'Should return null when storage is unavailable');
 
-        final profileAfterCrash = await container.read(userProfileProvider.future);
-        expect(profileAfterCrash, isNull, reason: 'Should return null when storage is unavailable');
+        final profileAfterCrash =
+            await container.read(userProfileProvider.future);
+        expect(profileAfterCrash, isNull,
+            reason: 'Should return null when storage is unavailable');
 
-        final eventsAfterCrash = await container.read(progressEventsProvider.future);
-        expect(eventsAfterCrash, isEmpty, reason: 'Should return empty list when storage is unavailable');
+        final eventsAfterCrash =
+            await container.read(progressEventsProvider.future);
+        expect(eventsAfterCrash, isEmpty,
+            reason: 'Should return empty list when storage is unavailable');
 
         // Derived providers should handle null/empty data gracefully
         final xpAfterCrash = await container.read(currentXPProvider.future);
-        expect(xpAfterCrash, equals(0), reason: 'Should return 0 XP when no data available');
+        expect(xpAfterCrash, equals(0),
+            reason: 'Should return 0 XP when no data available');
 
-        final streakAfterCrash = await container.read(currentStreakProvider.future);
-        expect(streakAfterCrash, equals(0), reason: 'Should return 0 streak when no data available');
+        final streakAfterCrash =
+            await container.read(currentStreakProvider.future);
+        expect(streakAfterCrash, equals(0),
+            reason: 'Should return 0 streak when no data available');
 
         print('✅ App state provider crash handled gracefully');
       });
@@ -254,7 +270,8 @@ void main() {
         }
 
         // App should handle closed boxes gracefully
-        final stateWithClosedBoxes = await container.read(programStateProvider.future);
+        final stateWithClosedBoxes =
+            await container.read(programStateProvider.future);
         expect(stateWithClosedBoxes, isNull);
 
         // SIMULATE RECOVERY: Reopen boxes
@@ -267,8 +284,10 @@ void main() {
         container = ProviderContainer();
 
         // App should work normally after recovery
-        await container.read(startProgramActionProvider('recovery_test').future);
-        final recoveredState = await container.read(programStateProvider.future);
+        await container
+            .read(startProgramActionProvider('recovery_test').future);
+        final recoveredState =
+            await container.read(programStateProvider.future);
         expect(recoveredState?.activeProgramId, equals('recovery_test'));
 
         print('✅ App recovery after crash handled gracefully');
@@ -287,7 +306,8 @@ void main() {
 
         // App should handle corrupted data gracefully
         final corruptedProfile = await prefsSource.getProfile();
-        expect(corruptedProfile, isNull, reason: 'Should return null for corrupted data, not crash');
+        expect(corruptedProfile, isNull,
+            reason: 'Should return null for corrupted data, not crash');
 
         // App should be able to save valid data over corrupted data
         const validProfile = Profile(
@@ -311,12 +331,14 @@ void main() {
         if (Hive.isBoxOpen('app_settings')) {
           final box = Hive.box('app_settings');
           await box.put('program_state', 12345); // Int instead of Map
-          await box.put('random_key', [1, 2, 3]); // Array instead of expected type
+          await box
+              .put('random_key', [1, 2, 3]); // Array instead of expected type
         }
 
         // App should handle type mismatches gracefully
         final wrongTypeState = await prefsSource.getProgramState();
-        expect(wrongTypeState, isNull, reason: 'Should return null for wrong data type, not crash');
+        expect(wrongTypeState, isNull,
+            reason: 'Should return null for wrong data type, not crash');
 
         // App should be able to save correct data
         const validState = ProgramState(

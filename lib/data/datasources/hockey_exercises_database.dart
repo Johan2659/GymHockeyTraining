@@ -6,11 +6,11 @@ import '../../core/models/models.dart';
 /// Contains all exercises with proper categorization and variants
 class HockeyExercisesDatabase {
   static final _logger = Logger();
-  
+
   // =============================================================================
   // STRENGTH EXERCISES
   // =============================================================================
-  
+
   static const Map<String, String> _strengthExercises = {
     // Lower Body Strength
     'back_squat': '''
@@ -99,7 +99,7 @@ class HockeyExercisesDatabase {
   "homeAltId": "stair_step_up"
 }
 ''',
-    
+
     // Posterior Chain
     'deadlift': '''
 {
@@ -151,7 +151,7 @@ class HockeyExercisesDatabase {
   "homeAltId": "hamstring_curl_towel"
 }
 ''',
-    
+
     // Upper Body Push
     'bench_press': '''
 {
@@ -216,7 +216,7 @@ class HockeyExercisesDatabase {
   "homeAltId": "pike_push_ups"
 }
 ''',
-    
+
     // Upper Body Pull
     'weighted_pull_ups': '''
 {
@@ -280,7 +280,7 @@ class HockeyExercisesDatabase {
   "homeAltId": "backpack_row"
 }
 ''',
-    
+
     // Calves
     'standing_calf_raise': '''
 {
@@ -294,7 +294,7 @@ class HockeyExercisesDatabase {
   "homeAltId": "single_leg_calf_raise"
 }
 ''',
-    
+
     // Missing Home Alternatives
     'bodyweight_squat': '''
 {
@@ -651,11 +651,11 @@ class HockeyExercisesDatabase {
 }
 ''',
   };
-  
+
   // =============================================================================
   // POWER & PLYOMETRIC EXERCISES
   // =============================================================================
-  
+
   static const Map<String, String> _powerExercises = {
     'power_clean': '''
 {
@@ -729,11 +729,11 @@ class HockeyExercisesDatabase {
 }
 ''',
   };
-  
+
   // =============================================================================
   // AGILITY & SPEED EXERCISES
   // =============================================================================
-  
+
   static const Map<String, String> _agilitySpeedExercises = {
     'skater_bounds': '''
 {
@@ -826,11 +826,11 @@ class HockeyExercisesDatabase {
 }
 ''',
   };
-  
+
   // =============================================================================
   // CORE & PREVENTION EXERCISES
   // =============================================================================
-  
+
   static const Map<String, String> _corePreventionExercises = {
     'pallof_press': '''
 {
@@ -918,11 +918,11 @@ class HockeyExercisesDatabase {
 }
 ''',
   };
-  
+
   // =============================================================================
   // CONDITIONING EXERCISES
   // =============================================================================
-  
+
   static const Map<String, String> _conditioningExercises = {
     'bike_intervals_20_40': '''
 {
@@ -1001,11 +1001,11 @@ class HockeyExercisesDatabase {
 }
 ''',
   };
-  
+
   // =============================================================================
   // WARMUP EXERCISES
   // =============================================================================
-  
+
   static const Map<String, String> _warmupExercises = {
     'dynamic_warmup_ramp': '''
 {
@@ -1053,11 +1053,11 @@ class HockeyExercisesDatabase {
 }
 ''',
   };
-  
+
   // =============================================================================
   // BONUS EXERCISES
   // =============================================================================
-  
+
   static const Map<String, String> _bonusExercises = {
     'farmer_walk': '''
 {
@@ -1101,14 +1101,14 @@ class HockeyExercisesDatabase {
   // =============================================================================
   // PUBLIC METHODS
   // =============================================================================
-  
+
   /// Gets all exercises from the database
   static Future<List<Exercise>> getAllExercises() async {
     try {
       _logger.d('HockeyExercisesDatabase: Loading all exercises');
-      
+
       final exercises = <Exercise>[];
-      
+
       // Combine all exercise maps
       final allExerciseData = <String, String>{
         ..._strengthExercises,
@@ -1119,29 +1119,29 @@ class HockeyExercisesDatabase {
         ..._warmupExercises,
         ..._bonusExercises,
       };
-      
+
       for (final entry in allExerciseData.entries) {
         final exercise = await _loadExercise(entry.key, entry.value);
         if (exercise != null) {
           exercises.add(exercise);
         }
       }
-      
-      _logger.i('HockeyExercisesDatabase: Loaded ${exercises.length} exercises');
+
+      _logger
+          .i('HockeyExercisesDatabase: Loaded ${exercises.length} exercises');
       return exercises;
-      
     } catch (e, stackTrace) {
-      _logger.e('HockeyExercisesDatabase: Failed to load exercises', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('HockeyExercisesDatabase: Failed to load exercises',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
-  
+
   /// Gets a specific exercise by ID
   static Future<Exercise?> getExerciseById(String id) async {
     try {
       _logger.d('HockeyExercisesDatabase: Loading exercise with ID: $id');
-      
+
       // Search through all exercise maps
       final allExerciseData = <String, String>{
         ..._strengthExercises,
@@ -1152,82 +1152,88 @@ class HockeyExercisesDatabase {
         ..._warmupExercises,
         ..._bonusExercises,
       };
-      
+
       final exerciseJson = allExerciseData[id];
       if (exerciseJson == null) {
         _logger.w('HockeyExercisesDatabase: Exercise not found: $id');
         return null;
       }
-      
+
       return await _loadExercise(id, exerciseJson);
-      
     } catch (e, stackTrace) {
-      _logger.e('HockeyExercisesDatabase: Failed to load exercise $id', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('HockeyExercisesDatabase: Failed to load exercise $id',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
-  
+
   /// Gets exercises by category
-  static Future<List<Exercise>> getExercisesByCategory(ExerciseCategory category) async {
+  static Future<List<Exercise>> getExercisesByCategory(
+      ExerciseCategory category) async {
     try {
-      _logger.d('HockeyExercisesDatabase: Loading exercises for category: $category');
-      
+      _logger.d(
+          'HockeyExercisesDatabase: Loading exercises for category: $category');
+
       final allExercises = await getAllExercises();
       final categoryExercises = allExercises
           .where((exercise) => exercise.category == category)
           .toList();
-      
-      _logger.d('HockeyExercisesDatabase: Found ${categoryExercises.length} exercises for category $category');
+
+      _logger.d(
+          'HockeyExercisesDatabase: Found ${categoryExercises.length} exercises for category $category');
       return categoryExercises;
-      
     } catch (e, stackTrace) {
-      _logger.e('HockeyExercisesDatabase: Failed to load exercises for category $category', 
-                error: e, stackTrace: stackTrace);
+      _logger.e(
+          'HockeyExercisesDatabase: Failed to load exercises for category $category',
+          error: e,
+          stackTrace: stackTrace);
       return [];
     }
   }
-  
+
   /// Searches exercises by query
   static Future<List<Exercise>> searchExercises(String query) async {
     try {
-      _logger.d('HockeyExercisesDatabase: Searching exercises with query: $query');
-      
+      _logger
+          .d('HockeyExercisesDatabase: Searching exercises with query: $query');
+
       final allExercises = await getAllExercises();
       final lowercaseQuery = query.toLowerCase();
-      
+
       final searchResults = allExercises
           .where((exercise) =>
               exercise.name.toLowerCase().contains(lowercaseQuery) ||
               exercise.category.name.toLowerCase().contains(lowercaseQuery))
           .toList();
-      
-      _logger.d('HockeyExercisesDatabase: Found ${searchResults.length} exercises matching query');
+
+      _logger.d(
+          'HockeyExercisesDatabase: Found ${searchResults.length} exercises matching query');
       return searchResults;
-      
     } catch (e, stackTrace) {
-      _logger.e('HockeyExercisesDatabase: Failed to search exercises', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('HockeyExercisesDatabase: Failed to search exercises',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
-  
+
   // =============================================================================
   // PRIVATE METHODS
   // =============================================================================
-  
+
   /// Loads an exercise from JSON string
   static Future<Exercise?> _loadExercise(String id, String jsonString) async {
     try {
       final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
       final exercise = Exercise.fromJson(jsonData);
-      
-      _logger.d('HockeyExercisesDatabase: Successfully loaded exercise: ${exercise.name}');
+
+      _logger.d(
+          'HockeyExercisesDatabase: Successfully loaded exercise: ${exercise.name}');
       return exercise;
-      
     } catch (e, stackTrace) {
-      _logger.e('HockeyExercisesDatabase: Failed to parse exercise JSON for $id', 
-                error: e, stackTrace: stackTrace);
+      _logger.e(
+          'HockeyExercisesDatabase: Failed to parse exercise JSON for $id',
+          error: e,
+          stackTrace: stackTrace);
       return null;
     }
   }

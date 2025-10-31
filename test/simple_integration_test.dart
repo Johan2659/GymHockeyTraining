@@ -8,7 +8,7 @@ void main() {
     expect(ExerciseCategory.values.length, 8);
     expect(ExerciseCategory.strength.name, 'strength');
     expect(ExerciseCategory.power.name, 'power');
-    
+
     // Test 2: Create a complete analytics object
     final analytics = PerformanceAnalytics(
       categoryProgress: <ExerciseCategory, double>{
@@ -56,13 +56,13 @@ void main() {
       ],
       lastUpdated: DateTime(2025, 9, 10, 15, 30),
     );
-    
+
     // Test 3: JSON serialization works
     final json = analytics.toJson();
     expect(json, isA<Map<String, dynamic>>());
     expect(json['categoryProgress'], isA<Map>());
     expect(json['weeklyStats'], isA<Map>());
-    
+
     // Test 4: JSON deserialization works
     final restored = PerformanceAnalytics.fromJson(json);
     expect(restored.categoryProgress[ExerciseCategory.strength], 0.75);
@@ -70,12 +70,14 @@ void main() {
     expect(restored.streakData.currentStreak, 5);
     expect(restored.personalBests['squat']?.bestValue, 100.0);
     expect(restored.intensityTrends.length, 1);
-    
+
     print('✅ All performance analytics tests passed!');
-    print('📊 Category Progress: ${restored.categoryProgress.length} categories');
+    print(
+        '📊 Category Progress: ${restored.categoryProgress.length} categories');
     print('📈 Weekly Stats: ${restored.weeklyStats.totalSessions} sessions');
     print('🔥 Streak: ${restored.streakData.currentStreak} days');
     print('🏆 Personal Bests: ${restored.personalBests.length} records');
-    print('📊 Intensity Trends: ${restored.intensityTrends.length} data points');
+    print(
+        '📊 Intensity Trends: ${restored.intensityTrends.length} data points');
   });
 }

@@ -21,6 +21,9 @@ class HiveBoxes {
   /// Migration metadata and schema versioning
   static const String migrations = 'migration_metadata';
 
+  /// Exercise performance data storage
+  static const String exercisePerformance = 'exercise_performance';
+
   /// All box names for bulk operations
   static const List<String> allBoxes = [
     main,
@@ -29,5 +32,6 @@ class HiveBoxes {
     progress,
     training,
     migrations,
+    exercisePerformance,
   ];
 }

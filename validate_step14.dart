@@ -12,9 +12,9 @@ import 'dart:io';
 void main() async {
   print('🚀 Step 14 - Security & Testing Validation');
   print('============================================\n');
-  
+
   bool allRequirementsMet = true;
-  
+
   // Requirement 1: All tests pass locally
   print('📋 Requirement 1: All tests pass locally');
   final testResult = await Process.run('flutter', ['test']);
@@ -27,7 +27,7 @@ void main() async {
     allRequirementsMet = false;
   }
   print('');
-  
+
   // Requirement 2: Coverage report >80%
   print('📋 Requirement 2: Coverage report >80%');
   final coverageResult = await Process.run('flutter', ['test', '--coverage']);
@@ -47,7 +47,7 @@ void main() async {
     allRequirementsMet = false;
   }
   print('');
-  
+
   // Requirement 3: Key not accessible via logs or files
   print('📋 Requirement 3: Key not accessible via logs or files');
   // This is verified by our security tests
@@ -56,7 +56,7 @@ void main() async {
   print('   - No key exposure in logs');
   print('   - No plaintext key in files');
   print('');
-  
+
   // Requirement 4: Simulated crash handled gracefully
   print('📋 Requirement 4: Simulated crash handled gracefully');
   // This is verified by our crash handling tests
@@ -65,7 +65,7 @@ void main() async {
   print('   - Graceful degradation');
   print('   - No app crashes');
   print('');
-  
+
   // Final result
   if (allRequirementsMet) {
     print('🎉 SUCCESS: All Step 14 requirements met!');

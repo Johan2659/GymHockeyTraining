@@ -335,5 +335,27 @@ final performanceAnalyticsRepositoryProvider =
 // ignore: unused_element
 typedef PerformanceAnalyticsRepositoryRef
     = AutoDisposeProviderRef<PerformanceAnalyticsRepository>;
+String _$exercisePerformanceRepositoryHash() =>
+    r'9a08e18f87e1ee952412b299b264c0dc5b988710';
+
+/// Provider for exercise performance repository
+///
+/// Copied from [exercisePerformanceRepository].
+@ProviderFor(exercisePerformanceRepository)
+final exercisePerformanceRepositoryProvider =
+    AutoDisposeProvider<ExercisePerformanceRepository>.internal(
+  exercisePerformanceRepository,
+  name: r'exercisePerformanceRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$exercisePerformanceRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ExercisePerformanceRepositoryRef
+    = AutoDisposeProviderRef<ExercisePerformanceRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

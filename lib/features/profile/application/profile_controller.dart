@@ -48,15 +48,17 @@ class ProfileController extends _$ProfileController {
   /// Exports all logs to a JSON file
   Future<String?> exportLogs() async {
     try {
-      LoggerService.instance.info('Starting log export', source: 'ProfileController');
-      
+      LoggerService.instance
+          .info('Starting log export', source: 'ProfileController');
+
       // Export using LoggerService
       await LoggerService.instance.exportLogs();
-      
+
       // Also include progress events in a separate file for comprehensive export
       final progressRepo = ref.read(progressRepositoryProvider);
-      final events = await progressRepo.getRecent(limit: 1000); // Get all events with high limit
-      
+      final events = await progressRepo.getRecent(
+          limit: 1000); // Get all events with high limit
+
       // Create export data structure for progress events
       final exportData = {
         'export_timestamp': DateTime.now().toIso8601String(),
@@ -64,27 +66,26 @@ class ProfileController extends _$ProfileController {
         'total_events': events.length,
         'events': events.map((event) => event.toJson()).toList(),
       };
-      
+
       // Convert to JSON
       final jsonString = const JsonEncoder.withIndent('  ').convert(exportData);
-      
+
       // Get documents directory
       final directory = await getApplicationDocumentsDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'hockey_gym_progress_$timestamp.json';
       final file = File('${directory.path}/$fileName');
-      
+
       // Write file
       await file.writeAsString(jsonString);
-      
-      LoggerService.instance.info('Logs exported successfully', 
-        source: 'ProfileController', metadata: {'fileName': fileName});
+
+      LoggerService.instance.info('Logs exported successfully',
+          source: 'ProfileController', metadata: {'fileName': fileName});
       PersistenceService.logStateChange('Logs exported to $fileName');
       return file.path;
-      
     } catch (e, stackTrace) {
-      LoggerService.instance.error('Failed to export logs', 
-        source: 'ProfileController', error: e, stackTrace: stackTrace);
+      LoggerService.instance.error('Failed to export logs',
+          source: 'ProfileController', error: e, stackTrace: stackTrace);
       if (kDebugMode) {
         print('Error exporting logs: $e');
       }
@@ -98,7 +99,7 @@ class ProfileController extends _$ProfileController {
       // Clear all Hive boxes
       final boxNames = HiveBoxes.allBoxes;
       bool allSuccess = true;
-      
+
       for (final boxName in boxNames) {
         try {
           final success = await LocalKVStore.clear(boxName);
@@ -112,14 +113,14 @@ class ProfileController extends _$ProfileController {
           allSuccess = false;
         }
       }
-      
+
       // Also clear via PersistenceService to handle fallbacks
       await PersistenceService.clearAll();
-      
+
       if (allSuccess) {
         PersistenceService.logStateChange('Account deleted - all data wiped');
       }
-      
+
       return allSuccess;
     } catch (e) {
       if (kDebugMode) {

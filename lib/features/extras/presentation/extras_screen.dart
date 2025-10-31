@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
 import '../../application/app_state_provider.dart';
 
@@ -13,8 +14,8 @@ class ExtrasScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Extras'),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
+        backgroundColor: AppTheme.surfaceColor,
+        foregroundColor: AppTheme.onSurfaceColor,
       ),
       body: const SingleChildScrollView(
         padding: EdgeInsets.all(16),
@@ -28,11 +29,11 @@ class ExtrasScreen extends ConsumerWidget {
             ),
             SizedBox(height: 24),
             _ExpressWorkoutsSection(),
-            SizedBox(height: 32),
+            SizedBox(height: 24),
             _BonusChallengesSection(),
-            SizedBox(height: 32),
+            SizedBox(height: 24),
             _MobilityRecoverySection(),
-            SizedBox(height: 32),
+            SizedBox(height: 24),
           ],
         ),
       ),
@@ -60,15 +61,17 @@ class _SectionHeader extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 32,
-              color: Theme.of(context).colorScheme.primary,
+              size: 28,
+              color: AppTheme.primaryColor,
             ),
             const SizedBox(width: 12),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
+            Flexible(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                softWrap: true,
               ),
             ),
           ],
@@ -76,9 +79,9 @@ class _SectionHeader extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           subtitle,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[400],
+              ),
         ),
       ],
     );
@@ -160,36 +163,33 @@ class _ExtrasSection extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 28,
+              size: 20,
               color: iconColor,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+                softWrap: true,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey[400],
+              ),
+        ),
+        const SizedBox(height: 12),
         extrasAsync.when(
           loading: () => const Center(
             child: Padding(
-              padding: EdgeInsets.all(32),
+              padding: EdgeInsets.all(24),
               child: CircularProgressIndicator(),
             ),
           ),
@@ -198,10 +198,10 @@ class _ExtrasSection extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.error_outline,
                     size: 48,
-                    color: Theme.of(context).colorScheme.error,
+                    color: Colors.red,
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -212,8 +212,8 @@ class _ExtrasSection extends StatelessWidget {
                   Text(
                     error.toString(),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                          color: Colors.grey[400],
+                        ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -221,9 +221,7 @@ class _ExtrasSection extends StatelessWidget {
             ),
           ),
           data: (extras) => Column(
-            children: extras
-                .map((extra) => _ExtraCard(extra: extra))
-                .toList(),
+            children: extras.map((extra) => _ExtraCard(extra: extra)).toList(),
           ),
         ),
       ],
@@ -257,16 +255,22 @@ class _ExtraCard extends StatelessWidget {
                       children: [
                         Text(
                           extra.title,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                          softWrap: true,
                         ),
                         const SizedBox(height: 4),
                         Text(
                           extra.description,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[400],
+                                  ),
+                          softWrap: true,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -276,15 +280,17 @@ class _ExtraCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                          color: AppTheme.accentColor.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           '+${extra.xpReward} XP',
-                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
+                          style: const TextStyle(
+                            color: AppTheme.accentColor,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -292,15 +298,18 @@ class _ExtraCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       if (extra.difficulty != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: _getDifficultyColor(extra.difficulty!).withOpacity(0.1),
+                            color: _getDifficultyColor(extra.difficulty!)
+                                .withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             extra.difficulty!.toUpperCase(),
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            style: TextStyle(
                               color: _getDifficultyColor(extra.difficulty!),
+                              fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -315,33 +324,36 @@ class _ExtraCard extends StatelessWidget {
                   Icon(
                     Icons.schedule,
                     size: 16,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: Colors.grey[400],
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '${extra.duration} min',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                          color: Colors.grey[400],
+                        ),
                   ),
                   const SizedBox(width: 16),
                   Icon(
                     Icons.fitness_center,
                     size: 16,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: Colors.grey[400],
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    '${extra.blocks.length} exercises',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  Flexible(
+                    child: Text(
+                      '${extra.blocks.length} exercises',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[400],
+                          ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 8),
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: AppTheme.primaryColor,
                   ),
                 ],
               ),

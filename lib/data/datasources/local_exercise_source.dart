@@ -13,8 +13,8 @@ class LocalExerciseSource {
       _logger.d('LocalExerciseSource: Loading all exercises from database');
       return await HockeyExercisesDatabase.getAllExercises();
     } catch (e, stackTrace) {
-      _logger.e('LocalExerciseSource: Failed to load exercises', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('LocalExerciseSource: Failed to load exercises',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
@@ -25,8 +25,8 @@ class LocalExerciseSource {
       _logger.d('LocalExerciseSource: Loading exercise with ID: $id');
       return await HockeyExercisesDatabase.getExerciseById(id);
     } catch (e, stackTrace) {
-      _logger.e('LocalExerciseSource: Failed to load exercise $id', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('LocalExerciseSource: Failed to load exercise $id',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -34,18 +34,21 @@ class LocalExerciseSource {
   /// Gets exercises by category
   Future<List<Exercise>> getExercisesByCategory(String category) async {
     try {
-      _logger.d('LocalExerciseSource: Loading exercises for category: $category');
-      
+      _logger
+          .d('LocalExerciseSource: Loading exercises for category: $category');
+
       // Convert string to enum
       final categoryEnum = ExerciseCategory.values.firstWhere(
         (cat) => cat.name.toLowerCase() == category.toLowerCase(),
         orElse: () => ExerciseCategory.strength,
       );
-      
+
       return await HockeyExercisesDatabase.getExercisesByCategory(categoryEnum);
     } catch (e, stackTrace) {
-      _logger.e('LocalExerciseSource: Failed to load exercises for category $category', 
-                error: e, stackTrace: stackTrace);
+      _logger.e(
+          'LocalExerciseSource: Failed to load exercises for category $category',
+          error: e,
+          stackTrace: stackTrace);
       return [];
     }
   }
@@ -56,8 +59,8 @@ class LocalExerciseSource {
       _logger.d('LocalExerciseSource: Searching exercises with query: $query');
       return await HockeyExercisesDatabase.searchExercises(query);
     } catch (e, stackTrace) {
-      _logger.e('LocalExerciseSource: Failed to search exercises', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('LocalExerciseSource: Failed to search exercises',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }

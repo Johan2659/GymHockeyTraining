@@ -48,10 +48,10 @@ void main() {
         );
 
         final prefsSource = LocalPrefsSource();
-        
+
         try {
           await prefsSource.saveProfile(profile);
-          
+
           // Verify it works initially
           final initialProfile = await prefsSource.getProfile();
           expect(initialProfile?.role, equals(UserRole.attacker));
@@ -97,7 +97,7 @@ void main() {
         );
 
         final progressSource = LocalProgressSource();
-        
+
         try {
           // Initially should work
           await progressSource.appendEvent(event);
@@ -143,7 +143,7 @@ void main() {
         );
 
         final prefsSource = LocalPrefsSource();
-        
+
         // Initially should work
         await prefsSource.saveProgramState(programState);
         final initialState = await prefsSource.getProgramState();
@@ -174,13 +174,17 @@ void main() {
       test('should handle app state provider when storage fails', () async {
         // Start with working state
         await container.read(startProgramActionProvider('test_program').future);
-        
+
         // Verify initial state
         final initialState = await container.read(programStateProvider.future);
         expect(initialState?.activeProgramId, equals('test_program'));
 
         // Close all Hive boxes to simulate storage failure
-        for (final boxName in ['user_profile', 'app_settings', 'progress_journal']) {
+        for (final boxName in [
+          'user_profile',
+          'app_settings',
+          'progress_journal'
+        ]) {
           if (Hive.isBoxOpen(boxName)) {
             await Hive.box(boxName).close();
           }
@@ -188,18 +192,30 @@ void main() {
 
         // App state should handle storage failures gracefully
         // These operations should not crash the app
-        expect(() => container.read(programStateProvider.future), returnsNormally);
-        expect(() => container.read(userProfileProvider.future), returnsNormally);
-        expect(() => container.read(progressEventsProvider.future), returnsNormally);
+        expect(
+            () => container.read(programStateProvider.future), returnsNormally);
+        expect(
+            () => container.read(userProfileProvider.future), returnsNormally);
+        expect(() => container.read(progressEventsProvider.future),
+            returnsNormally);
 
         // Actions should also handle failures gracefully
-        expect(() => container.read(markExerciseDoneActionProvider('exercise1').future), returnsNormally);
-        expect(() => container.read(completeSessionActionProvider.future), returnsNormally);
+        expect(
+            () => container
+                .read(markExerciseDoneActionProvider('exercise1').future),
+            returnsNormally);
+        expect(() => container.read(completeSessionActionProvider.future),
+            returnsNormally);
       });
 
-      test('should provide fallback values when storage is unavailable', () async {
+      test('should provide fallback values when storage is unavailable',
+          () async {
         // Close all boxes first
-        for (final boxName in ['user_profile', 'app_settings', 'progress_journal']) {
+        for (final boxName in [
+          'user_profile',
+          'app_settings',
+          'progress_journal'
+        ]) {
           if (Hive.isBoxOpen(boxName)) {
             await Hive.box(boxName).close();
           }
@@ -230,7 +246,11 @@ void main() {
     group('Recovery Scenarios', () {
       test('should recover gracefully when boxes are reopened', () async {
         // Start with closed boxes
-        for (final boxName in ['user_profile', 'app_settings', 'progress_journal']) {
+        for (final boxName in [
+          'user_profile',
+          'app_settings',
+          'progress_journal'
+        ]) {
           if (Hive.isBoxOpen(boxName)) {
             await Hive.box(boxName).close();
           }
@@ -254,8 +274,10 @@ void main() {
         container = ProviderContainer();
 
         // Should now work normally
-        await container.read(startProgramActionProvider('recovered_program').future);
-        final recoveredState = await container.read(programStateProvider.future);
+        await container
+            .read(startProgramActionProvider('recovered_program').future);
+        final recoveredState =
+            await container.read(programStateProvider.future);
         expect(recoveredState?.activeProgramId, equals('recovered_program'));
       });
 
@@ -266,8 +288,9 @@ void main() {
         }
 
         // Start a program (this should work since app_settings box is open)
-        await container.read(startProgramActionProvider('partial_failure_test').future);
-        
+        await container
+            .read(startProgramActionProvider('partial_failure_test').future);
+
         final state = await container.read(programStateProvider.future);
         expect(state?.activeProgramId, equals('partial_failure_test'));
 
@@ -276,7 +299,10 @@ void main() {
         expect(events, isEmpty); // Should return empty, not crash
 
         // Exercise completion should not crash even if event logging fails
-        expect(() => container.read(markExerciseDoneActionProvider('exercise1').future), returnsNormally);
+        expect(
+            () => container
+                .read(markExerciseDoneActionProvider('exercise1').future),
+            returnsNormally);
       });
     });
 
@@ -284,9 +310,9 @@ void main() {
       test('should handle corrupted box data gracefully', () async {
         // This test simulates what happens when Hive data is corrupted
         // In real scenarios, this would be handled by Hive itself, but we test our error handling
-        
+
         final prefsSource = LocalPrefsSource();
-        
+
         // Manually put invalid data that could cause parsing errors
         if (Hive.isBoxOpen('user_profile')) {
           final box = Hive.box('user_profile');
@@ -295,7 +321,8 @@ void main() {
 
         // Should handle parsing errors gracefully
         final profile = await prefsSource.getProfile();
-        expect(profile, isNull); // Should return null for corrupted data, not crash
+        expect(profile,
+            isNull); // Should return null for corrupted data, not crash
 
         // Should be able to overwrite corrupted data
         const validProfile = Profile(
@@ -317,7 +344,8 @@ void main() {
         if (Hive.isBoxOpen('app_settings')) {
           final box = Hive.box('app_settings');
           await box.put('program_state', 12345); // Should be Map, not int
-          await box.put('some_other_key', [1, 2, 3]); // List instead of expected type
+          await box.put(
+              'some_other_key', [1, 2, 3]); // List instead of expected type
         }
 
         // Should handle type mismatches gracefully

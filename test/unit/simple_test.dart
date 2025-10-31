@@ -13,7 +13,7 @@ void main() {
         currentSession: 0,
         completedExerciseIds: [],
       );
-      
+
       expect(state.activeProgramId, equals('test'));
       expect(state.currentWeek, equals(0));
     });
@@ -26,7 +26,7 @@ void main() {
         week: 0,
         session: 0,
       );
-      
+
       expect(event.programId, equals('test'));
       expect(event.type, equals(ProgressEventType.sessionStarted));
     });

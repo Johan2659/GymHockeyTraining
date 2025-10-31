@@ -65,10 +65,13 @@ void main() {
         final deserializedState = ProgramState.fromJson(json);
 
         // Assert
-        expect(deserializedState.activeProgramId, equals(programState.activeProgramId));
+        expect(deserializedState.activeProgramId,
+            equals(programState.activeProgramId));
         expect(deserializedState.currentWeek, equals(programState.currentWeek));
-        expect(deserializedState.currentSession, equals(programState.currentSession));
-        expect(deserializedState.completedExerciseIds, equals(programState.completedExerciseIds));
+        expect(deserializedState.currentSession,
+            equals(programState.currentSession));
+        expect(deserializedState.completedExerciseIds,
+            equals(programState.completedExerciseIds));
       });
 
       test('should handle empty completed exercises list', () {
@@ -148,7 +151,9 @@ void main() {
         expect(deserializedEvent.session, equals(event.session));
       });
 
-      test('should serialize and deserialize exerciseDone event with exerciseId', () {
+      test(
+          'should serialize and deserialize exerciseDone event with exerciseId',
+          () {
         // Arrange
         final event = ProgressEvent(
           ts: DateTime(2025, 8, 31, 12, 30, 0),
@@ -232,7 +237,8 @@ void main() {
         expect(deserializedProgram.role, equals(program.role));
         expect(deserializedProgram.weeks.length, equals(1));
         expect(deserializedProgram.weeks[0].sessions.length, equals(2));
-        expect(deserializedProgram.weeks[0].sessions, equals(['session_1', 'session_2']));
+        expect(deserializedProgram.weeks[0].sessions,
+            equals(['session_1', 'session_2']));
       });
 
       test('should handle empty weeks list', () {
@@ -275,7 +281,8 @@ void main() {
         expect(deserializedSession.title, equals(session.title));
         expect(deserializedSession.blocks.length, equals(2));
         expect(deserializedSession.blocks[0].exerciseId, equals('exercise_1'));
-        expect(deserializedSession.bonusChallenge, equals(session.bonusChallenge));
+        expect(
+            deserializedSession.bonusChallenge, equals(session.bonusChallenge));
       });
 
       test('should handle empty blocks list', () {
@@ -319,7 +326,8 @@ void main() {
         expect(deserializedExercise.reps, equals(exercise.reps));
         expect(deserializedExercise.duration, equals(exercise.duration));
         expect(deserializedExercise.rest, equals(exercise.rest));
-        expect(deserializedExercise.youtubeQuery, equals(exercise.youtubeQuery));
+        expect(
+            deserializedExercise.youtubeQuery, equals(exercise.youtubeQuery));
       });
 
       test('should handle optional fields', () {

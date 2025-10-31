@@ -14,11 +14,13 @@ void main() {
       test('should return valid attacker program (not empty)', () async {
         // Test: Get all programs
         final allPrograms = await repository.getAll();
-        expect(allPrograms, isNotEmpty, reason: 'Should have at least one program');
+        expect(allPrograms, isNotEmpty,
+            reason: 'Should have at least one program');
 
         // Test: Get programs by attacker role
         final attackerPrograms = await repository.listByRole(UserRole.attacker);
-        expect(attackerPrograms, isNotEmpty, reason: 'Should have attacker programs');
+        expect(attackerPrograms, isNotEmpty,
+            reason: 'Should have attacker programs');
 
         // Test: Verify program structure
         final program = attackerPrograms.first;
@@ -29,11 +31,12 @@ void main() {
 
         // Test: Verify weeks structure
         expect(program.weeks.length, equals(2), reason: 'Should have 2 weeks');
-        
+
         final week1 = program.weeks.first;
         expect(week1.index, equals(1));
         expect(week1.sessions, isNotEmpty, reason: 'Week should have sessions');
-        expect(week1.sessions.length, equals(3), reason: 'Week should have 3 sessions');
+        expect(week1.sessions.length, equals(3),
+            reason: 'Week should have 3 sessions');
 
         print('✅ Program verification passed:');
         print('  - Program ID: ${program.id}');
@@ -55,7 +58,8 @@ void main() {
 
       test('should handle non-existent program ID', () async {
         final program = await repository.getById('non_existent_program');
-        expect(program, isNull, reason: 'Should return null for non-existent program');
+        expect(program, isNull,
+            reason: 'Should return null for non-existent program');
 
         print('✅ Non-existent program handling verified');
       });
@@ -91,24 +95,26 @@ void main() {
 
         // Test: Append event
         final appendSuccess = await repository.appendEvent(testEvent);
-        expect(appendSuccess, isTrue, reason: 'Should successfully append event');
+        expect(appendSuccess, isTrue,
+            reason: 'Should successfully append event');
 
         // Wait for stream update
         await Future.delayed(const Duration(milliseconds: 200));
 
         // Test: Verify stream emitted updates
         expect(streamEvents, isNotEmpty, reason: 'Stream should emit events');
-        
+
         // Get recent events to verify
         final recentEvents = await repository.getRecent(limit: 10);
         expect(recentEvents, isNotEmpty, reason: 'Should have recent events');
-        
+
         final addedEvent = recentEvents.firstWhere(
-          (event) => event.programId == testEvent.programId && 
-                     event.type == testEvent.type,
+          (event) =>
+              event.programId == testEvent.programId &&
+              event.type == testEvent.type,
           orElse: () => throw StateError('Event not found'),
         );
-        
+
         expect(addedEvent.programId, equals(testEvent.programId));
         expect(addedEvent.type, equals(testEvent.type));
         expect(addedEvent.week, equals(testEvent.week));
@@ -147,8 +153,10 @@ void main() {
         }
 
         // Test: Get events by program
-        final programEvents = await repository.getByProgram('hockey_attacker_v1');
-        expect(programEvents, isNotEmpty, reason: 'Should have events for program');
+        final programEvents =
+            await repository.getByProgram('hockey_attacker_v1');
+        expect(programEvents, isNotEmpty,
+            reason: 'Should have events for program');
 
         print('✅ Get events by program verification passed:');
         print('  - Events for program: ${programEvents.length}');
@@ -185,7 +193,8 @@ void main() {
         expect(savedState!.activeProgramId, equals(testState.activeProgramId));
         expect(savedState.currentWeek, equals(testState.currentWeek));
         expect(savedState.currentSession, equals(testState.currentSession));
-        expect(savedState.completedExerciseIds, equals(testState.completedExerciseIds));
+        expect(savedState.completedExerciseIds,
+            equals(testState.completedExerciseIds));
         expect(savedState.pausedAt, equals(testState.pausedAt));
 
         print('✅ Program state read/write verification passed:');
@@ -193,7 +202,8 @@ void main() {
         print('  - Active program: ${savedState.activeProgramId}');
         print('  - Current week: ${savedState.currentWeek}');
         print('  - Current session: ${savedState.currentSession}');
-        print('  - Completed exercises: ${savedState.completedExerciseIds.length}');
+        print(
+            '  - Completed exercises: ${savedState.completedExerciseIds.length}');
       });
 
       test('should update specific state fields', () async {
@@ -209,42 +219,49 @@ void main() {
 
         // Test: Update current week
         final weekUpdateSuccess = await repository.updateCurrentWeek(2);
-        expect(weekUpdateSuccess, isTrue, reason: 'Should update week successfully');
+        expect(weekUpdateSuccess, isTrue,
+            reason: 'Should update week successfully');
 
         final stateAfterWeekUpdate = await repository.get();
         expect(stateAfterWeekUpdate!.currentWeek, equals(2));
 
         // Test: Update current session
         final sessionUpdateSuccess = await repository.updateCurrentSession(3);
-        expect(sessionUpdateSuccess, isTrue, reason: 'Should update session successfully');
+        expect(sessionUpdateSuccess, isTrue,
+            reason: 'Should update session successfully');
 
         final stateAfterSessionUpdate = await repository.get();
         expect(stateAfterSessionUpdate!.currentSession, equals(3));
 
         // Test: Add completed exercise
-        final addExerciseSuccess = await repository.addCompletedExercise('test_exercise_1');
-        expect(addExerciseSuccess, isTrue, reason: 'Should add exercise successfully');
+        final addExerciseSuccess =
+            await repository.addCompletedExercise('test_exercise_1');
+        expect(addExerciseSuccess, isTrue,
+            reason: 'Should add exercise successfully');
 
         final stateAfterAddExercise = await repository.get();
-        expect(stateAfterAddExercise!.completedExerciseIds, contains('test_exercise_1'));
+        expect(stateAfterAddExercise!.completedExerciseIds,
+            contains('test_exercise_1'));
 
         // Test: Pause program
         final pauseSuccess = await repository.pauseProgram();
-        expect(pauseSuccess, isTrue, reason: 'Should pause program successfully');
+        expect(pauseSuccess, isTrue,
+            reason: 'Should pause program successfully');
 
         final stateAfterPause = await repository.get();
         expect(stateAfterPause!.pausedAt, isNotNull);
 
         // Test: Resume program
         final resumeSuccess = await repository.resumeProgram();
-        expect(resumeSuccess, isTrue, reason: 'Should resume program successfully');
+        expect(resumeSuccess, isTrue,
+            reason: 'Should resume program successfully');
 
         final stateAfterResume = await repository.get();
         expect(stateAfterResume!.pausedAt, isNull);
 
         print('✅ Program state updates verification passed:');
         print('  - Week update: $weekUpdateSuccess');
-        print('  - Session update: $sessionUpdateSuccess'); 
+        print('  - Session update: $sessionUpdateSuccess');
         print('  - Add exercise: $addExerciseSuccess');
         print('  - Pause: $pauseSuccess');
         print('  - Resume: $resumeSuccess');

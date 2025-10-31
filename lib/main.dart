@@ -26,41 +26,41 @@ final logger = Logger(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   try {
     logger.i('🏒 Starting Hockey Gym App...');
-    
+
     // Initialize Hive with encryption
     await _initializeHive();
-    
+
     // Initialize LoggerService for centralized logging
     await LoggerService.instance.initialize();
-    LoggerService.instance.info('LoggerService initialized successfully', source: 'main');
-    
+    LoggerService.instance
+        .info('LoggerService initialized successfully', source: 'main');
+
     // Initialize persistence service with schema versioning and fallback
     await PersistenceService.initialize();
-    
+
     // Debug: Check what data exists on startup
     await PersistenceDebugger.debugStoredData();
-    
+
     // Run migrations
     await MigrationService.ensureMigrations();
-    
+
     logger.i('✅ App initialization complete');
     LoggerService.instance.info('App initialization complete', source: 'main');
-    
+
     runApp(
       const ProviderScope(
         child: HockeyGymApp(),
       ),
     );
-    
   } catch (e, stackTrace) {
     logger.f('💥 Failed to initialize app', error: e, stackTrace: stackTrace);
     // Try to log with LoggerService if it's initialized
     try {
-      LoggerService.instance.error('App initialization failed', 
-        source: 'main', error: e, stackTrace: stackTrace);
+      LoggerService.instance.error('App initialization failed',
+          source: 'main', error: e, stackTrace: stackTrace);
     } catch (_) {
       // LoggerService not available, continue with regular logger
     }
@@ -72,20 +72,20 @@ void main() async {
 Future<void> _initializeHive() async {
   try {
     logger.i('🔐 Initializing encrypted Hive storage...');
-    
+
     // Initialize Hive
     final appDocumentDir = await getApplicationDocumentsDirectory();
     await Hive.initFlutter(appDocumentDir.path);
     logger.d('📂 Hive initialized at: ${appDocumentDir.path}');
-    
+
     // Get or create encryption key
     final encryptionKey = await SecureKeyService.getOrCreateEncryptionKey();
     final cipher = HiveAesCipher(encryptionKey);
     logger.d('🔑 Encryption key ready');
-    
+
     // Open all encrypted boxes
     logger.i('📦 Opening encrypted Hive boxes...');
-    
+
     final boxOpenFutures = HiveBoxes.allBoxes.map((boxName) async {
       try {
         await Hive.openBox(
@@ -98,12 +98,11 @@ Future<void> _initializeHive() async {
         rethrow;
       }
     });
-    
+
     // Wait for all boxes to open
     await Future.wait(boxOpenFutures);
-    
+
     logger.i('🎯 All Hive boxes opened successfully');
-    
   } catch (e, stackTrace) {
     logger.e('💥 Failed to initialize Hive', error: e, stackTrace: stackTrace);
     rethrow;

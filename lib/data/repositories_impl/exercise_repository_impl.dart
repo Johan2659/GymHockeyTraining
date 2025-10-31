@@ -16,20 +16,19 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
   Future<Exercise?> getById(String id) async {
     try {
       _logger.d('ExerciseRepositoryImpl: Getting exercise by ID: $id');
-      
+
       final exercise = await _localSource.getExerciseById(id);
-      
+
       if (exercise != null) {
         _logger.i('ExerciseRepositoryImpl: Found exercise: ${exercise.name}');
       } else {
         _logger.w('ExerciseRepositoryImpl: Exercise not found: $id');
       }
-      
+
       return exercise;
-      
     } catch (e, stackTrace) {
-      _logger.e('ExerciseRepositoryImpl: Failed to get exercise $id', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('ExerciseRepositoryImpl: Failed to get exercise $id',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -37,16 +36,19 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
   @override
   Future<List<Exercise>> getByCategory(String category) async {
     try {
-      _logger.d('ExerciseRepositoryImpl: Getting exercises for category: $category');
-      
+      _logger.d(
+          'ExerciseRepositoryImpl: Getting exercises for category: $category');
+
       final exercises = await _localSource.getExercisesByCategory(category);
-      
-      _logger.i('ExerciseRepositoryImpl: Found ${exercises.length} exercises for category $category');
+
+      _logger.i(
+          'ExerciseRepositoryImpl: Found ${exercises.length} exercises for category $category');
       return exercises;
-      
     } catch (e, stackTrace) {
-      _logger.e('ExerciseRepositoryImpl: Failed to get exercises for category $category', 
-                error: e, stackTrace: stackTrace);
+      _logger.e(
+          'ExerciseRepositoryImpl: Failed to get exercises for category $category',
+          error: e,
+          stackTrace: stackTrace);
       return [];
     }
   }
@@ -55,15 +57,15 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
   Future<List<Exercise>> getAll() async {
     try {
       _logger.d('ExerciseRepositoryImpl: Getting all exercises');
-      
+
       final exercises = await _localSource.getAllExercises();
-      
-      _logger.i('ExerciseRepositoryImpl: Found ${exercises.length} total exercises');
+
+      _logger.i(
+          'ExerciseRepositoryImpl: Found ${exercises.length} total exercises');
       return exercises;
-      
     } catch (e, stackTrace) {
-      _logger.e('ExerciseRepositoryImpl: Failed to get all exercises', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('ExerciseRepositoryImpl: Failed to get all exercises',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
@@ -71,16 +73,17 @@ class ExerciseRepositoryImpl implements ExerciseRepository {
   @override
   Future<List<Exercise>> search(String query) async {
     try {
-      _logger.d('ExerciseRepositoryImpl: Searching exercises with query: $query');
-      
+      _logger
+          .d('ExerciseRepositoryImpl: Searching exercises with query: $query');
+
       final exercises = await _localSource.searchExercises(query);
-      
-      _logger.i('ExerciseRepositoryImpl: Found ${exercises.length} exercises matching query');
+
+      _logger.i(
+          'ExerciseRepositoryImpl: Found ${exercises.length} exercises matching query');
       return exercises;
-      
     } catch (e, stackTrace) {
-      _logger.e('ExerciseRepositoryImpl: Failed to search exercises', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('ExerciseRepositoryImpl: Failed to search exercises',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }

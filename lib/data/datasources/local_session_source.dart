@@ -7,7 +7,7 @@ import 'attacker_program_data.dart';
 /// Provides session definitions and exercise blocks
 class LocalSessionSource {
   static final _logger = Logger();
-  
+
   // Static session data for the hockey attacker program
   static const Map<String, String> _sessionData = {
     'week1_session1': '''
@@ -154,22 +154,21 @@ class LocalSessionSource {
   Future<List<Session>> getAllSessions() async {
     try {
       _logger.d('LocalSessionSource: Loading all sessions');
-      
+
       final sessions = <Session>[];
-      
+
       for (final entry in _sessionData.entries) {
         final session = await _loadSession(entry.key, entry.value);
         if (session != null) {
           sessions.add(session);
         }
       }
-      
+
       _logger.i('LocalSessionSource: Loaded ${sessions.length} sessions');
       return sessions;
-      
     } catch (e, stackTrace) {
-      _logger.e('LocalSessionSource: Failed to load sessions', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('LocalSessionSource: Failed to load sessions',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
@@ -178,24 +177,23 @@ class LocalSessionSource {
   Future<Session?> getSessionById(String id) async {
     try {
       _logger.d('LocalSessionSource: Loading session with ID: $id');
-      
+
       // Check if it's a new attacker program session
       if (id.startsWith('attacker_w')) {
         return await AttackerProgramData.getSessionById(id);
       }
-      
+
       // Check legacy sessions
       final sessionJson = _sessionData[id];
       if (sessionJson == null) {
         _logger.w('LocalSessionSource: Session not found: $id');
         return null;
       }
-      
+
       return await _loadSession(id, sessionJson);
-      
     } catch (e, stackTrace) {
-      _logger.e('LocalSessionSource: Failed to load session $id', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('LocalSessionSource: Failed to load session $id',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -204,18 +202,25 @@ class LocalSessionSource {
   Future<List<Session>> getSessionsByProgramId(String programId) async {
     try {
       _logger.d('LocalSessionSource: Loading sessions for program: $programId');
-      
-      // For now, return all sessions since we only have one program
+
+      // Handle new attacker program
+      if (programId == 'hockey_attacker_2025') {
+        return await AttackerProgramData.getAllSessions();
+      }
+
+      // Legacy attacker program
       if (programId == 'hockey_attacker_v1') {
         return await getAllSessions();
       }
-      
-      _logger.w('LocalSessionSource: No sessions found for program: $programId');
+
+      _logger
+          .w('LocalSessionSource: No sessions found for program: $programId');
       return [];
-      
     } catch (e, stackTrace) {
-      _logger.e('LocalSessionSource: Failed to load sessions for program $programId', 
-                error: e, stackTrace: stackTrace);
+      _logger.e(
+          'LocalSessionSource: Failed to load sessions for program $programId',
+          error: e,
+          stackTrace: stackTrace);
       return [];
     }
   }
@@ -223,19 +228,34 @@ class LocalSessionSource {
   /// Gets sessions for a specific week in a program
   Future<List<Session>> getSessionsByWeek(String programId, int week) async {
     try {
-      _logger.d('LocalSessionSource: Loading sessions for program $programId, week $week');
-      
+      _logger.d(
+          'LocalSessionSource: Loading sessions for program $programId, week $week');
+
       final allSessions = await getSessionsByProgramId(programId);
+      
+      // For new attacker program, filter by attacker_w{week}_
+      if (programId == 'hockey_attacker_2025') {
+        final weekNum = week + 1; // Convert 0-based to 1-based
+        final weekSessions = allSessions
+            .where((session) => session.id.startsWith('attacker_w${weekNum}_'))
+            .toList();
+
+        _logger.d(
+            'LocalSessionSource: Found ${weekSessions.length} sessions for week $week');
+        return weekSessions;
+      }
+
+      // Legacy format for old program
       final weekSessions = allSessions
           .where((session) => session.id.startsWith('week${week}_'))
           .toList();
-      
-      _logger.d('LocalSessionSource: Found ${weekSessions.length} sessions for week $week');
+
+      _logger.d(
+          'LocalSessionSource: Found ${weekSessions.length} sessions for week $week');
       return weekSessions;
-      
     } catch (e, stackTrace) {
-      _logger.e('LocalSessionSource: Failed to load sessions for week $week', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('LocalSessionSource: Failed to load sessions for week $week',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
@@ -245,13 +265,13 @@ class LocalSessionSource {
     try {
       final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
       final session = Session.fromJson(jsonData);
-      
-      _logger.d('LocalSessionSource: Successfully loaded session: ${session.title}');
+
+      _logger.d(
+          'LocalSessionSource: Successfully loaded session: ${session.title}');
       return session;
-      
     } catch (e, stackTrace) {
-      _logger.e('LocalSessionSource: Failed to parse session JSON for $id', 
-                error: e, stackTrace: stackTrace);
+      _logger.e('LocalSessionSource: Failed to parse session JSON for $id',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }

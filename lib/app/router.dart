@@ -8,7 +8,7 @@ import '../features/programs/presentation/programs_screen.dart';
 import '../features/programs/presentation/program_detail_screen.dart';
 import '../features/extras/presentation/extras_screen.dart';
 import '../features/extras/presentation/extra_detail_screen.dart';
-import '../features/progress/presentation/progress_screen.dart';
+import '../features/progress/presentation/modern_progress_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/session/presentation/session_player_screen.dart';
 
@@ -40,11 +40,11 @@ GoRouter router(Ref ref) {
             name: 'extras',
             builder: (context, state) => const ExtrasScreen(),
           ),
-          GoRoute(
-            path: '/progress',
-            name: 'progress',
-            builder: (context, state) => const ProgressScreen(),
-          ),
+        GoRoute(
+          path: '/progress',
+          name: 'progress',
+          builder: (context, state) => const ModernProgressScreen(),
+        ),
           GoRoute(
             path: '/profile',
             name: 'profile',
@@ -191,7 +191,7 @@ class HockeyRinkBorderPainter extends CustomPainter {
       end: Alignment.centerRight,
       colors: [
         const Color(0xFF0F0F0F), // Très foncé aux extrémités (radius)
-        const Color(0xFF1A1A1A), // Plus foncé 
+        const Color(0xFF1A1A1A), // Plus foncé
         const Color(0xFF2A2A2A), // Gris foncé
         const Color(0xFF1A1A1A), // Plus foncé vers le centre
         const Color(0xFF0F0F0F), // Très foncé au centre (interruption gauche)
@@ -209,7 +209,8 @@ class HockeyRinkBorderPainter extends CustomPainter {
       ..strokeWidth = 1.5
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
-      ..shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+      ..shader =
+          gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     // Dessiner la partie gauche complète (avec radius)
     final leftPath = Path();
@@ -272,7 +273,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentLocation = GoRouterState.of(context).uri.toString();
     final selectedIndex = _calculateSelectedIndex(currentLocation);
-    
+
     return Scaffold(
       body: child,
       extendBody: true,
@@ -292,19 +293,19 @@ class ScaffoldWithNavBar extends StatelessWidget {
               color: Colors.black, // Solid black background
             ),
           ),
-          
+
           // Dark grey border that follows the red line contour around the hub
           CustomPaint(
             size: Size(MediaQuery.of(context).size.width, 110),
             painter: HockeyRinkBorderPainter(),
           ),
-          
+
           // Red line that contours around the Hub button
           CustomPaint(
             size: Size(MediaQuery.of(context).size.width, 110),
             painter: HockeyRinkLinePainter(),
           ),
-          
+
           // Navigation items positioned around the puck
           Positioned.fill(
             child: Row(
@@ -317,7 +318,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   icon: Icons.sports_hockey_rounded,
                   label: 'Programs',
                   onTap: () => context.go('/programs'),
-                ),      
+                ),
                 _buildNavItem(
                   context,
                   index: 1,
@@ -325,18 +326,19 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   icon: Icons.calendar_today_rounded,
                   label: 'Extras',
                   onTap: () => context.go('/extras'),
-                ),       
-                
+                ),
+
                 // Center puck (Hub) - ajusté pour éviter l'overflow
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 30), // Réduit pour laisser place au texte
+                  padding: const EdgeInsets.only(
+                      bottom: 30), // Réduit pour laisser place au texte
                   child: _buildCenterHub(
                     context,
                     isSelected: currentIndex == 2,
                     onTap: () => context.go('/'),
                   ), // Home (Hub) - Main dashboard
                 ),
-                
+
                 _buildNavItem(
                   context,
                   index: 3,
@@ -344,7 +346,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   icon: Icons.trending_up_rounded,
                   label: 'Progress',
                   onTap: () => context.go('/progress'),
-                ),      
+                ),
                 _buildNavItem(
                   context,
                   index: 4,
@@ -369,10 +371,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
     required String label,
     required VoidCallback onTap,
   }) {
-    final color = isSelected 
-        ? const Color.fromARGB(255, 132, 239, 251) 
+    final color = isSelected
+        ? const Color.fromARGB(255, 132, 239, 251)
         : Colors.white.withOpacity(0.7);
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -384,8 +386,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               decoration: isSelected
                   ? BoxDecoration(
-                      color: const Color.fromARGB(255, 12, 2, 60).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),                      
+                      color:
+                          const Color.fromARGB(255, 12, 2, 60).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     )
                   : null,
               child: Icon(
@@ -414,10 +417,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    final color = isSelected 
-        ? const Color(0xFF00CFFF) 
-        : Colors.white.withOpacity(0.7);
-        
+    final color =
+        isSelected ? const Color(0xFF00CFFF) : Colors.white.withOpacity(0.7);
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -447,9 +449,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
             child: Icon(
               Icons.sports_hockey, // Single hockey icon
               size: 36, // Augmentation de 30 à 36
-              color: isSelected 
+              color: isSelected
                   ? const Color(0xFF00CFFF) // Bleu électrique quand sélectionné
-                  : const Color.fromARGB(255, 174, 166, 166), // Gris quand non sélectionné
+                  : const Color.fromARGB(
+                      255, 174, 166, 166), // Gris quand non sélectionné
             ),
           ),
           const SizedBox(height: 4),

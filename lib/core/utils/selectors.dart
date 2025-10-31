@@ -7,17 +7,18 @@ class Selectors {
   // =============================================================================
   // Constants for game mechanics
   // =============================================================================
-  
+
   /// XP required per level
   static const int xpPerLevel = 100;
-  
+
   /// Streak thresholds for different motivational messages
   static const int streakWeekThreshold = 7;
   static const int streakMomentumThreshold = 3;
-  
+
   /// Progress percentage thresholds for motivational messages
   static const double progressNearCompleteThreshold = 0.8;
   static const double progressHalfwayThreshold = 0.5;
+
   /// Calculate XP gained from progress events
   /// Note: XP calculation logic to be implemented based on event types
   static int calculateTotalXP(List<ProgressEvent> events) {
@@ -47,25 +48,24 @@ class Selectors {
     final todayEnd = todayStart.add(const Duration(days: 1));
 
     return events
-        .where((event) => 
-            event.ts.isAfter(todayStart) && 
-            event.ts.isBefore(todayEnd))
+        .where((event) =>
+            event.ts.isAfter(todayStart) && event.ts.isBefore(todayEnd))
         .fold(0, (total, event) {
-          switch (event.type) {
-            case ProgressEventType.exerciseDone:
-              return total + 10;
-            case ProgressEventType.sessionCompleted:
-              return total + 50;
-            case ProgressEventType.bonusDone:
-              return total + 25;
-            case ProgressEventType.sessionStarted:
-              return total + 5;
-            case ProgressEventType.extraCompleted:
-              // For extras, get XP reward from payload or use default
-              final xpReward = event.payload?['xp_reward'] as int? ?? 50;
-              return total + xpReward;
-          }
-        });
+      switch (event.type) {
+        case ProgressEventType.exerciseDone:
+          return total + 10;
+        case ProgressEventType.sessionCompleted:
+          return total + 50;
+        case ProgressEventType.bonusDone:
+          return total + 25;
+        case ProgressEventType.sessionStarted:
+          return total + 5;
+        case ProgressEventType.extraCompleted:
+          // For extras, get XP reward from payload or use default
+          final xpReward = event.payload?['xp_reward'] as int? ?? 50;
+          return total + xpReward;
+      }
+    });
   }
 
   /// Calculate current streak (consecutive days with progress)
@@ -73,8 +73,7 @@ class Selectors {
     if (events.isEmpty) return 0;
 
     // Sort events by date descending
-    final sortedEvents = events.toList()
-      ..sort((a, b) => b.ts.compareTo(a.ts));
+    final sortedEvents = events.toList()..sort((a, b) => b.ts.compareTo(a.ts));
 
     // Group events by day
     final eventsByDay = <String, List<ProgressEvent>>{};
@@ -113,7 +112,7 @@ class Selectors {
     if (session.blocks.isEmpty) return 0.0;
 
     final completedExercises = events
-        .where((event) => 
+        .where((event) =>
             event.type == ProgressEventType.exerciseDone &&
             session.blocks.any((block) => block.exerciseId == event.exerciseId))
         .map((event) => event.exerciseId)
@@ -133,7 +132,7 @@ class Selectors {
     if (week.sessions.isEmpty) return 0.0;
 
     var totalProgress = 0.0;
-    
+
     for (final sessionId in week.sessions) {
       final session = sessions.firstWhere(
         (s) => s.id == sessionId,
@@ -144,7 +143,7 @@ class Selectors {
           bonusChallenge: '',
         ),
       );
-      
+
       totalProgress += calculateSessionProgress(session, events);
     }
 
@@ -160,7 +159,7 @@ class Selectors {
     if (program.weeks.isEmpty) return 0.0;
 
     var totalProgress = 0.0;
-    
+
     for (final week in program.weeks) {
       totalProgress += calculateWeekProgress(week, sessions, events);
     }
@@ -229,12 +228,12 @@ class Selectors {
   ) {
     for (final week in program.weeks) {
       if (week.index < state.currentWeek) continue;
-      
+
       for (int i = 0; i < week.sessions.length; i++) {
         if (week.index == state.currentWeek && i < state.currentSession) {
           continue;
         }
-        
+
         final sessionId = week.sessions[i];
         final session = sessions.firstWhere(
           (s) => s.id == sessionId,
@@ -245,20 +244,20 @@ class Selectors {
             bonusChallenge: '',
           ),
         );
-        
+
         if (!isSessionCompleted(session, events)) {
           return session;
         }
       }
     }
-    
+
     return null; // Program completed
   }
 
   /// Calculate XP multiplier based on streak
   static double getXPMultiplier(int streak) {
     if (streak <= 1) return 1.0;
-    if (streak <= 7) return 1.1;   // 10% bonus for week streak
+    if (streak <= 7) return 1.1; // 10% bonus for week streak
     if (streak <= 30) return 1.25; // 25% bonus for month streak
     return 1.5; // 50% bonus for 30+ day streak
   }

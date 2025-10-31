@@ -1,9 +1,9 @@
 /// Custom exceptions for the Hockey Gym app
 class HockeyGymException implements Exception {
   const HockeyGymException(this.message);
-  
+
   final String message;
-  
+
   @override
   String toString() => 'HockeyGymException: $message';
 }

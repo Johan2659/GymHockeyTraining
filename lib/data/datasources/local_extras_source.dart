@@ -6,7 +6,7 @@ import '../../core/models/models.dart';
 /// Loads extras from embedded JSON data
 class LocalExtrasSource {
   static final _logger = Logger();
-  
+
   // Static extras data - Express Workouts
   static const String _expressWorkoutsJson = '''
 [
@@ -157,25 +157,26 @@ class LocalExtrasSource {
   Future<List<ExtraItem>> getAllExtras() async {
     try {
       _logger.d('LocalExtrasSource: Loading all extras');
-      
+
       final extras = <ExtraItem>[];
-      
+
       // Load express workouts
       final expressWorkouts = await _loadExpressWorkouts();
       extras.addAll(expressWorkouts);
-      
+
       // Load bonus challenges
       final bonusChallenges = await _loadBonusChallenges();
       extras.addAll(bonusChallenges);
-      
+
       // Load mobility & recovery
       final mobilityRecovery = await _loadMobilityRecovery();
       extras.addAll(mobilityRecovery);
-      
+
       _logger.d('LocalExtrasSource: Loaded ${extras.length} extras');
       return extras;
     } catch (e, stackTrace) {
-      _logger.e('LocalExtrasSource: Failed to load extras', error: e, stackTrace: stackTrace);
+      _logger.e('LocalExtrasSource: Failed to load extras',
+          error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -200,9 +201,12 @@ class LocalExtrasSource {
   Future<List<ExtraItem>> _loadExpressWorkouts() async {
     try {
       final List<dynamic> jsonList = json.decode(_expressWorkoutsJson);
-      return jsonList.map((json) => ExtraItem.fromJson(json as Map<String, dynamic>)).toList();
+      return jsonList
+          .map((json) => ExtraItem.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e, stackTrace) {
-      _logger.e('LocalExtrasSource: Failed to parse express workouts JSON', error: e, stackTrace: stackTrace);
+      _logger.e('LocalExtrasSource: Failed to parse express workouts JSON',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
@@ -210,9 +214,12 @@ class LocalExtrasSource {
   Future<List<ExtraItem>> _loadBonusChallenges() async {
     try {
       final List<dynamic> jsonList = json.decode(_bonusChallengesJson);
-      return jsonList.map((json) => ExtraItem.fromJson(json as Map<String, dynamic>)).toList();
+      return jsonList
+          .map((json) => ExtraItem.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e, stackTrace) {
-      _logger.e('LocalExtrasSource: Failed to parse bonus challenges JSON', error: e, stackTrace: stackTrace);
+      _logger.e('LocalExtrasSource: Failed to parse bonus challenges JSON',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }
@@ -220,9 +227,12 @@ class LocalExtrasSource {
   Future<List<ExtraItem>> _loadMobilityRecovery() async {
     try {
       final List<dynamic> jsonList = json.decode(_mobilityRecoveryJson);
-      return jsonList.map((json) => ExtraItem.fromJson(json as Map<String, dynamic>)).toList();
+      return jsonList
+          .map((json) => ExtraItem.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e, stackTrace) {
-      _logger.e('LocalExtrasSource: Failed to parse mobility & recovery JSON', error: e, stackTrace: stackTrace);
+      _logger.e('LocalExtrasSource: Failed to parse mobility & recovery JSON',
+          error: e, stackTrace: stackTrace);
       return [];
     }
   }

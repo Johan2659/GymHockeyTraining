@@ -136,3 +136,9 @@ PerformanceAnalyticsRepository performanceAnalyticsRepository(Ref ref) {
   final dataSource = ref.watch(localPerformanceSourceProvider);
   return PerformanceAnalyticsRepositoryImpl(dataSource: dataSource);
 }
+
+/// Provider for exercise performance repository
+@riverpod
+ExercisePerformanceRepository exercisePerformanceRepository(Ref ref) {
+  return ExercisePerformanceRepositoryImpl();
+}

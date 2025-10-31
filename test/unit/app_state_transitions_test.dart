@@ -10,10 +10,13 @@ import '../helpers/test_helpers.dart';
 
 // Mock classes
 class MockProgressRepository extends Mock implements ProgressRepository {}
-class MockProgramStateRepository extends Mock implements ProgramStateRepository {}
+
+class MockProgramStateRepository extends Mock
+    implements ProgramStateRepository {}
 
 // Fake classes for mocktail fallback values
 class FakeProgramState extends Fake implements ProgramState {}
+
 class FakeProgressEvent extends Fake implements ProgressEvent {}
 
 void main() {
@@ -25,7 +28,7 @@ void main() {
     setUpAll(() async {
       // Initialize test environment
       await TestHelpers.initializeTestEnvironment();
-      
+
       // Register fallback values for mocktail
       registerFallbackValue(FakeProgramState());
       registerFallbackValue(FakeProgressEvent());
@@ -34,11 +37,12 @@ void main() {
     setUp(() {
       mockProgressRepository = MockProgressRepository();
       mockProgramStateRepository = MockProgramStateRepository();
-      
+
       container = ProviderContainer(
         overrides: [
           progressRepositoryProvider.overrideWithValue(mockProgressRepository),
-          programStateRepositoryProvider.overrideWithValue(mockProgramStateRepository),
+          programStateRepositoryProvider
+              .overrideWithValue(mockProgramStateRepository),
         ],
       );
     });
@@ -55,54 +59,67 @@ void main() {
       test('should create new program state and log event', () async {
         // Arrange
         const programId = 'hockey_attacker_v1';
-        when(() => mockProgramStateRepository.save(any())).thenAnswer((_) async => true);
-        when(() => mockProgressRepository.appendEvent(any())).thenAnswer((_) async => true);
+        when(() => mockProgramStateRepository.save(any()))
+            .thenAnswer((_) async => true);
+        when(() => mockProgressRepository.appendEvent(any()))
+            .thenAnswer((_) async => true);
 
         // Act
         await container.read(startProgramActionProvider(programId).future);
 
         // Assert
-        verify(() => mockProgramStateRepository.save(any(that: isA<ProgramState>().having(
-          (state) => state.activeProgramId,
-          'activeProgramId',
-          equals(programId),
-        ).having(
-          (state) => state.currentWeek,
-          'currentWeek',
-          equals(0),
-        ).having(
-          (state) => state.currentSession,
-          'currentSession',
-          equals(0),
-        ).having(
-          (state) => state.completedExerciseIds,
-          'completedExerciseIds',
-          isEmpty,
-        )))).called(1);
+        verify(() => mockProgramStateRepository.save(any(
+            that: isA<ProgramState>()
+                .having(
+                  (state) => state.activeProgramId,
+                  'activeProgramId',
+                  equals(programId),
+                )
+                .having(
+                  (state) => state.currentWeek,
+                  'currentWeek',
+                  equals(0),
+                )
+                .having(
+                  (state) => state.currentSession,
+                  'currentSession',
+                  equals(0),
+                )
+                .having(
+                  (state) => state.completedExerciseIds,
+                  'completedExerciseIds',
+                  isEmpty,
+                )))).called(1);
 
-        verify(() => mockProgressRepository.appendEvent(any(that: isA<ProgressEvent>().having(
-          (event) => event.type,
-          'type',
-          equals(ProgressEventType.sessionStarted),
-        ).having(
-          (event) => event.programId,
-          'programId',
-          equals(programId),
-        ).having(
-          (event) => event.week,
-          'week',
-          equals(0),
-        ).having(
-          (event) => event.session,
-          'session',
-          equals(0),
-        )))).called(1);
+        verify(() => mockProgressRepository.appendEvent(any(
+            that: isA<ProgressEvent>()
+                .having(
+                  (event) => event.type,
+                  'type',
+                  equals(ProgressEventType.sessionStarted),
+                )
+                .having(
+                  (event) => event.programId,
+                  'programId',
+                  equals(programId),
+                )
+                .having(
+                  (event) => event.week,
+                  'week',
+                  equals(0),
+                )
+                .having(
+                  (event) => event.session,
+                  'session',
+                  equals(0),
+                )))).called(1);
       });
 
       test('should handle repository failures gracefully', () async {
         // Arrange
         const programId = 'hockey_attacker_v1';
-        when(() => mockProgramStateRepository.save(any())).thenThrow(Exception('Storage error'));
+        when(() => mockProgramStateRepository.save(any()))
+            .thenThrow(Exception('Storage error'));
 
         // Act & Assert
         expect(
@@ -123,45 +140,57 @@ void main() {
           completedExerciseIds: ['previous_exercise'],
         );
 
-        when(() => mockProgramStateRepository.get()).thenAnswer((_) async => initialState);
-        when(() => mockProgramStateRepository.addCompletedExercise(any())).thenAnswer((_) async => true);
-        when(() => mockProgressRepository.appendEvent(any())).thenAnswer((_) async => true);
+        when(() => mockProgramStateRepository.get())
+            .thenAnswer((_) async => initialState);
+        when(() => mockProgramStateRepository.addCompletedExercise(any()))
+            .thenAnswer((_) async => true);
+        when(() => mockProgressRepository.appendEvent(any()))
+            .thenAnswer((_) async => true);
 
         // Act
         await container.read(markExerciseDoneActionProvider(exerciseId).future);
 
         // Assert
-        verify(() => mockProgramStateRepository.addCompletedExercise(exerciseId)).called(1);
+        verify(() =>
+                mockProgramStateRepository.addCompletedExercise(exerciseId))
+            .called(1);
 
-        verify(() => mockProgressRepository.appendEvent(any(that: isA<ProgressEvent>().having(
-          (event) => event.type,
-          'type',
-          equals(ProgressEventType.exerciseDone),
-        ).having(
-          (event) => event.exerciseId,
-          'exerciseId',
-          equals(exerciseId),
-        ).having(
-          (event) => event.week,
-          'week',
-          equals(1),
-        ).having(
-          (event) => event.session,
-          'session',
-          equals(2),
-        )))).called(1);
+        verify(() => mockProgressRepository.appendEvent(any(
+            that: isA<ProgressEvent>()
+                .having(
+                  (event) => event.type,
+                  'type',
+                  equals(ProgressEventType.exerciseDone),
+                )
+                .having(
+                  (event) => event.exerciseId,
+                  'exerciseId',
+                  equals(exerciseId),
+                )
+                .having(
+                  (event) => event.week,
+                  'week',
+                  equals(1),
+                )
+                .having(
+                  (event) => event.session,
+                  'session',
+                  equals(2),
+                )))).called(1);
       });
 
       test('should handle null program state gracefully', () async {
         // Arrange
         const exerciseId = 'sprint_30m';
-        when(() => mockProgramStateRepository.get()).thenAnswer((_) async => null);
+        when(() => mockProgramStateRepository.get())
+            .thenAnswer((_) async => null);
 
         // Act
         await container.read(markExerciseDoneActionProvider(exerciseId).future);
 
         // Assert - Should exit early when no active program
-        verifyNever(() => mockProgramStateRepository.addCompletedExercise(any()));
+        verifyNever(
+            () => mockProgramStateRepository.addCompletedExercise(any()));
         verifyNever(() => mockProgressRepository.appendEvent(any()));
       });
     });
@@ -176,40 +205,50 @@ void main() {
           completedExerciseIds: ['exercise1', 'exercise2', 'exercise3'],
         );
 
-        when(() => mockProgramStateRepository.get()).thenAnswer((_) async => initialState);
-        when(() => mockProgramStateRepository.updateCurrentSession(any())).thenAnswer((_) async => true);
-        when(() => mockProgressRepository.appendEvent(any())).thenAnswer((_) async => true);
+        when(() => mockProgramStateRepository.get())
+            .thenAnswer((_) async => initialState);
+        when(() => mockProgramStateRepository.updateCurrentSession(any()))
+            .thenAnswer((_) async => true);
+        when(() => mockProgressRepository.appendEvent(any()))
+            .thenAnswer((_) async => true);
 
         // Act
         await container.read(completeSessionActionProvider.future);
 
         // Assert
-        verify(() => mockProgramStateRepository.updateCurrentSession(3)).called(1); // Advanced from 2 to 3
+        verify(() => mockProgramStateRepository.updateCurrentSession(3))
+            .called(1); // Advanced from 2 to 3
 
-        verify(() => mockProgressRepository.appendEvent(any(that: isA<ProgressEvent>().having(
-          (event) => event.type,
-          'type',
-          equals(ProgressEventType.sessionCompleted),
-        ).having(
-          (event) => event.week,
-          'week',
-          equals(1),
-        ).having(
-          (event) => event.session,
-          'session',
-          equals(2), // The session that was completed
-        )))).called(1);
+        verify(() => mockProgressRepository.appendEvent(any(
+            that: isA<ProgressEvent>()
+                .having(
+                  (event) => event.type,
+                  'type',
+                  equals(ProgressEventType.sessionCompleted),
+                )
+                .having(
+                  (event) => event.week,
+                  'week',
+                  equals(1),
+                )
+                .having(
+                  (event) => event.session,
+                  'session',
+                  equals(2), // The session that was completed
+                )))).called(1);
       });
 
       test('should handle null program state', () async {
         // Arrange
-        when(() => mockProgramStateRepository.get()).thenAnswer((_) async => null);
+        when(() => mockProgramStateRepository.get())
+            .thenAnswer((_) async => null);
 
         // Act
         await container.read(completeSessionActionProvider.future);
 
         // Assert - Should exit early when no active program
-        verifyNever(() => mockProgramStateRepository.updateCurrentSession(any()));
+        verifyNever(
+            () => mockProgramStateRepository.updateCurrentSession(any()));
         verifyNever(() => mockProgressRepository.appendEvent(any()));
       });
     });
@@ -217,7 +256,8 @@ void main() {
     group('pauseProgramAction', () {
       test('should set pausedAt timestamp', () async {
         // Arrange
-        when(() => mockProgramStateRepository.pauseProgram()).thenAnswer((_) async => true);
+        when(() => mockProgramStateRepository.pauseProgram())
+            .thenAnswer((_) async => true);
 
         // Act
         await container.read(pauseProgramActionProvider.future);
@@ -230,7 +270,8 @@ void main() {
     group('resumeProgramAction', () {
       test('should clear pausedAt timestamp', () async {
         // Arrange
-        when(() => mockProgramStateRepository.resumeProgram()).thenAnswer((_) async => true);
+        when(() => mockProgramStateRepository.resumeProgram())
+            .thenAnswer((_) async => true);
 
         // Act
         await container.read(resumeProgramActionProvider.future);
@@ -250,26 +291,32 @@ void main() {
           completedExerciseIds: ['exercise1'],
         );
 
-        when(() => mockProgramStateRepository.get()).thenAnswer((_) async => initialState);
-        when(() => mockProgressRepository.appendEvent(any())).thenAnswer((_) async => true);
+        when(() => mockProgramStateRepository.get())
+            .thenAnswer((_) async => initialState);
+        when(() => mockProgressRepository.appendEvent(any()))
+            .thenAnswer((_) async => true);
 
         // Act
         await container.read(completeBonusChallengeActionProvider.future);
 
         // Assert
-        verify(() => mockProgressRepository.appendEvent(any(that: isA<ProgressEvent>().having(
-          (event) => event.type,
-          'type',
-          equals(ProgressEventType.bonusDone),
-        ).having(
-          (event) => event.week,
-          'week',
-          equals(1),
-        ).having(
-          (event) => event.session,
-          'session',
-          equals(2),
-        )))).called(1);
+        verify(() => mockProgressRepository.appendEvent(any(
+            that: isA<ProgressEvent>()
+                .having(
+                  (event) => event.type,
+                  'type',
+                  equals(ProgressEventType.bonusDone),
+                )
+                .having(
+                  (event) => event.week,
+                  'week',
+                  equals(1),
+                )
+                .having(
+                  (event) => event.session,
+                  'session',
+                  equals(2),
+                )))).called(1);
       });
     });
 
@@ -280,25 +327,31 @@ void main() {
         const week = 2;
         const session = 1;
 
-        when(() => mockProgressRepository.appendEvent(any())).thenAnswer((_) async => true);
+        when(() => mockProgressRepository.appendEvent(any()))
+            .thenAnswer((_) async => true);
 
         // Act
-        await container.read(startSessionActionProvider(programId, week, session).future);
+        await container
+            .read(startSessionActionProvider(programId, week, session).future);
 
         // Assert
-        verify(() => mockProgressRepository.appendEvent(any(that: isA<ProgressEvent>().having(
-          (event) => event.type,
-          'type',
-          equals(ProgressEventType.sessionStarted),
-        ).having(
-          (event) => event.week,
-          'week',
-          equals(week),
-        ).having(
-          (event) => event.session,
-          'session',
-          equals(session),
-        )))).called(1);
+        verify(() => mockProgressRepository.appendEvent(any(
+            that: isA<ProgressEvent>()
+                .having(
+                  (event) => event.type,
+                  'type',
+                  equals(ProgressEventType.sessionStarted),
+                )
+                .having(
+                  (event) => event.week,
+                  'week',
+                  equals(week),
+                )
+                .having(
+                  (event) => event.session,
+                  'session',
+                  equals(session),
+                )))).called(1);
       });
     });
 
@@ -308,25 +361,31 @@ void main() {
         const extraId = 'express_workout_1';
         const xpReward = 50;
 
-        when(() => mockProgressRepository.appendEvent(any())).thenAnswer((_) async => true);
+        when(() => mockProgressRepository.appendEvent(any()))
+            .thenAnswer((_) async => true);
 
         // Act
-        await container.read(completeExtraActionProvider(extraId, xpReward).future);
+        await container
+            .read(completeExtraActionProvider(extraId, xpReward).future);
 
         // Assert
-        verify(() => mockProgressRepository.appendEvent(any(that: isA<ProgressEvent>().having(
-          (event) => event.type,
-          'type',
-          equals(ProgressEventType.extraCompleted),
-        ).having(
-          (event) => event.exerciseId,
-          'exerciseId',
-          equals(extraId),
-        ).having(
-          (event) => event.payload,
-          'payload',
-          isNotNull,
-        )))).called(1);
+        verify(() => mockProgressRepository.appendEvent(any(
+            that: isA<ProgressEvent>()
+                .having(
+                  (event) => event.type,
+                  'type',
+                  equals(ProgressEventType.extraCompleted),
+                )
+                .having(
+                  (event) => event.exerciseId,
+                  'exerciseId',
+                  equals(extraId),
+                )
+                .having(
+                  (event) => event.payload,
+                  'payload',
+                  isNotNull,
+                )))).called(1);
       });
     });
 
@@ -334,7 +393,8 @@ void main() {
       test('should handle repository save failures', () async {
         // Arrange
         const programId = 'hockey_attacker_v1';
-        when(() => mockProgramStateRepository.save(any())).thenThrow(Exception('Save failed'));
+        when(() => mockProgramStateRepository.save(any()))
+            .thenThrow(Exception('Save failed'));
 
         // Act & Assert
         expect(
@@ -353,13 +413,17 @@ void main() {
           completedExerciseIds: [],
         );
 
-        when(() => mockProgramStateRepository.get()).thenAnswer((_) async => initialState);
-        when(() => mockProgramStateRepository.addCompletedExercise(any())).thenAnswer((_) async => true);
-        when(() => mockProgressRepository.appendEvent(any())).thenThrow(Exception('Event log failed'));
+        when(() => mockProgramStateRepository.get())
+            .thenAnswer((_) async => initialState);
+        when(() => mockProgramStateRepository.addCompletedExercise(any()))
+            .thenAnswer((_) async => true);
+        when(() => mockProgressRepository.appendEvent(any()))
+            .thenThrow(Exception('Event log failed'));
 
         // Act & Assert
         expect(
-          () => container.read(markExerciseDoneActionProvider(exerciseId).future),
+          () =>
+              container.read(markExerciseDoneActionProvider(exerciseId).future),
           throwsA(isA<Exception>()),
         );
       });

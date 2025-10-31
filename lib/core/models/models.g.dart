@@ -319,3 +319,52 @@ Map<String, dynamic> _$IntensityDataPointToJson(IntensityDataPoint instance) =>
       'volume': instance.volume,
       'duration': instance.duration,
     };
+
+ExerciseSetPerformance _$ExerciseSetPerformanceFromJson(
+        Map<String, dynamic> json) =>
+    ExerciseSetPerformance(
+      setNumber: (json['setNumber'] as num).toInt(),
+      reps: (json['reps'] as num).toInt(),
+      weight: (json['weight'] as num?)?.toDouble(),
+      completed: json['completed'] as bool?,
+      notes: json['notes'] as String?,
+    );
+
+Map<String, dynamic> _$ExerciseSetPerformanceToJson(
+        ExerciseSetPerformance instance) =>
+    <String, dynamic>{
+      'setNumber': instance.setNumber,
+      'reps': instance.reps,
+      'weight': instance.weight,
+      'completed': instance.completed,
+      'notes': instance.notes,
+    };
+
+ExercisePerformance _$ExercisePerformanceFromJson(Map<String, dynamic> json) =>
+    ExercisePerformance(
+      id: json['id'] as String,
+      exerciseId: json['exerciseId'] as String,
+      exerciseName: json['exerciseName'] as String,
+      programId: json['programId'] as String,
+      week: (json['week'] as num).toInt(),
+      session: (json['session'] as num).toInt(),
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      sets: ExercisePerformance._setsFromJson(json['sets'] as List),
+      duration: (json['duration'] as num?)?.toInt(),
+      notes: json['notes'] as String?,
+    );
+
+Map<String, dynamic> _$ExercisePerformanceToJson(
+        ExercisePerformance instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'exerciseId': instance.exerciseId,
+      'exerciseName': instance.exerciseName,
+      'programId': instance.programId,
+      'week': instance.week,
+      'session': instance.session,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'sets': ExercisePerformance._setsToJson(instance.sets),
+      'duration': instance.duration,
+      'notes': instance.notes,
+    };

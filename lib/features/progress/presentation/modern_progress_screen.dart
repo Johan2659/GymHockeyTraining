@@ -6,8 +6,8 @@ import '../../../core/models/models.dart';
 import '../../../core/utils/selectors.dart';
 import '../../application/app_state_provider.dart';
 
-class ProgressScreen extends ConsumerWidget {
-  const ProgressScreen({super.key});
+class ModernProgressScreen extends ConsumerWidget {
+  const ModernProgressScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,8 +45,7 @@ class ProgressScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProgressContent(
-      BuildContext context, WidgetRef ref, AppStateData appState) {
+  Widget _buildProgressContent(BuildContext context, WidgetRef ref, AppStateData appState) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -60,34 +59,34 @@ class ProgressScreen extends ConsumerWidget {
               Expanded(child: _buildStreakCard(context, appState)),
             ],
           ),
-
+          
           const SizedBox(height: 16),
-
+          
           // Cycle completion
           _buildCycleProgressCard(context, appState),
-
+          
           const SizedBox(height: 24),
-
+          
           // Training Balance Stats section
           _buildTrainingBalanceSection(context, ref),
-
+          
           const SizedBox(height: 24),
-
+          
           // Weekly Stats section
           _buildWeeklyStatsSection(context, ref),
-
+          
           const SizedBox(height: 24),
-
+          
           // Weekly streak visualization
           _buildWeeklyStreakSection(context, appState),
-
+          
           const SizedBox(height: 24),
-
+          
           // Personal Records section
           _buildPersonalRecordsSection(context, appState),
-
+          
           const SizedBox(height: 24),
-
+          
           // Progress Timeline
           _buildProgressTimelineSection(context, appState),
         ],
@@ -120,8 +119,8 @@ class ProgressScreen extends ConsumerWidget {
             Text(
               '${appState.currentXP} XP',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: AppTheme.primaryColor,
-                  ),
+                color: AppTheme.primaryColor,
+              ),
             ),
             const SizedBox(height: 8),
             LinearProgressIndicator(
@@ -133,15 +132,15 @@ class ProgressScreen extends ConsumerWidget {
             Text(
               '${Selectors.xpPerLevel - xpInCurrentLevel} XP to Level ${level + 1}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                  ),
+                color: Colors.grey[400],
+              ),
             ),
             if (appState.todayXP > 0) ...[
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.2),
+                  color: Colors.green.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -170,9 +169,8 @@ class ProgressScreen extends ConsumerWidget {
             Row(
               children: [
                 Icon(
-                  Icons.local_fire_department,
-                  color:
-                      appState.currentStreak > 0 ? Colors.orange : Colors.grey,
+                  Icons.local_fire_department, 
+                  color: appState.currentStreak > 0 ? Colors.orange : Colors.grey,
                   size: 20,
                 ),
                 const SizedBox(width: 6),
@@ -186,24 +184,22 @@ class ProgressScreen extends ConsumerWidget {
             Text(
               '${appState.currentStreak} days',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: appState.currentStreak > 0
-                        ? Colors.orange
-                        : Colors.grey,
-                  ),
+                color: appState.currentStreak > 0 ? Colors.orange : Colors.grey,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               _getStreakMessage(appState.currentStreak),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                  ),
+                color: Colors.grey[400],
+              ),
             ),
             if (appState.xpMultiplier > 1.0) ...[
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.2),
+                  color: Colors.orange.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -224,7 +220,7 @@ class ProgressScreen extends ConsumerWidget {
 
   Widget _buildCycleProgressCard(BuildContext context, AppStateData appState) {
     final percentComplete = (appState.percentCycle * 100).toInt();
-
+    
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -233,8 +229,7 @@ class ProgressScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.track_changes,
-                    color: AppTheme.primaryColor, size: 20),
+                Icon(Icons.track_changes, color: AppTheme.primaryColor, size: 20),
                 const SizedBox(width: 6),
                 Text(
                   'Current Program',
@@ -244,9 +239,9 @@ class ProgressScreen extends ConsumerWidget {
                 Text(
                   '$percentComplete%',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -267,22 +262,22 @@ class ProgressScreen extends ConsumerWidget {
               Text(
                 _getCycleProgressMessage(appState.percentCycle),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[400],
-                    ),
+                  color: Colors.grey[400],
+                ),
               ),
             ] else ...[
               Text(
                 'No active program',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[400],
-                    ),
+                  color: Colors.grey[400],
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Start a program to track your progress',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[500],
-                    ),
+                  color: Colors.grey[500],
+                ),
               ),
             ],
           ],
@@ -291,16 +286,15 @@ class ProgressScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWeeklyStreakSection(
-      BuildContext context, AppStateData appState) {
+  Widget _buildWeeklyStreakSection(BuildContext context, AppStateData appState) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Weekly Activity',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
         Card(
@@ -313,13 +307,11 @@ class ProgressScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWeeklyActivityChart(
-      BuildContext context, AppStateData appState) {
+  Widget _buildWeeklyActivityChart(BuildContext context, AppStateData appState) {
     final now = DateTime.now();
     final weekStart = now.subtract(Duration(days: now.weekday - 1));
-    final days =
-        List.generate(7, (index) => weekStart.add(Duration(days: index)));
-
+    final days = List.generate(7, (index) => weekStart.add(Duration(days: index)));
+    
     // Group events by day
     final eventsByDay = <String, int>{};
     for (final event in appState.events) {
@@ -334,16 +326,16 @@ class ProgressScreen extends ConsumerWidget {
             final dayKey = _formatDateKey(day);
             final hasActivity = eventsByDay.containsKey(dayKey);
             final isToday = _formatDateKey(day) == _formatDateKey(now);
-
+            
             return Expanded(
               child: Column(
                 children: [
                   Text(
                     _formatWeekday(day),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[400],
-                          fontSize: 10,
-                        ),
+                      color: Colors.grey[400],
+                      fontSize: 10,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Container(
@@ -351,9 +343,10 @@ class ProgressScreen extends ConsumerWidget {
                     height: 28,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color:
-                          hasActivity ? AppTheme.accentColor : Colors.grey[700],
-                      border: isToday
+                      color: hasActivity 
+                          ? AppTheme.accentColor
+                          : Colors.grey[700],
+                      border: isToday 
                           ? Border.all(color: AppTheme.primaryColor, width: 2)
                           : null,
                     ),
@@ -369,13 +362,10 @@ class ProgressScreen extends ConsumerWidget {
                   Text(
                     '${day.day}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: isToday
-                              ? AppTheme.primaryColor
-                              : Colors.grey[400],
-                          fontWeight:
-                              isToday ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 11,
-                        ),
+                      color: isToday ? AppTheme.primaryColor : Colors.grey[400],
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -386,29 +376,25 @@ class ProgressScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPersonalRecordsSection(
-      BuildContext context, AppStateData appState) {
+  Widget _buildPersonalRecordsSection(BuildContext context, AppStateData appState) {
     return Consumer(
       builder: (context, ref, child) {
         final personalBestsAsync = ref.watch(personalBestsProvider);
-
+        
         return personalBestsAsync.when(
-          data: (personalBests) =>
-              _buildPersonalRecordsContent(context, personalBests),
+          data: (personalBests) => _buildPersonalRecordsContent(context, personalBests),
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) =>
-              _buildPersonalRecordsContent(context, <String, PersonalBest>{}),
+          error: (error, stack) => _buildPersonalRecordsContent(context, <String, PersonalBest>{}),
         );
       },
     );
   }
 
-  Widget _buildPersonalRecordsContent(
-      BuildContext context, Map<String, PersonalBest> personalBests) {
+  Widget _buildPersonalRecordsContent(BuildContext context, Map<String, PersonalBest> personalBests) {
     // Priority exercises for display (motivational strength exercises)
     final priorityExercises = [
       'ex_squat',
-      'ex_bench_press',
+      'ex_bench_press', 
       'ex_deadlift',
       'ex_overhead_press',
       'ex_pull_ups',
@@ -416,10 +402,10 @@ class ProgressScreen extends ConsumerWidget {
       'ex_dumbbell_press',
       'ex_weighted_chin_ups',
     ];
-
+    
     // Filter and sort personal bests by priority - focus on weight/performance metrics
     final displayBests = <String, PersonalBest>{};
-
+    
     // First add priority exercises if they exist
     for (final exerciseId in priorityExercises) {
       if (personalBests.containsKey(exerciseId)) {
@@ -430,32 +416,30 @@ class ProgressScreen extends ConsumerWidget {
         }
       }
     }
-
+    
     // Then add other exercises with weight/performance metrics (excluding warmup/mobility)
     for (final entry in personalBests.entries) {
-      if (!priorityExercises.contains(entry.key) &&
-          (entry.value.unit == 'kg' ||
-              entry.value.unit == 'lbs' ||
-              entry.value.unit == 'reps')) {
+      if (!priorityExercises.contains(entry.key) && 
+          (entry.value.unit == 'kg' || entry.value.unit == 'lbs' || entry.value.unit == 'reps')) {
         // Filter out non-performance oriented exercises
         final exerciseName = entry.value.exerciseName.toLowerCase();
-        if (!exerciseName.contains('stretch') &&
-            !exerciseName.contains('mobility') &&
+        if (!exerciseName.contains('stretch') && 
+            !exerciseName.contains('mobility') && 
             !exerciseName.contains('foam') &&
             !exerciseName.contains('warm')) {
           displayBests[entry.key] = entry.value;
         }
       }
     }
-
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Personal Records',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
         if (displayBests.isEmpty) ...[
@@ -474,15 +458,15 @@ class ProgressScreen extends ConsumerWidget {
                     Text(
                       'No performance records yet',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.grey[400],
-                          ),
+                        color: Colors.grey[400],
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Complete strength exercises to track your max lifts!',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[500],
-                          ),
+                        color: Colors.grey[500],
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -492,27 +476,26 @@ class ProgressScreen extends ConsumerWidget {
           ),
         ] else ...[
           ...displayBests.entries.take(5).map((entry) => _buildPersonalBestCard(
-                context,
-                entry.value,
-              )),
+            context,
+            entry.value,
+          )),
         ],
       ],
     );
   }
 
-  Widget _buildProgressTimelineSection(
-      BuildContext context, AppStateData appState) {
+  Widget _buildProgressTimelineSection(BuildContext context, AppStateData appState) {
     // Process events to combine session completions with their bonus challenges
     final combinedEvents = _processCombinedMilestones(appState.events);
-
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Recent Activity',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
         if (combinedEvents.isEmpty) ...[
@@ -531,15 +514,15 @@ class ProgressScreen extends ConsumerWidget {
                     Text(
                       'No milestones yet',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.grey[400],
-                          ),
+                        color: Colors.grey[400],
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Complete sessions and challenges to see your achievements here',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[500],
-                          ),
+                        color: Colors.grey[500],
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -555,7 +538,7 @@ class ProgressScreen extends ConsumerWidget {
                   final index = entry.key;
                   final eventInfo = entry.value;
                   final isLast = index == combinedEvents.length - 1;
-
+                  
                   return _buildCombinedTimelineItem(context, eventInfo, isLast);
                 }),
               ],
@@ -567,10 +550,9 @@ class ProgressScreen extends ConsumerWidget {
   }
 
   // Combined timeline processing methods
-  List<Map<String, dynamic>> _processCombinedMilestones(
-      List<ProgressEvent> events) {
+  List<Map<String, dynamic>> _processCombinedMilestones(List<ProgressEvent> events) {
     final milestoneEvents = events
-        .where((event) =>
+        .where((event) => 
             event.type == ProgressEventType.sessionCompleted ||
             event.type == ProgressEventType.bonusDone ||
             event.type == ProgressEventType.extraCompleted)
@@ -583,7 +565,7 @@ class ProgressScreen extends ConsumerWidget {
       if (event.type == ProgressEventType.sessionCompleted) {
         // Look for bonus challenge completed in the same session
         final matchingBonus = milestoneEvents
-            .where((e) =>
+            .where((e) => 
                 e.type == ProgressEventType.bonusDone &&
                 e.programId == event.programId &&
                 e.week == event.week &&
@@ -614,14 +596,12 @@ class ProgressScreen extends ConsumerWidget {
     }
 
     // Sort by timestamp (newest first)
-    combinedEvents.sort((a, b) =>
-        (b['timestamp'] as DateTime).compareTo(a['timestamp'] as DateTime));
-
+    combinedEvents.sort((a, b) => (b['timestamp'] as DateTime).compareTo(a['timestamp'] as DateTime));
+    
     return combinedEvents.take(10).toList();
   }
 
-  Widget _buildCombinedTimelineItem(
-      BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
+  Widget _buildCombinedTimelineItem(BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
     if (eventInfo['type'] == 'session_with_bonus') {
       return _buildSessionWithBonusItem(context, eventInfo, isLast);
     } else {
@@ -629,19 +609,16 @@ class ProgressScreen extends ConsumerWidget {
     }
   }
 
-  Widget _buildSessionWithBonusItem(
-      BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
+  Widget _buildSessionWithBonusItem(BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
     final sessionEvent = eventInfo['sessionEvent'] as ProgressEvent;
     final bonusEvent = eventInfo['bonusEvent'] as ProgressEvent?;
-
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(
-                bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
-              ),
+        border: isLast ? null : Border(
+          bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -651,10 +628,9 @@ class ProgressScreen extends ConsumerWidget {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppTheme.accentColor.withOpacity(0.2),
+              color: AppTheme.accentColor.withValues(alpha: 0.2),
             ),
-            child:
-                Icon(Icons.check_circle, color: AppTheme.accentColor, size: 20),
+            child: Icon(Icons.check_circle, color: AppTheme.accentColor, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -673,13 +649,11 @@ class ProgressScreen extends ConsumerWidget {
                     if (bonusEvent != null) ...[
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.2),
+                          color: Colors.orange.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
-                          border:
-                              Border.all(color: Colors.orange.withOpacity(0.3)),
+                          border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -704,8 +678,8 @@ class ProgressScreen extends ConsumerWidget {
                 Text(
                   _getSessionSubtitle(sessionEvent, bonusEvent),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[400],
-                      ),
+                    color: Colors.grey[400],
+                  ),
                 ),
               ],
             ),
@@ -713,26 +687,23 @@ class ProgressScreen extends ConsumerWidget {
           Text(
             _formatTime(sessionEvent.ts),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[500],
-                ),
+              color: Colors.grey[500],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildExtraItem(
-      BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
+  Widget _buildExtraItem(BuildContext context, Map<String, dynamic> eventInfo, bool isLast) {
     final event = eventInfo['event'] as ProgressEvent;
-
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(
-                bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
-              ),
+        border: isLast ? null : Border(
+          bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -741,7 +712,7 @@ class ProgressScreen extends ConsumerWidget {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.purple.withOpacity(0.2),
+              color: Colors.purple.withValues(alpha: 0.2),
             ),
             child: Icon(Icons.bolt, color: Colors.purple, size: 20),
           ),
@@ -758,8 +729,8 @@ class ProgressScreen extends ConsumerWidget {
                 Text(
                   _getEventSubtitle(event),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[400],
-                      ),
+                    color: Colors.grey[400],
+                  ),
                 ),
               ],
             ),
@@ -767,27 +738,25 @@ class ProgressScreen extends ConsumerWidget {
           Text(
             _formatTime(event.ts),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[500],
-                ),
+              color: Colors.grey[500],
+            ),
           ),
         ],
       ),
     );
   }
 
-  String _getSessionSubtitle(
-      ProgressEvent sessionEvent, ProgressEvent? bonusEvent) {
+  String _getSessionSubtitle(ProgressEvent sessionEvent, ProgressEvent? bonusEvent) {
     final parts = <String>[];
-
+    
     if (sessionEvent.week > 0 || sessionEvent.session > 0) {
-      parts.add(
-          'Week ${sessionEvent.week + 1}, Session ${sessionEvent.session + 1}');
+      parts.add('Week ${sessionEvent.week + 1}, Session ${sessionEvent.session + 1}');
     }
-
+    
     if (bonusEvent != null) {
       parts.add('Bonus Challenge Completed');
     }
-
+    
     return parts.join(' • ');
   }
 
@@ -810,20 +779,19 @@ class ProgressScreen extends ConsumerWidget {
 
   String _getEventSubtitle(ProgressEvent event) {
     final parts = <String>[];
-
+    
     if (event.exerciseId != null) {
       parts.add(event.exerciseId!.replaceAll('_', ' ').toUpperCase());
     }
-
+    
     if (event.week > 0 || event.session > 0) {
       parts.add('Week ${event.week + 1}, Session ${event.session + 1}');
     }
-
-    if (event.type == ProgressEventType.extraCompleted &&
-        event.payload?['xp_reward'] != null) {
+    
+    if (event.type == ProgressEventType.extraCompleted && event.payload?['xp_reward'] != null) {
       parts.add('+${event.payload!['xp_reward']} XP');
     }
-
+    
     return parts.join(' • ');
   }
 
@@ -838,20 +806,8 @@ class ProgressScreen extends ConsumerWidget {
   }
 
   String _formatShortDate(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return '${months[date.month - 1]} ${date.day}';
   }
 
@@ -867,7 +823,7 @@ class ProgressScreen extends ConsumerWidget {
 
   Widget _buildTrainingBalanceSection(BuildContext context, WidgetRef ref) {
     final categoryProgressAsync = ref.watch(categoryProgressProvider);
-
+    
     // Define the main training categories for balance calculation
     final mainCategories = [
       ExerciseCategory.strength,
@@ -876,7 +832,7 @@ class ProgressScreen extends ConsumerWidget {
       ExerciseCategory.agility,
       ExerciseCategory.conditioning,
     ];
-
+    
     return categoryProgressAsync.when(
       loading: () => const Card(
         child: Padding(
@@ -889,19 +845,18 @@ class ProgressScreen extends ConsumerWidget {
         // Calculate the total progress across main categories
         double totalProgress = 0.0;
         final categoryValues = <ExerciseCategory, double>{};
-
+        
         for (final category in mainCategories) {
           final progress = categoryProgress[category] ?? 0.0;
           categoryValues[category] = progress;
           totalProgress += progress;
         }
-
+        
         // Calculate percentages (normalize to 100%)
         final categoryPercentages = <ExerciseCategory, double>{};
         if (totalProgress > 0) {
           for (final category in mainCategories) {
-            categoryPercentages[category] =
-                (categoryValues[category]! / totalProgress) * 100;
+            categoryPercentages[category] = (categoryValues[category]! / totalProgress) * 100;
           }
         } else {
           // If no progress, show equal distribution
@@ -909,23 +864,21 @@ class ProgressScreen extends ConsumerWidget {
             categoryPercentages[category] = 20.0; // 100% / 5 categories
           }
         }
-
+        
         // Calculate balance score (how close to equal distribution)
         final idealPercentage = 20.0; // 100% / 5 categories
         double balanceScore = 0.0;
         for (final category in mainCategories) {
-          final deviation =
-              (categoryPercentages[category]! - idealPercentage).abs();
+          final deviation = (categoryPercentages[category]! - idealPercentage).abs();
           balanceScore += (20.0 - deviation) / 20.0; // Normalize to 0-1
         }
-        balanceScore = (balanceScore / mainCategories.length) *
-            100; // Convert to percentage
-
+        balanceScore = (balanceScore / mainCategories.length) * 100; // Convert to percentage
+        
         // Determine balance quality
         String balanceQuality;
         Color balanceColor;
         IconData balanceIcon;
-
+        
         if (balanceScore >= 80) {
           balanceQuality = 'Excellent';
           balanceColor = Colors.green;
@@ -939,7 +892,7 @@ class ProgressScreen extends ConsumerWidget {
           balanceColor = Colors.red;
           balanceIcon = Icons.error;
         }
-
+        
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -948,26 +901,25 @@ class ProgressScreen extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.analytics,
-                        color: AppTheme.primaryColor, size: 20),
+                    Icon(Icons.analytics, color: AppTheme.primaryColor, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       'Training Balance',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-
+                
                 // Balance Score
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: balanceColor.withOpacity(0.1),
+                    color: balanceColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: balanceColor.withOpacity(0.3)),
+                    border: Border.all(color: balanceColor.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
@@ -979,22 +931,16 @@ class ProgressScreen extends ConsumerWidget {
                           children: [
                             Text(
                               'Balance Score: ${balanceScore.toInt()}%',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: balanceColor,
-                                  ),
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: balanceColor,
+                              ),
                             ),
                             Text(
                               balanceQuality,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: balanceColor,
-                                  ),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: balanceColor,
+                              ),
                             ),
                           ],
                         ),
@@ -1002,18 +948,18 @@ class ProgressScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 16),
-
+                
                 // Category Distribution
                 Text(
                   'Training Distribution',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 12),
-
+                
                 ...mainCategories.map((category) {
                   final percentage = categoryPercentages[category] ?? 0.0;
                   return Padding(
@@ -1040,23 +986,22 @@ class ProgressScreen extends ConsumerWidget {
                         ),
                         Text(
                           '${percentage.toInt()}%',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: _getCategoryColor(category),
-                                  ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: _getCategoryColor(category),
+                          ),
                         ),
                       ],
                     ),
                   );
                 }).toList(),
-
+                
                 if (balanceScore < 80) ...[
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
+                      color: Colors.blue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
@@ -1066,10 +1011,9 @@ class ProgressScreen extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             'Tip: Try to balance your training across all categories for optimal development',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.blue,
-                                    ),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.blue,
+                            ),
                           ),
                         ),
                       ],
@@ -1086,7 +1030,7 @@ class ProgressScreen extends ConsumerWidget {
 
   Widget _buildWeeklyStatsSection(BuildContext context, WidgetRef ref) {
     final weeklyStatsAsync = ref.watch(weeklyStatsProvider);
-
+    
     return weeklyStatsAsync.when(
       loading: () => const Card(
         child: Padding(
@@ -1097,7 +1041,7 @@ class ProgressScreen extends ConsumerWidget {
       error: (error, stack) => const SizedBox.shrink(),
       data: (weeklyStats) {
         if (weeklyStats == null) return const SizedBox.shrink();
-
+        
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -1106,14 +1050,13 @@ class ProgressScreen extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.calendar_today,
-                        color: AppTheme.primaryColor, size: 20),
+                    Icon(Icons.calendar_today, color: AppTheme.primaryColor, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       'This Week',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -1183,9 +1126,9 @@ class ProgressScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -1194,15 +1137,15 @@ class ProgressScreen extends ConsumerWidget {
           Text(
             value,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
+              color: Colors.grey[600],
+            ),
           ),
         ],
       ),
@@ -1271,12 +1214,11 @@ class ProgressScreen extends ConsumerWidget {
     }
   }
 
-  Widget _buildPersonalBestCard(
-      BuildContext context, PersonalBest personalBest) {
+  Widget _buildPersonalBestCard(BuildContext context, PersonalBest personalBest) {
     IconData icon;
     Color iconColor;
     String subtitle;
-
+    
     // Set icon, color and subtitle based on exercise type
     if (personalBest.unit == 'kg' || personalBest.unit == 'lbs') {
       icon = Icons.fitness_center;
@@ -1300,7 +1242,7 @@ class ProgressScreen extends ConsumerWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
+            color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -1319,8 +1261,8 @@ class ProgressScreen extends ConsumerWidget {
         subtitle: Text(
           subtitle,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-              ),
+            color: Colors.grey[600],
+          ),
         ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1333,21 +1275,20 @@ class ProgressScreen extends ConsumerWidget {
               children: [
                 Text(
                   personalBest.bestValue.toStringAsFixed(
-                      personalBest.unit == 'kg' || personalBest.unit == 'lbs'
-                          ? 1
-                          : 0),
+                    personalBest.unit == 'kg' || personalBest.unit == 'lbs' ? 1 : 0
+                  ),
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: iconColor,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: iconColor,
+                  ),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   personalBest.unit,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: iconColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: iconColor,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -1356,10 +1297,10 @@ class ProgressScreen extends ConsumerWidget {
               Text(
                 'PR',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: iconColor,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
+                  color: iconColor,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
               ),
             ],
           ],

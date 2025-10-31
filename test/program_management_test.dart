@@ -10,7 +10,7 @@ import '../lib/core/models/models.dart';
 void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    
+
     // Mock platform channels
     const MethodChannel('plugins.flutter.io/path_provider')
         .setMockMethodCallHandler((MethodCall methodCall) async {
@@ -25,13 +25,13 @@ void main() {
       }
       return './test/';
     });
-    
+
     const MethodChannel('plugins.it_nomads.com/flutter_secure_storage')
         .setMockMethodCallHandler((MethodCall methodCall) async => null);
-    
+
     // Initialize Hive with test directory
     await Hive.initFlutter();
-    
+
     // Open required boxes
     try {
       await Hive.openBox('progress_journal');
@@ -63,12 +63,11 @@ void main() {
     } catch (e) {
       // Ignore cleanup errors
     }
-    
+
     await Hive.deleteFromDisk();
   });
 
   group('Program Management Tests', () {
-    
     group('Local Progress Source - Delete by Program', () {
       late LocalProgressSource source;
 
@@ -84,7 +83,6 @@ void main() {
       });
 
       test('should delete events for specific program only', () async {
-        
         // Create test events for different programs
         final program1Event1 = ProgressEvent(
           ts: DateTime.now(),
@@ -93,7 +91,7 @@ void main() {
           week: 0,
           session: 0,
         );
-        
+
         final program1Event2 = ProgressEvent(
           ts: DateTime.now().add(const Duration(minutes: 30)),
           type: ProgressEventType.sessionCompleted,
@@ -101,7 +99,7 @@ void main() {
           week: 0,
           session: 0,
         );
-        
+
         final program2Event = ProgressEvent(
           ts: DateTime.now().add(const Duration(hours: 1)),
           type: ProgressEventType.sessionStarted,
@@ -109,45 +107,49 @@ void main() {
           week: 0,
           session: 0,
         );
-        
+
         // Add events to storage
         await source.appendEvent(program1Event1);
         await source.appendEvent(program1Event2);
         await source.appendEvent(program2Event);
-        
+
         // Verify all events were added
         final allEvents = await source.getAllEvents();
         expect(allEvents.length, equals(3));
-        
+
         // Get events for each program
         final program1Events = await source.getEventsByProgram('program1');
         final program2Events = await source.getEventsByProgram('program2');
-        
+
         expect(program1Events.length, equals(2));
         expect(program2Events.length, equals(1));
-        
+
         // Delete program1 events
         final deleteSuccess = await source.deleteEventsByProgram('program1');
         expect(deleteSuccess, isTrue);
-        
+
         // Verify program1 events are deleted
-        final remainingProgram1Events = await source.getEventsByProgram('program1');
+        final remainingProgram1Events =
+            await source.getEventsByProgram('program1');
         expect(remainingProgram1Events.length, equals(0));
-        
+
         // Verify program2 events are still there
-        final remainingProgram2Events = await source.getEventsByProgram('program2');
+        final remainingProgram2Events =
+            await source.getEventsByProgram('program2');
         expect(remainingProgram2Events.length, equals(1));
-        
+
         // Verify total events count
         final remainingAllEvents = await source.getAllEvents();
         expect(remainingAllEvents.length, equals(1));
       });
 
-      test('should handle deleting from non-existent program gracefully', () async {
+      test('should handle deleting from non-existent program gracefully',
+          () async {
         // Try to delete events for a program that doesn't exist
-        final deleteSuccess = await source.deleteEventsByProgram('non_existent_program');
+        final deleteSuccess =
+            await source.deleteEventsByProgram('non_existent_program');
         expect(deleteSuccess, isTrue); // Should succeed (no-op)
-        
+
         // Verify no events exist
         final allEvents = await source.getAllEvents();
         expect(allEvents.length, equals(0));
@@ -164,7 +166,7 @@ void main() {
           exerciseId: 'bench_press',
           payload: {'sets': 4, 'reps': 8, 'weight': 100},
         );
-        
+
         final otherEvent = ProgressEvent(
           ts: DateTime.now().add(const Duration(minutes: 10)),
           type: ProgressEventType.sessionCompleted,
@@ -172,18 +174,18 @@ void main() {
           week: 1,
           session: 2,
         );
-        
+
         // Add events
         await source.appendEvent(complexEvent);
         await source.appendEvent(otherEvent);
-        
+
         // Delete test_program events
         await source.deleteEventsByProgram('test_program');
-        
+
         // Verify remaining event has intact data
         final remainingEvents = await source.getAllEvents();
         expect(remainingEvents.length, equals(1));
-        
+
         final remaining = remainingEvents.first;
         expect(remaining.programId, equals('other_program'));
         expect(remaining.week, equals(1));
@@ -195,16 +197,19 @@ void main() {
     group('Program Deletion Options', () {
       test('should have correct enum values', () {
         expect(ProgramDeletionOption.values.length, equals(3));
-        expect(ProgramDeletionOption.values, contains(ProgramDeletionOption.stopOnly));
-        expect(ProgramDeletionOption.values, contains(ProgramDeletionOption.stopAndDeleteProgress));
-        expect(ProgramDeletionOption.values, contains(ProgramDeletionOption.stopAndDeleteEverything));
+        expect(ProgramDeletionOption.values,
+            contains(ProgramDeletionOption.stopOnly));
+        expect(ProgramDeletionOption.values,
+            contains(ProgramDeletionOption.stopAndDeleteProgress));
+        expect(ProgramDeletionOption.values,
+            contains(ProgramDeletionOption.stopAndDeleteEverything));
       });
 
       test('should handle enum comparison correctly', () {
         const option1 = ProgramDeletionOption.stopOnly;
         const option2 = ProgramDeletionOption.stopAndDeleteProgress;
         const option3 = ProgramDeletionOption.stopAndDeleteEverything;
-        
+
         expect(option1 == ProgramDeletionOption.stopOnly, isTrue);
         expect(option1 == option2, isFalse);
         expect(option2 == option3, isFalse);
@@ -212,9 +217,11 @@ void main() {
     });
 
     group('SSOT Validation', () {
-      test('should verify that all program data sources clear progress consistently', () async {
+      test(
+          'should verify that all program data sources clear progress consistently',
+          () async {
         final source = LocalProgressSource();
-        
+
         // Create events for the same program we'll later delete
         final event1 = ProgressEvent(
           ts: DateTime.now(),
@@ -223,7 +230,7 @@ void main() {
           week: 0,
           session: 0,
         );
-        
+
         final event2 = ProgressEvent(
           ts: DateTime.now().add(const Duration(minutes: 30)),
           type: ProgressEventType.exerciseDone,
@@ -232,7 +239,7 @@ void main() {
           session: 0,
           exerciseId: 'squat',
         );
-        
+
         final event3 = ProgressEvent(
           ts: DateTime.now().add(const Duration(hours: 1)),
           type: ProgressEventType.sessionCompleted,
@@ -240,29 +247,30 @@ void main() {
           week: 0,
           session: 0,
         );
-        
+
         // Add events
         await source.appendEvent(event1);
         await source.appendEvent(event2);
         await source.appendEvent(event3);
-        
+
         // Verify events exist
         final beforeDeletion = await source.getAllEvents();
         expect(beforeDeletion.length, equals(3));
-        
+
         final programEvents = await source.getEventsByProgram('test_program');
         expect(programEvents.length, equals(3));
-        
+
         // Delete program events
         await source.deleteEventsByProgram('test_program');
-        
+
         // Verify all events for this program are gone
         final afterDeletion = await source.getAllEvents();
         expect(afterDeletion.length, equals(0));
-        
-        final remainingProgramEvents = await source.getEventsByProgram('test_program');
+
+        final remainingProgramEvents =
+            await source.getEventsByProgram('test_program');
         expect(remainingProgramEvents.length, equals(0));
-        
+
         // This test verifies that our single source of truth (LocalProgressSource)
         // correctly manages all program-related progress data
       });
