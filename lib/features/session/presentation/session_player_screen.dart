@@ -258,7 +258,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     final sessionAsync =
-        ref.watch(_sessionProvider(widget.week, widget.session));
+        ref.watch(_sessionProvider(widget.programId, widget.week, widget.session));
     final programAsync = ref.watch(_programProvider(widget.programId));
 
     return Scaffold(
@@ -474,7 +474,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }
 
   Widget _buildPageIndicator(int count) {
-    final sessionAsync = ref.watch(_sessionProvider(widget.week, widget.session));
+    final sessionAsync = ref.watch(_sessionProvider(widget.programId, widget.week, widget.session));
     
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1448,7 +1448,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
       await Future.delayed(const Duration(milliseconds: 300));
       
       // Get session data to determine total exercises
-      final sessionAsync = ref.read(_sessionProvider(widget.week, widget.session));
+      final sessionAsync = ref.read(_sessionProvider(widget.programId, widget.week, widget.session));
       if (mounted && sessionAsync.hasValue) {
         final totalExercises = sessionAsync.value!.blocks.length;
         // Navigate to next exercise if not on the last page
@@ -1618,21 +1618,37 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
 
 // Provider to get session data
 @riverpod
-Future<Session> _session(Ref ref, String week, String session) async {
+Future<Session> _session(Ref ref, String programId, String week, String session) async {
   final sessionRepository = ref.watch(sessionRepositoryProvider);
+  final programRepository = ref.watch(programRepositoryProvider);
 
-  // Convert route parameters to session ID format
-  final weekNum = int.parse(week) + 1; // Route uses 0-based, data uses 1-based
-  final sessionNum =
-      int.parse(session) + 1; // Route uses 0-based, data uses 1-based
-  
-  // Build session ID based on program format (attacker_w1_s1)
-  final sessionId = 'attacker_w${weekNum}_s$sessionNum';
+  // Convert route parameters to integers
+  final weekIndex = int.parse(week);
+  final sessionIndex = int.parse(session);
+
+  // Load the program to get the actual session ID
+  final program = await programRepository.getById(programId);
+  if (program == null) {
+    throw Exception('Program not found: $programId');
+  }
+
+  if (weekIndex >= program.weeks.length) {
+    throw Exception(
+        'Week index $weekIndex is out of bounds for program $programId (has ${program.weeks.length} weeks)');
+  }
+
+  final weekData = program.weeks[weekIndex];
+  if (sessionIndex >= weekData.sessions.length) {
+    throw Exception(
+        'Session index $sessionIndex is out of bounds for week $weekIndex (has ${weekData.sessions.length} sessions)');
+  }
+
+  final sessionId = weekData.sessions[sessionIndex];
 
   final sessionResult = await sessionRepository.getById(sessionId);
   if (sessionResult == null) {
     throw Exception(
-        'Session not found: $sessionId (week: $week, session: $session)');
+        'Session not found: $sessionId (program: $programId, week: $week, session: $session)');
   }
   return sessionResult;
 }

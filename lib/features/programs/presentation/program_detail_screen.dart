@@ -381,14 +381,14 @@ class ProgramDetailScreen extends ConsumerWidget {
       return SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: () => context.go('/hub'),
+          onPressed: () => _resumeProgram(context, ref),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppTheme.primaryColor,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
           child: const Text(
-            'Resume from Hub',
+            'Resume Program',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -480,14 +480,63 @@ class ProgramDetailScreen extends ConsumerWidget {
           ),
         );
 
-        // Navigate to hub
-        context.go('/hub');
+        // Navigate directly to the first session (week 0, session 0)
+        context.go('/session/$programId/0/0');
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to start program: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  void _resumeProgram(BuildContext context, WidgetRef ref) async {
+    try {
+      // Get the current app state to find the next session
+      final appState = await ref.read(appStateProvider.future);
+      
+      if (!appState.hasActiveProgram) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('No active program found'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+        return;
+      }
+
+      final programId = appState.state?.activeProgramId ?? '';
+      final week = appState.state?.currentWeek ?? 0;
+      final session = appState.state?.currentSession ?? 0;
+
+      if (programId.isEmpty) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Invalid program state'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+        return;
+      }
+
+      // Navigate directly to the current session
+      if (context.mounted) {
+        context.go('/session/$programId/$week/$session');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to resume program: $e'),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );

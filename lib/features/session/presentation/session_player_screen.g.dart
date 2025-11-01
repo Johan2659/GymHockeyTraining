@@ -6,7 +6,7 @@ part of 'session_player_screen.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sessionHash() => r'4951962c128d01e12d5966361c3164a6258a677b';
+String _$sessionHash() => r'8fda0902d3ea5d86eb58ee67205ef51abc56e214';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -40,10 +40,12 @@ class _SessionFamily extends Family<AsyncValue<Session>> {
 
   /// See also [_session].
   _SessionProvider call(
+    String programId,
     String week,
     String session,
   ) {
     return _SessionProvider(
+      programId,
       week,
       session,
     );
@@ -54,6 +56,7 @@ class _SessionFamily extends Family<AsyncValue<Session>> {
     covariant _SessionProvider provider,
   ) {
     return call(
+      provider.programId,
       provider.week,
       provider.session,
     );
@@ -78,11 +81,13 @@ class _SessionFamily extends Family<AsyncValue<Session>> {
 class _SessionProvider extends AutoDisposeFutureProvider<Session> {
   /// See also [_session].
   _SessionProvider(
+    String programId,
     String week,
     String session,
   ) : this._internal(
           (ref) => _session(
             ref as _SessionRef,
+            programId,
             week,
             session,
           ),
@@ -94,6 +99,7 @@ class _SessionProvider extends AutoDisposeFutureProvider<Session> {
                   : _$sessionHash,
           dependencies: _SessionFamily._dependencies,
           allTransitiveDependencies: _SessionFamily._allTransitiveDependencies,
+          programId: programId,
           week: week,
           session: session,
         );
@@ -105,10 +111,12 @@ class _SessionProvider extends AutoDisposeFutureProvider<Session> {
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
+    required this.programId,
     required this.week,
     required this.session,
   }) : super.internal();
 
+  final String programId;
   final String week;
   final String session;
 
@@ -125,6 +133,7 @@ class _SessionProvider extends AutoDisposeFutureProvider<Session> {
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
+        programId: programId,
         week: week,
         session: session,
       ),
@@ -139,6 +148,7 @@ class _SessionProvider extends AutoDisposeFutureProvider<Session> {
   @override
   bool operator ==(Object other) {
     return other is _SessionProvider &&
+        other.programId == programId &&
         other.week == week &&
         other.session == session;
   }
@@ -146,6 +156,7 @@ class _SessionProvider extends AutoDisposeFutureProvider<Session> {
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, programId.hashCode);
     hash = _SystemHash.combine(hash, week.hashCode);
     hash = _SystemHash.combine(hash, session.hashCode);
 
@@ -156,6 +167,9 @@ class _SessionProvider extends AutoDisposeFutureProvider<Session> {
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin _SessionRef on AutoDisposeFutureProviderRef<Session> {
+  /// The parameter `programId` of this provider.
+  String get programId;
+
   /// The parameter `week` of this provider.
   String get week;
 
@@ -167,6 +181,8 @@ class _SessionProviderElement extends AutoDisposeFutureProviderElement<Session>
     with _SessionRef {
   _SessionProviderElement(super.provider);
 
+  @override
+  String get programId => (origin as _SessionProvider).programId;
   @override
   String get week => (origin as _SessionProvider).week;
   @override

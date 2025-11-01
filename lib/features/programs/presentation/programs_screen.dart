@@ -115,7 +115,7 @@ class ProgramsScreen extends ConsumerWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () => context.go('/hub'),
+                    onPressed: () => _resumeActiveProgram(context, appState),
                     child: const Text('Resume'),
                   ),
                 ],
@@ -395,6 +395,36 @@ class ProgramsScreen extends ConsumerWidget {
       BuildContext context, WidgetRef ref, UserRole role, Program program) {
     // Navigate to program detail screen
     context.go('/programs/${program.id}');
+  }
+
+  void _resumeActiveProgram(
+      BuildContext context, AppStateData appState) {
+    if (!appState.hasActiveProgram) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('No active program found'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      return;
+    }
+
+    final programId = appState.state?.activeProgramId ?? '';
+    final week = appState.state?.currentWeek ?? 0;
+    final session = appState.state?.currentSession ?? 0;
+
+    if (programId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Invalid program state'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      return;
+    }
+
+    // Navigate directly to the current session
+    context.go('/session/$programId/$week/$session');
   }
 }
 
