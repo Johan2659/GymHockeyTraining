@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:logger/logger.dart';
 import '../../core/models/models.dart';
 import 'attacker_program_data.dart';
+import 'defender_program_data.dart';
+import 'goalie_program_data.dart';
+import 'referee_program_data.dart';
 
 /// Local data source for sessions using embedded JSON data
 /// Provides session definitions and exercise blocks
@@ -178,9 +181,15 @@ class LocalSessionSource {
     try {
       _logger.d('LocalSessionSource: Loading session with ID: $id');
 
-      // Check if it's a new attacker program session
+      // Check new program sessions
       if (id.startsWith('attacker_w')) {
         return await AttackerProgramData.getSessionById(id);
+      } else if (id.startsWith('defender_w')) {
+        return await DefenderProgramData.getSessionById(id);
+      } else if (id.startsWith('goalie_w')) {
+        return await GoalieProgramData.getSessionById(id);
+      } else if (id.startsWith('referee_w')) {
+        return await RefereeProgramData.getSessionById(id);
       }
 
       // Check legacy sessions
@@ -203,14 +212,16 @@ class LocalSessionSource {
     try {
       _logger.d('LocalSessionSource: Loading sessions for program: $programId');
 
-      // Handle new attacker program
-      if (programId == 'hockey_attacker_2025') {
-        return await AttackerProgramData.getAllSessions();
-      }
-
-      // Legacy attacker program
-      if (programId == 'hockey_attacker_v1') {
-        return await getAllSessions();
+      // Handle all programs
+      switch (programId) {
+        case 'hockey_attacker_2025':
+          return await AttackerProgramData.getAllSessions();
+        case 'hockey_defender_2025':
+          return await DefenderProgramData.getAllSessions();
+        case 'hockey_goalie_2025':
+          return await GoalieProgramData.getAllSessions();
+        case 'hockey_referee_2025':
+          return await RefereeProgramData.getAllSessions();
       }
 
       _logger
@@ -232,22 +243,30 @@ class LocalSessionSource {
           'LocalSessionSource: Loading sessions for program $programId, week $week');
 
       final allSessions = await getSessionsByProgramId(programId);
+      final weekNum = week + 1; // Convert 0-based to 1-based
       
-      // For new attacker program, filter by attacker_w{week}_
-      if (programId == 'hockey_attacker_2025') {
-        final weekNum = week + 1; // Convert 0-based to 1-based
-        final weekSessions = allSessions
-            .where((session) => session.id.startsWith('attacker_w${weekNum}_'))
-            .toList();
-
-        _logger.d(
-            'LocalSessionSource: Found ${weekSessions.length} sessions for week $week');
-        return weekSessions;
+      // Handle all program types
+      String prefix;
+      switch (programId) {
+        case 'hockey_attacker_2025':
+          prefix = 'attacker_w${weekNum}_';
+          break;
+        case 'hockey_defender_2025':
+          prefix = 'defender_w${weekNum}_';
+          break;
+        case 'hockey_goalie_2025':
+          prefix = 'goalie_w${weekNum}_';
+          break;
+        case 'hockey_referee_2025':
+          prefix = 'referee_w${weekNum}_';
+          break;
+        default:
+          _logger.w('Unknown program ID: $programId');
+          return [];
       }
 
-      // Legacy format for old program
       final weekSessions = allSessions
-          .where((session) => session.id.startsWith('week${week}_'))
+          .where((session) => session.id.startsWith(prefix))
           .toList();
 
       _logger.d(

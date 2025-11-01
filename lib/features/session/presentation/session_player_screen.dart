@@ -8,6 +8,7 @@ import '../../../app/di.dart';
 import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
 import '../../application/app_state_provider.dart';
+import 'widgets/bonus_exercise_badge.dart';
 
 part 'session_player_screen.g.dart';
 
@@ -676,6 +677,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   Widget _buildExercisePage(
       BuildContext context, ExerciseBlock block, int exerciseNumber) {
     final exerciseAsync = ref.watch(_exerciseProvider(block.exerciseId));
+    final sessionAsync = ref.watch(_sessionProvider(widget.programId, widget.week, widget.session));
 
     return exerciseAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -689,10 +691,49 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         // Watch last performance
         final lastPerfAsync = ref.watch(lastPerformanceProvider(exercise.id));
 
+        // Check if this is the bonus exercise (last exercise in the session)
+        // treating last exercise as bonus
+        final isBonus = sessionAsync.value != null &&
+            sessionAsync.value!.blocks.isNotEmpty &&
+            sessionAsync.value!.blocks.last.exerciseId == exercise.id;
+
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Column(
-            children: [
+          child: Container(
+            decoration: BoxDecoration(
+              color: isBonus 
+                  ? AppTheme.primaryColor.withOpacity(0.08)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+              border: isBonus
+                  ? Border.all(
+                      color: Colors.amber.withOpacity(0.4),
+                      width: 1.5,
+                    )
+                  : null,
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Add some top padding if bonus to make room for the badge
+                    if (isBonus) const SizedBox(height: 24),
+                  ],
+                ),
+                
+                // Bonus badge overlay
+                if (isBonus)
+                  const Positioned(
+                    top: 12,
+                    left: 12,
+                    child: BonusExerciseBadge(),
+                  ),
+              ],
+            ),
+          ),
+        );
               // Exercise info card
               Container(
                 decoration: BoxDecoration(
