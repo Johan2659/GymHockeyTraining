@@ -231,6 +231,56 @@ class Program {
       weeks.map((e) => e.toJson()).toList();
 }
 
+/// Session in progress model for paused sessions
+@JsonSerializable()
+class SessionInProgress {
+  const SessionInProgress({
+    required this.programId,
+    required this.week,
+    required this.session,
+    required this.currentPage,
+    required this.completedExercises,
+    required this.exercisePerformances,
+    this.lastWeightUsed,
+    required this.pausedAt,
+  });
+
+  final String programId;
+  final int week;
+  final int session;
+  final int currentPage;
+  final List<String> completedExercises;
+  final Map<String, dynamic> exercisePerformances; // Stored as dynamic JSON
+  final Map<String, double>? lastWeightUsed;
+  final DateTime pausedAt;
+
+  factory SessionInProgress.fromJson(Map<String, dynamic> json) =>
+      _$SessionInProgressFromJson(json);
+  Map<String, dynamic> toJson() => _$SessionInProgressToJson(this);
+
+  SessionInProgress copyWith({
+    String? programId,
+    int? week,
+    int? session,
+    int? currentPage,
+    List<String>? completedExercises,
+    Map<String, dynamic>? exercisePerformances,
+    Map<String, double>? lastWeightUsed,
+    DateTime? pausedAt,
+  }) {
+    return SessionInProgress(
+      programId: programId ?? this.programId,
+      week: week ?? this.week,
+      session: session ?? this.session,
+      currentPage: currentPage ?? this.currentPage,
+      completedExercises: completedExercises ?? this.completedExercises,
+      exercisePerformances: exercisePerformances ?? this.exercisePerformances,
+      lastWeightUsed: lastWeightUsed ?? this.lastWeightUsed,
+      pausedAt: pausedAt ?? this.pausedAt,
+    );
+  }
+}
+
 /// Program state model for tracking user progress in a program
 @JsonSerializable()
 class ProgramState {
@@ -240,6 +290,7 @@ class ProgramState {
     required this.currentSession,
     required this.completedExerciseIds,
     this.pausedAt,
+    this.sessionInProgress,
   });
 
   final String? activeProgramId;
@@ -247,6 +298,8 @@ class ProgramState {
   final int currentSession;
   final List<String> completedExerciseIds;
   final DateTime? pausedAt;
+  @JsonKey(fromJson: _sessionInProgressFromJson, toJson: _sessionInProgressToJson)
+  final SessionInProgress? sessionInProgress;
 
   factory ProgramState.fromJson(Map<String, dynamic> json) =>
       _$ProgramStateFromJson(json);
@@ -258,6 +311,8 @@ class ProgramState {
     int? currentSession,
     List<String>? completedExerciseIds,
     DateTime? pausedAt,
+    SessionInProgress? sessionInProgress,
+    bool clearSessionInProgress = false,
   }) {
     return ProgramState(
       activeProgramId: activeProgramId ?? this.activeProgramId,
@@ -265,8 +320,15 @@ class ProgramState {
       currentSession: currentSession ?? this.currentSession,
       completedExerciseIds: completedExerciseIds ?? this.completedExerciseIds,
       pausedAt: pausedAt ?? this.pausedAt,
+      sessionInProgress: clearSessionInProgress ? null : (sessionInProgress ?? this.sessionInProgress),
     );
   }
+
+  static SessionInProgress? _sessionInProgressFromJson(Map<String, dynamic>? json) =>
+      json == null ? null : SessionInProgress.fromJson(json);
+
+  static Map<String, dynamic>? _sessionInProgressToJson(SessionInProgress? session) =>
+      session?.toJson();
 }
 
 /// Progress event model for journaling training events

@@ -227,6 +227,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     // Log session start event on next frame to ensure ref is available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _logSessionStart();
+      _restoreSessionState();
     });
   }
 
@@ -252,6 +253,103 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     } catch (error) {
       // Log error but don't prevent session from loading
       debugPrint('Failed to log session start: $error');
+    }
+  }
+
+  Future<void> _restoreSessionState() async {
+    try {
+      final sessionInProgress = await ref.read(sessionInProgressProvider.future);
+      
+      if (sessionInProgress != null &&
+          sessionInProgress.programId == widget.programId &&
+          sessionInProgress.week == int.parse(widget.week) &&
+          sessionInProgress.session == int.parse(widget.session)) {
+        
+        // Restore state
+        setState(() {
+          _currentPage = sessionInProgress.currentPage;
+          _completedExercises.addAll(sessionInProgress.completedExercises);
+          
+          // Restore exercise performances
+          sessionInProgress.exercisePerformances.forEach((key, value) {
+            if (value is List) {
+              _exercisePerformances[key] = List<Map<String, dynamic>>.from(
+                value.map((item) => Map<String, dynamic>.from(item as Map))
+              );
+            }
+          });
+          
+          // Restore last weight used
+          if (sessionInProgress.lastWeightUsed != null) {
+            _lastWeightUsed.addAll(sessionInProgress.lastWeightUsed!);
+          }
+        });
+        
+        // Jump to the saved page
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_pageController.hasClients) {
+            _pageController.jumpToPage(_currentPage);
+          }
+        });
+        
+        debugPrint('Session state restored from saved progress');
+      }
+    } catch (error) {
+      debugPrint('Failed to restore session state: $error');
+    }
+  }
+
+  Future<void> _saveSessionStateAndExit() async {
+    try {
+      // Convert exercise performances to JSON-serializable format
+      final Map<String, dynamic> performancesJson = {};
+      _exercisePerformances.forEach((key, value) {
+        performancesJson[key] = value;
+      });
+      
+      final sessionInProgress = SessionInProgress(
+        programId: widget.programId,
+        week: int.parse(widget.week),
+        session: int.parse(widget.session),
+        currentPage: _currentPage,
+        completedExercises: _completedExercises.toList(),
+        exercisePerformances: performancesJson,
+        lastWeightUsed: Map<String, double>.from(_lastWeightUsed),
+        pausedAt: DateTime.now(),
+      );
+      
+      final success = await ref.read(saveSessionInProgressActionProvider(sessionInProgress).future);
+      
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.save, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Session saved! You can resume later.'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        
+        // Navigate back to hub
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          context.go('/');
+        }
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save session: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -284,6 +382,28 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
           IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: () => _showSessionInfo(context, sessionAsync.value),
+            tooltip: 'Session Info',
+          ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            tooltip: 'More options',
+            onSelected: (value) {
+              if (value == 'save_exit') {
+                _saveSessionStateAndExit();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'save_exit',
+                child: Row(
+                  children: [
+                    Icon(Icons.save_outlined, color: AppTheme.primaryColor),
+                    SizedBox(width: 12),
+                    Text('Save & Exit'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -1468,6 +1588,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     try {
       // Complete the session through app state
       await ref.read(completeSessionActionProvider.future);
+      
+      // Clear the session-in-progress since it's completed
+      await ref.read(clearSessionInProgressActionProvider.future);
 
       if (mounted) {
         // Show success dialog

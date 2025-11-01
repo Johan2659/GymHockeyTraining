@@ -107,6 +107,35 @@ const _$UserRoleEnumMap = {
   UserRole.referee: 'referee',
 };
 
+SessionInProgress _$SessionInProgressFromJson(Map<String, dynamic> json) =>
+    SessionInProgress(
+      programId: json['programId'] as String,
+      week: (json['week'] as num).toInt(),
+      session: (json['session'] as num).toInt(),
+      currentPage: (json['currentPage'] as num).toInt(),
+      completedExercises: (json['completedExercises'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      exercisePerformances:
+          json['exercisePerformances'] as Map<String, dynamic>,
+      lastWeightUsed: (json['lastWeightUsed'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, (e as num).toDouble()),
+      ),
+      pausedAt: DateTime.parse(json['pausedAt'] as String),
+    );
+
+Map<String, dynamic> _$SessionInProgressToJson(SessionInProgress instance) =>
+    <String, dynamic>{
+      'programId': instance.programId,
+      'week': instance.week,
+      'session': instance.session,
+      'currentPage': instance.currentPage,
+      'completedExercises': instance.completedExercises,
+      'exercisePerformances': instance.exercisePerformances,
+      'lastWeightUsed': instance.lastWeightUsed,
+      'pausedAt': instance.pausedAt.toIso8601String(),
+    };
+
 ProgramState _$ProgramStateFromJson(Map<String, dynamic> json) => ProgramState(
       activeProgramId: json['activeProgramId'] as String?,
       currentWeek: (json['currentWeek'] as num).toInt(),
@@ -117,6 +146,8 @@ ProgramState _$ProgramStateFromJson(Map<String, dynamic> json) => ProgramState(
       pausedAt: json['pausedAt'] == null
           ? null
           : DateTime.parse(json['pausedAt'] as String),
+      sessionInProgress: ProgramState._sessionInProgressFromJson(
+          json['sessionInProgress'] as Map<String, dynamic>?),
     );
 
 Map<String, dynamic> _$ProgramStateToJson(ProgramState instance) =>
@@ -126,6 +157,8 @@ Map<String, dynamic> _$ProgramStateToJson(ProgramState instance) =>
       'currentSession': instance.currentSession,
       'completedExerciseIds': instance.completedExerciseIds,
       'pausedAt': instance.pausedAt?.toIso8601String(),
+      'sessionInProgress':
+          ProgramState._sessionInProgressToJson(instance.sessionInProgress),
     };
 
 ProgressEvent _$ProgressEventFromJson(Map<String, dynamic> json) =>

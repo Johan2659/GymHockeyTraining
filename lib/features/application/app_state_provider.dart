@@ -511,6 +511,70 @@ Future<ExercisePerformance?> lastPerformance(Ref ref, String exerciseId) async {
   }
 }
 
+/// Save session in progress action provider
+@riverpod
+Future<bool> saveSessionInProgressAction(Ref ref, SessionInProgress session) async {
+  try {
+    final stateRepo = ref.read(programStateRepositoryProvider);
+    final success = await stateRepo.saveSessionInProgress(session);
+
+    if (success) {
+      LoggerService.instance.info('Session in progress saved',
+          source: 'saveSessionInProgressAction',
+          metadata: {
+            'programId': session.programId,
+            'week': session.week,
+            'session': session.session
+          });
+      
+      // Invalidate program state to trigger UI updates
+      ref.invalidate(programStateProvider);
+    }
+
+    return success;
+  } catch (e) {
+    LoggerService.instance.error('Failed to save session in progress',
+        source: 'saveSessionInProgressAction', error: e);
+    return false;
+  }
+}
+
+/// Clear session in progress action provider
+@riverpod
+Future<bool> clearSessionInProgressAction(Ref ref) async {
+  try {
+    final stateRepo = ref.read(programStateRepositoryProvider);
+    final success = await stateRepo.clearSessionInProgress();
+
+    if (success) {
+      LoggerService.instance.info('Session in progress cleared',
+          source: 'clearSessionInProgressAction');
+      
+      // Invalidate program state to trigger UI updates
+      ref.invalidate(programStateProvider);
+    }
+
+    return success;
+  } catch (e) {
+    LoggerService.instance.error('Failed to clear session in progress',
+        source: 'clearSessionInProgressAction', error: e);
+    return false;
+  }
+}
+
+/// Get session in progress provider
+@riverpod
+Future<SessionInProgress?> sessionInProgress(Ref ref) async {
+  try {
+    final state = await ref.watch(programStateProvider.future);
+    return state?.sessionInProgress;
+  } catch (e) {
+    LoggerService.instance.error('Failed to get session in progress',
+        source: 'sessionInProgressProvider', error: e);
+    return null;
+  }
+}
+
 // =============================================================================
 // Profile Action Providers
 // =============================================================================

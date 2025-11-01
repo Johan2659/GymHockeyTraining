@@ -1433,6 +1433,194 @@ class _LastPerformanceProviderElement
   String get exerciseId => (origin as LastPerformanceProvider).exerciseId;
 }
 
+String _$saveSessionInProgressActionHash() =>
+    r'de100e54c1d23aaf4e524831bc3ce8c4c1c7fd93';
+
+/// Save session in progress action provider
+///
+/// Copied from [saveSessionInProgressAction].
+@ProviderFor(saveSessionInProgressAction)
+const saveSessionInProgressActionProvider = SaveSessionInProgressActionFamily();
+
+/// Save session in progress action provider
+///
+/// Copied from [saveSessionInProgressAction].
+class SaveSessionInProgressActionFamily extends Family<AsyncValue<bool>> {
+  /// Save session in progress action provider
+  ///
+  /// Copied from [saveSessionInProgressAction].
+  const SaveSessionInProgressActionFamily();
+
+  /// Save session in progress action provider
+  ///
+  /// Copied from [saveSessionInProgressAction].
+  SaveSessionInProgressActionProvider call(
+    SessionInProgress session,
+  ) {
+    return SaveSessionInProgressActionProvider(
+      session,
+    );
+  }
+
+  @override
+  SaveSessionInProgressActionProvider getProviderOverride(
+    covariant SaveSessionInProgressActionProvider provider,
+  ) {
+    return call(
+      provider.session,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'saveSessionInProgressActionProvider';
+}
+
+/// Save session in progress action provider
+///
+/// Copied from [saveSessionInProgressAction].
+class SaveSessionInProgressActionProvider
+    extends AutoDisposeFutureProvider<bool> {
+  /// Save session in progress action provider
+  ///
+  /// Copied from [saveSessionInProgressAction].
+  SaveSessionInProgressActionProvider(
+    SessionInProgress session,
+  ) : this._internal(
+          (ref) => saveSessionInProgressAction(
+            ref as SaveSessionInProgressActionRef,
+            session,
+          ),
+          from: saveSessionInProgressActionProvider,
+          name: r'saveSessionInProgressActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$saveSessionInProgressActionHash,
+          dependencies: SaveSessionInProgressActionFamily._dependencies,
+          allTransitiveDependencies:
+              SaveSessionInProgressActionFamily._allTransitiveDependencies,
+          session: session,
+        );
+
+  SaveSessionInProgressActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.session,
+  }) : super.internal();
+
+  final SessionInProgress session;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(SaveSessionInProgressActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SaveSessionInProgressActionProvider._internal(
+        (ref) => create(ref as SaveSessionInProgressActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        session: session,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _SaveSessionInProgressActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SaveSessionInProgressActionProvider &&
+        other.session == session;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, session.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin SaveSessionInProgressActionRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `session` of this provider.
+  SessionInProgress get session;
+}
+
+class _SaveSessionInProgressActionProviderElement
+    extends AutoDisposeFutureProviderElement<bool>
+    with SaveSessionInProgressActionRef {
+  _SaveSessionInProgressActionProviderElement(super.provider);
+
+  @override
+  SessionInProgress get session =>
+      (origin as SaveSessionInProgressActionProvider).session;
+}
+
+String _$clearSessionInProgressActionHash() =>
+    r'af2cfcaf2d79ceb15af1de4acc1c7b2936f30d67';
+
+/// Clear session in progress action provider
+///
+/// Copied from [clearSessionInProgressAction].
+@ProviderFor(clearSessionInProgressAction)
+final clearSessionInProgressActionProvider =
+    AutoDisposeFutureProvider<bool>.internal(
+  clearSessionInProgressAction,
+  name: r'clearSessionInProgressActionProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$clearSessionInProgressActionHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ClearSessionInProgressActionRef = AutoDisposeFutureProviderRef<bool>;
+String _$sessionInProgressHash() => r'3a5aa1a4dc2347bdb20d2708d72c659d82a45d0c';
+
+/// Get session in progress provider
+///
+/// Copied from [sessionInProgress].
+@ProviderFor(sessionInProgress)
+final sessionInProgressProvider =
+    AutoDisposeFutureProvider<SessionInProgress?>.internal(
+  sessionInProgress,
+  name: r'sessionInProgressProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$sessionInProgressHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SessionInProgressRef = AutoDisposeFutureProviderRef<SessionInProgress?>;
 String _$updateRoleActionHash() => r'5de21297127b6375e96a56021263f51c718cf403';
 
 /// Update role action provider

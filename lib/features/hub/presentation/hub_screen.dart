@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/models/models.dart';
 import '../../application/app_state_provider.dart';
 import '../../../core/utils/selectors.dart';
 import '../../programs/presentation/program_management_dialog.dart';
@@ -47,16 +48,25 @@ class HubScreen extends ConsumerWidget {
 
   Widget _buildDashboard(
       BuildContext context, WidgetRef ref, AppStateData data) {
+    final sessionInProgressAsync = ref.watch(sessionInProgressProvider);
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Active Program Section
+          // Unified Program Card (includes session in progress if exists)
           if (data.hasActiveProgram) ...[
-            _buildActiveCycleCard(context, ref, data),
-            const SizedBox(height: 16),
-            _buildMainCTA(context, ref, data),
+            sessionInProgressAsync.when(
+              data: (sessionInProgress) => _buildUnifiedProgramCard(
+                context, 
+                ref, 
+                data, 
+                sessionInProgress,
+              ),
+              loading: () => _buildUnifiedProgramCard(context, ref, data, null),
+              error: (_, __) => _buildUnifiedProgramCard(context, ref, data, null),
+            ),
             const SizedBox(height: 24),
           ] else ...[
             _buildNoProgramCard(context),
@@ -80,99 +90,354 @@ class HubScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildActiveCycleCard(
-      BuildContext context, WidgetRef ref, AppStateData data) {
+
+  void _showDiscardSessionDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard Session?'),
+        content: const Text(
+          'Are you sure you want to discard this session in progress? All unsaved progress will be lost.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await ref.read(clearSessionInProgressActionProvider.future);
+              if (context.mounted) {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Session discarded'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              }
+            },
+            child: const Text(
+              'Discard',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Unified widget that shows current program with embedded session in progress
+  Widget _buildUnifiedProgramCard(
+    BuildContext context,
+    WidgetRef ref,
+    AppStateData data,
+    SessionInProgress? sessionInProgress,
+  ) {
     final currentWeek = (data.state?.currentWeek ?? 0) + 1;
     final currentSession = (data.state?.currentSession ?? 0) + 1;
+    final hasSessionInProgress = sessionInProgress != null;
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Main Program Header
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.track_changes,
-                  color: AppTheme.primaryColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    'Current Program',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: Colors.grey[400],
-                  ),
-                  onSelected: (value) {
-                    if (value == 'stop') {
-                      _showStopProgramDialog(context);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'stop',
-                      child: Row(
-                        children: [
-                          Icon(Icons.stop_circle_outlined, color: Colors.orange),
-                          SizedBox(width: 8),
-                          Text('Stop Program'),
-                        ],
+                Row(
+                  children: [
+                    Icon(
+                      Icons.track_changes,
+                      color: AppTheme.primaryColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Current Program',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+                    ),
+                    PopupMenuButton<String>(
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: Colors.grey[400],
+                      ),
+                      onSelected: (value) {
+                        if (value == 'stop') {
+                          _showStopProgramDialog(context);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'stop',
+                          child: Row(
+                            children: [
+                              Icon(Icons.stop_circle_outlined, color: Colors.orange),
+                              SizedBox(width: 8),
+                              Text('Stop Program'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  data.activeProgram?.title ?? 'Unknown Program',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                LinearProgressIndicator(
+                  value: data.percentCycle,
+                  backgroundColor: Colors.grey[700],
+                  valueColor: AlwaysStoppedAnimation(AppTheme.primaryColor),
+                  minHeight: 8,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Week $currentWeek • Session $currentSession',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[400],
+                          ),
+                    ),
+                    Text(
+                      '${(data.percentCycle * 100).toInt()}%',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              data.activeProgram?.title ?? 'Unknown Program',
-              style: Theme.of(context).textTheme.titleMedium,
+          ),
+          
+          // Session In Progress Banner (embedded)
+          if (hasSessionInProgress)
+            _buildSessionInProgressBanner(context, ref, sessionInProgress, data),
+          
+          // Main CTA Button
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: hasSessionInProgress
+                ? _buildResumeSessionButton(context, sessionInProgress)
+                : _buildStartNextSessionButton(context, data),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Compact banner showing session in progress
+  Widget _buildSessionInProgressBanner(
+    BuildContext context,
+    WidgetRef ref,
+    SessionInProgress sessionInProgress,
+    AppStateData data,
+  ) {
+    final timeSincePause = DateTime.now().difference(sessionInProgress.pausedAt);
+    final hoursSincePause = timeSincePause.inHours;
+    final minutesSincePause = timeSincePause.inMinutes;
+    
+    String timeAgoText;
+    if (hoursSincePause > 24) {
+      timeAgoText = '${(hoursSincePause / 24).floor()} days ago';
+    } else if (hoursSincePause > 0) {
+      timeAgoText = '$hoursSincePause hours ago';
+    } else if (minutesSincePause > 0) {
+      timeAgoText = '$minutesSincePause minutes ago';
+    } else {
+      timeAgoText = 'Just now';
+    }
+    
+    final completedCount = sessionInProgress.completedExercises.length;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primaryColor.withOpacity(0.15),
+            AppTheme.accentColor.withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppTheme.primaryColor.withOpacity(0.3),
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.2),
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 12),
-            LinearProgressIndicator(
-              value: data.percentCycle,
-              backgroundColor: Colors.grey[700],
-              valueColor: AlwaysStoppedAnimation(AppTheme.primaryColor),
-              minHeight: 8,
+            child: Icon(
+              Icons.play_circle_filled,
+              color: Colors.orange[300],
+              size: 20,
             ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Week $currentWeek • Session $currentSession',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[400],
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.25),
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.pause_circle,
+                            size: 12,
+                            color: Colors.orange[300],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'In Progress',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange[300],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'Paused $timeAgoText',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[400],
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  '${(data.percentCycle * 100).toInt()}%',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  'Week ${sessionInProgress.week + 1} • Session ${sessionInProgress.session + 1}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[300],
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
-          ],
+          ),
+          if (completedCount > 0)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppTheme.accentColor.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: 14,
+                    color: AppTheme.accentColor,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$completedCount',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.accentColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.close, size: 18),
+            onPressed: () => _showDiscardSessionDialog(context, ref),
+            color: Colors.grey[400],
+            tooltip: 'Discard session',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Resume session button
+  Widget _buildResumeSessionButton(
+    BuildContext context,
+    SessionInProgress sessionInProgress,
+  ) {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          context.go('/session/${sessionInProgress.programId}/${sessionInProgress.week}/${sessionInProgress.session}');
+        },
+        icon: const Icon(Icons.play_arrow, size: 22),
+        label: const Text(
+          'Resume Session',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppTheme.primaryColor,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
         ),
       ),
     );
   }
 
-  Widget _buildMainCTA(BuildContext context, WidgetRef ref, AppStateData data) {
+  /// Start next session button
+  Widget _buildStartNextSessionButton(BuildContext context, AppStateData data) {
     final isSessionAvailable = data.nextSession != null;
 
     return SizedBox(
       width: double.infinity,
-      height: 56,
+      height: 52,
       child: FilledButton(
         onPressed: isSessionAvailable
             ? () {
@@ -201,7 +466,7 @@ class HubScreen extends ConsumerWidget {
               child: Text(
                 isSessionAvailable ? 'Start Next Session' : 'Program Complete!',
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -212,6 +477,7 @@ class HubScreen extends ConsumerWidget {
       ),
     );
   }
+
 
   Widget _buildNoProgramCard(BuildContext context) {
     return Card(

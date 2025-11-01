@@ -224,4 +224,82 @@ class ProgramStateRepositoryImpl implements ProgramStateRepository {
       return false;
     }
   }
+
+  @override
+  Future<bool> saveSessionInProgress(SessionInProgress session) async {
+    try {
+      _logger.d('ProgramStateRepositoryImpl: Saving session in progress');
+
+      final currentState = await get();
+      if (currentState == null) {
+        _logger.w('ProgramStateRepositoryImpl: No current state to update');
+        return false;
+      }
+
+      final updatedState = currentState.copyWith(sessionInProgress: session);
+      final success = await save(updatedState);
+
+      if (success) {
+        _logger.i('ProgramStateRepositoryImpl: Successfully saved session in progress');
+      }
+
+      return success;
+    } catch (e, stackTrace) {
+      _logger.e('ProgramStateRepositoryImpl: Error saving session in progress',
+          error: e, stackTrace: stackTrace);
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> clearSessionInProgress() async {
+    try {
+      _logger.d('ProgramStateRepositoryImpl: Clearing session in progress');
+
+      final currentState = await get();
+      if (currentState == null) {
+        _logger.w('ProgramStateRepositoryImpl: No current state to update');
+        return false;
+      }
+
+      final updatedState = currentState.copyWith(clearSessionInProgress: true);
+      final success = await save(updatedState);
+
+      if (success) {
+        _logger.i('ProgramStateRepositoryImpl: Successfully cleared session in progress');
+      }
+
+      return success;
+    } catch (e, stackTrace) {
+      _logger.e('ProgramStateRepositoryImpl: Error clearing session in progress',
+          error: e, stackTrace: stackTrace);
+      return false;
+    }
+  }
+
+  @override
+  Future<SessionInProgress?> getSessionInProgress() async {
+    try {
+      _logger.d('ProgramStateRepositoryImpl: Getting session in progress');
+
+      final currentState = await get();
+      if (currentState == null) {
+        _logger.d('ProgramStateRepositoryImpl: No current state found');
+        return null;
+      }
+
+      final session = currentState.sessionInProgress;
+      if (session != null) {
+        _logger.i('ProgramStateRepositoryImpl: Found session in progress');
+      } else {
+        _logger.d('ProgramStateRepositoryImpl: No session in progress found');
+      }
+
+      return session;
+    } catch (e, stackTrace) {
+      _logger.e('ProgramStateRepositoryImpl: Error getting session in progress',
+          error: e, stackTrace: stackTrace);
+      return null;
+    }
+  }
 }

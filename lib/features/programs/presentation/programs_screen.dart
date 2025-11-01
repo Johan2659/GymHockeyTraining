@@ -79,51 +79,10 @@ class ProgramsScreen extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context, AppStateData appState) {
+    // Removed Active Program Resume section
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (appState.hasActiveProgram) ...[
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: AppTheme.primaryColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Active Program',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          appState.activeProgram?.title ?? 'Unknown Program',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[400],
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => _resumeActiveProgram(context, appState),
-                    child: const Text('Resume'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-        ],
         Text(
           'Choose Your Role',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
