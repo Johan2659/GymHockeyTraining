@@ -699,168 +699,166 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
 
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Container(
-            decoration: BoxDecoration(
-              color: isBonus 
-                  ? AppTheme.primaryColor.withOpacity(0.08)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-              border: isBonus
-                  ? Border.all(
-                      color: Colors.amber.withOpacity(0.4),
-                      width: 1.5,
-                    )
-                  : null,
-            ),
-            padding: const EdgeInsets.all(16),
-            child: Stack(
-              children: [
-                Column(
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: isBonus 
+                      ? AppTheme.primaryColor.withOpacity(0.08)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                  border: isBonus
+                      ? Border.all(
+                          color: Colors.amber.withOpacity(0.4),
+                          width: 1.5,
+                        )
+                      : null,
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Add some top padding if bonus to make room for the badge
                     if (isBonus) const SizedBox(height: 24),
-                  ],
-                ),
-                
-                // Bonus badge overlay
-                if (isBonus)
-                  const Positioned(
-                    top: 12,
-                    left: 12,
-                    child: BonusExerciseBadge(),
-                  ),
-              ],
-            ),
-          ),
-        );
-              // Exercise info card
-              Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.surfaceColor,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 12,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Exercise name and number
-                    Row(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppTheme.primaryColor.withOpacity(0.2),
+                    
+                    // Exercise info card
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceColor,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 12,
+                            offset: const Offset(0, 3),
                           ),
-                          child: Center(
-                            child: Text(
-                              '$exerciseNumber',
-                              style: const TextStyle(
-                                color: AppTheme.primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Exercise name and number
+                          Row(
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppTheme.primaryColor.withOpacity(0.2),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '$exerciseNumber',
+                                    style: const TextStyle(
+                                      color: AppTheme.primaryColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  exercise.name,
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Prescribed details
+                          _buildPrescribedDetails(context, exercise),
+
+                          // Last performance history
+                          lastPerfAsync.when(
+                            data: (lastPerf) => lastPerf != null
+                                ? _buildLastPerformance(context, lastPerf)
+                                : const SizedBox.shrink(),
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                          ),
+
+                          // Watch video button
+                          if (exercise.youtubeQuery.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: () => _showVideoDialog(context, exercise),
+                                icon: const Icon(Icons.play_circle_outline, size: 18),
+                                label: const Text('Watch Video', style: TextStyle(fontSize: 14)),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            exercise.name,
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                          ],
+                        ],
+                      ),
                     ),
+
                     const SizedBox(height: 16),
 
-                    // Prescribed details
-                    _buildPrescribedDetails(context, exercise),
+                    // Performance input section
+                    _buildPerformanceInput(context, exercise),
 
-                    // Last performance history
-                    lastPerfAsync.when(
-                      data: (lastPerf) => lastPerf != null
-                          ? _buildLastPerformance(context, lastPerf)
-                          : const SizedBox.shrink(),
-                      loading: () => const SizedBox.shrink(),
-                      error: (_, __) => const SizedBox.shrink(),
-                    ),
+                    const SizedBox(height: 16),
 
-                    // Watch video button
-                    if (exercise.youtubeQuery.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () => _showVideoDialog(context, exercise),
-                          icon: const Icon(Icons.play_circle_outline, size: 18),
-                          label: const Text('Watch Video', style: TextStyle(fontSize: 14)),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                          ),
-                        ),
+                    // Mark as done and go to next button
+                    SizedBox(
+                      width: double.infinity,
+                      child: Builder(
+                        builder: (context) {
+                          final allSetsCompleted = _areAllSetsCompleted(exercise.id);
+                          final isCompleted = _completedExercises.contains(exercise.id);
+                          
+                          return ElevatedButton.icon(
+                            onPressed: isCompleted
+                                ? null
+                                : () => _saveExercisePerformanceAndNext(exercise),
+                            icon: Icon(
+                              isCompleted
+                                  ? Icons.check_circle
+                                  : (allSetsCompleted ? Icons.check_circle : Icons.arrow_forward),
+                              size: 20,
+                            ),
+                            label: Text(
+                              isCompleted
+                                  ? 'Completed'
+                                  : (allSetsCompleted ? 'Next Exercise ✓' : 'Next Exercise'),
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: (isCompleted || allSetsCompleted)
+                                  ? Colors.green
+                                  : AppTheme.primaryColor,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                          );
+                        },
                       ),
-                    ],
+                    ),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 16),
-
-              // Performance input section
-              _buildPerformanceInput(context, exercise),
-
-              const SizedBox(height: 16),
-
-              // Mark as done and go to next button
-              SizedBox(
-                width: double.infinity,
-                child: Builder(
-                  builder: (context) {
-                    final allSetsCompleted = _areAllSetsCompleted(exercise.id);
-                    final isCompleted = _completedExercises.contains(exercise.id);
-                    
-                    return ElevatedButton.icon(
-                      onPressed: isCompleted
-                          ? null
-                          : () => _saveExercisePerformanceAndNext(exercise),
-                      icon: Icon(
-                        isCompleted
-                            ? Icons.check_circle
-                            : (allSetsCompleted ? Icons.check_circle : Icons.arrow_forward),
-                        size: 20,
-                      ),
-                      label: Text(
-                        isCompleted
-                            ? 'Completed'
-                            : (allSetsCompleted ? 'Next Exercise ✓' : 'Next Exercise'),
-                        style: const TextStyle(fontSize: 15),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: (isCompleted || allSetsCompleted)
-                            ? Colors.green
-                            : AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                    );
-                  },
+              
+              // Bonus badge overlay
+              if (isBonus)
+                const Positioned(
+                  top: 12,
+                  left: 12,
+                  child: BonusExerciseBadge(),
                 ),
-              ),
             ],
           ),
         );
