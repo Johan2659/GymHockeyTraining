@@ -607,21 +607,38 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
           
           if (sessionAsync.hasValue) {
             final exerciseId = sessionAsync.value!.blocks[index].exerciseId;
-            final isCompleted = _completedExercises.contains(exerciseId);
-            final hasPerformance = _exercisePerformances.containsKey(exerciseId);
-            final allSetsCompleted = _areAllSetsCompleted(exerciseId);
             
-            if (isCompleted || allSetsCompleted) {
-              // Fully completed (marked or all sets done) - green
-              dotColor = Colors.green;
-            } else if (hasPerformance) {
-              // Check if partially completed (some sets done)
-              final sets = _exercisePerformances[exerciseId] ?? [];
-              final hasCompletedSets = sets.any((set) => set['completed'] as bool);
+            // Check if this is the bonus exercise (last exercise in session)
+            final isBonus = sessionAsync.value!.blocks.isNotEmpty &&
+                sessionAsync.value!.blocks.last.exerciseId == exerciseId;
+            
+            if (isBonus) {
+              // Bonus exercise - always use bonus color (amber)
+              dotColor = Colors.yellow;
+            } else {
+              // Normal exercises - apply status-based coloring
+              final isCompleted = _completedExercises.contains(exerciseId);
+              final hasPerformance = _exercisePerformances.containsKey(exerciseId);
+              final allSetsCompleted = _areAllSetsCompleted(exerciseId);
               
-              if (hasCompletedSets) {
-                // Partially completed - orange
-                dotColor = Colors.orange;
+              if (isCompleted || allSetsCompleted) {
+                // Fully completed (marked or all sets done) - green
+                dotColor = Colors.green;
+              } else if (hasPerformance) {
+                // Check if partially completed (some sets done)
+                final sets = _exercisePerformances[exerciseId] ?? [];
+                final hasCompletedSets = sets.any((set) => set['completed'] as bool);
+                
+                if (hasCompletedSets) {
+                  // Partially completed - orange
+                  dotColor = Colors.orange;
+                } else if (index == _currentPage) {
+                  // Current page - primary color
+                  dotColor = AppTheme.primaryColor;
+                } else {
+                  // Not started - gray
+                  dotColor = Colors.grey[700]!;
+                }
               } else if (index == _currentPage) {
                 // Current page - primary color
                 dotColor = AppTheme.primaryColor;
@@ -629,12 +646,6 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                 // Not started - gray
                 dotColor = Colors.grey[700]!;
               }
-            } else if (index == _currentPage) {
-              // Current page - primary color
-              dotColor = AppTheme.primaryColor;
-            } else {
-              // Not started - gray
-              dotColor = Colors.grey[700]!;
             }
           } else {
             // Loading state
