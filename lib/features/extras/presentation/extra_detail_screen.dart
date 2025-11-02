@@ -23,7 +23,6 @@ class ExtraDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
-  final Set<String> _completedExercises = <String>{};
   bool _isCompleting = false;
   bool _extraStarted = false;
 
@@ -166,14 +165,9 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
         .cast<Exercise>()
         .toList();
 
-    final completedCount = _completedExercises.length;
-    final totalCount = extraExercises.length;
-    final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
-    final isCompleted = completedCount == totalCount;
-
     return Column(
       children: [
-        // Header with progress
+        // Header with session overview
         Container(
           padding: const EdgeInsets.all(16),
           child: Card(
@@ -182,6 +176,13 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    'Session Overview',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
                   Text(
                     extra.description,
                     style: Theme.of(context).textTheme.bodyMedium,
@@ -202,6 +203,23 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                             ),
                       ),
                       const SizedBox(width: 16),
+                      if (extra.difficulty != null) ...[
+                        Icon(
+                          Icons.trending_up,
+                          size: 16,
+                          color: _getDifficultyColor(extra.difficulty!),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          extra.difficulty!.toUpperCase(),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: _getDifficultyColor(extra.difficulty!),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        const SizedBox(width: 16),
+                      ],
                       Icon(
                         Icons.emoji_events,
                         size: 16,
@@ -217,97 +235,106 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  // Progress bar
-                  Row(
-                    children: [
-                      Expanded(
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          backgroundColor: Colors.grey[700],
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            isCompleted ? Colors.green : AppTheme.primaryColor,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        '$completedCount/$totalCount',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
           ),
         ),
-        // Exercise list
+        // Exercise preview list
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: extraExercises.length,
-            itemBuilder: (context, index) {
-              final exercise = extraExercises[index];
-              final isCompleted = _completedExercises.contains(exercise.id);
-
-              return _ExerciseCard(
-                exercise: exercise,
-                isCompleted: isCompleted,
-                onCompleted: () => _markExerciseCompleted(exercise.id),
-              );
-            },
+          child: extraExercises.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.fitness_center,
+                          size: 64,
+                          color: Colors.grey[700],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Session preview',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Start the session to see exercises',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[400],
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: extraExercises.length,
+                  itemBuilder: (context, index) {
+                    final exercise = extraExercises[index];
+                    return _ExercisePreviewCard(
+                      exercise: exercise,
+                      index: index,
+                    );
+                  },
+                ),
+        ),
+        // Start Session button - always visible
+        SafeArea(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isCompleting ? null : () => _startSession(extra),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  disabledBackgroundColor: Colors.grey[800],
+                ),
+                child: _isCompleting
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Text(
+                        'Start this session',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+              ),
+            ),
           ),
         ),
-        // Complete button
-        if (isCompleted && !_isCompleting)
-          SafeArea(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _completeExtra,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: Text(
-                    'Complete Extra (+${extra.xpReward} XP)',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        if (_isCompleting)
-          SafeArea(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          ),
       ],
     );
   }
 
-  void _markExerciseCompleted(String exerciseId) {
-    setState(() {
-      if (_completedExercises.contains(exerciseId)) {
-        _completedExercises.remove(exerciseId);
-      } else {
-        _completedExercises.add(exerciseId);
-      }
-    });
-  }
-
-  Future<void> _completeExtra() async {
+  Future<void> _startSession(ExtraItem extra) async {
     if (_isCompleting) return;
 
     setState(() {
@@ -315,27 +342,38 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
     });
 
     try {
-      final extra = await ref.read(_extraProvider(widget.extraId).future);
-      if (extra != null) {
-        await ref.read(
-            completeExtraActionProvider(widget.extraId, extra.xpReward).future);
+      // Log the session start
+      debugPrint('Starting extra session: ${extra.id}');
 
+      // TODO: Replace with actual workout session navigation
+      // For now, navigate to a placeholder or existing workout screen
+      // Example: context.push('/workout-session/${extra.id}');
+      
+      if (mounted) {
+        // Show a snackbar indicating session is starting
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Starting ${extra.title}...'),
+            backgroundColor: AppTheme.primaryColor,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        // Simulate navigation delay
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // TODO: Navigate to actual workout session screen when implemented
+        // For now, just pop back
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Extra completed! +${extra.xpReward} XP earned'),
-              backgroundColor: Colors.green,
-            ),
-          );
           context.pop();
         }
       }
     } catch (error) {
-      debugPrint('Failed to complete extra: $error');
+      debugPrint('Failed to start session: $error');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to complete extra: $error'),
+            content: Text('Failed to start session: $error'),
             backgroundColor: Colors.red,
           ),
         );
@@ -346,6 +384,19 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
           _isCompleting = false;
         });
       }
+    }
+  }
+
+  Color _getDifficultyColor(String difficulty) {
+    switch (difficulty.toLowerCase()) {
+      case 'easy':
+        return Colors.green;
+      case 'medium':
+        return Colors.orange;
+      case 'hard':
+        return Colors.red;
+      default:
+        return Colors.grey;
     }
   }
 
@@ -394,100 +445,91 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
   }
 }
 
-class _ExerciseCard extends StatelessWidget {
-  const _ExerciseCard({
+class _ExercisePreviewCard extends StatelessWidget {
+  const _ExercisePreviewCard({
     required this.exercise,
-    required this.isCompleted,
-    required this.onCompleted,
+    required this.index,
   });
 
   final Exercise exercise;
-  final bool isCompleted;
-  final VoidCallback onCompleted;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: onCompleted,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isCompleted
-                      ? AppTheme.accentColor
-                      : AppTheme.backgroundColor,
-                  border: Border.all(
-                    color:
-                        isCompleted ? AppTheme.accentColor : Colors.grey[700]!,
-                    width: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.primaryColor.withOpacity(0.2),
+                border: Border.all(
+                  color: AppTheme.primaryColor,
+                  width: 2,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  '${index + 1}',
+                  style: const TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
                 ),
-                child: isCompleted
-                    ? Icon(
-                        Icons.check,
-                        color: AppTheme.backgroundColor,
-                        size: 16,
-                      )
-                    : null,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      exercise.name,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
-                      softWrap: true,
-                    ),
-                    const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 8,
-                      children: [
-                        if (exercise.sets > 0)
-                          Text(
-                            '${exercise.sets} sets',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[400],
-                                    ),
-                          ),
-                        if (exercise.reps > 0)
-                          Text(
-                            '${exercise.reps} reps',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[400],
-                                    ),
-                          ),
-                        if (exercise.duration != null)
-                          Text(
-                            '${exercise.duration}s',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[400],
-                                    ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    exercise.name,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                    softWrap: true,
+                  ),
+                  const SizedBox(height: 4),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      if (exercise.sets > 0)
+                        Text(
+                          '${exercise.sets} sets',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[400],
+                                  ),
+                        ),
+                      if (exercise.reps > 0)
+                        Text(
+                          '${exercise.reps} reps',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[400],
+                                  ),
+                        ),
+                      if (exercise.duration != null)
+                        Text(
+                          '${exercise.duration}s',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[400],
+                                  ),
+                        ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
