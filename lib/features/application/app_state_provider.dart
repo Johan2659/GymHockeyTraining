@@ -449,6 +449,37 @@ Future<void> startSessionAction(
   await progressRepo.appendEvent(event);
 }
 
+/// Start extra action provider
+@riverpod
+Future<void> startExtraAction(Ref ref, String extraId) async {
+  try {
+    LoggerService.instance.info('Starting extra action',
+        source: 'startExtraAction', metadata: {'extraId': extraId});
+
+    PersistenceService.logStateChange('Starting extra session: $extraId');
+
+    final progressRepo = ref.read(progressRepositoryProvider);
+    final event = ProgressEvent(
+      ts: DateTime.now(),
+      type: ProgressEventType.sessionStarted,
+      programId: extraId,
+      week: 0,
+      session: 0,
+      payload: {
+        'context': 'extra_session',
+      },
+    );
+
+    await progressRepo.appendEvent(event);
+  } catch (e, stackTrace) {
+    LoggerService.instance.error('Failed to start extra',
+        source: 'startExtraAction',
+        error: e,
+        stackTrace: stackTrace,
+        metadata: {'extraId': extraId});
+  }
+}
+
 /// Complete extra action provider
 @riverpod
 Future<void> completeExtraAction(Ref ref, String extraId, int xpReward) async {

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../app/di.dart';
 import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
 import '../../application/app_state_provider.dart';
-
-part 'extra_detail_screen.g.dart';
+import '../application/extra_session_model.dart';
+import '../application/extra_session_provider.dart';
 
 class ExtraDetailScreen extends ConsumerStatefulWidget {
   final String extraId;
@@ -49,8 +47,10 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final extraAsync = ref.watch(_extraProvider(widget.extraId));
-    final exercisesAsync = ref.watch(_exercisesProvider);
+    final sessionAsync = ref.watch(resolvedExtraSessionProvider(widget.extraId));
+    final resolvedSession = sessionAsync.valueOrNull;
+    final extraTitle = resolvedSession?.extra.title ?? 'Loading...';
+    final typeLabel = _getTypeDisplayName(resolvedSession?.extra.type);
 
     return Scaffold(
       appBar: AppBar(
@@ -60,12 +60,12 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              extraAsync.value?.title ?? 'Loading...',
+              extraTitle,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              _getTypeDisplayName(extraAsync.value?.type),
+              typeLabel,
               style:
                   const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
             ),
@@ -74,11 +74,11 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            onPressed: () => _showExtraInfo(context, extraAsync.value),
+            onPressed: () => _showExtraInfo(context, resolvedSession?.extra),
           ),
         ],
       ),
-      body: extraAsync.when(
+      body: sessionAsync.when(
         loading: () => const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +114,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
             ],
           ),
         ),
-        data: (extra) => extra == null
+        data: (session) => session == null
             ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -141,29 +141,15 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                   ],
                 ),
               )
-            : exercisesAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(
-                  child: Text('Failed to load exercises: $error'),
-                ),
-                data: (exercises) =>
-                    _buildExtraContent(context, extra, exercises),
-              ),
+            : _buildExtraContent(context, session),
       ),
     );
   }
 
   Widget _buildExtraContent(
-      BuildContext context, ExtraItem extra, List<Exercise> exercises) {
-    // Create a map for quick exercise lookups
-    final exerciseMap = {for (var ex in exercises) ex.id: ex};
-
-    // Get the exercises for this extra
-    final extraExercises = extra.blocks
-        .map((block) => exerciseMap[block.exerciseId])
-        .where((exercise) => exercise != null)
-        .cast<Exercise>()
-        .toList();
+      BuildContext context, ResolvedExtraSession session) {
+    final extra = session.extra;
+    final exercises = session.exercises;
 
     return Column(
       children: [
@@ -187,6 +173,34 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                     extra.description,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
+                  if (session.hasPlaceholders) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.amber.shade400),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.info_outline,
+                              color: Colors.amber, size: 18),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Some exercises are placeholders and will be updated soon.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.amber.shade200),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -242,7 +256,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
         ),
         // Exercise preview list
         Expanded(
-          child: extraExercises.isEmpty
+          child: exercises.isEmpty
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),
@@ -277,12 +291,13 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                 )
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: extraExercises.length,
+                  itemCount: exercises.length,
                   itemBuilder: (context, index) {
-                    final exercise = extraExercises[index];
+                    final exercise = exercises[index];
                     return _ExercisePreviewCard(
                       exercise: exercise,
                       index: index,
+                      isPlaceholder: session.isPlaceholder(exercise),
                     );
                   },
                 ),
@@ -304,7 +319,8 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isCompleting ? null : () => _startSession(extra),
+                onPressed:
+                    _isCompleting ? null : () => _startSession(session.extra),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
@@ -342,31 +358,8 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
     });
 
     try {
-      // Log the session start
-      debugPrint('Starting extra session: ${extra.id}');
-
-      // TODO: Replace with actual workout session navigation
-      // For now, navigate to a placeholder or existing workout screen
-      // Example: context.push('/workout-session/${extra.id}');
-      
       if (mounted) {
-        // Show a snackbar indicating session is starting
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Starting ${extra.title}...'),
-            backgroundColor: AppTheme.primaryColor,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-
-        // Simulate navigation delay
-        await Future.delayed(const Duration(milliseconds: 500));
-
-        // TODO: Navigate to actual workout session screen when implemented
-        // For now, just pop back
-        if (mounted) {
-          context.pop();
-        }
+        context.push('/extras/${extra.id}/play');
       }
     } catch (error) {
       debugPrint('Failed to start session: $error');
@@ -449,10 +442,12 @@ class _ExercisePreviewCard extends StatelessWidget {
   const _ExercisePreviewCard({
     required this.exercise,
     required this.index,
+    this.isPlaceholder = false,
   });
 
   final Exercise exercise;
   final int index;
+  final bool isPlaceholder;
 
   @override
   Widget build(BuildContext context) {
@@ -496,6 +491,23 @@ class _ExercisePreviewCard extends StatelessWidget {
                         ),
                     softWrap: true,
                   ),
+                  if (isPlaceholder) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.info_outline,
+                            size: 14, color: Colors.amber.shade300),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Placeholder exercise',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Colors.amber.shade200),
+                        ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 4),
                   Wrap(
                     spacing: 8,
@@ -534,18 +546,4 @@ class _ExercisePreviewCard extends StatelessWidget {
       ),
     );
   }
-}
-
-// Provider for getting a specific extra by ID
-@riverpod
-Future<ExtraItem?> _extra(Ref ref, String extraId) async {
-  final repository = ref.watch(extrasRepositoryProvider);
-  return repository.getById(extraId);
-}
-
-// Provider for getting all exercises (reused from existing logic)
-@riverpod
-Future<List<Exercise>> _exercises(Ref ref) async {
-  final repository = ref.watch(exerciseRepositoryProvider);
-  return repository.getAll();
 }

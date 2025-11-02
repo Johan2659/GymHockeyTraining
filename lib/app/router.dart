@@ -8,6 +8,7 @@ import '../features/programs/presentation/programs_screen.dart';
 import '../features/programs/presentation/program_detail_screen.dart';
 import '../features/extras/presentation/extras_screen.dart';
 import '../features/extras/presentation/extra_detail_screen.dart';
+import '../features/extras/presentation/extra_session_player_screen.dart';
 import '../features/progress/presentation/modern_progress_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/session/presentation/session_player_screen.dart';
@@ -83,6 +84,15 @@ GoRouter router(Ref ref) {
         builder: (context, state) {
           final extraId = state.pathParameters['extraId']!;
           return ExtraDetailScreen(extraId: extraId);
+        },
+      ),
+      // Extra session player route (fullscreen, no bottom nav)
+      GoRoute(
+        path: '/extras/:extraId/play',
+        name: 'extra-session-player',
+        builder: (context, state) {
+          final extraId = state.pathParameters['extraId']!;
+          return ExtraSessionPlayerScreen(extraId: extraId);
         },
       ),
     ],

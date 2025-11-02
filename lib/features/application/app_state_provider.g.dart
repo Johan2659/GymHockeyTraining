@@ -981,6 +981,148 @@ class _StartSessionActionProviderElement
   int get session => (origin as StartSessionActionProvider).session;
 }
 
+String _$startExtraActionHash() => r'3ea0d06d5b7d9de8976d148814223607a9e0305d';
+
+/// Start extra action provider
+///
+/// Copied from [startExtraAction].
+@ProviderFor(startExtraAction)
+const startExtraActionProvider = StartExtraActionFamily();
+
+/// Start extra action provider
+///
+/// Copied from [startExtraAction].
+class StartExtraActionFamily extends Family<AsyncValue<void>> {
+  /// Start extra action provider
+  ///
+  /// Copied from [startExtraAction].
+  const StartExtraActionFamily();
+
+  /// Start extra action provider
+  ///
+  /// Copied from [startExtraAction].
+  StartExtraActionProvider call(
+    String extraId,
+  ) {
+    return StartExtraActionProvider(
+      extraId,
+    );
+  }
+
+  @override
+  StartExtraActionProvider getProviderOverride(
+    covariant StartExtraActionProvider provider,
+  ) {
+    return call(
+      provider.extraId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'startExtraActionProvider';
+}
+
+/// Start extra action provider
+///
+/// Copied from [startExtraAction].
+class StartExtraActionProvider extends AutoDisposeFutureProvider<void> {
+  /// Start extra action provider
+  ///
+  /// Copied from [startExtraAction].
+  StartExtraActionProvider(
+    String extraId,
+  ) : this._internal(
+          (ref) => startExtraAction(
+            ref as StartExtraActionRef,
+            extraId,
+          ),
+          from: startExtraActionProvider,
+          name: r'startExtraActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$startExtraActionHash,
+          dependencies: StartExtraActionFamily._dependencies,
+          allTransitiveDependencies:
+              StartExtraActionFamily._allTransitiveDependencies,
+          extraId: extraId,
+        );
+
+  StartExtraActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.extraId,
+  }) : super.internal();
+
+  final String extraId;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(StartExtraActionRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: StartExtraActionProvider._internal(
+        (ref) => create(ref as StartExtraActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        extraId: extraId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _StartExtraActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is StartExtraActionProvider && other.extraId == extraId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, extraId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin StartExtraActionRef on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `extraId` of this provider.
+  String get extraId;
+}
+
+class _StartExtraActionProviderElement
+    extends AutoDisposeFutureProviderElement<void> with StartExtraActionRef {
+  _StartExtraActionProviderElement(super.provider);
+
+  @override
+  String get extraId => (origin as StartExtraActionProvider).extraId;
+}
+
 String _$completeExtraActionHash() =>
     r'94d2105925bc6c42cfd8b59053eebe91e962e0f0';
 

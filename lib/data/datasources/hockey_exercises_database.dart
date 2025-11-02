@@ -1099,6 +1099,159 @@ class HockeyExercisesDatabase {
   };
 
   // =============================================================================
+  // EXTRAS DEFINITIONS (EXPRESS WORKOUTS, CHALLENGES, MOBILITY)
+  // =============================================================================
+
+  static const Map<String, String> _extrasData = {
+    'express_cardio_15': '''
+{
+  "id": "express_cardio_15",
+  "title": "15-Min Cardio Blast",
+  "description": "High-intensity cardio circuit to boost endurance and agility",
+  "type": "express_workout",
+  "xpReward": 50,
+  "duration": 15,
+  "difficulty": "medium",
+  "blocks": [
+    {"exerciseId": "high_knees_intervals"},
+    {"exerciseId": "bike_intervals_20_40"},
+    {"exerciseId": "burpee_intervals"},
+    {"exerciseId": "jump_squat"}
+  ]
+}
+''',
+    'express_strength_20': '''
+{
+  "id": "express_strength_20",
+  "title": "20-Min Strength Circuit",
+  "description": "Full-body strength workout for hockey power development",
+  "type": "express_workout",
+  "xpReward": 75,
+  "duration": 20,
+  "difficulty": "hard",
+  "blocks": [
+    {"exerciseId": "dynamic_warmup_ramp"},
+    {"exerciseId": "goblet_squat"},
+    {"exerciseId": "bench_press"},
+    {"exerciseId": "side_plank_reach"},
+    {"exerciseId": "bike_intervals_15_45"}
+  ]
+}
+''',
+    'express_agility_15': '''
+{
+  "id": "express_agility_15",
+  "title": "15-Min Agility Focus",
+  "description": "Quick agility and coordination drills for better on-ice movement",
+  "type": "express_workout",
+  "xpReward": 60,
+  "duration": 15,
+  "difficulty": "easy",
+  "blocks": [
+    {"exerciseId": "ladder_footwork"},
+    {"exerciseId": "five_ten_five_shuttle"},
+    {"exerciseId": "skater_bounds"},
+    {"exerciseId": "pallof_press_rotation"}
+  ]
+}
+''',
+    'challenge_100_pushups': '''
+{
+  "id": "challenge_100_pushups",
+  "title": "100 Push-ups Challenge",
+  "description": "Complete 100 push-ups in one session. Break them into sets as needed!",
+  "type": "bonus_challenge",
+  "xpReward": 100,
+  "duration": 30,
+  "difficulty": "hard",
+  "blocks": [
+    {"exerciseId": "push_ups_weighted"}
+  ]
+}
+''',
+    'challenge_plank_5min': '''
+{
+  "id": "challenge_plank_5min",
+  "title": "5-Minute Plank Hold",
+  "description": "Hold a plank position for 5 minutes total. Rest breaks allowed!",
+  "type": "bonus_challenge",
+  "xpReward": 80,
+  "duration": 10,
+  "difficulty": "medium",
+  "blocks": [
+    {"exerciseId": "side_plank_reach"}
+  ]
+}
+''',
+    'challenge_burpee_ladder': '''
+{
+  "id": "challenge_burpee_ladder",
+  "title": "Burpee Ladder",
+  "description": "Do 1 burpee, then 2, then 3... up to 10, then back down to 1",
+  "type": "bonus_challenge",
+  "xpReward": 120,
+  "duration": 25,
+  "difficulty": "hard",
+  "blocks": [
+    {"exerciseId": "burpee_intervals"}
+  ]
+}
+''',
+    'mobility_hip_flow': '''
+{
+  "id": "mobility_hip_flow",
+  "title": "Hip Mobility Flow",
+  "description": "Essential hip stretches and mobility work for hockey players",
+  "type": "mobility_recovery",
+  "xpReward": 25,
+  "duration": 10,
+  "difficulty": "easy",
+  "blocks": [
+    {"exerciseId": "hip_circles"},
+    {"exerciseId": "leg_swings"},
+    {"exerciseId": "hip_flexor_stretch"},
+    {"exerciseId": "pigeon_stretch"}
+  ]
+}
+''',
+    'mobility_ankle_prep': '''
+{
+  "id": "mobility_ankle_prep",
+  "title": "Ankle Preparation",
+  "description": "Pre-skate ankle mobility and strengthening routine",
+  "type": "mobility_recovery",
+  "xpReward": 20,
+  "duration": 8,
+  "difficulty": "easy",
+  "blocks": [
+    {"exerciseId": "ankle_circles"},
+    {"exerciseId": "calf_raises"},
+    {"exerciseId": "ankle_dorsiflexion"},
+    {"exerciseId": "toe_raises"}
+  ]
+}
+''',
+    'mobility_cool_down': '''
+{
+  "id": "mobility_cool_down",
+  "title": "Post-Training Cool Down",
+  "description": "Full-body stretching sequence for recovery",
+  "type": "mobility_recovery",
+  "xpReward": 30,
+  "duration": 15,
+  "difficulty": "easy",
+  "blocks": [
+    {"exerciseId": "quad_stretch"},
+    {"exerciseId": "hamstring_stretch"},
+    {"exerciseId": "shoulder_stretch"},
+    {"exerciseId": "back_stretch"},
+    {"exerciseId": "neck_rolls"}
+  ]
+}
+''',
+  };
+
+  // =============================================================================
   // PUBLIC METHODS
   // =============================================================================
 
@@ -1216,6 +1369,71 @@ class HockeyExercisesDatabase {
     }
   }
 
+  /// Gets all extras from the database
+  static Future<List<ExtraItem>> getAllExtras() async {
+    try {
+      _logger.d('HockeyExercisesDatabase: Loading all extras');
+
+      final extras = <ExtraItem>[];
+
+      for (final entry in _extrasData.entries) {
+        final extra = await _loadExtra(entry.key, entry.value);
+        if (extra != null) {
+          extras.add(extra);
+        }
+      }
+
+      _logger
+          .i('HockeyExercisesDatabase: Loaded ${extras.length} extras');
+      return extras;
+    } catch (e, stackTrace) {
+      _logger.e('HockeyExercisesDatabase: Failed to load extras',
+          error: e, stackTrace: stackTrace);
+      return [];
+    }
+  }
+
+  /// Gets extras filtered by type
+  static Future<List<ExtraItem>> getExtrasByType(ExtraType type) async {
+    try {
+      _logger.d(
+          'HockeyExercisesDatabase: Loading extras for type: ${type.name}');
+
+      final allExtras = await getAllExtras();
+      final filteredExtras =
+          allExtras.where((extra) => extra.type == type).toList();
+
+      _logger.d(
+          'HockeyExercisesDatabase: Found ${filteredExtras.length} extras for type ${type.name}');
+      return filteredExtras;
+    } catch (e, stackTrace) {
+      _logger.e(
+          'HockeyExercisesDatabase: Failed to load extras for type ${type.name}',
+          error: e,
+          stackTrace: stackTrace);
+      return [];
+    }
+  }
+
+  /// Gets a specific extra by ID
+  static Future<ExtraItem?> getExtraById(String id) async {
+    try {
+      _logger.d('HockeyExercisesDatabase: Loading extra with ID: $id');
+
+      final extraJson = _extrasData[id];
+      if (extraJson == null) {
+        _logger.w('HockeyExercisesDatabase: Extra not found: $id');
+        return null;
+      }
+
+      return await _loadExtra(id, extraJson);
+    } catch (e, stackTrace) {
+      _logger.e('HockeyExercisesDatabase: Failed to load extra $id',
+          error: e, stackTrace: stackTrace);
+      return null;
+    }
+  }
+
   // =============================================================================
   // PRIVATE METHODS
   // =============================================================================
@@ -1234,6 +1452,22 @@ class HockeyExercisesDatabase {
           'HockeyExercisesDatabase: Failed to parse exercise JSON for $id',
           error: e,
           stackTrace: stackTrace);
+      return null;
+    }
+  }
+
+  /// Loads an extra from JSON string
+  static Future<ExtraItem?> _loadExtra(String id, String jsonString) async {
+    try {
+      final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
+      final extra = ExtraItem.fromJson(jsonData);
+
+      _logger.d(
+          'HockeyExercisesDatabase: Successfully loaded extra: ${extra.title}');
+      return extra;
+    } catch (e, stackTrace) {
+      _logger.e('HockeyExercisesDatabase: Failed to parse extra JSON for $id',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
