@@ -823,279 +823,7 @@ class ModernProgressScreen extends ConsumerWidget {
   // =============================================================================
 
   Widget _buildPerformanceEvolutionSection(BuildContext context, WidgetRef ref) {
-    // Mock data for demonstration - replace with real data from your database
-    final List<PerformanceDataPoint> performanceData = _generateMockPerformanceData();
-    
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.trending_up, color: AppTheme.primaryColor, size: 24),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Performance Evolution',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: 8),
-            
-            Text(
-              'Track your strength gains over time',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[400],
-              ),
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Stats summary
-            Row(
-              children: [
-                Expanded(
-                  child: _buildPerformanceStatTile(
-                    context,
-                    'Total Volume',
-                    '12.5K kg',
-                    '+15%',
-                    Icons.fitness_center,
-                    Colors.blue,
-                    isPositive: true,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildBestLiftTile(
-                    context,
-                    'Squat',
-                    '125 kg',
-                    'Nov 1, 2025',
-                    Icons.military_tech,
-                    Colors.amber,
-                  ),
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Time period selector
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildTimePeriodChip(context, 'Week', isSelected: false),
-                const SizedBox(width: 8),
-                _buildTimePeriodChip(context, 'Month', isSelected: true),
-                const SizedBox(width: 8),
-                _buildTimePeriodChip(context, 'Year', isSelected: false),
-              ],
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Performance graph
-            SizedBox(
-              height: 200,
-              child: CustomPaint(
-                size: const Size(double.infinity, 200),
-                painter: PerformanceGraphPainter(
-                  dataPoints: performanceData,
-                  color: AppTheme.primaryColor,
-                  bestLiftIndex: 5, // Index of the best lift in the data
-                  bestLiftColor: Colors.amber,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPerformanceStatTile(
-    BuildContext context,
-    String label,
-    String value,
-    String change,
-    IconData icon,
-    Color color, {
-    required bool isPositive,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Icon(
-                isPositive ? Icons.arrow_upward : Icons.arrow_downward,
-                size: 12,
-                color: isPositive ? Colors.green : Colors.red,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                change,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isPositive ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBestLiftTile(
-    BuildContext context,
-    String exerciseName,
-    String weight,
-    String date,
-    IconData icon,
-    Color color,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 6),
-              Text(
-                'Best Lift',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            weight,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            exerciseName,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[300],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Row(
-            children: [
-              Icon(Icons.calendar_today, size: 10, color: Colors.grey[500]),
-              const SizedBox(width: 4),
-              Text(
-                date,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[500],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimePeriodChip(BuildContext context, String label, {required bool isSelected}) {
-    return GestureDetector(
-      onTap: () {
-        // TODO: Implement time period change
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? AppTheme.primaryColor : Colors.grey[700]!,
-            width: 1.5,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : Colors.grey[400],
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<PerformanceDataPoint> _generateMockPerformanceData() {
-    // Generate sample data for the last 8 weeks
-    final now = DateTime.now();
-    return List.generate(8, (index) {
-      return PerformanceDataPoint(
-        date: now.subtract(Duration(days: (7 - index) * 7)),
-        value: 8000 + (index * 600) + (index * index * 50), // Simulated progressive growth
-      );
-    });
+    return _PerformanceEvolutionWidget();
   }
 
   Widget _buildTrainingBalanceSection(BuildContext context, WidgetRef ref) {
@@ -2391,12 +2119,14 @@ class PerformanceGraphPainter extends CustomPainter {
   final Color color;
   final int? bestLiftIndex; // Index of the best lift point
   final Color bestLiftColor;
+  final String period; // 'Week', 'Month', or 'Year' to format labels accordingly
 
   PerformanceGraphPainter({
     required this.dataPoints,
     required this.color,
     this.bestLiftIndex,
     this.bestLiftColor = Colors.amber,
+    this.period = 'Month',
   });
 
   @override
@@ -2427,12 +2157,12 @@ class PerformanceGraphPainter extends CustomPainter {
 
   void _drawGrid(Canvas canvas, Size size, double minValue, double maxValue) {
     final gridPaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withOpacity(0.08)
       ..strokeWidth = 1;
 
-    // Draw horizontal grid lines (5 lines)
-    for (int i = 0; i <= 4; i++) {
-      final y = size.height * i / 4;
+    // Draw horizontal grid lines (3 lines to match the labels)
+    for (int i = 0; i <= 2; i++) {
+      final y = size.height * i / 2;
       canvas.drawLine(
         Offset(0, y),
         Offset(size.width, y),
@@ -2571,17 +2301,40 @@ class PerformanceGraphPainter extends CustomPainter {
   }
 
   void _drawLabels(Canvas canvas, Size size, double minValue, double maxValue) {
-    // Draw week labels at the bottom
+    final monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    // Draw date labels at the bottom (show first, middle, last)
     for (int i = 0; i < dataPoints.length; i++) {
-      if (i % 2 == 0 || i == dataPoints.length - 1) { // Show every other label + last
+      // Only show first, middle, and last labels to avoid clutter
+      if (i == 0 || i == dataPoints.length ~/ 2 || i == dataPoints.length - 1) {
         final x = (size.width / (dataPoints.length - 1)) * i;
+        final date = dataPoints[i].date;
         
-        final weekLabel = 'W${i + 1}';
+        // Format label based on selected period
+        String dateLabel;
+        switch (period) {
+          case 'Week':
+            // Show "Nov 1" format for days
+            dateLabel = '${monthNames[date.month - 1]} ${date.day}';
+            break;
+          case 'Month':
+            // Show only month name for weeks/months
+            dateLabel = monthNames[date.month - 1];
+            break;
+          case 'Year':
+            // Show only year for yearly view
+            dateLabel = '${date.year}';
+            break;
+          default:
+            dateLabel = '${monthNames[date.month - 1]} ${date.day}';
+        }
+        
         final textSpan = TextSpan(
-          text: weekLabel,
+          text: dateLabel,
           style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 10,
+            color: Colors.grey[500],
+            fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
         );
@@ -2600,17 +2353,24 @@ class PerformanceGraphPainter extends CustomPainter {
       }
     }
 
-    // Draw value labels on the left
-    for (int i = 0; i <= 4; i++) {
-      final value = minValue + (maxValue - minValue) * (4 - i) / 4;
-      final y = size.height * i / 4;
+    // Draw value labels on the left (show only 3 values: min, mid, max)
+    for (int i = 0; i <= 2; i++) {
+      final value = minValue + (maxValue - minValue) * (2 - i) / 2;
+      final y = size.height * i / 2;
       
-      final valueText = '${(value / 1000).toStringAsFixed(1)}K';
+      // Format value in a friendly way
+      String valueText;
+      if (value >= 1000) {
+        valueText = '${(value / 1000).toStringAsFixed(0)}K';
+      } else {
+        valueText = '${value.toInt()}';
+      }
+      
       final textSpan = TextSpan(
         text: valueText,
         style: TextStyle(
-          color: Colors.grey[600],
-          fontSize: 10,
+          color: Colors.grey[500],
+          fontSize: 11,
           fontWeight: FontWeight.w500,
         ),
       );
@@ -2636,5 +2396,322 @@ class PerformanceGraphPainter extends CustomPainter {
   @override
   bool shouldRepaint(PerformanceGraphPainter oldDelegate) {
     return dataPoints != oldDelegate.dataPoints;
+  }
+}
+
+// =============================================================================
+// Stateful Performance Evolution Widget
+// =============================================================================
+
+class _PerformanceEvolutionWidget extends StatefulWidget {
+  @override
+  State<_PerformanceEvolutionWidget> createState() => _PerformanceEvolutionWidgetState();
+}
+
+class _PerformanceEvolutionWidgetState extends State<_PerformanceEvolutionWidget> {
+  String _selectedPeriod = 'Month'; // 'Week', 'Month', or 'Year'
+
+  List<PerformanceDataPoint> _generatePerformanceData(String period) {
+    final now = DateTime.now();
+    
+    switch (period) {
+      case 'Week':
+        // Last 7 days
+        return List.generate(7, (index) {
+          return PerformanceDataPoint(
+            date: now.subtract(Duration(days: 6 - index)),
+            value: 1500 + (index * 100) + (index * index * 10),
+          );
+        });
+      
+      case 'Month':
+        // Last 8 weeks
+        return List.generate(8, (index) {
+          return PerformanceDataPoint(
+            date: now.subtract(Duration(days: (7 - index) * 7)),
+            value: 8000 + (index * 600) + (index * index * 50),
+          );
+        });
+      
+      case 'Year':
+        // Last 12 months
+        return List.generate(12, (index) {
+          return PerformanceDataPoint(
+            date: DateTime(now.year, now.month - (11 - index), 1),
+            value: 30000 + (index * 2500) + (index * index * 200),
+          );
+        });
+      
+      default:
+        return [];
+    }
+  }
+
+  Widget _buildTimePeriodChip(String label, {required bool isSelected}) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedPeriod = label;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppTheme.primaryColor : Colors.grey[700]!,
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? Colors.white : Colors.grey[400],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPerformanceStatTile(
+    BuildContext context,
+    String label,
+    String value,
+    String change,
+    IconData icon,
+    Color color, {
+    required bool isPositive,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[400],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(
+                isPositive ? Icons.arrow_upward : Icons.arrow_downward,
+                size: 12,
+                color: isPositive ? Colors.green : Colors.red,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                change,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isPositive ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBestLiftTile(
+    BuildContext context,
+    String exerciseName,
+    String weight,
+    String date,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 6),
+              Text(
+                'Best Lift',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[400],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            weight,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            exerciseName,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[300],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Row(
+            children: [
+              Icon(Icons.calendar_today, size: 10, color: Colors.grey[500]),
+              const SizedBox(width: 4),
+              Text(
+                date,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<PerformanceDataPoint> performanceData = _generatePerformanceData(_selectedPeriod);
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.trending_up, color: AppTheme.primaryColor, size: 24),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Performance Evolution',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 8),
+            
+            Text(
+              'Track your strength gains over time',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey[400],
+              ),
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // Stats summary
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPerformanceStatTile(
+                    context,
+                    'Total Volume',
+                    '12.5K kg',
+                    '+15%',
+                    Icons.fitness_center,
+                    Colors.blue,
+                    isPositive: true,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildBestLiftTile(
+                    context,
+                    'Squat',
+                    '125 kg',
+                    'Nov 1, 2025',
+                    Icons.military_tech,
+                    Colors.amber,
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // Time period selector
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildTimePeriodChip('Week', isSelected: _selectedPeriod == 'Week'),
+                const SizedBox(width: 8),
+                _buildTimePeriodChip('Month', isSelected: _selectedPeriod == 'Month'),
+                const SizedBox(width: 8),
+                _buildTimePeriodChip('Year', isSelected: _selectedPeriod == 'Year'),
+              ],
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // Performance graph
+            SizedBox(
+              height: 200,
+              child: CustomPaint(
+                size: const Size(double.infinity, 200),
+                painter: PerformanceGraphPainter(
+                  dataPoints: performanceData,
+                  color: AppTheme.primaryColor,
+                  bestLiftIndex: 5, // Index of the best lift in the data
+                  bestLiftColor: Colors.amber,
+                  period: _selectedPeriod, // Pass the selected period for label formatting
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
