@@ -161,15 +161,20 @@ class _ExtraSessionPlayerScreenState
   }
 
   void _toggleSet(Exercise exercise, int setIndex) {
+    final wasCompleted = _completedSets[exercise.id]![setIndex];
+    
+    // Always allow toggling - user can check/uncheck freely
     setState(() {
-      _completedSets[exercise.id]![setIndex] =
-          !_completedSets[exercise.id]![setIndex];
+      _completedSets[exercise.id]![setIndex] = !wasCompleted;
     });
     
-    // Start REST timer when marking a set as complete
-    if (_completedSets[exercise.id]![setIndex]) {
+    // Smart timer logic: Only start/reset timer when MARKING as complete (not unmarking)
+    if (!wasCompleted) {
+      // User just completed this set -> Start/restart rest timer
       _startRestTimer(exercise, setIndex);
     }
+    // If they're UNmarking a set, the timer keeps running
+    // They can freely uncheck if they realize they didn't finish the set properly
   }
   
   void _startRestTimer(Exercise exercise, int setNumber) {
