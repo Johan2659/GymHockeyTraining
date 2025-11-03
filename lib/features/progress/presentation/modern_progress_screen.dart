@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -47,48 +49,40 @@ class ModernProgressScreen extends ConsumerWidget {
 
   Widget _buildProgressContent(BuildContext context, WidgetRef ref, AppStateData appState) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header stats row
-          Row(
-            children: [
-              Expanded(child: _buildXPCard(context, appState)),
-              const SizedBox(width: 12),
-              Expanded(child: _buildStreakCard(context, appState)),
-            ],
+          // Performance Profile - consistent width
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+            child: _buildTrainingBalanceSection(context, ref),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Performance Evolution Graph - consistent width
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: _buildPerformanceEvolutionSection(context, ref),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Weekly Stats section - consistent width
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: _buildWeeklyStatsSection(context, ref),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Recent Activity - consistent width
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: _buildProgressTimelineSection(context, appState),
           ),
           
           const SizedBox(height: 16),
-          
-          // Cycle completion
-          _buildCycleProgressCard(context, appState),
-          
-          const SizedBox(height: 24),
-          
-          // Training Balance Stats section
-          _buildTrainingBalanceSection(context, ref),
-          
-          const SizedBox(height: 24),
-          
-          // Weekly Stats section
-          _buildWeeklyStatsSection(context, ref),
-          
-          const SizedBox(height: 24),
-          
-          // Weekly streak visualization
-          _buildWeeklyStreakSection(context, appState),
-          
-          const SizedBox(height: 24),
-          
-          // Personal Records section
-          _buildPersonalRecordsSection(context, appState),
-          
-          const SizedBox(height: 24),
-          
-          // Progress Timeline
-          _buildProgressTimelineSection(context, appState),
         ],
       ),
     );
@@ -488,64 +482,71 @@ class ModernProgressScreen extends ConsumerWidget {
     // Process events to combine session completions with their bonus challenges
     final combinedEvents = _processCombinedMilestones(appState.events);
     
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Recent Activity',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        if (combinedEvents.isEmpty) ...[
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.timeline,
-                      size: 48,
-                      color: Colors.grey[600],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'No milestones yet',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Complete sessions and challenges to see your achievements here',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[500],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ] else ...[
-          Card(
-            child: Column(
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title with icon (same style as other sections)
+            Row(
               children: [
-                ...combinedEvents.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final eventInfo = entry.value;
-                  final isLast = index == combinedEvents.length - 1;
-                  
-                  return _buildCombinedTimelineItem(context, eventInfo, isLast);
-                }),
+                Icon(Icons.history, color: AppTheme.primaryColor, size: 24),
+                const SizedBox(width: 10),
+                Text(
+                  'Recent Activity',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ],
+            
+            const SizedBox(height: 16),
+            
+            if (combinedEvents.isEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.timeline,
+                        size: 48,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'No milestones yet',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Complete sessions and challenges to see your achievements here',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[500],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ] else ...[
+              ...combinedEvents.asMap().entries.map((entry) {
+                final index = entry.key;
+                final eventInfo = entry.value;
+                final isLast = index == combinedEvents.length - 1;
+                
+                return _buildCombinedTimelineItem(context, eventInfo, isLast);
+              }),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -821,16 +822,301 @@ class ModernProgressScreen extends ConsumerWidget {
   // Performance Analytics Sections
   // =============================================================================
 
+  Widget _buildPerformanceEvolutionSection(BuildContext context, WidgetRef ref) {
+    // Mock data for demonstration - replace with real data from your database
+    final List<PerformanceDataPoint> performanceData = _generateMockPerformanceData();
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.trending_up, color: AppTheme.primaryColor, size: 24),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Performance Evolution',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 8),
+            
+            Text(
+              'Track your strength gains over time',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey[400],
+              ),
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // Stats summary
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPerformanceStatTile(
+                    context,
+                    'Total Volume',
+                    '12.5K kg',
+                    '+15%',
+                    Icons.fitness_center,
+                    Colors.blue,
+                    isPositive: true,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildBestLiftTile(
+                    context,
+                    'Squat',
+                    '125 kg',
+                    'Nov 1, 2025',
+                    Icons.military_tech,
+                    Colors.amber,
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // Time period selector
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildTimePeriodChip(context, 'Week', isSelected: false),
+                const SizedBox(width: 8),
+                _buildTimePeriodChip(context, 'Month', isSelected: true),
+                const SizedBox(width: 8),
+                _buildTimePeriodChip(context, 'Year', isSelected: false),
+              ],
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // Performance graph
+            SizedBox(
+              height: 200,
+              child: CustomPaint(
+                size: const Size(double.infinity, 200),
+                painter: PerformanceGraphPainter(
+                  dataPoints: performanceData,
+                  color: AppTheme.primaryColor,
+                  bestLiftIndex: 5, // Index of the best lift in the data
+                  bestLiftColor: Colors.amber,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPerformanceStatTile(
+    BuildContext context,
+    String label,
+    String value,
+    String change,
+    IconData icon,
+    Color color, {
+    required bool isPositive,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[400],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(
+                isPositive ? Icons.arrow_upward : Icons.arrow_downward,
+                size: 12,
+                color: isPositive ? Colors.green : Colors.red,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                change,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isPositive ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBestLiftTile(
+    BuildContext context,
+    String exerciseName,
+    String weight,
+    String date,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 6),
+              Text(
+                'Best Lift',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[400],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            weight,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            exerciseName,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[300],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Row(
+            children: [
+              Icon(Icons.calendar_today, size: 10, color: Colors.grey[500]),
+              const SizedBox(width: 4),
+              Text(
+                date,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimePeriodChip(BuildContext context, String label, {required bool isSelected}) {
+    return GestureDetector(
+      onTap: () {
+        // TODO: Implement time period change
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppTheme.primaryColor : Colors.grey[700]!,
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? Colors.white : Colors.grey[400],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<PerformanceDataPoint> _generateMockPerformanceData() {
+    // Generate sample data for the last 8 weeks
+    final now = DateTime.now();
+    return List.generate(8, (index) {
+      return PerformanceDataPoint(
+        date: now.subtract(Duration(days: (7 - index) * 7)),
+        value: 8000 + (index * 600) + (index * index * 50), // Simulated progressive growth
+      );
+    });
+  }
+
   Widget _buildTrainingBalanceSection(BuildContext context, WidgetRef ref) {
     final categoryProgressAsync = ref.watch(categoryProgressProvider);
     
-    // Define the main training categories for balance calculation
+    // Optimal training distribution for hockey players (based on sport science)
+    // Source: Hockey training periodization research
+    final hockeyOptimalDistribution = {
+      ExerciseCategory.strength: 25.0,      // Foundation for power and injury prevention
+      ExerciseCategory.power: 30.0,         // Most critical for explosive skating and shooting
+      ExerciseCategory.speed: 20.0,         // Essential for acceleration and transitions
+      ExerciseCategory.conditioning: 15.0,  // Aerobic/anaerobic endurance for game stamina
+      ExerciseCategory.agility: 10.0,       // Quick direction changes and edge work
+    };
+    
     final mainCategories = [
-      ExerciseCategory.strength,
       ExerciseCategory.power,
+      ExerciseCategory.strength,
       ExerciseCategory.speed,
-      ExerciseCategory.agility,
       ExerciseCategory.conditioning,
+      ExerciseCategory.agility,
     ];
     
     return categoryProgressAsync.when(
@@ -852,45 +1138,66 @@ class ModernProgressScreen extends ConsumerWidget {
           totalProgress += progress;
         }
         
-        // Calculate percentages (normalize to 100%)
+        // Calculate actual percentages
         final categoryPercentages = <ExerciseCategory, double>{};
         if (totalProgress > 0) {
           for (final category in mainCategories) {
             categoryPercentages[category] = (categoryValues[category]! / totalProgress) * 100;
           }
         } else {
-          // If no progress, show equal distribution
+          // If no progress, show 0%
           for (final category in mainCategories) {
-            categoryPercentages[category] = 20.0; // 100% / 5 categories
+            categoryPercentages[category] = 0.0;
           }
         }
         
-        // Calculate balance score (how close to equal distribution)
-        final idealPercentage = 20.0; // 100% / 5 categories
+        // Calculate hockey-specific balance score (how close to optimal distribution)
         double balanceScore = 0.0;
-        for (final category in mainCategories) {
-          final deviation = (categoryPercentages[category]! - idealPercentage).abs();
-          balanceScore += (20.0 - deviation) / 20.0; // Normalize to 0-1
-        }
-        balanceScore = (balanceScore / mainCategories.length) * 100; // Convert to percentage
+        double totalDeviation = 0.0;
         
-        // Determine balance quality
+        for (final category in mainCategories) {
+          final actual = categoryPercentages[category]!;
+          final optimal = hockeyOptimalDistribution[category]!;
+          final deviation = (actual - optimal).abs();
+          totalDeviation += deviation;
+        }
+        
+        // Convert to a 0-100 score (lower deviation = higher score)
+        // Max possible deviation is 200 (if all in one category)
+        balanceScore = ((200 - totalDeviation) / 200) * 100;
+        balanceScore = balanceScore.clamp(0, 100);
+        
+        // Determine balance quality for hockey performance
         String balanceQuality;
         Color balanceColor;
         IconData balanceIcon;
+        String balanceMessage;
         
-        if (balanceScore >= 80) {
-          balanceQuality = 'Excellent';
+        if (balanceScore >= 85) {
+          balanceQuality = 'Elite Hockey Balance';
           balanceColor = Colors.green;
-          balanceIcon = Icons.check_circle;
-        } else if (balanceScore >= 60) {
-          balanceQuality = 'Good';
-          balanceColor = Colors.orange;
-          balanceIcon = Icons.warning;
+          balanceIcon = Icons.emoji_events;
+          balanceMessage = 'Your training distribution is ideal for hockey performance!';
+        } else if (balanceScore >= 70) {
+          balanceQuality = 'Good Hockey Balance';
+          balanceColor = Colors.lightGreen;
+          balanceIcon = Icons.trending_up;
+          balanceMessage = 'Solid distribution. Keep following your program!';
+        } else if (balanceScore >= 50) {
+          balanceQuality = 'Building Your Foundation';
+          balanceColor = Colors.blue;
+          balanceIcon = Icons.trending_up;
+          balanceMessage = 'Your program is on track. Add extras to fine-tune specific areas.';
+        } else if (totalProgress > 0) {
+          balanceQuality = 'Early Progress';
+          balanceColor = Colors.blue;
+          balanceIcon = Icons.fitness_center;
+          balanceMessage = 'Keep following your program. Balance will improve naturally!';
         } else {
-          balanceQuality = 'Needs Improvement';
-          balanceColor = Colors.red;
-          balanceIcon = Icons.error;
+          balanceQuality = 'Ready to Start';
+          balanceColor = Colors.grey;
+          balanceIcon = Icons.play_arrow;
+          balanceMessage = 'Start your training program for optimal hockey development.';
         }
         
         return Card(
@@ -901,12 +1208,29 @@ class ModernProgressScreen extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.analytics, color: AppTheme.primaryColor, size: 20),
-                    const SizedBox(width: 8),
+                    Icon(Icons.sports_hockey, color: AppTheme.accentColor, size: 24),
+                    const SizedBox(width: 10),
                     Text(
-                      'Training Balance',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      'Performance Profile',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () => _showPerformanceProfileInfo(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentColor.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 18,
+                          color: AppTheme.accentColor,
+                        ),
                       ),
                     ),
                   ],
@@ -917,103 +1241,195 @@ class ModernProgressScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: balanceColor.withValues(alpha: 0.1),
+                    color: balanceColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: balanceColor.withValues(alpha: 0.3)),
+                    border: Border.all(color: balanceColor.withValues(alpha: 0.4), width: 1.5),
                   ),
-                  child: Row(
+                  child: Column(
                     children: [
-                      Icon(balanceIcon, color: balanceColor, size: 24),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Balance Score: ${balanceScore.toInt()}%',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: balanceColor,
-                              ),
+                      Row(
+                        children: [
+                          Icon(balanceIcon, color: balanceColor, size: 28),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  balanceQuality,
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: balanceColor,
+                                  ),
+                                ),
+                                Text(
+                                  'Score: ${balanceScore.toInt()}/100',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: balanceColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              balanceQuality,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: balanceColor,
-                              ),
-                            ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: balanceScore / 100,
+                        backgroundColor: Colors.grey[800],
+                        valueColor: AlwaysStoppedAnimation(balanceColor),
+                        minHeight: 6,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        balanceMessage,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: balanceColor,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
                 ),
                 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 
-                // Category Distribution
-                Text(
-                  'Training Distribution',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                // Category Distribution with target comparison
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Your Training Mix',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => _showPerformanceProfileInfo(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 18,
+                          color: Colors.white.withOpacity(0.7),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 
-                ...mainCategories.map((category) {
-                  final percentage = categoryPercentages[category] ?? 0.0;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                // Spider/Radar Chart with interactive labels
+                Center(
+                  child: CustomPaint(
+                    size: const Size(280, 280),
+                    painter: RadarChartPainter(
+                      categories: mainCategories,
+                      actualValues: categoryPercentages,
+                      targetValues: hockeyOptimalDistribution,
+                      getCategoryColor: _getCategoryColor,
+                      getCategoryName: _getExerciseCategoryDisplayName,
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 12),
+                
+                // Chart guide
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                    ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: _getCategoryColor(category),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _getExerciseCategoryDisplayName(category),
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.amber, width: 2),
+                            shape: BoxShape.circle,
+                          ),
                         ),
+                        const SizedBox(width: 8),
                         Text(
-                          '${percentage.toInt()}%',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          'Optimal Zone',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.amber[300],
                             fontWeight: FontWeight.w600,
-                            color: _getCategoryColor(category),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Container(
+                          width: 20,
+                          height: 3,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.primaryColor,
+                                AppTheme.accentColor,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Your Profile',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.accentColor,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                  );
-                }).toList(),
+                  ),
+                ),
                 
-                if (balanceScore < 80) ...[
-                  const SizedBox(height: 12),
+                const SizedBox(height: 16),
+                
+                if (totalProgress == 0) ...[
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.blue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.lightbulb, color: Colors.blue, size: 16),
-                        const SizedBox(width: 8),
+                        Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                        const SizedBox(width: 12),
                         Expanded(
-                          child: Text(
-                            'Tip: Try to balance your training across all categories for optimal development',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.blue,
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'How It Works',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Your training programs are already designed with optimal hockey balance. Follow your program and use Extras to target specific areas when needed!',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -1155,6 +1571,365 @@ class ModernProgressScreen extends ConsumerWidget {
   // =============================================================================
   // Helper Methods for Categories
   // =============================================================================
+
+  Widget _buildMotivationalGuidance(
+    BuildContext context,
+    Map<ExerciseCategory, double> actual,
+    Map<ExerciseCategory, double> optimal,
+    List<ExerciseCategory> categories,
+    double balanceScore,
+  ) {
+    // Find the category that needs the most focus
+    ExerciseCategory? focusArea;
+    double maxDeficit = 0;
+    
+    for (final category in categories) {
+      final deficit = optimal[category]! - actual[category]!;
+      if (deficit > maxDeficit && deficit > 5) {
+        maxDeficit = deficit;
+        focusArea = category;
+      }
+    }
+    
+    // Build the message
+    String message;
+    IconData icon;
+    Color color;
+    
+    if (balanceScore >= 85) {
+      // Excellent balance
+      message = "Outstanding! Your training profile is dialed in. Keep crushing your program! 💪";
+      icon = Icons.emoji_events;
+      color = Colors.green;
+    } else if (focusArea == null) {
+      // Good balance, minor tweaks
+      message = "Solid work! Your program is keeping you balanced. Stay consistent! 🔥";
+      icon = Icons.trending_up;
+      color = Colors.blue;
+    } else {
+      // Specific area to focus
+      final categoryName = _getExerciseCategoryDisplayName(focusArea);
+      final actionTip = _getFocusActionTip(focusArea);
+      message = "You're doing great! To level up, try adding $categoryName Extras or choose bonus exercises when available. $actionTip 🚀";
+      icon = Icons.lightbulb_outline;
+      color = Colors.amber;
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.12),
+            color.withValues(alpha: 0.06),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: color.withValues(alpha: 0.9),
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getFocusActionTip(ExerciseCategory category) {
+    switch (category) {
+      case ExerciseCategory.power:
+        return 'Plyometrics and explosive lifts will boost your first stride!';
+      case ExerciseCategory.strength:
+        return 'Building your foundation protects you on the ice!';
+      case ExerciseCategory.speed:
+        return 'Sprint work translates directly to faster skating!';
+      case ExerciseCategory.conditioning:
+        return 'Your 3rd period performance will thank you!';
+      case ExerciseCategory.agility:
+        return 'Sharp edges win battles in the corners!';
+      default:
+        return 'Every session makes you better!';
+    }
+  }
+
+  void _showPerformanceProfileInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: AppTheme.surfaceColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentColor.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.sports_hockey,
+                      color: AppTheme.accentColor,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Performance Profile',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Explanation
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'What is this?',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.accentColor,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Your Performance Profile shows how balanced your training is across 5 key hockey areas:',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[300],
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildProfileCategory(context, '⚡ Power', '30%', 'Explosive skating & shots', Colors.orange),
+                    _buildProfileCategory(context, '💪 Strength', '25%', 'Foundation & injury prevention', Colors.red),
+                    _buildProfileCategory(context, '🏃 Speed', '20%', 'Acceleration & transitions', Colors.blue),
+                    _buildProfileCategory(context, '❤️ Conditioning', '15%', 'Stamina & endurance', Colors.pink),
+                    _buildProfileCategory(context, '🔀 Agility', '10%', 'Edge work & quickness', Colors.purple),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // How to read it
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.amber.withOpacity(0.15),
+                      Colors.amber.withOpacity(0.05),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.amber.withOpacity(0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.insights, color: Colors.amber, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'How to read it',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.amber,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _buildReadingTip(context, 'Dashed amber line', 'Optimal hockey profile'),
+                    _buildReadingTip(context, 'Filled colored area', 'Your current training'),
+                    _buildReadingTip(context, '✓ Checkmarks', 'You\'re on target!'),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Close button
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.accentColor,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text('Got it!'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileCategory(BuildContext context, String title, String percentage, String description, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              percentage,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[400],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReadingTip(BuildContext context, String label, String description) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(Icons.arrow_right, size: 16, color: Colors.amber[300]),
+          const SizedBox(width: 6),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[300],
+                ),
+                children: [
+                  TextSpan(
+                    text: '$label: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: description),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getCategoryDescription(ExerciseCategory category) {
+    switch (category) {
+      case ExerciseCategory.power:
+        return 'Explosive skating & powerful shots';
+      case ExerciseCategory.strength:
+        return 'Foundation for power & injury prevention';
+      case ExerciseCategory.speed:
+        return 'Acceleration & quick transitions';
+      case ExerciseCategory.conditioning:
+        return 'Game stamina & 3rd period endurance';
+      case ExerciseCategory.agility:
+        return 'Edge work & direction changes';
+      default:
+        return '';
+    }
+  }
+
+  String _getRadarChartGuidance(
+    Map<ExerciseCategory, double> actual,
+    Map<ExerciseCategory, double> optimal,
+    List<ExerciseCategory> categories,
+  ) {
+    // Find categories that need improvement (below target by >5%)
+    final needsWork = <ExerciseCategory>[];
+    
+    for (final category in categories) {
+      final deficit = optimal[category]! - actual[category]!;
+      if (deficit > 5) {
+        needsWork.add(category);
+      }
+    }
+    
+    if (needsWork.isEmpty) {
+      return 'Great balance! Your profile is close to the optimal hockey zone.';
+    } else if (needsWork.length == 1) {
+      final category = needsWork.first;
+      return 'Expand your ${_getExerciseCategoryDisplayName(category)} area to reach the optimal zone. Use Extras to target this!';
+    } else {
+      final names = needsWork.take(2).map((c) => _getExerciseCategoryDisplayName(c)).join(' and ');
+      return 'Focus on expanding $names to match the optimal zone. Add Extras in these areas!';
+    }
+  }
+
+
 
   String _getExerciseCategoryDisplayName(ExerciseCategory category) {
     switch (category) {
@@ -1307,5 +2082,559 @@ class ModernProgressScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+// Radar Chart Painter for Performance Profile
+class RadarChartPainter extends CustomPainter {
+  final List<ExerciseCategory> categories;
+  final Map<ExerciseCategory, double> actualValues;
+  final Map<ExerciseCategory, double> targetValues;
+  final Color Function(ExerciseCategory) getCategoryColor;
+  final String Function(ExerciseCategory) getCategoryName;
+
+  RadarChartPainter({
+    required this.categories,
+    required this.actualValues,
+    required this.targetValues,
+    required this.getCategoryColor,
+    required this.getCategoryName,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width * 0.35; // Chart radius
+    final maxValue = 35.0; // Max percentage for scaling (slightly above 30% max)
+    
+    // Draw grid circles (background levels)
+    _drawGridCircles(canvas, center, radius);
+    
+    // Draw axes lines from center
+    _drawAxes(canvas, center, radius);
+    
+    // Draw target polygon (outlined)
+    _drawTargetPolygon(canvas, center, radius, maxValue);
+    
+    // Draw actual polygon (filled)
+    _drawActualPolygon(canvas, center, radius, maxValue);
+    
+    // Draw labels
+    _drawLabels(canvas, center, radius, size);
+  }
+
+  void _drawGridCircles(Canvas canvas, Offset center, double radius) {
+    final paint = Paint()
+      ..color = Colors.grey[800]!
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    // Draw 3 concentric circles at 33%, 66%, 100%
+    for (int i = 1; i <= 3; i++) {
+      canvas.drawCircle(center, radius * (i / 3), paint);
+    }
+  }
+
+  void _drawAxes(Canvas canvas, Offset center, double radius) {
+    final paint = Paint()
+      ..color = Colors.grey[700]!
+      ..strokeWidth = 1;
+
+    for (int i = 0; i < categories.length; i++) {
+      final angle = _getAngleForIndex(i);
+      final endPoint = Offset(
+        center.dx + radius * cos(angle),
+        center.dy + radius * sin(angle),
+      );
+      canvas.drawLine(center, endPoint, paint);
+    }
+  }
+
+  void _drawTargetPolygon(Canvas canvas, Offset center, double radius, double maxValue) {
+    final path = Path();
+    
+    for (int i = 0; i < categories.length; i++) {
+      final category = categories[i];
+      final value = targetValues[category] ?? 0.0;
+      final angle = _getAngleForIndex(i);
+      final distance = (value / maxValue) * radius;
+      
+      final point = Offset(
+        center.dx + distance * cos(angle),
+        center.dy + distance * sin(angle),
+      );
+
+      if (i == 0) {
+        path.moveTo(point.dx, point.dy);
+      } else {
+        path.lineTo(point.dx, point.dy);
+      }
+    }
+    path.close();
+    
+    // Fill target zone with subtle color
+    final fillPaint = Paint()
+      ..color = Colors.amber.withValues(alpha: 0.08)
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, fillPaint);
+    
+    // Draw dashed outline for target
+    final dashedPaint = Paint()
+      ..color = Colors.amber.withValues(alpha: 0.6)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5;
+    
+    _drawDashedPath(canvas, path, dashedPaint, dashWidth: 8, dashSpace: 5);
+  }
+  
+  void _drawDashedPath(Canvas canvas, Path path, Paint paint, {required double dashWidth, required double dashSpace}) {
+    final metric = path.computeMetrics().first;
+    double distance = 0.0;
+    
+    while (distance < metric.length) {
+      final start = metric.getTangentForOffset(distance)!.position;
+      distance += dashWidth;
+      final end = metric.getTangentForOffset(distance)!.position;
+      canvas.drawLine(start, end, paint);
+      distance += dashSpace;
+    }
+  }
+
+  void _drawActualPolygon(Canvas canvas, Offset center, double radius, double maxValue) {
+    final path = Path();
+    
+    for (int i = 0; i < categories.length; i++) {
+      final category = categories[i];
+      final value = actualValues[category] ?? 0.0;
+      final angle = _getAngleForIndex(i);
+      final distance = (value / maxValue) * radius;
+      
+      final point = Offset(
+        center.dx + distance * cos(angle),
+        center.dy + distance * sin(angle),
+      );
+
+      if (i == 0) {
+        path.moveTo(point.dx, point.dy);
+      } else {
+        path.lineTo(point.dx, point.dy);
+      }
+    }
+    path.close();
+
+    // Fill with gradient
+    final paint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          AppTheme.primaryColor.withValues(alpha: 0.4),
+          AppTheme.accentColor.withValues(alpha: 0.2),
+        ],
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
+      ..style = PaintingStyle.fill;
+
+    canvas.drawPath(path, paint);
+
+    // Draw colored outline
+    final outlinePaint = Paint()
+      ..color = AppTheme.accentColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+
+    canvas.drawPath(path, outlinePaint);
+
+    // Draw points on vertices
+    for (int i = 0; i < categories.length; i++) {
+      final category = categories[i];
+      final value = actualValues[category] ?? 0.0;
+      final angle = _getAngleForIndex(i);
+      final distance = (value / maxValue) * radius;
+      
+      final point = Offset(
+        center.dx + distance * cos(angle),
+        center.dy + distance * sin(angle),
+      );
+
+      final pointPaint = Paint()
+        ..color = getCategoryColor(category)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawCircle(point, 5, pointPaint);
+      
+      // White border around point
+      final borderPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+      canvas.drawCircle(point, 5, borderPaint);
+    }
+  }
+
+  void _drawLabels(Canvas canvas, Offset center, double radius, Size size) {
+    for (int i = 0; i < categories.length; i++) {
+      final category = categories[i];
+      final angle = _getAngleForIndex(i);
+      final labelDistance = radius + 35;
+      final actualValue = actualValues[category] ?? 0.0;
+      final targetValue = targetValues[category] ?? 0.0;
+      final isOnTarget = (actualValue - targetValue).abs() < 5.0;
+      
+      final point = Offset(
+        center.dx + labelDistance * cos(angle),
+        center.dy + labelDistance * sin(angle),
+      );
+
+      // Draw category name
+      final nameSpan = TextSpan(
+        text: getCategoryName(category),
+        style: TextStyle(
+          color: getCategoryColor(category),
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+
+      final namePainter = TextPainter(
+        text: nameSpan,
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+      );
+
+      namePainter.layout();
+
+      // Position name
+      final nameOffset = Offset(
+        point.dx - namePainter.width / 2,
+        point.dy - namePainter.height / 2 - 8,
+      );
+
+      namePainter.paint(canvas, nameOffset);
+      
+      // Draw percentage below name
+      final percentSpan = TextSpan(
+        text: '${actualValue.toInt()}%',
+        style: TextStyle(
+          color: getCategoryColor(category),
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+      );
+
+      final percentPainter = TextPainter(
+        text: percentSpan,
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+      );
+
+      percentPainter.layout();
+
+      final percentOffset = Offset(
+        point.dx - percentPainter.width / 2,
+        point.dy - percentPainter.height / 2 + 8,
+      );
+
+      percentPainter.paint(canvas, percentOffset);
+      
+      // Draw status indicator (checkmark or arrow)
+      final iconPaint = Paint()
+        ..color = isOnTarget ? Colors.blue[300]! : 
+          (actualValue > targetValue ? Colors.orange : Colors.red[300]!)
+        ..style = PaintingStyle.fill;
+      
+      final iconCenter = Offset(
+        point.dx + namePainter.width / 2 + 10,
+        point.dy - 8,
+      );
+      
+      if (isOnTarget) {
+        // Draw checkmark circle
+        canvas.drawCircle(iconCenter, 6, iconPaint);
+        // Draw checkmark
+        final checkPaint = Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
+        final checkPath = Path()
+          ..moveTo(iconCenter.dx - 2, iconCenter.dy)
+          ..lineTo(iconCenter.dx - 1, iconCenter.dy + 2)
+          ..lineTo(iconCenter.dx + 2, iconCenter.dy - 2);
+        canvas.drawPath(checkPath, checkPaint);
+      }
+    }
+  }
+
+  double _getAngleForIndex(int index) {
+    // Start from top (-π/2) and go clockwise
+    final angleStep = (2 * pi) / categories.length;
+    return -pi / 2 + (index * angleStep);
+  }
+
+  @override
+  bool shouldRepaint(RadarChartPainter oldDelegate) => true;
+}
+
+// =============================================================================
+// Performance Evolution Graph
+// =============================================================================
+
+class PerformanceDataPoint {
+  final DateTime date;
+  final double value;
+
+  PerformanceDataPoint({
+    required this.date,
+    required this.value,
+  });
+}
+
+class PerformanceGraphPainter extends CustomPainter {
+  final List<PerformanceDataPoint> dataPoints;
+  final Color color;
+  final int? bestLiftIndex; // Index of the best lift point
+  final Color bestLiftColor;
+
+  PerformanceGraphPainter({
+    required this.dataPoints,
+    required this.color,
+    this.bestLiftIndex,
+    this.bestLiftColor = Colors.amber,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (dataPoints.isEmpty) return;
+
+    // Find min and max values for scaling
+    double minValue = dataPoints.map((p) => p.value).reduce((a, b) => a < b ? a : b);
+    double maxValue = dataPoints.map((p) => p.value).reduce((a, b) => a > b ? a : b);
+    
+    // Add some padding to the range
+    final valueRange = maxValue - minValue;
+    minValue -= valueRange * 0.1;
+    maxValue += valueRange * 0.1;
+
+    // Draw grid lines
+    _drawGrid(canvas, size, minValue, maxValue);
+
+    // Draw the line graph
+    _drawGraph(canvas, size, minValue, maxValue);
+
+    // Draw data points
+    _drawDataPoints(canvas, size, minValue, maxValue);
+
+    // Draw labels
+    _drawLabels(canvas, size, minValue, maxValue);
+  }
+
+  void _drawGrid(Canvas canvas, Size size, double minValue, double maxValue) {
+    final gridPaint = Paint()
+      ..color = Colors.white.withOpacity(0.1)
+      ..strokeWidth = 1;
+
+    // Draw horizontal grid lines (5 lines)
+    for (int i = 0; i <= 4; i++) {
+      final y = size.height * i / 4;
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        gridPaint,
+      );
+    }
+  }
+
+  void _drawGraph(Canvas canvas, Size size, double minValue, double maxValue) {
+    if (dataPoints.length < 2) return;
+
+    final path = Path();
+    final gradientPath = Path();
+
+    // Calculate first point
+    final firstX = 0.0;
+    final firstY = _valueToY(dataPoints[0].value, size.height, minValue, maxValue);
+    
+    path.moveTo(firstX, firstY);
+    gradientPath.moveTo(firstX, size.height);
+    gradientPath.lineTo(firstX, firstY);
+
+    // Draw smooth curve through points
+    for (int i = 0; i < dataPoints.length; i++) {
+      final x = (size.width / (dataPoints.length - 1)) * i;
+      final y = _valueToY(dataPoints[i].value, size.height, minValue, maxValue);
+      
+      if (i == 0) {
+        path.moveTo(x, y);
+        gradientPath.lineTo(x, y);
+      } else {
+        // Smooth curve using quadratic bezier
+        final prevX = (size.width / (dataPoints.length - 1)) * (i - 1);
+        final prevY = _valueToY(dataPoints[i - 1].value, size.height, minValue, maxValue);
+        final cpX = (prevX + x) / 2;
+        
+        path.quadraticBezierTo(cpX, prevY, x, y);
+        gradientPath.quadraticBezierTo(cpX, prevY, x, y);
+      }
+    }
+
+    // Complete gradient path
+    gradientPath.lineTo(size.width, size.height);
+    gradientPath.close();
+
+    // Draw gradient fill
+    final gradientPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          color.withOpacity(0.3),
+          color.withOpacity(0.05),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    canvas.drawPath(gradientPath, gradientPaint);
+
+    // Draw line
+    final linePaint = Paint()
+      ..color = color
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawPath(path, linePaint);
+  }
+
+  void _drawDataPoints(Canvas canvas, Size size, double minValue, double maxValue) {
+    for (int i = 0; i < dataPoints.length; i++) {
+      final x = (size.width / (dataPoints.length - 1)) * i;
+      final y = _valueToY(dataPoints[i].value, size.height, minValue, maxValue);
+
+      final isBestLift = bestLiftIndex != null && i == bestLiftIndex;
+
+      if (isBestLift) {
+        // Special marker for best lift - larger and gold colored
+        
+        // Outer glow
+        final glowPaint = Paint()
+          ..color = bestLiftColor.withOpacity(0.3)
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(Offset(x, y), 10, glowPaint);
+        
+        // Trophy/star background
+        final bgPaint = Paint()
+          ..color = bestLiftColor
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(Offset(x, y), 7, bgPaint);
+        
+        // White border
+        final borderPaint = Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
+        canvas.drawCircle(Offset(x, y), 7, borderPaint);
+        
+        // Star icon in the center (simplified)
+        final starPaint = Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.fill;
+        _drawStar(canvas, Offset(x, y), 4, starPaint);
+        
+      } else {
+        // Regular data points
+        // Outer circle (white)
+        final outerPaint = Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(Offset(x, y), 5, outerPaint);
+
+        // Inner circle (colored)
+        final innerPaint = Paint()
+          ..color = color
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(Offset(x, y), 3, innerPaint);
+      }
+    }
+  }
+
+  void _drawStar(Canvas canvas, Offset center, double size, Paint paint) {
+    // Simple star shape
+    final path = Path();
+    for (int i = 0; i < 5; i++) {
+      final angle = (i * 4 * pi / 5) - pi / 2;
+      final x = center.dx + size * cos(angle);
+      final y = center.dy + size * sin(angle);
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  void _drawLabels(Canvas canvas, Size size, double minValue, double maxValue) {
+    // Draw week labels at the bottom
+    for (int i = 0; i < dataPoints.length; i++) {
+      if (i % 2 == 0 || i == dataPoints.length - 1) { // Show every other label + last
+        final x = (size.width / (dataPoints.length - 1)) * i;
+        
+        final weekLabel = 'W${i + 1}';
+        final textSpan = TextSpan(
+          text: weekLabel,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+        );
+
+        final textPainter = TextPainter(
+          text: textSpan,
+          textDirection: TextDirection.ltr,
+          textAlign: TextAlign.center,
+        );
+
+        textPainter.layout();
+        textPainter.paint(
+          canvas,
+          Offset(x - textPainter.width / 2, size.height + 8),
+        );
+      }
+    }
+
+    // Draw value labels on the left
+    for (int i = 0; i <= 4; i++) {
+      final value = minValue + (maxValue - minValue) * (4 - i) / 4;
+      final y = size.height * i / 4;
+      
+      final valueText = '${(value / 1000).toStringAsFixed(1)}K';
+      final textSpan = TextSpan(
+        text: valueText,
+        style: TextStyle(
+          color: Colors.grey[600],
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+        ),
+      );
+
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr,
+      );
+
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(-textPainter.width - 8, y - textPainter.height / 2),
+      );
+    }
+  }
+
+  double _valueToY(double value, double height, double minValue, double maxValue) {
+    final normalized = (value - minValue) / (maxValue - minValue);
+    return height - (normalized * height);
+  }
+
+  @override
+  bool shouldRepaint(PerformanceGraphPainter oldDelegate) {
+    return dataPoints != oldDelegate.dataPoints;
   }
 }

@@ -77,6 +77,10 @@ class HubScreen extends ConsumerWidget {
           _buildStatsRow(context, data),
           const SizedBox(height: 24),
 
+          // Tip of the Day
+          _buildTipOfTheDay(context),
+          const SizedBox(height: 24),
+
           // Shortcut Cards
           _buildShortcutCards(context),
           const SizedBox(height: 24),
@@ -820,6 +824,75 @@ class HubScreen extends ConsumerWidget {
     ];
 
     return messages[data.currentXP % messages.length];
+  }
+
+  Widget _buildTipOfTheDay(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blue.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.tips_and_updates, color: Colors.blue[300], size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tip of the Day',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.blue[300],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _getTipOfTheDay(),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.blue[200],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getTipOfTheDay() {
+    final tips = [
+      'Add Power Extras for explosive first strides. Plyometrics and jump training translate directly to faster acceleration on ice!',
+      'Boost your Strength with compound lift Extras. A strong foundation reduces injury risk and improves overall performance.',
+      'Include Speed Extras for better acceleration. Sprint intervals improve your ability to win races to loose pucks.',
+      'Use Conditioning Extras to dominate the 3rd period. Better endurance means maintaining your speed when opponents are tired.',
+      'Try Agility Extras to sharpen your edge work. Quick direction changes are crucial for tight turns and defensive maneuvers.',
+      'Power training builds the explosive strength needed for powerful slap shots and quick one-timers.',
+      'Consistent Strength work protects your joints during physical play and board battles.',
+      'Speed training improves your straight-line skating, perfect for breakaways and backchecking.',
+      'Conditioning work helps you maintain high performance across all three periods of intense play.',
+      'Agility training enhances your ability to evade checks and create space in tight situations.',
+      'Use Extras strategically to target areas where you want to excel on the ice.',
+      'Balance your training for well-rounded development, but don\'t be afraid to specialize in your strengths!',
+      'Recovery is training too. Listen to your body and use rest days wisely.',
+      'Consistency beats intensity. Regular training sessions yield better results than sporadic intense workouts.',
+      'Pre-game nutrition matters. Fuel your body 2-3 hours before training for optimal performance.',
+      'Hydration is key. Drink water throughout the day, not just during training.',
+      'Quality sleep enhances recovery. Aim for 8+ hours to maximize your training gains.',
+      'Mental preparation is as important as physical training. Visualize your success on the ice.',
+      'Progressive overload drives improvement. Gradually increase intensity over time.',
+      'Mix up your training to avoid plateaus. Your body adapts when you challenge it in new ways.',
+    ];
+    
+    final now = DateTime.now();
+    final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+    final index = dayOfYear % tips.length;
+    return tips[index];
   }
 
   /// Shows the stop program dialog

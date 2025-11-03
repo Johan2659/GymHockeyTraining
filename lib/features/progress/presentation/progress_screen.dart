@@ -84,9 +84,9 @@ class ProgressScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // Personal Records section
-          _buildPersonalRecordsSection(context, appState),
+          // _buildPersonalRecordsSection(context, appState),
 
-          const SizedBox(height: 24),
+          // const SizedBox(height: 24),
 
           // Progress Timeline
           _buildProgressTimelineSection(context, appState),
