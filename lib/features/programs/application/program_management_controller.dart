@@ -75,17 +75,18 @@ class ProgramManagementService {
         ref.invalidate(programStateProvider);
         ref.invalidate(progressEventsProvider);
         ref.invalidate(performanceAnalyticsProvider);
-        
+
         // Then invalidate derived providers that depend on the core data
         ref.invalidate(activeProgramProvider);
         ref.invalidate(currentXPProvider);
         ref.invalidate(todayXPProvider);
         ref.invalidate(currentStreakProvider);
-        
+
         // Finally invalidate the main app state provider
         ref.invalidate(appStateProvider);
-        
-        _logger.d('ProgramManagementService: All providers invalidated successfully');
+
+        _logger.d(
+            'ProgramManagementService: All providers invalidated successfully');
       } else {
         _logger.e(
             'ProgramManagementService: Failed to stop program with option: $option');
@@ -153,7 +154,8 @@ class ProgramManagementService {
       final success = await programStateRepo.clear();
 
       if (success) {
-        _logger.i('ProgramManagementService: Successfully cleared program state');
+        _logger
+            .i('ProgramManagementService: Successfully cleared program state');
       }
 
       return success;

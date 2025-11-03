@@ -26,7 +26,8 @@ class ExtraSessionPlayerScreen extends ConsumerStatefulWidget {
 }
 
 class _ExtraSessionPlayerScreenState
-    extends ConsumerState<ExtraSessionPlayerScreen> with SingleTickerProviderStateMixin {
+    extends ConsumerState<ExtraSessionPlayerScreen>
+    with SingleTickerProviderStateMixin {
   late final PageController _pageController;
   final Map<String, List<bool>> _completedSets = {};
   bool _startLogged = false;
@@ -43,19 +44,17 @@ class _ExtraSessionPlayerScreenState
   int _restDuration = 0;
   int _currentSet = 0;
   String? _currentIntervalExerciseId;
-  
+
   // Page transition animation
   late AnimationController _pageTransitionController;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
-  
-
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
-    
+
     // Initialize page transition animation (fast and snappy)
     _pageTransitionController = AnimationController(
       duration: const Duration(milliseconds: 200), // Reduced from 300ms
@@ -88,12 +87,14 @@ class _ExtraSessionPlayerScreenState
     _pageTransitionController.dispose();
     super.dispose();
   }
-  
+
   void _navigateToPage(int newPage) async {
     if (newPage == _currentPage) return;
-    
-    final direction = newPage > _currentPage ? -1.0 : 1.0; // -1 = slide left (next), 1 = slide right (prev)
-    
+
+    final direction = newPage > _currentPage
+        ? -1.0
+        : 1.0; // -1 = slide left (next), 1 = slide right (prev)
+
     // Set up slide out animation
     setState(() {
       _slideAnimation = Tween<Offset>(
@@ -111,14 +112,14 @@ class _ExtraSessionPlayerScreenState
         curve: Curves.easeIn,
       ));
     });
-    
+
     // Slide out old content
     await _pageTransitionController.forward(from: 0);
-    
+
     // Update page content
     setState(() {
       _currentPage = newPage;
-      
+
       // Set up slide in animation (from opposite direction)
       _slideAnimation = Tween<Offset>(
         begin: Offset(-direction, 0),
@@ -135,7 +136,7 @@ class _ExtraSessionPlayerScreenState
         curve: Curves.easeOut,
       ));
     });
-    
+
     // Slide in new content
     await _pageTransitionController.forward(from: 0);
   }
@@ -162,12 +163,12 @@ class _ExtraSessionPlayerScreenState
 
   void _toggleSet(Exercise exercise, int setIndex) {
     final wasCompleted = _completedSets[exercise.id]![setIndex];
-    
+
     // Always allow toggling - user can check/uncheck freely
     setState(() {
       _completedSets[exercise.id]![setIndex] = !wasCompleted;
     });
-    
+
     // Smart timer logic: Only start/reset timer when MARKING as complete (not unmarking)
     if (!wasCompleted) {
       // User just completed this set -> Start/restart rest timer
@@ -176,7 +177,7 @@ class _ExtraSessionPlayerScreenState
     // If they're UNmarking a set, the timer keeps running
     // They can freely uncheck if they realize they didn't finish the set properly
   }
-  
+
   void _startRestTimer(Exercise exercise, int setNumber) {
     _stopIntervalTimer();
 
@@ -434,7 +435,7 @@ class _ExtraSessionPlayerScreenState
   Widget _buildSessionPlayer(
       BuildContext context, ResolvedExtraSession session) {
     final exercises = session.exercises;
-    
+
     // Get current exercise data
     final exercise = exercises[_currentPage];
     final isPlaceholder = session.isPlaceholder(exercise);
@@ -464,7 +465,8 @@ class _ExtraSessionPlayerScreenState
                   if (velocity > 200 && _currentPage > 0) {
                     // Swipe right - go to previous
                     _navigateToPage(_currentPage - 1);
-                  } else if (velocity < -200 && _currentPage < exercises.length - 1) {
+                  } else if (velocity < -200 &&
+                      _currentPage < exercises.length - 1) {
                     // Swipe left - go to next
                     _navigateToPage(_currentPage + 1);
                   }
@@ -476,83 +478,84 @@ class _ExtraSessionPlayerScreenState
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                  // ════════════════════════════════════════════════════════
-                  // 2.1: EXERCISE HEADER (name + demo button)
-                  // ════════════════════════════════════════════════════════
-                  const SizedBox(height: 8),
-                  _buildExerciseHeader(context, exercise, isPlaceholder),
-                  
-                  // ════════════════════════════════════════════════════════
-                  // 2.2: PLACEHOLDER CHIP (if needed)
-                  // ════════════════════════════════════════════════════════
-                  if (isPlaceholder) ...[
-                    const SizedBox(height: 8),
-                    _buildPlaceholderChip(context),
-                  ],
-                  
-                  // ════════════════════════════════════════════════════════
-                  // 2.3: DETAILS ROW (6 sets, 20s hold, 40s rest)
-                  // ════════════════════════════════════════════════════════
-                  const SizedBox(height: 16),
-                  _buildExerciseDetails(context, exercise),
-                  
-                  // ════════════════════════════════════════════════════════
-                  // FLEXIBLE SPACE - Timer centered between details and sets
-                  // ════════════════════════════════════════════════════════
-                  const Spacer(flex: 2),
-                  
-                  // ════════════════════════════════════════════════════════
-                  // 2.4: INTERVAL TIMER (big circle) - THE FOCAL POINT
-                  // ════════════════════════════════════════════════════════
-                  _buildIntervalTimer(context, exercise),
-                  
-                  // ════════════════════════════════════════════════════════
-                  // FLEXIBLE SPACE - Timer centered between details and sets
-                  // ════════════════════════════════════════════════════════
-                  const Spacer(flex: 2),
-                  
-                  // ════════════════════════════════════════════════════════
-                  // 2.5: SETS TRACKER - Moved to bottom sticky section
-                  // (Now grouped with controls for better UX)
-                  // ════════════════════════════════════════════════════════
-                  _buildSetsTracker(context, exercise, completedSets),
-                  
-                  // ════════════════════════════════════════════════════════
-                  // SWIPE INDICATORS - Simple grey dots
-                  // ════════════════════════════════════════════════════════
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      exercises.length,
-                      (index) {
-                        final isActive = index == _currentPage;
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: isActive ? 10 : 8,
-                          height: isActive ? 10 : 8,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(isActive ? 0.6 : 0.3),
-                            shape: BoxShape.circle,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // ════════════════════════════════════════════════════════
+                          // 2.1: EXERCISE HEADER (name + demo button)
+                          // ════════════════════════════════════════════════════════
+                          const SizedBox(height: 8),
+                          _buildExerciseHeader(
+                              context, exercise, isPlaceholder),
+
+                          // ════════════════════════════════════════════════════════
+                          // 2.2: PLACEHOLDER CHIP (if needed)
+                          // ════════════════════════════════════════════════════════
+                          if (isPlaceholder) ...[
+                            const SizedBox(height: 8),
+                            _buildPlaceholderChip(context),
+                          ],
+
+                          // ════════════════════════════════════════════════════════
+                          // 2.3: DETAILS ROW (6 sets, 20s hold, 40s rest)
+                          // ════════════════════════════════════════════════════════
+                          const SizedBox(height: 16),
+                          _buildExerciseDetails(context, exercise),
+
+                          // ════════════════════════════════════════════════════════
+                          // FLEXIBLE SPACE - Timer centered between details and sets
+                          // ════════════════════════════════════════════════════════
+                          const Spacer(flex: 2),
+
+                          // ════════════════════════════════════════════════════════
+                          // 2.4: INTERVAL TIMER (big circle) - THE FOCAL POINT
+                          // ════════════════════════════════════════════════════════
+                          _buildIntervalTimer(context, exercise),
+
+                          // ════════════════════════════════════════════════════════
+                          // FLEXIBLE SPACE - Timer centered between details and sets
+                          // ════════════════════════════════════════════════════════
+                          const Spacer(flex: 2),
+
+                          // ════════════════════════════════════════════════════════
+                          // 2.5: SETS TRACKER - Moved to bottom sticky section
+                          // (Now grouped with controls for better UX)
+                          // ════════════════════════════════════════════════════════
+                          _buildSetsTracker(context, exercise, completedSets),
+
+                          // ════════════════════════════════════════════════════════
+                          // SWIPE INDICATORS - Simple grey dots
+                          // ════════════════════════════════════════════════════════
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              exercises.length,
+                              (index) {
+                                final isActive = index == _currentPage;
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  width: isActive ? 10 : 8,
+                                  height: isActive ? 10 : 8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey
+                                        .withOpacity(isActive ? 0.6 : 0.3),
+                                    shape: BoxShape.circle,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        );
-                      },
+                          const SizedBox(height: 12),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  ],
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-          
-
-        ],
-      ),
-    ),
+        ),
 
         // ============================================================
         // SECTION 3: BOTTOM CONTROLS (Fixed at bottom)
@@ -638,7 +641,8 @@ class _ExtraSessionPlayerScreenState
             _buildProgressBar(exercises, completedCount, allCompleted),
             SizedBox(height: (screenWidth * 0.025).clamp(9.0, 11.0)),
             // Navigation buttons
-            _buildNavigationButtons(isCompleted, isLastPage, allCompleted, session),
+            _buildNavigationButtons(
+                isCompleted, isLastPage, allCompleted, session),
           ],
         ),
       ),
@@ -648,7 +652,7 @@ class _ExtraSessionPlayerScreenState
   Widget _buildProgressBar(
       List<Exercise> exercises, int completedCount, bool allCompleted) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Row(
       children: [
         // Exercise counter badge with icon
@@ -715,7 +719,7 @@ class _ExtraSessionPlayerScreenState
                     final isCurrent = index == _currentPage;
                     final isPast = index < _currentPage;
                     final isPartiallyDone = isPast && !isFullyCompleted;
-                    
+
                     Color segmentColor;
                     if (isCurrent) {
                       // Current exercise - solid blue
@@ -730,7 +734,7 @@ class _ExtraSessionPlayerScreenState
                       // Future exercise - low opacity blue
                       segmentColor = const Color(0xFF42A5F5).withOpacity(0.25);
                     }
-                    
+
                     return Expanded(
                       child: Container(
                         margin: EdgeInsets.only(
@@ -752,10 +756,10 @@ class _ExtraSessionPlayerScreenState
     );
   }
 
-  Widget _buildNavigationButtons(
-      bool isCompleted, bool isLastPage, bool allCompleted, ResolvedExtraSession session) {
+  Widget _buildNavigationButtons(bool isCompleted, bool isLastPage,
+      bool allCompleted, ResolvedExtraSession session) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Row(
       children: [
         if (_currentPage > 0)
@@ -768,7 +772,8 @@ class _ExtraSessionPlayerScreenState
               onTap: () => _navigateToPage(_currentPage - 1),
             ),
           ),
-        if (_currentPage > 0) SizedBox(width: (screenWidth * 0.028).clamp(10.0, 12.0)),
+        if (_currentPage > 0)
+          SizedBox(width: (screenWidth * 0.028).clamp(10.0, 12.0)),
         Expanded(
           flex: 3,
           child: _buildNavigationButton(
@@ -795,12 +800,10 @@ class _ExtraSessionPlayerScreenState
     VoidCallback? onTap,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isPrimary
-            ? AppTheme.primaryColor
-            : Colors.grey[800],
+        color: isPrimary ? AppTheme.primaryColor : Colors.grey[800],
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isPrimary
@@ -840,8 +843,11 @@ class _ExtraSessionPlayerScreenState
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (icon == Icons.arrow_back_ios_new_rounded) ...[
-                          Icon(icon, size: (screenWidth * 0.045).clamp(16.0, 18.0), color: Colors.white),
-                          SizedBox(width: (screenWidth * 0.018).clamp(6.5, 8.0)),
+                          Icon(icon,
+                              size: (screenWidth * 0.045).clamp(16.0, 18.0),
+                              color: Colors.white),
+                          SizedBox(
+                              width: (screenWidth * 0.018).clamp(6.5, 8.0)),
                         ],
                         Text(
                           label,
@@ -854,8 +860,11 @@ class _ExtraSessionPlayerScreenState
                           ),
                         ),
                         if (icon == Icons.arrow_forward_ios_rounded) ...[
-                          SizedBox(width: (screenWidth * 0.018).clamp(6.5, 8.0)),
-                          Icon(icon, size: (screenWidth * 0.045).clamp(16.0, 18.0), color: Colors.white),
+                          SizedBox(
+                              width: (screenWidth * 0.018).clamp(6.5, 8.0)),
+                          Icon(icon,
+                              size: (screenWidth * 0.045).clamp(16.0, 18.0),
+                              color: Colors.white),
                         ],
                       ],
                     ),
@@ -866,7 +875,8 @@ class _ExtraSessionPlayerScreenState
     );
   }
 
-  String _getControlLabel(bool isCompleted, bool isLastPage, bool allCompleted) {
+  String _getControlLabel(
+      bool isCompleted, bool isLastPage, bool allCompleted) {
     if (isLastPage) return 'Finish Session';
     return 'Next Exercise';
   }
@@ -974,24 +984,29 @@ class _ExtraSessionPlayerScreenState
   // Helper Widget Builders - All in one place for easy maintenance
   // =========================================================================
 
-  Widget _buildExerciseHeader(BuildContext context, Exercise exercise, bool isPlaceholder) {
+  Widget _buildExerciseHeader(
+      BuildContext context, Exercise exercise, bool isPlaceholder) {
     final screenWidth = MediaQuery.of(context).size.width;
     final badgeSize = (screenWidth * 0.11).clamp(40.0, 48.0);
     final titleSize = (screenWidth * 0.056).clamp(20.0, 24.0);
     final isCompleted = _isExerciseCompleted(exercise);
-    
+
     return Row(
       children: [
         Container(
           width: badgeSize,
           height: badgeSize,
           decoration: BoxDecoration(
-            color: isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
+            color:
+                isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
             boxShadow: [
               BoxShadow(
-                color: (isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor).withOpacity(0.3),
+                color: (isCompleted
+                        ? const Color(0xFF4CAF50)
+                        : AppTheme.primaryColor)
+                    .withOpacity(0.3),
                 blurRadius: 12,
                 spreadRadius: 1,
               ),
@@ -999,7 +1014,8 @@ class _ExtraSessionPlayerScreenState
           ),
           child: Center(
             child: isCompleted
-                ? Icon(Icons.check_rounded, color: Colors.white, size: badgeSize * 0.5)
+                ? Icon(Icons.check_rounded,
+                    color: Colors.white, size: badgeSize * 0.5)
                 : Text(
                     '${_currentPage + 1}',
                     style: TextStyle(
@@ -1046,7 +1062,7 @@ class _ExtraSessionPlayerScreenState
 
   Widget _buildPlaceholderChip(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: (screenWidth * 0.032).clamp(12.0, 14.0),
@@ -1055,7 +1071,8 @@ class _ExtraSessionPlayerScreenState
       decoration: BoxDecoration(
         color: const Color(0xFFFFA726).withOpacity(0.12),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFFFA726).withOpacity(0.45), width: 1.5),
+        border: Border.all(
+            color: const Color(0xFFFFA726).withOpacity(0.45), width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1082,7 +1099,7 @@ class _ExtraSessionPlayerScreenState
 
   Widget _buildExerciseDetails(BuildContext context, Exercise exercise) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: (screenWidth * 0.038).clamp(14.0, 16.0),
@@ -1110,7 +1127,9 @@ class _ExtraSessionPlayerScreenState
           ),
           _buildInfoChip(
             icon: Icons.fitness_center,
-            value: exercise.duration != null ? '${exercise.duration}s' : '${exercise.reps}',
+            value: exercise.duration != null
+                ? '${exercise.duration}s'
+                : '${exercise.reps}',
             label: exercise.duration != null ? 'hold' : 'reps',
             color: const Color(0xFF4CAF50),
             screenWidth: screenWidth,
@@ -1144,7 +1163,7 @@ class _ExtraSessionPlayerScreenState
     final iconSize = (screenWidth * 0.052).clamp(18.0, 22.0);
     final valueSize = (screenWidth * 0.042).clamp(15.0, 18.0);
     final labelSize = (screenWidth * 0.026).clamp(9.5, 11.0);
-    
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -1185,10 +1204,10 @@ class _ExtraSessionPlayerScreenState
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final baseTimerSize = (screenWidth * 0.65).clamp(220.0, 320.0);
-    final timerSize = screenHeight < 700 
+    final timerSize = screenHeight < 700
         ? (baseTimerSize * 0.85).clamp(200.0, 260.0)
         : baseTimerSize;
-    
+
     return Center(
       child: SizedBox(
         height: timerSize,
@@ -1202,7 +1221,8 @@ class _ExtraSessionPlayerScreenState
               _startIntervalTimer(exercise, nextSet);
             }
           },
-          isActive: _isIntervalTimerActive && _currentIntervalExerciseId == exercise.id,
+          isActive: _isIntervalTimerActive &&
+              _currentIntervalExerciseId == exercise.id,
           isPaused: _isIntervalTimerPaused,
           isWorkPhase: _isWorkPhase,
           currentPhaseSeconds: _currentPhaseSeconds,
@@ -1216,14 +1236,17 @@ class _ExtraSessionPlayerScreenState
     );
   }
 
-  Widget _buildSetsTracker(BuildContext context, Exercise exercise, List<bool> completedSets) {
+  Widget _buildSetsTracker(
+      BuildContext context, Exercise exercise, List<bool> completedSets) {
     return SetsTrackerWidget(
       totalSets: exercise.sets,
       completedSets: completedSets,
-      currentActiveSet: _isIntervalTimerActive && _currentIntervalExerciseId == exercise.id
-          ? _currentSet
-          : -1,
-      isTimerActive: _isIntervalTimerActive && _currentIntervalExerciseId == exercise.id,
+      currentActiveSet:
+          _isIntervalTimerActive && _currentIntervalExerciseId == exercise.id
+              ? _currentSet
+              : -1,
+      isTimerActive:
+          _isIntervalTimerActive && _currentIntervalExerciseId == exercise.id,
       isWorkPhase: _isWorkPhase,
       onToggleSet: (setIndex) => _toggleSet(exercise, setIndex),
     );

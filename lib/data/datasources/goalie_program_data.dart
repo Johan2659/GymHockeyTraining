@@ -107,7 +107,7 @@ class GoalieProgramData {
   static Future<List<Session>> getAllSessions() async {
     try {
       final sessions = <Session>[];
-      
+
       // Week 1 sessions
       final week1Sessions = [
         await _loadSession('goalie_w1_s1', _week1Session1),
@@ -117,7 +117,7 @@ class GoalieProgramData {
       sessions.addAll(week1Sessions.whereType<Session>());
 
       // Add other weeks when defined...
-      
+
       return sessions;
     } catch (e, stack) {
       _logger.e('Error getting goalie sessions', error: e, stackTrace: stack);
@@ -154,7 +154,8 @@ class GoalieProgramData {
 
       return await _loadSession(id, jsonString);
     } catch (e, stack) {
-      _logger.e('Error getting goalie session $id', error: e, stackTrace: stack);
+      _logger.e('Error getting goalie session $id',
+          error: e, stackTrace: stack);
       return null;
     }
   }

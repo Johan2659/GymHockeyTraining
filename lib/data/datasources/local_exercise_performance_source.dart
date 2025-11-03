@@ -16,7 +16,7 @@ class LocalExercisePerformanceSource {
       } else {
         box = await Hive.openBox(HiveBoxes.exercisePerformance);
       }
-      
+
       await box.put(performance.id, performance.toJson());
       _logger.d(
           'LocalExercisePerformanceSource: Saved performance: ${performance.id}');
@@ -37,10 +37,10 @@ class LocalExercisePerformanceSource {
       } else {
         box = await Hive.openBox(HiveBoxes.exercisePerformance);
       }
-      
+
       final data = box.get(id);
       if (data == null) return null;
-      
+
       if (data is Map) {
         return ExercisePerformance.fromJson(Map<String, dynamic>.from(data));
       }
@@ -62,7 +62,7 @@ class LocalExercisePerformanceSource {
       } else {
         box = await Hive.openBox(HiveBoxes.exercisePerformance);
       }
-      
+
       final performances = <ExercisePerformance>[];
 
       for (final data in box.values) {
@@ -97,7 +97,7 @@ class LocalExercisePerformanceSource {
       } else {
         box = await Hive.openBox(HiveBoxes.exercisePerformance);
       }
-      
+
       final performances = <ExercisePerformance>[];
 
       for (final data in box.values) {
@@ -132,7 +132,7 @@ class LocalExercisePerformanceSource {
       } else {
         box = await Hive.openBox(HiveBoxes.exercisePerformance);
       }
-      
+
       final performances = <ExercisePerformance>[];
 
       for (final data in box.values) {
@@ -163,10 +163,9 @@ class LocalExercisePerformanceSource {
       } else {
         box = await Hive.openBox(HiveBoxes.exercisePerformance);
       }
-      
+
       await box.delete(id);
-      _logger.d(
-          'LocalExercisePerformanceSource: Deleted performance: $id');
+      _logger.d('LocalExercisePerformanceSource: Deleted performance: $id');
       return true;
     } catch (e, stackTrace) {
       _logger.e('LocalExercisePerformanceSource: Failed to delete performance',
@@ -184,7 +183,7 @@ class LocalExercisePerformanceSource {
       } else {
         box = await Hive.openBox(HiveBoxes.exercisePerformance);
       }
-      
+
       await box.clear();
       _logger.d('LocalExercisePerformanceSource: Cleared all performances');
       return true;
@@ -195,4 +194,3 @@ class LocalExercisePerformanceSource {
     }
   }
 }
-

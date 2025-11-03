@@ -27,4 +27,3 @@ abstract class ExercisePerformanceRepository {
   /// Clear all performance data
   Future<bool> clear();
 }
-

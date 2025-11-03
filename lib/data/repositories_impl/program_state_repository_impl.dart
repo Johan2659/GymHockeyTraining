@@ -240,7 +240,8 @@ class ProgramStateRepositoryImpl implements ProgramStateRepository {
       final success = await save(updatedState);
 
       if (success) {
-        _logger.i('ProgramStateRepositoryImpl: Successfully saved session in progress');
+        _logger.i(
+            'ProgramStateRepositoryImpl: Successfully saved session in progress');
       }
 
       return success;
@@ -266,13 +267,16 @@ class ProgramStateRepositoryImpl implements ProgramStateRepository {
       final success = await save(updatedState);
 
       if (success) {
-        _logger.i('ProgramStateRepositoryImpl: Successfully cleared session in progress');
+        _logger.i(
+            'ProgramStateRepositoryImpl: Successfully cleared session in progress');
       }
 
       return success;
     } catch (e, stackTrace) {
-      _logger.e('ProgramStateRepositoryImpl: Error clearing session in progress',
-          error: e, stackTrace: stackTrace);
+      _logger.e(
+          'ProgramStateRepositoryImpl: Error clearing session in progress',
+          error: e,
+          stackTrace: stackTrace);
       return false;
     }
   }

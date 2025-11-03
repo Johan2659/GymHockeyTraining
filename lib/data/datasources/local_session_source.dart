@@ -244,7 +244,7 @@ class LocalSessionSource {
 
       final allSessions = await getSessionsByProgramId(programId);
       final weekNum = week + 1; // Convert 0-based to 1-based
-      
+
       // Handle all program types
       String prefix;
       switch (programId) {

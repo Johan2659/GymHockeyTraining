@@ -52,9 +52,9 @@ class ExerciseCardWidget extends StatelessWidget {
   /// MAIN BUILD METHOD
   /// ===========================================================================
   /// This widget displays exercise content inside the PageView.
-  /// 
+  ///
   /// LAYOUT STRUCTURE:
-  /// 
+  ///
   /// ┌─────────────────────────────────┐
   /// │ 1. Header (name + demo button)  │ ← Fixed height
   /// │ 2. Placeholder chip (optional)  │ ← Fixed height
@@ -69,7 +69,7 @@ class ExerciseCardWidget extends StatelessWidget {
   /// │                                 │
   /// └─────────────────────────────────┘
   ///   ↓ (Followed by Bottom Controls in main screen)
-  /// 
+  ///
   /// ===========================================================================
   @override
   Widget build(BuildContext context) {
@@ -114,17 +114,17 @@ class ExerciseCardWidget extends StatelessWidget {
   /// ===========================================================================
   /// EXPANDED LAYOUT - Main layout for taller screens
   /// ===========================================================================
-  /// 
+  ///
   /// HOW TO MODIFY THE VERTICAL POSITION:
-  /// 
+  ///
   /// To move Timer + Sets UP:     Increase bottom Spacer flex (e.g., flex: 2)
   /// To move Timer + Sets DOWN:   Increase top Spacer flex (e.g., flex: 2)
   /// To center exactly:           Keep both Spacer flex equal (flex: 1)
-  /// 
+  ///
   /// To adjust spacing between elements:
   /// - Change SizedBox(height: X) values
   /// - Horizontal padding: EdgeInsets.symmetric(horizontal: X)
-  /// 
+  ///
   /// ===========================================================================
   Widget _buildExpandedLayout(BuildContext context) {
     return Padding(
@@ -137,7 +137,7 @@ class ExerciseCardWidget extends StatelessWidget {
           // ═══════════════════════════════════════════════════════════════
           const SizedBox(height: 4),
           _buildHeader(context),
-          
+
           // ═══════════════════════════════════════════════════════════════
           // SECTION 2: PLACEHOLDER CHIP (only if exercise is placeholder)
           // ═══════════════════════════════════════════════════════════════
@@ -145,33 +145,33 @@ class ExerciseCardWidget extends StatelessWidget {
             const SizedBox(height: 8),
             _buildPlaceholderChip(context),
           ],
-          
+
           // ═══════════════════════════════════════════════════════════════
           // SECTION 3: DETAILS ROW (6 sets, 20s hold, 40s rest)
           // ═══════════════════════════════════════════════════════════════
           const SizedBox(height: 12),
           _buildDetailsRow(context),
-          
+
           // ═══════════════════════════════════════════════════════════════
           // FLEXIBLE SPACE ABOVE TIMER (adjust flex to move content)
           // ═══════════════════════════════════════════════════════════════
           const Spacer(flex: 3),
-          
+
           // ═══════════════════════════════════════════════════════════════
           // SECTION 4: INTERVAL TIMER (big circular timer)
           // ═══════════════════════════════════════════════════════════════
           Center(child: _buildTimer(context)),
-          
+
           // ═══════════════════════════════════════════════════════════════
           // SPACING BETWEEN TIMER AND SETS
           // ═══════════════════════════════════════════════════════════════
           const SizedBox(height: 20),
-          
+
           // ═══════════════════════════════════════════════════════════════
           // SECTION 5: SETS TRACKER (1 2 3 4 5 6 pills)
           // ═══════════════════════════════════════════════════════════════
           _buildSetsTracker(context),
-          
+
           // ═══════════════════════════════════════════════════════════════
           // FLEXIBLE SPACE BELOW SETS (adjust flex to move content)
           // ═══════════════════════════════════════════════════════════════
@@ -186,14 +186,15 @@ class ExerciseCardWidget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final badgeSize = (screenWidth * 0.11).clamp(40.0, 48.0);
     final titleSize = (screenWidth * 0.056).clamp(20.0, 24.0);
-    
+
     return Row(
       children: [
         Container(
           width: badgeSize,
           height: badgeSize,
           decoration: BoxDecoration(
-            color: isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
+            color:
+                isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.white.withOpacity(0.2),
@@ -201,7 +202,9 @@ class ExerciseCardWidget extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: (isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor)
+                color: (isCompleted
+                        ? const Color(0xFF4CAF50)
+                        : AppTheme.primaryColor)
                     .withOpacity(0.3),
                 blurRadius: 12,
                 spreadRadius: 1,
@@ -262,7 +265,7 @@ class ExerciseCardWidget extends StatelessWidget {
   /// Placeholder chip indicator
   Widget _buildPlaceholderChip(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: (screenWidth * 0.032).clamp(12.0, 14.0),
@@ -302,7 +305,7 @@ class ExerciseCardWidget extends StatelessWidget {
   /// Exercise details row (sets, reps/duration, rest)
   Widget _buildDetailsRow(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: (screenWidth * 0.038).clamp(14.0, 16.0),
@@ -410,7 +413,7 @@ class _InfoChip extends StatelessWidget {
     final iconSize = (screenWidth * 0.052).clamp(18.0, 22.0);
     final valueSize = (screenWidth * 0.042).clamp(15.0, 18.0);
     final labelSize = (screenWidth * 0.026).clamp(9.5, 11.0);
-    
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -447,4 +450,3 @@ class _InfoChip extends StatelessWidget {
     );
   }
 }
-

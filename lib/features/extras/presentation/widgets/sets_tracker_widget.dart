@@ -191,7 +191,7 @@ class _SetPillState extends State<_SetPill>
     final pillHeight = (widget.screenWidth * 0.11).clamp(40.0, 48.0);
     final iconSize = (widget.screenWidth * 0.05).clamp(18.0, 22.0);
     final textSize = (widget.screenWidth * 0.04).clamp(14.5, 16.5);
-    
+
     return GestureDetector(
       onTapDown: (_) => _controller.forward(),
       onTapUp: (_) {
@@ -232,4 +232,3 @@ class _SetPillState extends State<_SetPill>
     );
   }
 }
-

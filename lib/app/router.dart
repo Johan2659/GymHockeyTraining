@@ -41,11 +41,11 @@ GoRouter router(Ref ref) {
             name: 'extras',
             builder: (context, state) => const ExtrasScreen(),
           ),
-        GoRoute(
-          path: '/progress',
-          name: 'progress',
-          builder: (context, state) => const ModernProgressScreen(),
-        ),
+          GoRoute(
+            path: '/progress',
+            name: 'progress',
+            builder: (context, state) => const ModernProgressScreen(),
+          ),
           GoRoute(
             path: '/profile',
             name: 'profile',

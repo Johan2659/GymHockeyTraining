@@ -5,9 +5,9 @@ import 'package:gymhockeytraining/core/storage/hive_boxes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  
+
   print('\n=== Checking Hive Boxes ===\n');
-  
+
   try {
     // Check exercise_performance box
     print('1. Checking exercise_performance box...');
@@ -19,10 +19,10 @@ void main() async {
       print('   Opening box...');
       perfBox = await Hive.openBox(HiveBoxes.exercisePerformance);
     }
-    
+
     print('   Total entries: ${perfBox.length}');
     print('   Keys: ${perfBox.keys.take(5).toList()}');
-    
+
     if (perfBox.isEmpty) {
       print('   ❌ Box is EMPTY - No exercise performances saved yet');
       print('   → You need to complete some exercises first!');
@@ -41,7 +41,7 @@ void main() async {
         count++;
       }
     }
-    
+
     // Check other relevant boxes
     print('\n2. Checking other boxes...');
     final boxes = [
@@ -51,7 +51,7 @@ void main() async {
       'sessions',
       'programs',
     ];
-    
+
     for (final boxName in boxes) {
       try {
         Box<dynamic> box;
@@ -65,7 +65,7 @@ void main() async {
         print('   $boxName: Error - $e');
       }
     }
-    
+
     print('\n✅ Check complete!');
   } catch (e, stack) {
     print('❌ Error: $e');

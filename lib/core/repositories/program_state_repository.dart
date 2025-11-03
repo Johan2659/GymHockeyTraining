@@ -27,7 +27,7 @@ abstract class ProgramStateRepository {
   Future<bool> removeCompletedExercise(String exerciseId);
   Future<bool> pauseProgram();
   Future<bool> resumeProgram();
-  
+
   /// Session in progress management
   Future<bool> saveSessionInProgress(SessionInProgress session);
   Future<bool> clearSessionInProgress();

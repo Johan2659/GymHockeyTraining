@@ -240,10 +240,10 @@ class _ProgramManagementDialogState
       if (mounted) {
         if (success) {
           Navigator.of(context).pop();
-          
+
           // Force immediate UI refresh by invalidating the app state provider
           ref.invalidate(appStateProvider);
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(_getSuccessMessage()),

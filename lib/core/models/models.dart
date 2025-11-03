@@ -298,7 +298,8 @@ class ProgramState {
   final int currentSession;
   final List<String> completedExerciseIds;
   final DateTime? pausedAt;
-  @JsonKey(fromJson: _sessionInProgressFromJson, toJson: _sessionInProgressToJson)
+  @JsonKey(
+      fromJson: _sessionInProgressFromJson, toJson: _sessionInProgressToJson)
   final SessionInProgress? sessionInProgress;
 
   factory ProgramState.fromJson(Map<String, dynamic> json) =>
@@ -320,14 +321,18 @@ class ProgramState {
       currentSession: currentSession ?? this.currentSession,
       completedExerciseIds: completedExerciseIds ?? this.completedExerciseIds,
       pausedAt: pausedAt ?? this.pausedAt,
-      sessionInProgress: clearSessionInProgress ? null : (sessionInProgress ?? this.sessionInProgress),
+      sessionInProgress: clearSessionInProgress
+          ? null
+          : (sessionInProgress ?? this.sessionInProgress),
     );
   }
 
-  static SessionInProgress? _sessionInProgressFromJson(Map<String, dynamic>? json) =>
+  static SessionInProgress? _sessionInProgressFromJson(
+          Map<String, dynamic>? json) =>
       json == null ? null : SessionInProgress.fromJson(json);
 
-  static Map<String, dynamic>? _sessionInProgressToJson(SessionInProgress? session) =>
+  static Map<String, dynamic>? _sessionInProgressToJson(
+          SessionInProgress? session) =>
       session?.toJson();
 }
 

@@ -176,21 +176,19 @@ Future<Program?> activeProgram(Ref ref) async {
 
     final repository = ref.watch(programRepositoryProvider);
     final program = await repository.getById(state!.activeProgramId!);
-    
+
     // Additional safety check
     if (program == null) {
-      LoggerService.instance.warning('Active program not found', 
-          source: 'activeProgramProvider', 
+      LoggerService.instance.warning('Active program not found',
+          source: 'activeProgramProvider',
           metadata: {'programId': state.activeProgramId});
       return null;
     }
-    
+
     return program;
   } catch (e, stackTrace) {
     LoggerService.instance.error('Failed to get active program',
-        source: 'activeProgramProvider',
-        error: e,
-        stackTrace: stackTrace);
+        source: 'activeProgramProvider', error: e, stackTrace: stackTrace);
     return null;
   }
 }
@@ -390,7 +388,7 @@ Future<void> completeSessionAction(Ref ref) async {
       currentState,
     );
     await analyticsRepo.save(updatedAnalytics);
-    
+
     // Invalidate the cache so the UI updates immediately
     ref.invalidate(performanceAnalyticsProvider);
     ref.invalidate(categoryProgressProvider);
@@ -421,7 +419,8 @@ Future<void> resumeProgramAction(Ref ref) async {
 Future<void> resetSessionAction(Ref ref) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   await stateRepo.updateCurrentSession(0);
-  LoggerService.instance.info('Session reset to 0', source: 'resetSessionAction');
+  LoggerService.instance
+      .info('Session reset to 0', source: 'resetSessionAction');
 }
 
 /// Complete bonus challenge action provider
@@ -556,7 +555,8 @@ Future<ExercisePerformance?> lastPerformance(Ref ref, String exerciseId) async {
 
 /// Save session in progress action provider
 @riverpod
-Future<bool> saveSessionInProgressAction(Ref ref, SessionInProgress session) async {
+Future<bool> saveSessionInProgressAction(
+    Ref ref, SessionInProgress session) async {
   try {
     final stateRepo = ref.read(programStateRepositoryProvider);
     final success = await stateRepo.saveSessionInProgress(session);
@@ -569,7 +569,7 @@ Future<bool> saveSessionInProgressAction(Ref ref, SessionInProgress session) asy
             'week': session.week,
             'session': session.session
           });
-      
+
       // Invalidate program state to trigger UI updates
       ref.invalidate(programStateProvider);
     }
@@ -592,7 +592,7 @@ Future<bool> clearSessionInProgressAction(Ref ref) async {
     if (success) {
       LoggerService.instance.info('Session in progress cleared',
           source: 'clearSessionInProgressAction');
-      
+
       // Invalidate program state to trigger UI updates
       ref.invalidate(programStateProvider);
     }

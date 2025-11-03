@@ -213,7 +213,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           subtitle,
           style: TextStyle(fontSize: 12, color: Colors.grey[400]),
         ),
-        trailing: Icon(Icons.chevron_right, color: AppTheme.primaryColor, size: 20),
+        trailing:
+            Icon(Icons.chevron_right, color: AppTheme.primaryColor, size: 20),
         onTap: onTap,
       ),
     );

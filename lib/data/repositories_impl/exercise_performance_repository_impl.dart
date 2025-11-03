@@ -24,8 +24,8 @@ class ExercisePerformanceRepositoryImpl
         _logger.i(
             'ExercisePerformanceRepositoryImpl: Successfully saved performance');
       } else {
-        _logger.e(
-            'ExercisePerformanceRepositoryImpl: Failed to save performance');
+        _logger
+            .e('ExercisePerformanceRepositoryImpl: Failed to save performance');
       }
 
       return success;
@@ -85,7 +85,8 @@ class ExercisePerformanceRepositoryImpl
     try {
       _logger.d(
           'ExercisePerformanceRepositoryImpl: Getting last performance for exercise: $exerciseId');
-      final performances = await _localSource.getPerformancesByExerciseId(exerciseId);
+      final performances =
+          await _localSource.getPerformancesByExerciseId(exerciseId);
       return performances.isNotEmpty ? performances.first : null;
     } catch (e, stackTrace) {
       _logger.e(
@@ -99,8 +100,7 @@ class ExercisePerformanceRepositoryImpl
   @override
   Future<List<ExercisePerformance>> getAll() async {
     try {
-      _logger.d(
-          'ExercisePerformanceRepositoryImpl: Getting all performances');
+      _logger.d('ExercisePerformanceRepositoryImpl: Getting all performances');
       return await _localSource.getAllPerformances();
     } catch (e, stackTrace) {
       _logger.e(
@@ -114,8 +114,7 @@ class ExercisePerformanceRepositoryImpl
   @override
   Future<bool> delete(String id) async {
     try {
-      _logger.d(
-          'ExercisePerformanceRepositoryImpl: Deleting performance: $id');
+      _logger.d('ExercisePerformanceRepositoryImpl: Deleting performance: $id');
       final success = await _localSource.deletePerformance(id);
 
       if (success) {
@@ -128,10 +127,8 @@ class ExercisePerformanceRepositoryImpl
 
       return success;
     } catch (e, stackTrace) {
-      _logger.e(
-          'ExercisePerformanceRepositoryImpl: Error deleting performance',
-          error: e,
-          stackTrace: stackTrace);
+      _logger.e('ExercisePerformanceRepositoryImpl: Error deleting performance',
+          error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -139,8 +136,7 @@ class ExercisePerformanceRepositoryImpl
   @override
   Future<bool> clear() async {
     try {
-      _logger.d(
-          'ExercisePerformanceRepositoryImpl: Clearing all performances');
+      _logger.d('ExercisePerformanceRepositoryImpl: Clearing all performances');
       final success = await _localSource.clearAll();
 
       if (success) {
@@ -161,4 +157,3 @@ class ExercisePerformanceRepositoryImpl
     }
   }
 }
-

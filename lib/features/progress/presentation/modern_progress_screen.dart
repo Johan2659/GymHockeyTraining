@@ -1202,6 +1202,8 @@ class ModernProgressScreen extends ConsumerWidget {
                   optimalValues: hockeyOptimalDistribution,
                   getCategoryColor: _getCategoryColor,
                   getCategoryName: _getExerciseCategoryDisplayName,
+                  balanceScore: balanceScore,
+                  balanceQuality: balanceQuality,
                 ),
 
                 const SizedBox(height: 16),
@@ -1780,6 +1782,8 @@ class _CategoryBreakdownWidget extends StatefulWidget {
   final Map<ExerciseCategory, double> optimalValues;
   final Color Function(ExerciseCategory) getCategoryColor;
   final String Function(ExerciseCategory) getCategoryName;
+  final double balanceScore;
+  final String balanceQuality;
 
   const _CategoryBreakdownWidget({
     required this.categories,
@@ -1787,6 +1791,8 @@ class _CategoryBreakdownWidget extends StatefulWidget {
     required this.optimalValues,
     required this.getCategoryColor,
     required this.getCategoryName,
+    required this.balanceScore,
+    required this.balanceQuality,
   });
 
   @override
@@ -1816,225 +1822,411 @@ class _CategoryBreakdownWidgetState extends State<_CategoryBreakdownWidget>
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: widget.categories.asMap().entries.map((entry) {
-        final index = entry.key;
-        final category = entry.value;
-        final actualPercent = widget.actualValues[category] ?? 0.0;
-        final optimalPercent = widget.optimalValues[category] ?? 0.0;
-        final categoryColor = widget.getCategoryColor(category);
-        final categoryName = widget.getCategoryName(category);
-        final diff = actualPercent - optimalPercent;
-
-        return TweenAnimationBuilder<double>(
-          duration: Duration(milliseconds: 600 + (index * 100)),
+      children: [
+        // Donut Chart
+        TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 1200),
           curve: Curves.easeOutCubic,
           tween: Tween(begin: 0.0, end: 1.0),
           builder: (context, animation, child) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Category name and values
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 3,
-                            height: 14,
-                            decoration: BoxDecoration(
-                              color: categoryColor,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            categoryName,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: categoryColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '${actualPercent.toInt()}%',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: categoryColor,
-                            ),
-                          ),
-                          Text(
-                            ' / ${optimalPercent.toInt()}%',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Side-by-side comparison bars
-                  Row(
-                    children: [
-                      // Your actual (left)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'You',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey[500],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(6),
-                              child: SizedBox(
-                                height: 24,
-                                child: Stack(
-                                  children: [
-                                    // Background
-                                    Container(
-                                      color: Colors.grey[850],
-                                    ),
-                                    // Filled portion
-                                    FractionallySizedBox(
-                                      widthFactor: (actualPercent * animation)
-                                              .clamp(0.0, 100.0) /
-                                          100,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              categoryColor.withValues(
-                                                  alpha: 0.8),
-                                              categoryColor,
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              '${actualPercent.toInt()}%',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: categoryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(width: 16),
-
-                      // Target (right)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Target',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey[500],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(6),
-                              child: SizedBox(
-                                height: 24,
-                                child: Stack(
-                                  children: [
-                                    // Background
-                                    Container(
-                                      color: Colors.grey[850],
-                                    ),
-                                    // Filled portion
-                                    FractionallySizedBox(
-                                      widthFactor: (optimalPercent * animation)
-                                              .clamp(0.0, 100.0) /
-                                          100,
-                                      child: Container(
-                                        color:
-                                            Colors.amber.withValues(alpha: 0.5),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              '${optimalPercent.toInt()}%',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.amber[400],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Status indicator (only if not on target)
-                  if (diff.abs() >= 5.0)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            diff > 0
-                                ? Icons.arrow_upward
-                                : Icons.arrow_downward,
-                            size: 14,
-                            color: diff > 0 ? Colors.orange : Colors.red[300],
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            diff > 0 ? '+${diff.toInt()}%' : '${diff.toInt()}%',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: diff > 0 ? Colors.orange : Colors.red[300],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+            return CustomPaint(
+              size: const Size(320, 320),
+              painter: _DonutChartPainter(
+                categories: widget.categories,
+                actualValues: widget.actualValues,
+                optimalValues: widget.optimalValues,
+                getCategoryColor: widget.getCategoryColor,
+                getCategoryName: widget.getCategoryName,
+                balanceScore: widget.balanceScore,
+                balanceQuality: widget.balanceQuality,
+                animation: animation,
               ),
             );
           },
-        );
-      }).toList(),
+        ),
+      ],
     );
   }
+}
+
+// =============================================================================
+// Donut Chart Painter
+// =============================================================================
+
+class _DonutChartPainter extends CustomPainter {
+  final List<ExerciseCategory> categories;
+  final Map<ExerciseCategory, double> actualValues;
+  final Map<ExerciseCategory, double> optimalValues;
+  final Color Function(ExerciseCategory) getCategoryColor;
+  final String Function(ExerciseCategory) getCategoryName;
+  final double balanceScore;
+  final String balanceQuality;
+  final double animation;
+
+  _DonutChartPainter({
+    required this.categories,
+    required this.actualValues,
+    required this.optimalValues,
+    required this.getCategoryColor,
+    required this.getCategoryName,
+    required this.balanceScore,
+    required this.balanceQuality,
+    required this.animation,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    // Modern 2025 design parameters - inspired by WHOOP, Apple Fitness+
+    final radius = size.width / 2.3;
+    final strokeWidth = 56.0; // Thicker for modern look
+
+    // Add subtle outer glow for depth
+    final glowPaint = Paint()
+      ..color = Colors.cyan.withValues(alpha: 0.1)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth + 8
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
+
+    canvas.drawCircle(center, radius, glowPaint);
+
+    // Start angle at top (-90 degrees)
+    double startAngle = -pi / 2;
+
+    for (final category in categories) {
+      final optimalPercent = optimalValues[category] ?? 0.0;
+      final actualPercent = actualValues[category] ?? 0.0;
+      final categoryColor = getCategoryColor(category);
+
+      // Calculate sweep angle based on optimal percentage
+      final sweepAngle = (2 * pi * optimalPercent / 100) * animation;
+
+      // Draw background ring segment with subtle gradient
+      final bgGradient = SweepGradient(
+        colors: [
+          Colors.grey[850]!,
+          Colors.grey[800]!,
+          Colors.grey[850]!,
+        ],
+        startAngle: startAngle,
+        endAngle: startAngle + sweepAngle,
+      );
+
+      final bgPaint = Paint()
+        ..shader = bgGradient
+            .createShader(Rect.fromCircle(center: center, radius: radius))
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        bgPaint,
+      );
+
+      // Calculate how much to fill (actual vs optimal)
+      final fillRatio = optimalPercent > 0
+          ? (actualPercent / optimalPercent).clamp(0.0, 1.5)
+          : 0.0;
+      final fillSweep = sweepAngle * fillRatio;
+
+      if (fillRatio > 0) {
+        // Main fill with vibrant gradient (Apple Fitness+ style)
+        final mainFillSweep = fillSweep.clamp(0.0, sweepAngle);
+
+        final fillPaint = Paint()
+          ..shader = SweepGradient(
+            colors: [
+              categoryColor.withValues(alpha: 0.85),
+              categoryColor,
+              categoryColor.withValues(alpha: 0.95),
+              categoryColor.withValues(alpha: 1.0),
+            ],
+            startAngle: startAngle,
+            endAngle: startAngle + mainFillSweep,
+          ).createShader(Rect.fromCircle(center: center, radius: radius))
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth
+          ..strokeCap = StrokeCap.round;
+
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          startAngle,
+          mainFillSweep,
+          false,
+          fillPaint,
+        );
+
+        // If over target, show overflow with modern pulsing effect
+        if (fillRatio > 1.0) {
+          final overflowSweep = fillSweep - sweepAngle;
+
+          // Overflow with warning color gradient
+          final overflowPaint = Paint()
+            ..shader = SweepGradient(
+              colors: [
+                categoryColor.withValues(alpha: 0.5),
+                Colors.amber.withValues(alpha: 0.7),
+                Colors.orange.withValues(alpha: 0.6),
+              ],
+              startAngle: startAngle + sweepAngle,
+              endAngle: startAngle +
+                  sweepAngle +
+                  overflowSweep.clamp(0.0, sweepAngle * 0.5),
+            ).createShader(Rect.fromCircle(center: center, radius: radius))
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = strokeWidth
+            ..strokeCap = StrokeCap.round;
+
+          canvas.drawArc(
+            Rect.fromCircle(center: center, radius: radius),
+            startAngle + sweepAngle,
+            overflowSweep.clamp(0.0, sweepAngle * 0.5),
+            false,
+            overflowPaint,
+          );
+
+          // Modern warning indicator with glow
+          final overflowRadius = radius + strokeWidth / 2 + 10;
+          final overflowAngle = startAngle +
+              sweepAngle +
+              (overflowSweep / 2).clamp(0.0, sweepAngle * 0.25);
+          final indicatorPos = Offset(
+            center.dx + overflowRadius * cos(overflowAngle),
+            center.dy + overflowRadius * sin(overflowAngle),
+          );
+
+          // Glow effect
+          final glowWarning = Paint()
+            ..color = Colors.amber.withValues(alpha: 0.4)
+            ..style = PaintingStyle.fill
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+          canvas.drawCircle(indicatorPos, 8, glowWarning);
+
+          // Solid indicator
+          final warningPaint = Paint()
+            ..color = Colors.amber
+            ..style = PaintingStyle.fill;
+          canvas.drawCircle(indicatorPos, 5, warningPaint);
+
+          // Inner white dot
+          final whiteDot = Paint()
+            ..color = Colors.white
+            ..style = PaintingStyle.fill;
+          canvas.drawCircle(indicatorPos, 2, whiteDot);
+        }
+      }
+
+      // Thin separator for modern look (less harsh than before)
+      if (categories.indexOf(category) < categories.length - 1) {
+        final separatorPaint = Paint()
+          ..color = Colors.black.withValues(alpha: 0.6)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
+
+        final separatorAngle = startAngle + sweepAngle;
+        final innerRadius = radius - strokeWidth / 2;
+        final outerRadius = radius + strokeWidth / 2;
+
+        canvas.drawLine(
+          Offset(
+            center.dx + innerRadius * cos(separatorAngle),
+            center.dy + innerRadius * sin(separatorAngle),
+          ),
+          Offset(
+            center.dx + outerRadius * cos(separatorAngle),
+            center.dy + outerRadius * sin(separatorAngle),
+          ),
+          separatorPaint,
+        );
+      }
+
+      // Modern label positioning - cleaner typography
+      final midAngle = startAngle + (sweepAngle / 2);
+      final labelRadius = radius + strokeWidth / 2 + 32;
+      final labelPos = Offset(
+        center.dx + labelRadius * cos(midAngle),
+        center.dy + labelRadius * sin(midAngle),
+      );
+
+      // Category name with modern font weight
+      final categoryName = getCategoryName(category);
+      final nameSpan = TextSpan(
+        text: categoryName.toUpperCase(),
+        style: TextStyle(
+          color: categoryColor,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.8,
+        ),
+      );
+
+      final namePainter = TextPainter(
+        text: nameSpan,
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+      );
+
+      namePainter.layout();
+      namePainter.paint(
+        canvas,
+        Offset(
+          labelPos.dx - namePainter.width / 2,
+          labelPos.dy - namePainter.height / 2 - 12,
+        ),
+      );
+
+      // Modern stats display - larger actual, smaller target
+      final statsSpan = TextSpan(
+        children: [
+          TextSpan(
+            text: '${actualPercent.toInt()}',
+            style: TextStyle(
+              color: categoryColor,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              height: 1.0,
+            ),
+          ),
+          TextSpan(
+            text: '%',
+            style: TextStyle(
+              color: categoryColor.withValues(alpha: 0.8),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          TextSpan(
+            text: '\n/${optimalPercent.toInt()}%',
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              height: 1.3,
+            ),
+          ),
+        ],
+      );
+
+      final statsPainter = TextPainter(
+        text: statsSpan,
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+      );
+
+      statsPainter.layout();
+      statsPainter.paint(
+        canvas,
+        Offset(
+          labelPos.dx - statsPainter.width / 2,
+          labelPos.dy - statsPainter.height / 2 + 8,
+        ),
+      );
+
+      startAngle += sweepAngle;
+    }
+
+    // Modern center circle with depth effect
+    // Outer shadow for depth
+    final shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.5)
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
+    canvas.drawCircle(center, radius - strokeWidth / 2 - 4, shadowPaint);
+
+    // Gradient center background (premium look)
+    final centerGradient = RadialGradient(
+      colors: [
+        Colors.grey[900]!,
+        Colors.grey[850]!,
+        Colors.black,
+      ],
+      stops: const [0.0, 0.5, 1.0],
+    );
+
+    final centerPaint = Paint()
+      ..shader = centerGradient.createShader(
+        Rect.fromCircle(center: center, radius: radius - strokeWidth / 2 - 5),
+      )
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(center, radius - strokeWidth / 2 - 5, centerPaint);
+
+    // Subtle inner border for definition
+    final borderPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.05)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    canvas.drawCircle(center, radius - strokeWidth / 2 - 5, borderPaint);
+
+    // Modern center text - WHOOP-inspired large number
+    final centerSpan = TextSpan(
+      children: [
+        TextSpan(
+          text: '${balanceScore.toInt()}',
+          style: TextStyle(
+            fontSize: 64,
+            fontWeight: FontWeight.w900,
+            color: balanceScore >= 85
+                ? const Color(0xFF00E676) // Material green accent
+                : balanceScore >= 70
+                    ? const Color(0xFF00E5FF) // Cyan accent
+                    : balanceScore >= 50
+                        ? const Color(0xFF448AFF) // Blue accent
+                        : const Color(0xFFFFAB40), // Amber accent
+            height: 1.0,
+            letterSpacing: -2,
+          ),
+        ),
+        TextSpan(
+          text: '%',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: balanceScore >= 85
+                ? const Color(0xFF00E676).withValues(alpha: 0.7)
+                : balanceScore >= 70
+                    ? const Color(0xFF00E5FF).withValues(alpha: 0.7)
+                    : balanceScore >= 50
+                        ? const Color(0xFF448AFF).withValues(alpha: 0.7)
+                        : const Color(0xFFFFAB40).withValues(alpha: 0.7),
+            height: 1.0,
+          ),
+        ),
+        TextSpan(
+          text: '\n${balanceQuality.toUpperCase()}',
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: Colors.grey[500],
+            letterSpacing: 1.2,
+            height: 2.0,
+          ),
+        ),
+      ],
+    );
+
+    final centerPainter = TextPainter(
+      text: centerSpan,
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    );
+
+    centerPainter.layout(maxWidth: radius * 1.5);
+    centerPainter.paint(
+      canvas,
+      Offset(
+        center.dx - centerPainter.width / 2,
+        center.dy - centerPainter.height / 2,
+      ),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_DonutChartPainter oldDelegate) => true;
 }
 
 // Simple animated bar widget

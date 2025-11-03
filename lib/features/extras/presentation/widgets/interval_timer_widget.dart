@@ -41,17 +41,19 @@ class IntervalTimerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayWorkDuration = workDuration > 0 ? workDuration : (exercise.duration ?? 20);
-    final displayRestDuration = restDuration > 0 ? restDuration : (exercise.rest ?? 40);
+    final displayWorkDuration =
+        workDuration > 0 ? workDuration : (exercise.duration ?? 20);
+    final displayRestDuration =
+        restDuration > 0 ? restDuration : (exercise.rest ?? 40);
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
     final screenHeight = screenSize.height;
-    
+
     // Responsive sizing - much larger timer, optimized for space
     // Base size on available space, with min/max constraints
     final double baseTimerSize = (screenWidth * 0.65).clamp(220.0, 320.0);
     // Adjust for screen height
-    final double timerSize = screenHeight < 700 
+    final double timerSize = screenHeight < 700
         ? (baseTimerSize * 0.85).clamp(200.0, 260.0)
         : baseTimerSize;
     final double strokeWidth = (timerSize * 0.045).clamp(9.0, 14.0);
@@ -150,18 +152,24 @@ class IntervalTimerWidget extends StatelessWidget {
             vertical: (screenWidth * 0.012).clamp(4.0, 6.0),
           ),
           decoration: BoxDecoration(
-            color: (isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800))
+            color: (isWorkPhase
+                    ? const Color(0xFF4CAF50)
+                    : const Color(0xFFFF9800))
                 .withOpacity(0.2),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800),
+              color: isWorkPhase
+                  ? const Color(0xFF4CAF50)
+                  : const Color(0xFFFF9800),
               width: 2,
             ),
           ),
           child: Text(
             isWorkPhase ? 'HOLD' : 'REST',
             style: TextStyle(
-              color: isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800),
+              color: isWorkPhase
+                  ? const Color(0xFF4CAF50)
+                  : const Color(0xFFFF9800),
               fontSize: labelSize,
               fontWeight: FontWeight.w900,
               letterSpacing: 2.5,
@@ -172,8 +180,9 @@ class IntervalTimerWidget extends StatelessWidget {
         SizedBox(height: (screenWidth * 0.028).clamp(10.0, 14.0)),
         // Timer display
         Text(
-          _formatTime((isWorkPhase ? displayWorkDuration : displayRestDuration) -
-              (currentPhaseSeconds ~/ 10)),
+          _formatTime(
+              (isWorkPhase ? displayWorkDuration : displayRestDuration) -
+                  (currentPhaseSeconds ~/ 10)),
           style: TextStyle(
             color: Colors.white,
             fontSize: fontSize,
@@ -182,7 +191,9 @@ class IntervalTimerWidget extends StatelessWidget {
             height: 1,
             shadows: [
               Shadow(
-                color: (isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800))
+                color: (isWorkPhase
+                        ? const Color(0xFF4CAF50)
+                        : const Color(0xFFFF9800))
                     .withOpacity(0.6),
                 blurRadius: 24,
               ),
@@ -412,4 +423,3 @@ class _TimerPainter extends CustomPainter {
         oldDelegate.isActive != isActive;
   }
 }
-

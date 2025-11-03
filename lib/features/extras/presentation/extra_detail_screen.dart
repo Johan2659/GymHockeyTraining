@@ -47,7 +47,8 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sessionAsync = ref.watch(resolvedExtraSessionProvider(widget.extraId));
+    final sessionAsync =
+        ref.watch(resolvedExtraSessionProvider(widget.extraId));
     final resolvedSession = sessionAsync.valueOrNull;
     final extraTitle = resolvedSession?.extra.title ?? 'Loading...';
     final typeLabel = _getTypeDisplayName(resolvedSession?.extra.type);
@@ -226,11 +227,13 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                         const SizedBox(width: 4),
                         Text(
                           extra.difficulty!.toUpperCase(),
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: _getDifficultyColor(extra.difficulty!),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                color: _getDifficultyColor(extra.difficulty!),
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         const SizedBox(width: 16),
                       ],

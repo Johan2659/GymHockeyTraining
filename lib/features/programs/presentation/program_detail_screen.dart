@@ -499,7 +499,7 @@ class ProgramDetailScreen extends ConsumerWidget {
     try {
       // Get the current app state to find the next session
       final appState = await ref.read(appStateProvider.future);
-      
+
       if (!appState.hasActiveProgram) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

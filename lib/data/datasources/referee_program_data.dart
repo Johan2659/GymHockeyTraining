@@ -107,7 +107,7 @@ class RefereeProgramData {
   static Future<List<Session>> getAllSessions() async {
     try {
       final sessions = <Session>[];
-      
+
       // Week 1 sessions
       final week1Sessions = [
         await _loadSession('referee_w1_s1', _week1Session1),
@@ -117,7 +117,7 @@ class RefereeProgramData {
       sessions.addAll(week1Sessions.whereType<Session>());
 
       // Add other weeks when defined...
-      
+
       return sessions;
     } catch (e, stack) {
       _logger.e('Error getting referee sessions', error: e, stackTrace: stack);
@@ -154,7 +154,8 @@ class RefereeProgramData {
 
       return await _loadSession(id, jsonString);
     } catch (e, stack) {
-      _logger.e('Error getting referee session $id', error: e, stackTrace: stack);
+      _logger.e('Error getting referee session $id',
+          error: e, stackTrace: stack);
       return null;
     }
   }

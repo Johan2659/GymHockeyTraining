@@ -181,7 +181,8 @@ class LocalPrefsSource {
       _logger.w('LocalPrefsSource: Clearing program state');
 
       // Use PersistenceService to clear from both Hive and SharedPreferences
-      final success = await PersistenceService.clearWithFallback(HiveBoxes.settings, _programStateKey);
+      final success = await PersistenceService.clearWithFallback(
+          HiveBoxes.settings, _programStateKey);
 
       if (success) {
         _logger.w('LocalPrefsSource: Successfully cleared program state');

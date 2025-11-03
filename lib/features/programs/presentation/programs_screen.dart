@@ -356,8 +356,7 @@ class ProgramsScreen extends ConsumerWidget {
     context.go('/programs/${program.id}');
   }
 
-  void _resumeActiveProgram(
-      BuildContext context, AppStateData appState) {
+  void _resumeActiveProgram(BuildContext context, AppStateData appState) {
     if (!appState.hasActiveProgram) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

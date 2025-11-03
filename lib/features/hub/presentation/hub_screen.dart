@@ -49,7 +49,7 @@ class HubScreen extends ConsumerWidget {
   Widget _buildDashboard(
       BuildContext context, WidgetRef ref, AppStateData data) {
     final sessionInProgressAsync = ref.watch(sessionInProgressProvider);
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -59,13 +59,14 @@ class HubScreen extends ConsumerWidget {
           if (data.hasActiveProgram) ...[
             sessionInProgressAsync.when(
               data: (sessionInProgress) => _buildUnifiedProgramCard(
-                context, 
-                ref, 
-                data, 
+                context,
+                ref,
+                data,
                 sessionInProgress,
               ),
               loading: () => _buildUnifiedProgramCard(context, ref, data, null),
-              error: (_, __) => _buildUnifiedProgramCard(context, ref, data, null),
+              error: (_, __) =>
+                  _buildUnifiedProgramCard(context, ref, data, null),
             ),
             const SizedBox(height: 24),
           ] else ...[
@@ -93,7 +94,6 @@ class HubScreen extends ConsumerWidget {
       ),
     );
   }
-
 
   void _showDiscardSessionDialog(BuildContext context, WidgetRef ref) {
     showDialog(
@@ -185,7 +185,8 @@ class HubScreen extends ConsumerWidget {
                           value: 'stop',
                           child: Row(
                             children: [
-                              Icon(Icons.stop_circle_outlined, color: Colors.orange),
+                              Icon(Icons.stop_circle_outlined,
+                                  color: Colors.orange),
                               SizedBox(width: 8),
                               Text('Stop Program'),
                             ],
@@ -229,11 +230,12 @@ class HubScreen extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           // Session In Progress Banner (embedded)
           if (hasSessionInProgress)
-            _buildSessionInProgressBanner(context, ref, sessionInProgress, data),
-          
+            _buildSessionInProgressBanner(
+                context, ref, sessionInProgress, data),
+
           // Main CTA Button
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -253,10 +255,11 @@ class HubScreen extends ConsumerWidget {
     SessionInProgress sessionInProgress,
     AppStateData data,
   ) {
-    final timeSincePause = DateTime.now().difference(sessionInProgress.pausedAt);
+    final timeSincePause =
+        DateTime.now().difference(sessionInProgress.pausedAt);
     final hoursSincePause = timeSincePause.inHours;
     final minutesSincePause = timeSincePause.inMinutes;
-    
+
     String timeAgoText;
     if (hoursSincePause > 24) {
       timeAgoText = '${(hoursSincePause / 24).floor()} days ago';
@@ -267,7 +270,7 @@ class HubScreen extends ConsumerWidget {
     } else {
       timeAgoText = 'Just now';
     }
-    
+
     final completedCount = sessionInProgress.completedExercises.length;
 
     return AnimatedContainer(
@@ -312,7 +315,8 @@ class HubScreen extends ConsumerWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: Colors.orange.withOpacity(0.25),
                         borderRadius: BorderRadius.circular(8),
@@ -413,7 +417,8 @@ class HubScreen extends ConsumerWidget {
       height: 52,
       child: ElevatedButton.icon(
         onPressed: () {
-          context.go('/session/${sessionInProgress.programId}/${sessionInProgress.week}/${sessionInProgress.session}');
+          context.go(
+              '/session/${sessionInProgress.programId}/${sessionInProgress.week}/${sessionInProgress.session}');
         },
         icon: const Icon(Icons.play_arrow, size: 22),
         label: const Text(
@@ -481,7 +486,6 @@ class HubScreen extends ConsumerWidget {
       ),
     );
   }
-
 
   Widget _buildNoProgramCard(BuildContext context) {
     return Card(
@@ -846,16 +850,16 @@ class HubScreen extends ConsumerWidget {
                 Text(
                   'Tip of the Day',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.blue[300],
-                    fontWeight: FontWeight.bold,
-                  ),
+                        color: Colors.blue[300],
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _getTipOfTheDay(),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.blue[200],
-                  ),
+                        color: Colors.blue[200],
+                      ),
                 ),
               ],
             ),
@@ -888,7 +892,7 @@ class HubScreen extends ConsumerWidget {
       'Progressive overload drives improvement. Gradually increase intensity over time.',
       'Mix up your training to avoid plateaus. Your body adapts when you challenge it in new ways.',
     ];
-    
+
     final now = DateTime.now();
     final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
     final index = dayOfYear % tips.length;

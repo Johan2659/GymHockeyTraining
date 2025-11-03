@@ -212,12 +212,12 @@ class PerformanceAnalyticsRepositoryImpl
     try {
       // Get ALL exercise performances for the user (lifetime stats)
       final allPerformances = await _exercisePerformanceRepository.getAll();
-      
+
       LoggerService.instance.info(
         'Calculating category progress: ${allPerformances.length} performances found',
         source: 'PerformanceAnalyticsRepository',
       );
-      
+
       if (allPerformances.isEmpty) {
         LoggerService.instance.warning(
           'No performances found - returning empty map',
@@ -246,7 +246,8 @@ class PerformanceAnalyticsRepositoryImpl
       // Calculate volume for each completed exercise
       for (final performance in allPerformances) {
         // Get the exercise to know its category
-        final exercise = await _exerciseRepository.getById(performance.exerciseId);
+        final exercise =
+            await _exerciseRepository.getById(performance.exerciseId);
         if (exercise == null) {
           skippedCount++;
           continue;
@@ -269,7 +270,7 @@ class PerformanceAnalyticsRepositoryImpl
         }
 
         // Add to category total
-        categoryVolumes[exercise.category] = 
+        categoryVolumes[exercise.category] =
             (categoryVolumes[exercise.category] ?? 0.0) + exerciseVolume;
       }
 
@@ -277,7 +278,7 @@ class PerformanceAnalyticsRepositoryImpl
         'Category calculation complete: Matched=$matchedCount, Skipped=$skippedCount',
         source: 'PerformanceAnalyticsRepository',
       );
-      
+
       // Log the results
       final totalVolume = categoryVolumes.values.fold(0.0, (sum, v) => sum + v);
       for (final category in mainCategories) {

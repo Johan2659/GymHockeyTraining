@@ -1383,8 +1383,7 @@ class HockeyExercisesDatabase {
         }
       }
 
-      _logger
-          .i('HockeyExercisesDatabase: Loaded ${extras.length} extras');
+      _logger.i('HockeyExercisesDatabase: Loaded ${extras.length} extras');
       return extras;
     } catch (e, stackTrace) {
       _logger.e('HockeyExercisesDatabase: Failed to load extras',
@@ -1396,8 +1395,8 @@ class HockeyExercisesDatabase {
   /// Gets extras filtered by type
   static Future<List<ExtraItem>> getExtrasByType(ExtraType type) async {
     try {
-      _logger.d(
-          'HockeyExercisesDatabase: Loading extras for type: ${type.name}');
+      _logger
+          .d('HockeyExercisesDatabase: Loading extras for type: ${type.name}');
 
       final allExtras = await getAllExtras();
       final filteredExtras =

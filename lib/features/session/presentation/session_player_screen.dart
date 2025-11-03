@@ -204,7 +204,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   bool _isFinishing = false;
   bool _bonusChallengeCompleted = false;
   bool _sessionStarted = false;
-  
+
   late PageController _pageController;
   int _currentPage = 0;
   Timer? _restTimer;
@@ -217,7 +217,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   // Performance tracking state
   // Map<exerciseId, List<Map<String, dynamic>>> to store reps, weight, and completion per set
   final Map<String, List<Map<String, dynamic>>> _exercisePerformances = {};
-  
+
   // Track last used weight for each exercise (to auto-fill next sets)
   final Map<String, double> _lastWeightUsed = {};
 
@@ -259,40 +259,39 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
 
   Future<void> _restoreSessionState() async {
     try {
-      final sessionInProgress = await ref.read(sessionInProgressProvider.future);
-      
+      final sessionInProgress =
+          await ref.read(sessionInProgressProvider.future);
+
       if (sessionInProgress != null &&
           sessionInProgress.programId == widget.programId &&
           sessionInProgress.week == int.parse(widget.week) &&
           sessionInProgress.session == int.parse(widget.session)) {
-        
         // Restore state
         setState(() {
           _currentPage = sessionInProgress.currentPage;
           _completedExercises.addAll(sessionInProgress.completedExercises);
-          
+
           // Restore exercise performances
           sessionInProgress.exercisePerformances.forEach((key, value) {
             if (value is List) {
               _exercisePerformances[key] = List<Map<String, dynamic>>.from(
-                value.map((item) => Map<String, dynamic>.from(item as Map))
-              );
+                  value.map((item) => Map<String, dynamic>.from(item as Map)));
             }
           });
-          
+
           // Restore last weight used
           if (sessionInProgress.lastWeightUsed != null) {
             _lastWeightUsed.addAll(sessionInProgress.lastWeightUsed!);
           }
         });
-        
+
         // Jump to the saved page
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_pageController.hasClients) {
             _pageController.jumpToPage(_currentPage);
           }
         });
-        
+
         debugPrint('Session state restored from saved progress');
       }
     } catch (error) {
@@ -307,7 +306,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
       _exercisePerformances.forEach((key, value) {
         performancesJson[key] = value;
       });
-      
+
       final sessionInProgress = SessionInProgress(
         programId: widget.programId,
         week: int.parse(widget.week),
@@ -318,9 +317,10 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         lastWeightUsed: Map<String, double>.from(_lastWeightUsed),
         pausedAt: DateTime.now(),
       );
-      
-      final success = await ref.read(saveSessionInProgressActionProvider(sessionInProgress).future);
-      
+
+      final success = await ref
+          .read(saveSessionInProgressActionProvider(sessionInProgress).future);
+
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -335,7 +335,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             duration: Duration(seconds: 2),
           ),
         );
-        
+
         // Navigate back to hub
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
@@ -356,8 +356,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sessionAsync =
-        ref.watch(_sessionProvider(widget.programId, widget.week, widget.session));
+    final sessionAsync = ref
+        .watch(_sessionProvider(widget.programId, widget.week, widget.session));
     final programAsync = ref.watch(_programProvider(widget.programId));
 
     return Scaffold(
@@ -471,10 +471,14 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: LinearProgressIndicator(
-                            value: totalCount > 0 ? (_currentPage + 1) / totalCount : 0,
+                            value: totalCount > 0
+                                ? (_currentPage + 1) / totalCount
+                                : 0,
                             backgroundColor: Colors.grey[800],
                             valueColor: AlwaysStoppedAnimation(
-                              isAllCompleted ? Colors.green : AppTheme.primaryColor,
+                              isAllCompleted
+                                  ? Colors.green
+                                  : AppTheme.primaryColor,
                             ),
                             minHeight: 6,
                           ),
@@ -485,7 +489,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                         '$completedCount/$totalCount',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: isAllCompleted ? Colors.green : AppTheme.primaryColor,
+                              color: isAllCompleted
+                                  ? Colors.green
+                                  : AppTheme.primaryColor,
                             ),
                       ),
                     ],
@@ -508,7 +514,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                 },
                 itemCount: totalCount,
                 itemBuilder: (context, index) {
-                  return _buildExercisePage(context, session.blocks[index], index + 1);
+                  return _buildExercisePage(
+                      context, session.blocks[index], index + 1);
                 },
               ),
             ),
@@ -549,9 +556,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                     if (isLastPage)
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: isAllCompleted && !_isFinishing ? _finishSession : null,
+                          onPressed: isAllCompleted && !_isFinishing
+                              ? _finishSession
+                              : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: isAllCompleted ? Colors.green : null,
+                            backgroundColor:
+                                isAllCompleted ? Colors.green : null,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
@@ -561,7 +571,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                                   width: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation(Colors.white),
+                                    valueColor:
+                                        AlwaysStoppedAnimation(Colors.white),
                                   ),
                                 )
                               : Text(
@@ -595,8 +606,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }
 
   Widget _buildPageIndicator(int count) {
-    final sessionAsync = ref.watch(_sessionProvider(widget.programId, widget.week, widget.session));
-    
+    final sessionAsync = ref
+        .watch(_sessionProvider(widget.programId, widget.week, widget.session));
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -604,31 +616,33 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         children: List.generate(count, (index) {
           // Determine the color based on completion status
           Color dotColor;
-          
+
           if (sessionAsync.hasValue) {
             final exerciseId = sessionAsync.value!.blocks[index].exerciseId;
-            
+
             // Check if this is the bonus exercise (last exercise in session)
             final isBonus = sessionAsync.value!.blocks.isNotEmpty &&
                 sessionAsync.value!.blocks.last.exerciseId == exerciseId;
-            
+
             if (isBonus) {
               // Bonus exercise - always use bonus color (amber)
               dotColor = Colors.yellow;
             } else {
               // Normal exercises - apply status-based coloring
               final isCompleted = _completedExercises.contains(exerciseId);
-              final hasPerformance = _exercisePerformances.containsKey(exerciseId);
+              final hasPerformance =
+                  _exercisePerformances.containsKey(exerciseId);
               final allSetsCompleted = _areAllSetsCompleted(exerciseId);
-              
+
               if (isCompleted || allSetsCompleted) {
                 // Fully completed (marked or all sets done) - green
                 dotColor = Colors.green;
               } else if (hasPerformance) {
                 // Check if partially completed (some sets done)
                 final sets = _exercisePerformances[exerciseId] ?? [];
-                final hasCompletedSets = sets.any((set) => set['completed'] as bool);
-                
+                final hasCompletedSets =
+                    sets.any((set) => set['completed'] as bool);
+
                 if (hasCompletedSets) {
                   // Partially completed - orange
                   dotColor = Colors.orange;
@@ -649,9 +663,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             }
           } else {
             // Loading state
-            dotColor = index == _currentPage ? AppTheme.primaryColor : Colors.grey[700]!;
+            dotColor = index == _currentPage
+                ? AppTheme.primaryColor
+                : Colors.grey[700]!;
           }
-          
+
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 3),
             width: index == _currentPage ? 24 : 8,
@@ -659,7 +675,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             decoration: BoxDecoration(
               color: dotColor,
               borderRadius: BorderRadius.circular(4),
-              border: index == _currentPage 
+              border: index == _currentPage
                   ? Border.all(color: Colors.white.withOpacity(0.3), width: 1)
                   : null,
             ),
@@ -688,7 +704,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   Widget _buildExercisePage(
       BuildContext context, ExerciseBlock block, int exerciseNumber) {
     final exerciseAsync = ref.watch(_exerciseProvider(block.exerciseId));
-    final sessionAsync = ref.watch(_sessionProvider(widget.programId, widget.week, widget.session));
+    final sessionAsync = ref
+        .watch(_sessionProvider(widget.programId, widget.week, widget.session));
 
     return exerciseAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -698,7 +715,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
       data: (exercise) {
         // Initialize performance data for this exercise if not exists
         _initializeExercisePerformance(exercise);
-        
+
         // Watch last performance
         final lastPerfAsync = ref.watch(lastPerformanceProvider(exercise.id));
 
@@ -714,7 +731,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: isBonus 
+                  color: isBonus
                       ? AppTheme.primaryColor.withOpacity(0.08)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(16),
@@ -731,7 +748,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                   children: [
                     // Add some top padding if bonus to make room for the badge
                     if (isBonus) const SizedBox(height: 24),
-                    
+
                     // Exercise info card
                     Container(
                       decoration: BoxDecoration(
@@ -774,7 +791,10 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                               Expanded(
                                 child: Text(
                                   exercise.name,
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                       ),
@@ -804,11 +824,15 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: OutlinedButton.icon(
-                                onPressed: () => _showVideoDialog(context, exercise),
-                                icon: const Icon(Icons.play_circle_outline, size: 18),
-                                label: const Text('Watch Video', style: TextStyle(fontSize: 14)),
+                                onPressed: () =>
+                                    _showVideoDialog(context, exercise),
+                                icon: const Icon(Icons.play_circle_outline,
+                                    size: 18),
+                                label: const Text('Watch Video',
+                                    style: TextStyle(fontSize: 14)),
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
                                 ),
                               ),
                             ),
@@ -829,23 +853,30 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                       width: double.infinity,
                       child: Builder(
                         builder: (context) {
-                          final allSetsCompleted = _areAllSetsCompleted(exercise.id);
-                          final isCompleted = _completedExercises.contains(exercise.id);
-                          
+                          final allSetsCompleted =
+                              _areAllSetsCompleted(exercise.id);
+                          final isCompleted =
+                              _completedExercises.contains(exercise.id);
+
                           return ElevatedButton.icon(
                             onPressed: isCompleted
                                 ? null
-                                : () => _saveExercisePerformanceAndNext(exercise),
+                                : () =>
+                                    _saveExercisePerformanceAndNext(exercise),
                             icon: Icon(
                               isCompleted
                                   ? Icons.check_circle
-                                  : (allSetsCompleted ? Icons.check_circle : Icons.arrow_forward),
+                                  : (allSetsCompleted
+                                      ? Icons.check_circle
+                                      : Icons.arrow_forward),
                               size: 20,
                             ),
                             label: Text(
                               isCompleted
                                   ? 'Completed'
-                                  : (allSetsCompleted ? 'Next Exercise ✓' : 'Next Exercise'),
+                                  : (allSetsCompleted
+                                      ? 'Next Exercise ✓'
+                                      : 'Next Exercise'),
                               style: const TextStyle(fontSize: 15),
                             ),
                             style: ElevatedButton.styleFrom(
@@ -862,7 +893,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                   ],
                 ),
               ),
-              
+
               // Bonus badge overlay
               if (isBonus)
                 const Positioned(
@@ -876,7 +907,6 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
       },
     );
   }
-
 
   String _formatTime(int seconds) {
     final mins = seconds ~/ 60;
@@ -942,7 +972,6 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     _stopRestTimer();
   }
 
-
   void _initializeExercisePerformance(Exercise exercise) {
     if (!_exercisePerformances.containsKey(exercise.id)) {
       final sets = <Map<String, dynamic>>[];
@@ -1005,7 +1034,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     );
   }
 
-  Widget _buildLastPerformance(BuildContext context, ExercisePerformance lastPerf) {
+  Widget _buildLastPerformance(
+      BuildContext context, ExercisePerformance lastPerf) {
     return Container(
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(12),
@@ -1075,7 +1105,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                 ),
           ),
           const SizedBox(height: 16),
-          
+
           // Set cards
           ...List.generate(sets.length, (index) {
             return Padding(
@@ -1123,10 +1153,10 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }
 
   Widget _buildStickyRestTimer(BuildContext context) {
-    final progress = _restTimerDuration > 0 
-        ? (_restTimerDuration - _restSecondsRemaining) / _restTimerDuration 
+    final progress = _restTimerDuration > 0
+        ? (_restTimerDuration - _restSecondsRemaining) / _restTimerDuration
         : 0.0;
-    
+
     return SafeArea(
       child: Container(
         width: double.infinity,
@@ -1166,10 +1196,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                 valueColor: const AlwaysStoppedAnimation(Colors.white),
                 minHeight: 4,
               ),
-              
+
               // Timer content
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     // Timer icon and label
@@ -1186,7 +1217,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                       ),
                     ),
                     const SizedBox(width: 14),
-                    
+
                     // Timer display
                     Expanded(
                       child: Column(
@@ -1214,7 +1245,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                         ],
                       ),
                     ),
-                    
+
                     // Control buttons
                     Row(
                       children: [
@@ -1230,10 +1261,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                           tooltip: 'Restart',
                         ),
                         const SizedBox(width: 6),
-                        
+
                         // Play/Pause button
                         IconButton(
-                          onPressed: _isRestTimerPaused ? _resumeRestTimer : _pauseRestTimer,
+                          onPressed: _isRestTimerPaused
+                              ? _resumeRestTimer
+                              : _pauseRestTimer,
                           icon: Icon(
                             _isRestTimerPaused ? Icons.play_arrow : Icons.pause,
                             size: 22,
@@ -1246,7 +1279,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                           tooltip: _isRestTimerPaused ? 'Resume' : 'Pause',
                         ),
                         const SizedBox(width: 6),
-                        
+
                         // Skip button
                         IconButton(
                           onPressed: _skipRestTimer,
@@ -1284,14 +1317,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: completed 
-            ? Colors.green.withOpacity(0.1) 
+        color: completed
+            ? Colors.green.withOpacity(0.1)
             : AppTheme.backgroundColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: completed 
-              ? Colors.green.withOpacity(0.4) 
-              : Colors.grey[800]!,
+          color: completed ? Colors.green.withOpacity(0.4) : Colors.grey[800]!,
           width: 2,
         ),
       ),
@@ -1341,7 +1372,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
               label: 'Weight',
               value: weight > 0 ? '${weight.toStringAsFixed(1)} kg' : '-',
               icon: Icons.fitness_center,
-              onTap: completed ? null : () => _showWeightPicker(exercise, index),
+              onTap:
+                  completed ? null : () => _showWeightPicker(exercise, index),
             ),
           ),
           const SizedBox(width: 10),
@@ -1377,7 +1409,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
           color: AppTheme.surfaceColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: onTap == null ? Colors.grey[700]! : AppTheme.primaryColor.withOpacity(0.3),
+            color: onTap == null
+                ? Colors.grey[700]!
+                : AppTheme.primaryColor.withOpacity(0.3),
           ),
         ),
         child: Column(
@@ -1405,7 +1439,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: onTap == null ? Colors.grey[600] : AppTheme.onSurfaceColor,
+                color:
+                    onTap == null ? Colors.grey[600] : AppTheme.onSurfaceColor,
               ),
             ),
           ],
@@ -1438,8 +1473,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }
 
   Future<void> _showRepsPicker(Exercise exercise, int setIndex) async {
-    final currentReps = _exercisePerformances[exercise.id]![setIndex]['reps'] as int;
-    
+    final currentReps =
+        _exercisePerformances[exercise.id]![setIndex]['reps'] as int;
+
     final result = await showDialog<double>(
       context: context,
       builder: (context) => NumberPickerDialog(
@@ -1454,12 +1490,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     if (result != null) {
       setState(() {
         _exercisePerformances[exercise.id]![setIndex]['reps'] = result.toInt();
-        
+
         // Auto-complete set if both reps and weight are filled
         final setData = _exercisePerformances[exercise.id]![setIndex];
         final weight = setData['weight'] as double;
         final isCompleted = setData['completed'] as bool;
-        
+
         if (!isCompleted && result > 0 && weight > 0) {
           _autoCompleteSet(exercise, setIndex);
         }
@@ -1468,9 +1504,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }
 
   Future<void> _showWeightPicker(Exercise exercise, int setIndex) async {
-    final currentWeight = _exercisePerformances[exercise.id]![setIndex]['weight'] as double;
-    final initialWeight = currentWeight > 0 ? currentWeight : (_lastWeightUsed[exercise.id] ?? 20.0);
-    
+    final currentWeight =
+        _exercisePerformances[exercise.id]![setIndex]['weight'] as double;
+    final initialWeight = currentWeight > 0
+        ? currentWeight
+        : (_lastWeightUsed[exercise.id] ?? 20.0);
+
     final result = await showDialog<double>(
       context: context,
       builder: (context) => NumberPickerDialog(
@@ -1486,12 +1525,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
       setState(() {
         _exercisePerformances[exercise.id]![setIndex]['weight'] = result;
         _lastWeightUsed[exercise.id] = result;
-        
+
         // Auto-complete set if both reps and weight are filled
         final setData = _exercisePerformances[exercise.id]![setIndex];
         final reps = setData['reps'] as int;
         final isCompleted = setData['completed'] as bool;
-        
+
         if (!isCompleted && result > 0 && reps > 0) {
           _autoCompleteSet(exercise, setIndex);
         }
@@ -1501,11 +1540,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
 
   void _autoCompleteSet(Exercise exercise, int setIndex) {
     _exercisePerformances[exercise.id]![setIndex]['completed'] = true;
-    
+
     // Check if this is not the last set, then start rest timer
     final sets = _exercisePerformances[exercise.id]!;
     final isLastSet = setIndex == sets.length - 1;
-    
+
     if (!isLastSet && exercise.rest != null && exercise.rest! > 0) {
       _startRestTimer(exercise.rest!, exercise.id);
     }
@@ -1514,11 +1553,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   void _completeSet(Exercise exercise, int setIndex) {
     setState(() {
       _exercisePerformances[exercise.id]![setIndex]['completed'] = true;
-      
+
       // Check if this is not the last set, then start rest timer
       final sets = _exercisePerformances[exercise.id]!;
       final isLastSet = setIndex == sets.length - 1;
-      
+
       if (!isLastSet && exercise.rest != null && exercise.rest! > 0) {
         _startRestTimer(exercise.rest!, exercise.id);
       }
@@ -1529,7 +1568,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     try {
       // Collect performance data from the state
       final setsData = _exercisePerformances[exercise.id]!;
-      
+
       // Check if all sets are completed
       final allCompleted = setsData.every((set) => set['completed'] as bool);
       if (!allCompleted) {
@@ -1544,12 +1583,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         }
         return;
       }
-      
+
       final sets = <ExerciseSetPerformance>[];
       for (final setData in setsData) {
         final reps = setData['reps'] as int;
         final weight = setData['weight'] as double;
-        
+
         sets.add(ExerciseSetPerformance(
           setNumber: setData['setNumber'] as int,
           reps: reps,
@@ -1611,14 +1650,15 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   Future<void> _saveExercisePerformanceAndNext(Exercise exercise) async {
     // First save the exercise performance
     await _saveExercisePerformance(exercise);
-    
+
     // If save was successful (exercise is now in completed list), move to next
     if (_completedExercises.contains(exercise.id)) {
       // Small delay to show the completion feedback
       await Future.delayed(const Duration(milliseconds: 300));
-      
+
       // Get session data to determine total exercises
-      final sessionAsync = ref.read(_sessionProvider(widget.programId, widget.week, widget.session));
+      final sessionAsync = ref.read(
+          _sessionProvider(widget.programId, widget.week, widget.session));
       if (mounted && sessionAsync.hasValue) {
         final totalExercises = sessionAsync.value!.blocks.length;
         // Navigate to next exercise if not on the last page
@@ -1629,7 +1669,6 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     }
   }
 
-
   Future<void> _finishSession() async {
     setState(() {
       _isFinishing = true;
@@ -1638,7 +1677,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     try {
       // Complete the session through app state
       await ref.read(completeSessionActionProvider.future);
-      
+
       // Clear the session-in-progress since it's completed
       await ref.read(clearSessionInProgressActionProvider.future);
 
@@ -1791,7 +1830,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
 
 // Provider to get session data
 @riverpod
-Future<Session> _session(Ref ref, String programId, String week, String session) async {
+Future<Session> _session(
+    Ref ref, String programId, String week, String session) async {
   final sessionRepository = ref.watch(sessionRepositoryProvider);
   final programRepository = ref.watch(programRepositoryProvider);
 

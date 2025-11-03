@@ -262,7 +262,8 @@ class PersistenceService {
   /// This ensures complete data removal when using fallback mechanisms
   static Future<bool> clearWithFallback(String boxName, String key) async {
     try {
-      _logger.d('PersistenceService: Clearing $boxName/$key from both storage sources');
+      _logger.d(
+          'PersistenceService: Clearing $boxName/$key from both storage sources');
 
       // Clear from Hive
       bool hiveSuccess = false;
@@ -270,7 +271,8 @@ class PersistenceService {
         hiveSuccess = await LocalKVStore.delete(boxName, key);
         _logger.d('PersistenceService: Hive deletion result: $hiveSuccess');
       } catch (e) {
-        _logger.w('PersistenceService: Hive deletion failed for $boxName/$key', error: e);
+        _logger.w('PersistenceService: Hive deletion failed for $boxName/$key',
+            error: e);
       }
 
       // Clear from SharedPreferences fallback
@@ -279,16 +281,20 @@ class PersistenceService {
         try {
           final fallbackKey = '${boxName}_$key';
           prefsSuccess = await _sharedPrefs!.remove(fallbackKey);
-          _logger.d('PersistenceService: SharedPreferences deletion result: $prefsSuccess');
+          _logger.d(
+              'PersistenceService: SharedPreferences deletion result: $prefsSuccess');
         } catch (e) {
-          _logger.w('PersistenceService: SharedPreferences deletion failed for $boxName/$key', error: e);
+          _logger.w(
+              'PersistenceService: SharedPreferences deletion failed for $boxName/$key',
+              error: e);
           prefsSuccess = false;
         }
       }
 
       final success = hiveSuccess && prefsSuccess;
-      _logger.i('PersistenceService: Complete deletion result: $success (Hive: $hiveSuccess, Prefs: $prefsSuccess)');
-      
+      _logger.i(
+          'PersistenceService: Complete deletion result: $success (Hive: $hiveSuccess, Prefs: $prefsSuccess)');
+
       return success;
     } catch (e, stackTrace) {
       _logger.e('PersistenceService: Failed to clear $boxName/$key',

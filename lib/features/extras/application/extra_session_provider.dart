@@ -15,8 +15,8 @@ final resolvedExtraSessionProvider = FutureProvider.autoDispose
 
   final extra = await extrasRepository.getById(extraId);
   if (extra == null) {
-    _logger.w(
-        'resolvedExtraSessionProvider: Extra not found (extraId: $extraId)');
+    _logger
+        .w('resolvedExtraSessionProvider: Extra not found (extraId: $extraId)');
     return null;
   }
 
@@ -75,4 +75,3 @@ String _humanizeId(String rawId) {
 
   return capitalized;
 }
-
