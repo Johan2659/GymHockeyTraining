@@ -48,6 +48,29 @@ class ExerciseCardWidget extends StatelessWidget {
   final VoidCallback onResumeTimer;
   final VoidCallback onStopTimer;
 
+  /// ===========================================================================
+  /// MAIN BUILD METHOD
+  /// ===========================================================================
+  /// This widget displays exercise content inside the PageView.
+  /// 
+  /// LAYOUT STRUCTURE:
+  /// 
+  /// ┌─────────────────────────────────┐
+  /// │ 1. Header (name + demo button)  │ ← Fixed height
+  /// │ 2. Placeholder chip (optional)  │ ← Fixed height
+  /// │ 3. Details (sets/hold/rest)     │ ← Fixed height
+  /// │                                 │
+  /// │        ↕ Flexible Space         │ ← Spacer (flex: 1)
+  /// │                                 │
+  /// │ 4. Timer (big circle)           │ ← Fixed height (timer size)
+  /// │ 5. Sets Tracker (pills)         │ ← Fixed height
+  /// │                                 │
+  /// │        ↕ Flexible Space         │ ← Spacer (flex: 1)
+  /// │                                 │
+  /// └─────────────────────────────────┘
+  ///   ↓ (Followed by Bottom Controls in main screen)
+  /// 
+  /// ===========================================================================
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -67,7 +90,7 @@ class ExerciseCardWidget extends StatelessWidget {
   Widget _buildCompactLayout(BuildContext context) {
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -78,42 +101,81 @@ class ExerciseCardWidget extends StatelessWidget {
           ],
           const SizedBox(height: 12),
           _buildDetailsRow(context),
-          const SizedBox(height: 16),
-          _buildTimer(context),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
+          Center(child: _buildTimer(context)),
+          const SizedBox(height: 24),
           _buildSetsTracker(context),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
         ],
       ),
     );
   }
 
-  /// Expanded layout for larger screens - optimized space usage
+  /// ===========================================================================
+  /// EXPANDED LAYOUT - Main layout for taller screens
+  /// ===========================================================================
+  /// 
+  /// HOW TO MODIFY THE VERTICAL POSITION:
+  /// 
+  /// To move Timer + Sets UP:     Increase bottom Spacer flex (e.g., flex: 2)
+  /// To move Timer + Sets DOWN:   Increase top Spacer flex (e.g., flex: 2)
+  /// To center exactly:           Keep both Spacer flex equal (flex: 1)
+  /// 
+  /// To adjust spacing between elements:
+  /// - Change SizedBox(height: X) values
+  /// - Horizontal padding: EdgeInsets.symmetric(horizontal: X)
+  /// 
+  /// ===========================================================================
   Widget _buildExpandedLayout(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // ═══════════════════════════════════════════════════════════════
+          // SECTION 1: EXERCISE HEADER
+          // ═══════════════════════════════════════════════════════════════
+          const SizedBox(height: 4),
           _buildHeader(context),
+          
+          // ═══════════════════════════════════════════════════════════════
+          // SECTION 2: PLACEHOLDER CHIP (only if exercise is placeholder)
+          // ═══════════════════════════════════════════════════════════════
           if (isPlaceholder) ...[
             const SizedBox(height: 8),
             _buildPlaceholderChip(context),
           ],
+          
+          // ═══════════════════════════════════════════════════════════════
+          // SECTION 3: DETAILS ROW (6 sets, 20s hold, 40s rest)
+          // ═══════════════════════════════════════════════════════════════
           const SizedBox(height: 12),
           _buildDetailsRow(context),
-          const SizedBox(height: 12),
-          // Timer takes available space
-          Expanded(
-            child: Center(
-              child: _buildTimer(context),
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Sets tracker at bottom
+          
+          // ═══════════════════════════════════════════════════════════════
+          // FLEXIBLE SPACE ABOVE TIMER (adjust flex to move content)
+          // ═══════════════════════════════════════════════════════════════
+          const Spacer(flex: 3),
+          
+          // ═══════════════════════════════════════════════════════════════
+          // SECTION 4: INTERVAL TIMER (big circular timer)
+          // ═══════════════════════════════════════════════════════════════
+          Center(child: _buildTimer(context)),
+          
+          // ═══════════════════════════════════════════════════════════════
+          // SPACING BETWEEN TIMER AND SETS
+          // ═══════════════════════════════════════════════════════════════
+          const SizedBox(height: 20),
+          
+          // ═══════════════════════════════════════════════════════════════
+          // SECTION 5: SETS TRACKER (1 2 3 4 5 6 pills)
+          // ═══════════════════════════════════════════════════════════════
           _buildSetsTracker(context),
-          const SizedBox(height: 8),
+          
+          // ═══════════════════════════════════════════════════════════════
+          // FLEXIBLE SPACE BELOW SETS (adjust flex to move content)
+          // ═══════════════════════════════════════════════════════════════
+          const Spacer(flex: 2),
         ],
       ),
     );
@@ -121,59 +183,77 @@ class ExerciseCardWidget extends StatelessWidget {
 
   /// Exercise header with number, name, and demo button
   Widget _buildHeader(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final badgeSize = (screenWidth * 0.11).clamp(40.0, 48.0);
+    final titleSize = (screenWidth * 0.056).clamp(20.0, 24.0);
+    
     return Row(
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: badgeSize,
+          height: badgeSize,
           decoration: BoxDecoration(
             color: isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.15),
-              width: 1.5,
+              color: Colors.white.withOpacity(0.2),
+              width: 2,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: (isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor)
+                    .withOpacity(0.3),
+                blurRadius: 12,
+                spreadRadius: 1,
+              ),
+            ],
           ),
           child: Center(
             child: isCompleted
-                ? const Icon(
+                ? Icon(
                     Icons.check_rounded,
                     color: Colors.white,
-                    size: 20,
+                    size: badgeSize * 0.5,
                   )
                 : Text(
                     '${index + 1}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
+                      fontSize: badgeSize * 0.44,
                       fontWeight: FontWeight.bold,
+                      height: 1,
                     ),
                   ),
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: (screenWidth * 0.032).clamp(12.0, 14.0)),
         Expanded(
           child: Text(
             exercise.name,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  height: 1.1,
-                ),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: titleSize,
+              height: 1.15,
+              letterSpacing: -0.5,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ),
         IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.play_circle_outline,
-            color: Color(0xFF42A5F5),
-            size: 28,
+            color: const Color(0xFF42A5F5),
+            size: (screenWidth * 0.08).clamp(28.0, 34.0),
           ),
           onPressed: () {},
           tooltip: 'Watch demo',
-          padding: const EdgeInsets.all(6),
-          constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+          padding: EdgeInsets.all((screenWidth * 0.018).clamp(6.0, 8.0)),
+          constraints: BoxConstraints(
+            minWidth: (screenWidth * 0.11).clamp(40.0, 46.0),
+            minHeight: (screenWidth * 0.11).clamp(40.0, 46.0),
+          ),
         ),
       ],
     );
@@ -181,31 +261,38 @@ class ExerciseCardWidget extends StatelessWidget {
 
   /// Placeholder chip indicator
   Widget _buildPlaceholderChip(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: EdgeInsets.symmetric(
+        horizontal: (screenWidth * 0.032).clamp(12.0, 14.0),
+        vertical: (screenWidth * 0.022).clamp(8.0, 10.0),
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFFFFA726).withOpacity(0.12),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFFFA726).withOpacity(0.4),
-          width: 1,
+          color: const Color(0xFFFFA726).withOpacity(0.45),
+          width: 1.5,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.info_outline_rounded,
-            color: Color(0xFFFFB74D),
-            size: 14,
+            color: const Color(0xFFFFB74D),
+            size: (screenWidth * 0.042).clamp(15.0, 17.0),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: (screenWidth * 0.018).clamp(7.0, 8.0)),
           Text(
             'Placeholder exercise',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: const Color(0xFFFFCC80),
-                  fontSize: 11,
-                ),
+            style: TextStyle(
+              color: const Color(0xFFFFCC80),
+              fontSize: (screenWidth * 0.032).clamp(11.5, 13.0),
+              fontWeight: FontWeight.w600,
+              height: 1,
+            ),
           ),
         ],
       ),
@@ -214,12 +301,20 @@ class ExerciseCardWidget extends StatelessWidget {
 
   /// Exercise details row (sets, reps/duration, rest)
   Widget _buildDetailsRow(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(
+        horizontal: (screenWidth * 0.038).clamp(14.0, 16.0),
+        vertical: (screenWidth * 0.026).clamp(10.0, 12.0),
+      ),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey[800]!, width: 1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.grey[800]!,
+          width: 1.5,
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -229,8 +324,13 @@ class ExerciseCardWidget extends StatelessWidget {
             value: '${exercise.sets}',
             label: 'sets',
             color: AppTheme.primaryColor,
+            screenWidth: screenWidth,
           ),
-          Container(width: 1, height: 26, color: Colors.grey[800]),
+          Container(
+            width: 1.5,
+            height: (screenWidth * 0.08).clamp(30.0, 34.0),
+            color: Colors.grey[800],
+          ),
           _InfoChip(
             icon: Icons.fitness_center,
             value: exercise.duration != null
@@ -238,14 +338,20 @@ class ExerciseCardWidget extends StatelessWidget {
                 : '${exercise.reps}',
             label: exercise.duration != null ? 'hold' : 'reps',
             color: const Color(0xFF4CAF50),
+            screenWidth: screenWidth,
           ),
           if (exercise.rest != null) ...[
-            Container(width: 1, height: 26, color: Colors.grey[800]),
+            Container(
+              width: 1.5,
+              height: (screenWidth * 0.08).clamp(30.0, 34.0),
+              color: Colors.grey[800],
+            ),
             _InfoChip(
               icon: Icons.hourglass_bottom_rounded,
               value: '${exercise.rest}s',
               label: 'rest',
               color: const Color(0xFFFF9800),
+              screenWidth: screenWidth,
             ),
           ],
         ],
@@ -290,20 +396,26 @@ class _InfoChip extends StatelessWidget {
     required this.value,
     required this.label,
     required this.color,
+    required this.screenWidth,
   });
 
   final IconData icon;
   final String value;
   final String label;
   final Color color;
+  final double screenWidth;
 
   @override
   Widget build(BuildContext context) {
+    final iconSize = (screenWidth * 0.052).clamp(18.0, 22.0);
+    final valueSize = (screenWidth * 0.042).clamp(15.0, 18.0);
+    final labelSize = (screenWidth * 0.026).clamp(9.5, 11.0);
+    
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 17, color: color),
-        const SizedBox(width: 5),
+        Icon(icon, size: iconSize, color: color),
+        SizedBox(width: (screenWidth * 0.016).clamp(6.0, 7.0)),
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,19 +424,21 @@ class _InfoChip extends StatelessWidget {
               value,
               style: TextStyle(
                 color: color,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
+                fontSize: valueSize,
+                fontWeight: FontWeight.w800,
                 height: 1,
+                letterSpacing: -0.2,
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: (screenWidth * 0.006).clamp(2.0, 3.0)),
             Text(
               label,
               style: TextStyle(
-                color: color.withOpacity(0.7),
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
+                color: color.withOpacity(0.75),
+                fontSize: labelSize,
+                fontWeight: FontWeight.w700,
                 height: 1,
+                letterSpacing: 0.2,
               ),
             ),
           ],

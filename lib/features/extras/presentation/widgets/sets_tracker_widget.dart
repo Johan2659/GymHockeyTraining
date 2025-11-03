@@ -24,15 +24,19 @@ class SetsTrackerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final completedCount = completedSets.where((s) => s).length;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+      padding: EdgeInsets.symmetric(
+        horizontal: (screenWidth * 0.032).clamp(12.0, 14.0),
+        vertical: (screenWidth * 0.028).clamp(10.0, 12.0),
+      ),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.06),
-          width: 1,
+          color: Colors.white.withOpacity(0.08),
+          width: 1.5,
         ),
       ),
       child: Column(
@@ -44,15 +48,16 @@ class SetsTrackerWidget extends StatelessWidget {
               Icon(
                 Icons.grid_view_rounded,
                 color: AppTheme.primaryColor,
-                size: 15,
+                size: (screenWidth * 0.045).clamp(16.0, 19.0),
               ),
-              const SizedBox(width: 7),
+              SizedBox(width: (screenWidth * 0.022).clamp(8.0, 9.0)),
               Text(
                 'Sets',
                 style: TextStyle(
                   color: Colors.grey[400],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontSize: (screenWidth * 0.035).clamp(13.0, 14.5),
+                  fontWeight: FontWeight.w700,
+                  height: 1,
                 ),
               ),
               const Spacer(),
@@ -62,21 +67,23 @@ class SetsTrackerWidget extends StatelessWidget {
                   color: completedCount == totalSets
                       ? const Color(0xFF4CAF50)
                       : AppTheme.accentColor,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
+                  fontSize: (screenWidth * 0.042).clamp(15.0, 17.0),
+                  fontWeight: FontWeight.w800,
+                  height: 1,
                 ),
               ),
               Text(
                 '/$totalSets',
                 style: TextStyle(
                   color: Colors.grey[600],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontSize: (screenWidth * 0.035).clamp(13.0, 14.0),
+                  fontWeight: FontWeight.w700,
+                  height: 1,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: (screenWidth * 0.025).clamp(9.0, 11.0)),
           // Set pills
           Row(
             children: List.generate(totalSets, (setIndex) {
@@ -88,7 +95,9 @@ class SetsTrackerWidget extends StatelessWidget {
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: setIndex < totalSets - 1 ? 6.0 : 0,
+                    right: setIndex < totalSets - 1
+                        ? (screenWidth * 0.018).clamp(6.5, 8.0)
+                        : 0,
                   ),
                   child: _SetPill(
                     setNumber: setIndex + 1,
@@ -96,6 +105,7 @@ class SetsTrackerWidget extends StatelessWidget {
                     isActive: isCurrentlyActive,
                     isWorkPhase: isWorkPhase,
                     onTap: () => onToggleSet(setIndex),
+                    screenWidth: screenWidth,
                   ),
                 ),
               );
@@ -115,6 +125,7 @@ class _SetPill extends StatefulWidget {
     required this.isActive,
     required this.isWorkPhase,
     required this.onTap,
+    required this.screenWidth,
   });
 
   final int setNumber;
@@ -122,6 +133,7 @@ class _SetPill extends StatefulWidget {
   final bool isActive;
   final bool isWorkPhase;
   final VoidCallback onTap;
+  final double screenWidth;
 
   @override
   State<_SetPill> createState() => _SetPillState();
@@ -176,6 +188,10 @@ class _SetPillState extends State<_SetPill>
       icon = null;
     }
 
+    final pillHeight = (widget.screenWidth * 0.11).clamp(40.0, 48.0);
+    final iconSize = (widget.screenWidth * 0.05).clamp(18.0, 22.0);
+    final textSize = (widget.screenWidth * 0.04).clamp(14.5, 16.5);
+    
     return GestureDetector(
       onTapDown: (_) => _controller.forward(),
       onTapUp: (_) {
@@ -187,26 +203,27 @@ class _SetPillState extends State<_SetPill>
         scale: _scaleAnimation,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
-          height: 38,
+          height: pillHeight,
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: widget.isActive || widget.isCompleted
                   ? textColor.withOpacity(0.5)
-                  : Colors.white.withOpacity(0.05),
-              width: 1,
+                  : Colors.white.withOpacity(0.06),
+              width: 1.5,
             ),
           ),
           child: Center(
             child: icon != null
-                ? Icon(icon, size: 17, color: textColor)
+                ? Icon(icon, size: iconSize, color: textColor)
                 : Text(
                     '${widget.setNumber}',
                     style: TextStyle(
                       color: textColor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
+                      fontSize: textSize,
+                      fontWeight: FontWeight.w800,
+                      height: 1,
                     ),
                   ),
           ),

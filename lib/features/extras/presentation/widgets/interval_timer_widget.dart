@@ -43,11 +43,18 @@ class IntervalTimerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayWorkDuration = workDuration > 0 ? workDuration : (exercise.duration ?? 20);
     final displayRestDuration = restDuration > 0 ? restDuration : (exercise.rest ?? 40);
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
     
-    // Responsive sizing
-    final double timerSize = screenWidth < 380 ? 160 : (screenWidth < 400 ? 170 : 180);
-    final double strokeWidth = screenWidth < 380 ? 8 : 9;
+    // Responsive sizing - much larger timer, optimized for space
+    // Base size on available space, with min/max constraints
+    final double baseTimerSize = (screenWidth * 0.65).clamp(220.0, 320.0);
+    // Adjust for screen height
+    final double timerSize = screenHeight < 700 
+        ? (baseTimerSize * 0.85).clamp(200.0, 260.0)
+        : baseTimerSize;
+    final double strokeWidth = (timerSize * 0.045).clamp(9.0, 14.0);
 
     return GestureDetector(
       onTap: isActive ? null : onStart,
@@ -57,16 +64,16 @@ class IntervalTimerWidget extends StatelessWidget {
           // Outer glow ring when active
           if (isActive)
             Container(
-              width: timerSize + 16,
-              height: timerSize + 16,
+              width: timerSize + 24,
+              height: timerSize + 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: (isWorkPhase
                           ? const Color(0xFF4CAF50)
                           : const Color(0xFFFF9800))
-                      .withOpacity(0.3),
-                  width: 2,
+                      .withOpacity(0.25),
+                  width: 3,
                 ),
               ),
             ),
@@ -129,22 +136,26 @@ class IntervalTimerWidget extends StatelessWidget {
     int displayRestDuration,
     double screenWidth,
   ) {
-    final fontSize = screenWidth < 380 ? 34.0 : (screenWidth < 400 ? 38.0 : 44.0);
-    final labelSize = screenWidth < 380 ? 10.0 : 11.0;
+    // Responsive typography - larger and more readable
+    final fontSize = (screenWidth * 0.13).clamp(48.0, 68.0);
+    final labelSize = (screenWidth * 0.032).clamp(11.0, 14.0);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Phase indicator
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+          padding: EdgeInsets.symmetric(
+            horizontal: (screenWidth * 0.035).clamp(12.0, 16.0),
+            vertical: (screenWidth * 0.012).clamp(4.0, 6.0),
+          ),
           decoration: BoxDecoration(
             color: (isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800))
                 .withOpacity(0.2),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800),
-              width: 1.5,
+              width: 2,
             ),
           ),
           child: Text(
@@ -152,12 +163,13 @@ class IntervalTimerWidget extends StatelessWidget {
             style: TextStyle(
               color: isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800),
               fontSize: labelSize,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2.5,
+              height: 1,
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: (screenWidth * 0.028).clamp(10.0, 14.0)),
         // Timer display
         Text(
           _formatTime((isWorkPhase ? displayWorkDuration : displayRestDuration) -
@@ -165,18 +177,19 @@ class IntervalTimerWidget extends StatelessWidget {
           style: TextStyle(
             color: Colors.white,
             fontSize: fontSize,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 2,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 3,
+            height: 1,
             shadows: [
               Shadow(
                 color: (isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800))
-                    .withOpacity(0.5),
-                blurRadius: 20,
+                    .withOpacity(0.6),
+                blurRadius: 24,
               ),
             ],
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: (screenWidth * 0.035).clamp(12.0, 16.0)),
         // Control buttons
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -185,12 +198,14 @@ class IntervalTimerWidget extends StatelessWidget {
               icon: isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
               onTap: isPaused ? onResume : onPause,
               color: Colors.white,
+              size: (screenWidth * 0.09).clamp(32.0, 42.0),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: (screenWidth * 0.05).clamp(18.0, 24.0)),
             _TimerControlButton(
               icon: Icons.stop_rounded,
               onTap: onStop,
               color: Colors.red,
+              size: (screenWidth * 0.09).clamp(32.0, 42.0),
             ),
           ],
         ),
@@ -199,21 +214,23 @@ class IntervalTimerWidget extends StatelessWidget {
   }
 
   Widget _buildIdleContent(BuildContext context, double screenWidth) {
-    final iconSize = screenWidth < 380 ? 44.0 : (screenWidth < 400 ? 50.0 : 56.0);
+    final iconSize = (screenWidth * 0.16).clamp(56.0, 72.0);
+    final titleSize = (screenWidth * 0.032).clamp(12.0, 14.0);
+    final subtitleSize = (screenWidth * 0.026).clamp(9.5, 11.0);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: const EdgeInsets.all(14),
+          padding: EdgeInsets.all((screenWidth * 0.045).clamp(16.0, 20.0)),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: AppTheme.primaryColor.withOpacity(0.15),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primaryColor.withOpacity(0.2),
-                blurRadius: 20,
-                spreadRadius: 2,
+                color: AppTheme.primaryColor.withOpacity(0.25),
+                blurRadius: 24,
+                spreadRadius: 3,
               ),
             ],
           ),
@@ -223,23 +240,25 @@ class IntervalTimerWidget extends StatelessWidget {
             size: iconSize,
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: (screenWidth * 0.022).clamp(8.0, 10.0)),
         Text(
           'TAP TO START',
           style: TextStyle(
-            color: AppTheme.primaryColor.withOpacity(0.8),
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 2,
+            color: AppTheme.primaryColor.withOpacity(0.9),
+            fontSize: titleSize,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 2.5,
+            height: 1,
           ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: (screenWidth * 0.008).clamp(3.0, 4.0)),
         Text(
           'Interval Timer',
           style: TextStyle(
             color: Colors.grey[500],
-            fontSize: 9,
-            fontWeight: FontWeight.w500,
+            fontSize: subtitleSize,
+            fontWeight: FontWeight.w600,
+            height: 1,
           ),
         ),
       ],
@@ -253,29 +272,31 @@ class _TimerControlButton extends StatelessWidget {
     required this.icon,
     required this.onTap,
     required this.color,
+    this.size = 32.0,
   });
 
   final IconData icon;
   final VoidCallback onTap;
   final Color color;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.all((size * 0.32).clamp(10.0, 14.0)),
         decoration: BoxDecoration(
           color: color.withOpacity(0.15),
           shape: BoxShape.circle,
           border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 1.5,
+            color: color.withOpacity(0.35),
+            width: 2,
           ),
         ),
         child: Icon(
           icon,
-          size: 24,
+          size: size,
           color: color,
         ),
       ),
