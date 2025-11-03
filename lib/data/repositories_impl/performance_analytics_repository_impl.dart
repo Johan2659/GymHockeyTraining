@@ -1,6 +1,8 @@
 /// Performance analytics repository implementation
 import '../../core/models/models.dart';
 import '../../core/repositories/performance_analytics_repository.dart';
+import '../../core/repositories/exercise_repository.dart';
+import '../../core/repositories/exercise_performance_repository.dart';
 import '../../core/services/logger_service.dart';
 import '../datasources/local_performance_source.dart';
 
@@ -8,9 +10,15 @@ class PerformanceAnalyticsRepositoryImpl
     implements PerformanceAnalyticsRepository {
   PerformanceAnalyticsRepositoryImpl({
     required LocalPerformanceSource dataSource,
-  }) : _dataSource = dataSource;
+    required ExerciseRepository exerciseRepository,
+    required ExercisePerformanceRepository exercisePerformanceRepository,
+  })  : _dataSource = dataSource,
+        _exerciseRepository = exerciseRepository,
+        _exercisePerformanceRepository = exercisePerformanceRepository;
 
   final LocalPerformanceSource _dataSource;
+  final ExerciseRepository _exerciseRepository;
+  final ExercisePerformanceRepository _exercisePerformanceRepository;
 
   @override
   Future<PerformanceAnalytics?> get() async {
@@ -201,43 +209,87 @@ class PerformanceAnalyticsRepositoryImpl
     List<Program> programs,
     ProgramState? currentState,
   ) async {
-    if (currentState?.activeProgramId == null) {
-      return <ExerciseCategory, double>{};
-    }
-
     try {
-      final program =
-          programs.firstWhere((p) => p.id == currentState!.activeProgramId);
-      final completedEvents = events
-          .where((e) =>
-              e.type == ProgressEventType.exerciseDone &&
-              e.programId == program.id)
-          .toList();
-
-      // Initialize all categories with 0.0
-      final categoryProgress = <ExerciseCategory, double>{
-        for (ExerciseCategory category in ExerciseCategory.values)
-          category: 0.0,
-      };
-
-      // This is a simplified calculation - in a real app, you'd need access to exercise data
-      // to map completed exercises to their categories
-      final totalCompleted = completedEvents.length;
-      if (totalCompleted > 0) {
-        // Distribute progress across categories based on typical hockey training patterns
-        categoryProgress[ExerciseCategory.strength] =
-            (totalCompleted * 0.25).clamp(0.0, 1.0);
-        categoryProgress[ExerciseCategory.power] =
-            (totalCompleted * 0.20).clamp(0.0, 1.0);
-        categoryProgress[ExerciseCategory.speed] =
-            (totalCompleted * 0.15).clamp(0.0, 1.0);
-        categoryProgress[ExerciseCategory.agility] =
-            (totalCompleted * 0.15).clamp(0.0, 1.0);
-        categoryProgress[ExerciseCategory.conditioning] =
-            (totalCompleted * 0.25).clamp(0.0, 1.0);
+      // Get ALL exercise performances for the user (lifetime stats)
+      final allPerformances = await _exercisePerformanceRepository.getAll();
+      
+      LoggerService.instance.info(
+        'Calculating category progress: ${allPerformances.length} performances found',
+        source: 'PerformanceAnalyticsRepository',
+      );
+      
+      if (allPerformances.isEmpty) {
+        LoggerService.instance.warning(
+          'No performances found - returning empty map',
+          source: 'PerformanceAnalyticsRepository',
+        );
+        return <ExerciseCategory, double>{};
       }
 
-      return categoryProgress;
+      // Define the main 5 categories for hockey training radar
+      const mainCategories = {
+        ExerciseCategory.power,
+        ExerciseCategory.strength,
+        ExerciseCategory.speed,
+        ExerciseCategory.conditioning,
+        ExerciseCategory.agility,
+      };
+
+      // Initialize category volumes
+      final categoryVolumes = <ExerciseCategory, double>{
+        for (final category in mainCategories) category: 0.0,
+      };
+
+      int matchedCount = 0;
+      int skippedCount = 0;
+
+      // Calculate volume for each completed exercise
+      for (final performance in allPerformances) {
+        // Get the exercise to know its category
+        final exercise = await _exerciseRepository.getById(performance.exerciseId);
+        if (exercise == null) {
+          skippedCount++;
+          continue;
+        }
+
+        // Only count the 5 main categories (ignore warmup, recovery, technique, etc.)
+        if (!mainCategories.contains(exercise.category)) {
+          skippedCount++;
+          continue;
+        }
+
+        matchedCount++;
+
+        // Calculate total volume: sum(sets × reps × weight)
+        double exerciseVolume = 0.0;
+        for (final set in performance.sets) {
+          // For bodyweight exercises, weight might be null, treat as 1.0
+          final weight = set.weight ?? 1.0;
+          exerciseVolume += set.reps * weight;
+        }
+
+        // Add to category total
+        categoryVolumes[exercise.category] = 
+            (categoryVolumes[exercise.category] ?? 0.0) + exerciseVolume;
+      }
+
+      LoggerService.instance.info(
+        'Category calculation complete: Matched=$matchedCount, Skipped=$skippedCount',
+        source: 'PerformanceAnalyticsRepository',
+      );
+      
+      // Log the results
+      final totalVolume = categoryVolumes.values.fold(0.0, (sum, v) => sum + v);
+      for (final category in mainCategories) {
+        final volume = categoryVolumes[category] ?? 0.0;
+        final percentage = totalVolume > 0 ? (volume / totalVolume * 100) : 0.0;
+        LoggerService.instance.info(
+          '  ${category.name}: ${volume.toStringAsFixed(1)} (${percentage.toStringAsFixed(1)}%)',
+          source: 'PerformanceAnalyticsRepository',
+        );
+      }
+
+      return categoryVolumes;
     } catch (e) {
       LoggerService.instance.error('Failed to calculate category progress',
           error: e, source: 'PerformanceAnalyticsRepository');

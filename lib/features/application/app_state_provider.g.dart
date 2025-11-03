@@ -725,7 +725,7 @@ class _MarkExerciseDoneActionProviderElement
 }
 
 String _$completeSessionActionHash() =>
-    r'41a463538cdfb53dad79eda81279855d80b12c72';
+    r'8b5d8613a1487ffc555266c35e9595f14d396bd0';
 
 /// Complete session action provider
 ///
@@ -784,6 +784,26 @@ final resumeProgramActionProvider = AutoDisposeFutureProvider<void>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ResumeProgramActionRef = AutoDisposeFutureProviderRef<void>;
+String _$resetSessionActionHash() =>
+    r'912fac91ec1f549d08bcee0b9837290d0ce9b273';
+
+/// Reset current session to 0 (DEBUG - for testing)
+///
+/// Copied from [resetSessionAction].
+@ProviderFor(resetSessionAction)
+final resetSessionActionProvider = AutoDisposeFutureProvider<void>.internal(
+  resetSessionAction,
+  name: r'resetSessionActionProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$resetSessionActionHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ResetSessionActionRef = AutoDisposeFutureProviderRef<void>;
 String _$completeBonusChallengeActionHash() =>
     r'55ceeb21b92843629d60c81f7fb2f77f631c012b';
 

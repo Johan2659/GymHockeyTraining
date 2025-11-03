@@ -390,6 +390,10 @@ Future<void> completeSessionAction(Ref ref) async {
       currentState,
     );
     await analyticsRepo.save(updatedAnalytics);
+    
+    // Invalidate the cache so the UI updates immediately
+    ref.invalidate(performanceAnalyticsProvider);
+    ref.invalidate(categoryProgressProvider);
   } catch (e) {
     LoggerService.instance.warning(
         'Failed to update performance analytics after session completion',
@@ -410,6 +414,14 @@ Future<void> pauseProgramAction(Ref ref) async {
 Future<void> resumeProgramAction(Ref ref) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   await stateRepo.resumeProgram();
+}
+
+/// Reset current session to 0 (DEBUG - for testing)
+@riverpod
+Future<void> resetSessionAction(Ref ref) async {
+  final stateRepo = ref.read(programStateRepositoryProvider);
+  await stateRepo.updateCurrentSession(0);
+  LoggerService.instance.info('Session reset to 0', source: 'resetSessionAction');
 }
 
 /// Complete bonus challenge action provider

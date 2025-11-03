@@ -314,7 +314,7 @@ final extrasRepositoryProvider = AutoDisposeProvider<ExtrasRepository>.internal(
 // ignore: unused_element
 typedef ExtrasRepositoryRef = AutoDisposeProviderRef<ExtrasRepository>;
 String _$performanceAnalyticsRepositoryHash() =>
-    r'0b36dba5eefefcb2471564cac1c9c40cb3661a39';
+    r'a95bbc17cfa61a61f8016ef79e6f445a3cbb5974';
 
 /// Provider for performance analytics repository
 ///

@@ -10,8 +10,13 @@ class LocalExercisePerformanceSource {
   /// Save an exercise performance record
   Future<bool> savePerformance(ExercisePerformance performance) async {
     try {
-      final box = await Hive.openBox<Map<dynamic, dynamic>>(
-          HiveBoxes.exercisePerformance);
+      Box<dynamic> box;
+      if (Hive.isBoxOpen(HiveBoxes.exercisePerformance)) {
+        box = Hive.box(HiveBoxes.exercisePerformance);
+      } else {
+        box = await Hive.openBox(HiveBoxes.exercisePerformance);
+      }
+      
       await box.put(performance.id, performance.toJson());
       _logger.d(
           'LocalExercisePerformanceSource: Saved performance: ${performance.id}');
@@ -26,12 +31,20 @@ class LocalExercisePerformanceSource {
   /// Get exercise performance by ID
   Future<ExercisePerformance?> getPerformanceById(String id) async {
     try {
-      final box = await Hive.openBox<Map<dynamic, dynamic>>(
-          HiveBoxes.exercisePerformance);
+      Box<dynamic> box;
+      if (Hive.isBoxOpen(HiveBoxes.exercisePerformance)) {
+        box = Hive.box(HiveBoxes.exercisePerformance);
+      } else {
+        box = await Hive.openBox(HiveBoxes.exercisePerformance);
+      }
+      
       final data = box.get(id);
       if (data == null) return null;
-
-      return ExercisePerformance.fromJson(Map<String, dynamic>.from(data));
+      
+      if (data is Map) {
+        return ExercisePerformance.fromJson(Map<String, dynamic>.from(data));
+      }
+      return null;
     } catch (e, stackTrace) {
       _logger.e('LocalExercisePerformanceSource: Failed to get performance',
           error: e, stackTrace: stackTrace);
@@ -43,15 +56,22 @@ class LocalExercisePerformanceSource {
   Future<List<ExercisePerformance>> getPerformancesByExerciseId(
       String exerciseId) async {
     try {
-      final box = await Hive.openBox<Map<dynamic, dynamic>>(
-          HiveBoxes.exercisePerformance);
+      Box<dynamic> box;
+      if (Hive.isBoxOpen(HiveBoxes.exercisePerformance)) {
+        box = Hive.box(HiveBoxes.exercisePerformance);
+      } else {
+        box = await Hive.openBox(HiveBoxes.exercisePerformance);
+      }
+      
       final performances = <ExercisePerformance>[];
 
       for (final data in box.values) {
-        final performance =
-            ExercisePerformance.fromJson(Map<String, dynamic>.from(data));
-        if (performance.exerciseId == exerciseId) {
-          performances.add(performance);
+        if (data is Map) {
+          final performance =
+              ExercisePerformance.fromJson(Map<String, dynamic>.from(data));
+          if (performance.exerciseId == exerciseId) {
+            performances.add(performance);
+          }
         }
       }
 
@@ -71,17 +91,24 @@ class LocalExercisePerformanceSource {
   Future<List<ExercisePerformance>> getPerformancesBySession(
       String programId, int week, int session) async {
     try {
-      final box = await Hive.openBox<Map<dynamic, dynamic>>(
-          HiveBoxes.exercisePerformance);
+      Box<dynamic> box;
+      if (Hive.isBoxOpen(HiveBoxes.exercisePerformance)) {
+        box = Hive.box(HiveBoxes.exercisePerformance);
+      } else {
+        box = await Hive.openBox(HiveBoxes.exercisePerformance);
+      }
+      
       final performances = <ExercisePerformance>[];
 
       for (final data in box.values) {
-        final performance =
-            ExercisePerformance.fromJson(Map<String, dynamic>.from(data));
-        if (performance.programId == programId &&
-            performance.week == week &&
-            performance.session == session) {
-          performances.add(performance);
+        if (data is Map) {
+          final performance =
+              ExercisePerformance.fromJson(Map<String, dynamic>.from(data));
+          if (performance.programId == programId &&
+              performance.week == week &&
+              performance.session == session) {
+            performances.add(performance);
+          }
         }
       }
 
@@ -98,13 +125,21 @@ class LocalExercisePerformanceSource {
   /// Get all performance records
   Future<List<ExercisePerformance>> getAllPerformances() async {
     try {
-      final box = await Hive.openBox<Map<dynamic, dynamic>>(
-          HiveBoxes.exercisePerformance);
+      // Check if box is already open, if so use it, otherwise open it
+      Box<dynamic> box;
+      if (Hive.isBoxOpen(HiveBoxes.exercisePerformance)) {
+        box = Hive.box(HiveBoxes.exercisePerformance);
+      } else {
+        box = await Hive.openBox(HiveBoxes.exercisePerformance);
+      }
+      
       final performances = <ExercisePerformance>[];
 
       for (final data in box.values) {
-        performances
-            .add(ExercisePerformance.fromJson(Map<String, dynamic>.from(data)));
+        if (data is Map) {
+          performances.add(
+              ExercisePerformance.fromJson(Map<String, dynamic>.from(data)));
+        }
       }
 
       // Sort by timestamp, most recent first
@@ -122,8 +157,13 @@ class LocalExercisePerformanceSource {
   /// Delete a performance record
   Future<bool> deletePerformance(String id) async {
     try {
-      final box = await Hive.openBox<Map<dynamic, dynamic>>(
-          HiveBoxes.exercisePerformance);
+      Box<dynamic> box;
+      if (Hive.isBoxOpen(HiveBoxes.exercisePerformance)) {
+        box = Hive.box(HiveBoxes.exercisePerformance);
+      } else {
+        box = await Hive.openBox(HiveBoxes.exercisePerformance);
+      }
+      
       await box.delete(id);
       _logger.d(
           'LocalExercisePerformanceSource: Deleted performance: $id');
@@ -138,8 +178,13 @@ class LocalExercisePerformanceSource {
   /// Clear all performance data
   Future<bool> clearAll() async {
     try {
-      final box = await Hive.openBox<Map<dynamic, dynamic>>(
-          HiveBoxes.exercisePerformance);
+      Box<dynamic> box;
+      if (Hive.isBoxOpen(HiveBoxes.exercisePerformance)) {
+        box = Hive.box(HiveBoxes.exercisePerformance);
+      } else {
+        box = await Hive.openBox(HiveBoxes.exercisePerformance);
+      }
+      
       await box.clear();
       _logger.d('LocalExercisePerformanceSource: Cleared all performances');
       return true;

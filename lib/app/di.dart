@@ -134,7 +134,13 @@ ExtrasRepository extrasRepository(Ref ref) {
 @riverpod
 PerformanceAnalyticsRepository performanceAnalyticsRepository(Ref ref) {
   final dataSource = ref.watch(localPerformanceSourceProvider);
-  return PerformanceAnalyticsRepositoryImpl(dataSource: dataSource);
+  final exerciseRepo = ref.watch(exerciseRepositoryProvider);
+  final performanceRepo = ref.watch(exercisePerformanceRepositoryProvider);
+  return PerformanceAnalyticsRepositoryImpl(
+    dataSource: dataSource,
+    exerciseRepository: exerciseRepo,
+    exercisePerformanceRepository: performanceRepo,
+  );
 }
 
 /// Provider for exercise performance repository
