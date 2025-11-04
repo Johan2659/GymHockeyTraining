@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
@@ -26,6 +27,9 @@ final logger = Logger(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Disable debug paint borders (green/yellow lines in debug mode)
+  debugPaintSizeEnabled = false;
 
   try {
     logger.i('🏒 Starting Hockey Gym App...');

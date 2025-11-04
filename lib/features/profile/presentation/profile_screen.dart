@@ -180,7 +180,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onTap: _isLoading ? null : () => _deleteAccount(),
           ),
 
-          const SizedBox(height: 24),
+          // Extra bottom padding to clear the bottom navigation bar
+          const SizedBox(height: 100),
         ],
       ),
     );

@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../app/di.dart';
 import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
 import '../../../core/utils/selectors.dart';
 import '../../application/app_state_provider.dart';
+import 'widgets/activity_calendar_widget.dart';
 
 class ModernProgressScreen extends ConsumerWidget {
   const ModernProgressScreen({super.key});
@@ -54,84 +54,6 @@ class ModernProgressScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // DEBUG: Admin buttons (TEMPORARY - remove after testing)
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Recalculating analytics...')),
-                      );
-                      try {
-                        final progressRepo =
-                            ref.read(progressRepositoryProvider);
-                        final programRepo = ref.read(programRepositoryProvider);
-                        final stateRepo =
-                            ref.read(programStateRepositoryProvider);
-                        final analyticsRepo =
-                            ref.read(performanceAnalyticsRepositoryProvider);
-
-                        final events =
-                            await progressRepo.getRecent(limit: 10000);
-                        final programs = await programRepo.getAll();
-                        final currentState = await stateRepo.get();
-
-                        final newAnalytics =
-                            await analyticsRepo.calculateAnalytics(
-                          events,
-                          programs,
-                          currentState,
-                        );
-
-                        await analyticsRepo.save(newAnalytics);
-
-                        // Force refresh
-                        ref.invalidate(performanceAnalyticsProvider);
-                        ref.invalidate(categoryProgressProvider);
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('✅ Analytics recalculated!')),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('❌ Error: $e')),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Recalc'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      try {
-                        await ref.read(resetSessionActionProvider.future);
-                        ref.invalidate(appStateProvider);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('✅ Session reset to 0!')),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('❌ Error: $e')),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.replay),
-                    label: const Text('Reset Week'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
           // Performance Profile - consistent width
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
@@ -148,21 +70,14 @@ class ModernProgressScreen extends ConsumerWidget {
 
           const SizedBox(height: 24),
 
-          // Weekly Stats section - consistent width
+          // Activity Calendar - consistent width
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: _buildWeeklyStatsSection(context, ref),
+            child: ActivityCalendarWidget(events: appState.events),
           ),
 
-          const SizedBox(height: 24),
-
-          // Recent Activity - consistent width
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: _buildProgressTimelineSection(context, appState),
-          ),
-
-          const SizedBox(height: 16),
+          // Extra bottom padding to clear the bottom navigation bar
+          const SizedBox(height: 100),
         ],
       ),
     );
@@ -981,11 +896,7 @@ class ModernProgressScreen extends ConsumerWidget {
               e.type == ProgressEventType.exerciseDone
             ).toList();
 
-            // Only show if we have data
-            if (sessionEvents.isEmpty && personalBests.isEmpty) {
-              return const SizedBox.shrink();
-            }
-
+            // Always show the card, even with empty data
             return _PerformanceEvolutionWidget(
               sessionEvents: sessionEvents,
               exerciseEvents: exerciseEvents,
@@ -1154,7 +1065,15 @@ class ModernProgressScreen extends ConsumerWidget {
       ),
       error: (error, stack) => const SizedBox.shrink(),
       data: (weeklyStats) {
-        if (weeklyStats == null) return const SizedBox.shrink();
+        // Always show the section, even with empty data
+        final stats = weeklyStats ?? const WeeklyStats(
+          totalSessions: 0,
+          totalExercises: 0,
+          totalTrainingTime: 0,
+          avgSessionDuration: 0.0,
+          completionRate: 0.0,
+          xpEarned: 0,
+        );
 
         return Card(
           child: Padding(
@@ -1182,7 +1101,7 @@ class ModernProgressScreen extends ConsumerWidget {
                       child: _buildStatTile(
                         context,
                         'Sessions',
-                        weeklyStats.totalSessions.toString(),
+                        stats.totalSessions.toString(),
                         Icons.fitness_center,
                         AppTheme.primaryColor,
                       ),
@@ -1192,7 +1111,7 @@ class ModernProgressScreen extends ConsumerWidget {
                       child: _buildStatTile(
                         context,
                         'Exercises',
-                        weeklyStats.totalExercises.toString(),
+                        stats.totalExercises.toString(),
                         Icons.list_alt,
                         AppTheme.accentColor,
                       ),
@@ -1206,7 +1125,7 @@ class ModernProgressScreen extends ConsumerWidget {
                       child: _buildStatTile(
                         context,
                         'Training Time',
-                        '${weeklyStats.totalTrainingTime}min',
+                        '${stats.totalTrainingTime}min',
                         Icons.timer,
                         Colors.orange,
                       ),
@@ -1216,7 +1135,7 @@ class ModernProgressScreen extends ConsumerWidget {
                       child: _buildStatTile(
                         context,
                         'XP Earned',
-                        '+${weeklyStats.xpEarned}',
+                        '+${stats.xpEarned}',
                         Icons.star,
                         Colors.amber,
                       ),
@@ -2387,8 +2306,11 @@ class _PerformanceEvolutionWidgetState
       }
     }
     
+    // Filter personal records by selected period
+    final filteredBests = _filterPersonalBestsByPeriod(allBests.values.toList(), _selectedPeriod);
+    
     // Get top 3 personal records (most recent)
-    final sortedBests = allBests.values.toList()
+    final sortedBests = filteredBests
       ..sort((a, b) => b.achievedAt.compareTo(a.achievedAt));
     final top3Bests = sortedBests.take(3).toList();
 
@@ -2401,12 +2323,13 @@ class _PerformanceEvolutionWidgetState
             // Header
             Row(
               children: [
-                Icon(Icons.trending_up, color: AppTheme.primaryColor, size: 22),
+                Icon(Icons.trending_up, color: Colors.blue, size: 22),
                 const SizedBox(width: 8),
                 Text(
                   'Training Stats',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: Colors.blue,
                       ),
                 ),
               ],
@@ -2432,10 +2355,9 @@ class _PerformanceEvolutionWidgetState
 
             const SizedBox(height: 20),
 
-            // Key Metrics Grid
-            if (totalSessions > 0) ...[
-              // First Row: Total Sessions & Programs
-              Row(
+            // Key Metrics Grid - Always show, even with zeros
+            // First Row: Total Sessions & Programs
+            Row(
                 children: [
                   Expanded(
                     child: _buildMetricCard(
@@ -2484,35 +2406,34 @@ class _PerformanceEvolutionWidgetState
                 ],
               ),
               
-              // Training Time Section (if any duration data exists)
-              if (totalTrainingSeconds > 0) ...[
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Text(
-                      'Training Time',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[400],
+              // Training Time Section - Always show, even with zeros
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    'Training Time',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[400],
+                    ),
+                  ),
+                  if (estimatedSessionCount > 0) ...[
+                    const SizedBox(width: 6),
+                    Tooltip(
+                      message: '$estimatedSessionCount ${estimatedSessionCount == 1 ? 'session' : 'sessions'} estimated at typical duration',
+                      child: Icon(
+                        Icons.info_outline,
+                        size: 14,
+                        color: Colors.grey[600],
                       ),
                     ),
-                    if (estimatedSessionCount > 0) ...[
-                      const SizedBox(width: 6),
-                      Tooltip(
-                        message: '$estimatedSessionCount ${estimatedSessionCount == 1 ? 'session' : 'sessions'} estimated at typical duration',
-                        child: Icon(
-                          Icons.info_outline,
-                          size: 14,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
                   ],
-                ),
-                const SizedBox(height: 12),
-                // Third Row: Training Time Stats
-                Row(
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Third Row: Training Time Stats
+              Row(
                   children: [
                     Expanded(
                       child: _buildMetricCard(
@@ -2553,64 +2474,63 @@ class _PerformanceEvolutionWidgetState
                       child: _buildMetricCard(
                         context,
                         'Avg/Session',
-                        _formatTrainingTime(totalTrainingSeconds ~/ totalSessions),
+                        totalSessions > 0 
+                          ? _formatTrainingTime(totalTrainingSeconds ~/ totalSessions)
+                          : '0min',
                         Icons.trending_up,
                         Colors.orange,
                       ),
                     ),
                   ],
                 ),
-              ],
-              const SizedBox(height: 16),
-            ],
+            const SizedBox(height: 16),
 
-            // Personal Records Section
-            if (top3Bests.isNotEmpty) ...[
-              Text(
-                'Personal Records',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[400],
-                ),
+            // Personal Records Section - Always show
+            Text(
+              'Personal Records',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[400],
               ),
-              const SizedBox(height: 12),
+            ),
+            const SizedBox(height: 12),
+            
+            // Show personal records or empty state
+            if (top3Bests.isNotEmpty) ...[
               ...top3Bests.map((best) => _buildPersonalBestItem(best)),
-              const SizedBox(height: 8),
-            ],
-
-            // Empty State
-            if (totalSessions == 0 && top3Bests.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                child: Column(
+            ] else
+              // Empty state for personal records
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[900],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[800]!),
+                ),
+                child: Row(
                   children: [
                     Icon(
-                      Icons.insights,
-                      size: 64,
-                      color: Colors.grey[700],
+                      Icons.emoji_events,
+                      color: Colors.grey[600],
+                      size: 32,
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No data yet',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Complete sessions to track your progress',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'No personal records yet\nComplete exercises to set your first record!',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[500],
+                          height: 1.4,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
+            
+            const SizedBox(height: 8),
           ],
         ),
       ),
@@ -2772,6 +2692,32 @@ class _PerformanceEvolutionWidgetState
 
     return events.where((event) => event.ts.isAfter(cutoffDate)).toList()
       ..sort((a, b) => a.ts.compareTo(b.ts));
+  }
+
+  List<PersonalBest> _filterPersonalBestsByPeriod(
+    List<PersonalBest> bests,
+    String period,
+  ) {
+    if (bests.isEmpty) return [];
+    
+    final now = DateTime.now();
+    DateTime cutoffDate;
+
+    switch (period) {
+      case 'Week':
+        cutoffDate = now.subtract(const Duration(days: 7));
+        break;
+      case 'Month':
+        cutoffDate = now.subtract(const Duration(days: 30));
+        break;
+      case 'Year':
+        cutoffDate = now.subtract(const Duration(days: 365));
+        break;
+      default:
+        cutoffDate = now.subtract(const Duration(days: 30));
+    }
+
+    return bests.where((best) => best.achievedAt.isAfter(cutoffDate)).toList();
   }
 
   String _formatDate(DateTime date) {

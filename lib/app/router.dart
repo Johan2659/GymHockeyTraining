@@ -292,7 +292,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }
 
   Widget _buildHockeyRinkBottomNav(BuildContext context, int currentIndex) {
-    return Container(
+    return SizedBox(
       height: 110, // Augmentation pour accueillir le texte "Hub"
       child: Stack(
         clipBehavior: Clip.none,

@@ -584,6 +584,9 @@ Future<bool> saveExercisePerformanceAction(
             'exerciseId': performance.exerciseId,
             'sets': performance.sets.length
           });
+
+      // Check for personal bests after saving performance
+      await _checkAndRecordPersonalBests(ref, performance);
     }
 
     return success;
@@ -591,6 +594,119 @@ Future<bool> saveExercisePerformanceAction(
     LoggerService.instance.error('Failed to save exercise performance',
         source: 'saveExercisePerformanceAction', error: e);
     return false;
+  }
+}
+
+/// Check if the performance contains any personal bests and record them
+Future<void> _checkAndRecordPersonalBests(
+    Ref ref, ExercisePerformance performance) async {
+  try {
+    final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
+    final performanceRepo = ref.read(exercisePerformanceRepositoryProvider);
+
+    // Get all previous performances for this exercise
+    final previousPerformances =
+        await performanceRepo.getByExerciseId(performance.exerciseId);
+
+    // Find the best weight used in this performance
+    double maxWeight = 0.0;
+    for (final set in performance.sets) {
+      if ((set.completed ?? false) && set.weight != null && set.weight! > maxWeight) {
+        maxWeight = set.weight!;
+      }
+    }
+
+    // Find the max reps in a single set
+    int maxReps = 0;
+    for (final set in performance.sets) {
+      if ((set.completed ?? false) && set.reps > maxReps) {
+        maxReps = set.reps;
+      }
+    }
+
+    // Check if this is a new personal best for weight
+    if (maxWeight > 0) {
+      bool isNewBest = true;
+      for (final prev in previousPerformances) {
+        if (prev.id == performance.id) continue; // Skip current performance
+        for (final set in prev.sets) {
+          if (set.weight != null && set.weight! >= maxWeight) {
+            isNewBest = false;
+            break;
+          }
+        }
+        if (!isNewBest) break;
+      }
+
+      if (isNewBest) {
+        final personalBest = PersonalBest(
+          exerciseId: performance.exerciseId,
+          exerciseName: performance.exerciseName,
+          bestValue: maxWeight,
+          unit: 'kg',
+          achievedAt: performance.timestamp,
+          programId: performance.programId,
+        );
+
+        await analyticsRepo.recordPersonalBest(personalBest);
+
+        // Invalidate the analytics provider to refresh UI
+        ref.invalidate(performanceAnalyticsProvider);
+
+        LoggerService.instance.info('New personal best recorded',
+            source: 'saveExercisePerformanceAction',
+            metadata: {
+              'exerciseId': performance.exerciseId,
+              'type': 'weight',
+              'value': maxWeight
+            });
+      }
+    }
+
+    // Check if this is a new personal best for reps (only if no weight)
+    if (maxWeight == 0 && maxReps > 0) {
+      bool isNewBest = true;
+      for (final prev in previousPerformances) {
+        if (prev.id == performance.id) continue; // Skip current performance
+        for (final set in prev.sets) {
+          if (set.reps >= maxReps) {
+            isNewBest = false;
+            break;
+          }
+        }
+        if (!isNewBest) break;
+      }
+
+      if (isNewBest) {
+        final personalBest = PersonalBest(
+          exerciseId: performance.exerciseId,
+          exerciseName: performance.exerciseName,
+          bestValue: maxReps.toDouble(),
+          unit: 'reps',
+          achievedAt: performance.timestamp,
+          programId: performance.programId,
+        );
+
+        await analyticsRepo.recordPersonalBest(personalBest);
+
+        // Invalidate the analytics provider to refresh UI
+        ref.invalidate(performanceAnalyticsProvider);
+
+        LoggerService.instance.info('New personal best recorded',
+            source: 'saveExercisePerformanceAction',
+            metadata: {
+              'exerciseId': performance.exerciseId,
+              'type': 'reps',
+              'value': maxReps
+            });
+      }
+    }
+  } catch (e) {
+    LoggerService.instance.warning(
+        'Failed to check/record personal bests, but performance was saved',
+        source: 'saveExercisePerformanceAction',
+        error: e);
+    // Don't rethrow - we don't want to fail the save if personal best tracking fails
   }
 }
 
