@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/exercise_repository.dart';
 import '../datasources/local_exercise_source.dart';
@@ -6,7 +6,7 @@ import '../datasources/local_exercise_source.dart';
 /// Implementation of ExerciseRepository using local data source
 class ExerciseRepositoryImpl implements ExerciseRepository {
   final LocalExerciseSource _localSource;
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   ExerciseRepositoryImpl({
     LocalExerciseSource? localSource,

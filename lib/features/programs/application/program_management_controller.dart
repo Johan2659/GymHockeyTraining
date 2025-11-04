@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:logger/logger.dart';
 
 import '../../../app/di.dart';
+import '../../../core/logging/logger_config.dart';
 import '../../../core/models/models.dart';
 import '../../application/app_state_provider.dart';
 
@@ -23,7 +23,7 @@ enum ProgramDeletionOption {
 /// Service for managing program lifecycle operations
 /// Handles stopping and deleting programs while maintaining SSOT
 class ProgramManagementService {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   /// Stops and optionally deletes the current active program
   /// Returns true if operation was successful
@@ -240,8 +240,8 @@ Future<Program?> currentActiveProgram(Ref ref) async {
     final programRepo = ref.read(programRepositoryProvider);
     return await programRepo.getById(currentState!.activeProgramId!);
   } catch (e, stackTrace) {
-    final _logger = Logger();
-    _logger.e('currentActiveProgramProvider: Error getting current program',
+    final logger = AppLogger.getLogger();
+    logger.e('currentActiveProgramProvider: Error getting current program',
         error: e, stackTrace: stackTrace);
     return null;
   }
@@ -264,8 +264,8 @@ Future<int> currentProgramProgressCount(Ref ref) async {
 
     return events.length;
   } catch (e, stackTrace) {
-    final _logger = Logger();
-    _logger.e(
+    final logger = AppLogger.getLogger();
+    logger.e(
         'currentProgramProgressCountProvider: Error getting progress count',
         error: e,
         stackTrace: stackTrace);

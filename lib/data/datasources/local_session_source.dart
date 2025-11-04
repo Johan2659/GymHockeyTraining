@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import 'attacker_program_data.dart';
 import 'defender_program_data.dart';
@@ -9,7 +9,7 @@ import 'referee_program_data.dart';
 /// Local data source for sessions using embedded JSON data
 /// Provides session definitions and exercise blocks
 class LocalSessionSource {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // Static session data for the hockey attacker program
   static const Map<String, String> _sessionData = {

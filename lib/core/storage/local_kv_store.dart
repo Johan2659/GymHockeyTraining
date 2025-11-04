@@ -1,29 +1,24 @@
 import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:logger/logger.dart';
+import '../logging/logger_config.dart';
 
 /// Local key-value store wrapper for Hive with JSON string storage
 /// Provides a clean interface for reading/writing/deleting data by key
 class LocalKVStore {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   /// Reads a JSON string from the specified box by key
   /// Returns null if key doesn't exist or if an error occurs
   static Future<String?> read(String boxName, String key) async {
     try {
-      _logger.d('LocalKVStore: Reading key "$key" from box "$boxName"');
-
       final box = Hive.box(boxName);
       final value = box.get(key);
 
       if (value == null) {
-        _logger.d('LocalKVStore: Key "$key" not found in box "$boxName"');
         return null;
       }
 
       if (value is String) {
-        _logger.d(
-            'LocalKVStore: Successfully read key "$key" from box "$boxName"');
         return value;
       } else {
         _logger.w(
@@ -42,8 +37,6 @@ class LocalKVStore {
   static Future<bool> write(
       String boxName, String key, String jsonValue) async {
     try {
-      _logger.d('LocalKVStore: Writing key "$key" to box "$boxName"');
-
       // Validate JSON format
       try {
         jsonDecode(jsonValue);
@@ -56,8 +49,6 @@ class LocalKVStore {
       final box = Hive.box(boxName);
       await box.put(key, jsonValue);
 
-      _logger
-          .d('LocalKVStore: Successfully wrote key "$key" to box "$boxName"');
       return true;
     } catch (e, stackTrace) {
       _logger.e('LocalKVStore: Failed to write key "$key" to box "$boxName"',
@@ -70,13 +61,9 @@ class LocalKVStore {
   /// Returns true if successful, false otherwise
   static Future<bool> delete(String boxName, String key) async {
     try {
-      _logger.d('LocalKVStore: Deleting key "$key" from box "$boxName"');
-
       final box = Hive.box(boxName);
       await box.delete(key);
 
-      _logger.d(
-          'LocalKVStore: Successfully deleted key "$key" from box "$boxName"');
       return true;
     } catch (e, stackTrace) {
       _logger.e('LocalKVStore: Failed to delete key "$key" from box "$boxName"',
@@ -88,14 +75,9 @@ class LocalKVStore {
   /// Checks if a key exists in the specified box
   static Future<bool> exists(String boxName, String key) async {
     try {
-      _logger
-          .d('LocalKVStore: Checking if key "$key" exists in box "$boxName"');
-
       final box = Hive.box(boxName);
       final exists = box.containsKey(key);
 
-      _logger.d(
-          'LocalKVStore: Key "$key" ${exists ? "exists" : "does not exist"} in box "$boxName"');
       return exists;
     } catch (e, stackTrace) {
       _logger.e('LocalKVStore: Failed to check key "$key" in box "$boxName"',
@@ -107,12 +89,9 @@ class LocalKVStore {
   /// Gets all keys from the specified box
   static Future<List<String>> getKeys(String boxName) async {
     try {
-      _logger.d('LocalKVStore: Getting all keys from box "$boxName"');
-
       final box = Hive.box(boxName);
       final keys = box.keys.cast<String>().toList();
 
-      _logger.d('LocalKVStore: Found ${keys.length} keys in box "$boxName"');
       return keys;
     } catch (e, stackTrace) {
       _logger.e('LocalKVStore: Failed to get keys from box "$boxName"',
@@ -148,6 +127,39 @@ class LocalKVStore {
       _logger.e('LocalKVStore: Failed to get count from box "$boxName"',
           error: e, stackTrace: stackTrace);
       return 0;
+    }
+  }
+
+  /// Reads multiple keys at once (bulk read) - more efficient than individual reads
+  /// Returns a map of key -> value (null for missing keys)
+  static Future<Map<String, String?>> readBulk(
+      String boxName, List<String> keys) async {
+    try {
+      _logger.d(
+          'LocalKVStore: Bulk reading ${keys.length} keys from box "$boxName"');
+
+      final box = Hive.box(boxName);
+      final results = <String, String?>{};
+
+      for (final key in keys) {
+        final value = box.get(key);
+        if (value is String) {
+          results[key] = value;
+        } else {
+          results[key] = null;
+        }
+      }
+
+      final successCount = results.values.where((v) => v != null).length;
+      _logger.d(
+          'LocalKVStore: Successfully read $successCount/${keys.length} keys from box "$boxName"');
+      return results;
+    } catch (e, stackTrace) {
+      _logger.e(
+          'LocalKVStore: Failed to bulk read keys from box "$boxName"',
+          error: e,
+          stackTrace: stackTrace);
+      return {};
     }
   }
 }

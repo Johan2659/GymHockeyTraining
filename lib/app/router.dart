@@ -385,8 +385,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
         ? const Color.fromARGB(255, 132, 239, 251)
         : Colors.white.withOpacity(0.7);
 
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
+      splashColor: Colors.white.withOpacity(0.1),
+      highlightColor: Colors.white.withOpacity(0.05),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
@@ -430,8 +433,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
     final color =
         isSelected ? const Color(0xFF00CFFF) : Colors.white.withOpacity(0.7);
 
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
+      customBorder: const CircleBorder(),
+      splashColor: Colors.white.withOpacity(0.1),
+      highlightColor: Colors.white.withOpacity(0.05),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

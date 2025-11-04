@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/program_repository.dart';
 import '../datasources/local_program_source.dart';
@@ -6,7 +6,7 @@ import '../datasources/local_program_source.dart';
 /// Implementation of ProgramRepository using local data source
 class ProgramRepositoryImpl implements ProgramRepository {
   final LocalProgramSource _localSource;
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   ProgramRepositoryImpl({
     LocalProgramSource? localSource,
@@ -15,8 +15,6 @@ class ProgramRepositoryImpl implements ProgramRepository {
   @override
   Future<Program?> getById(String id) async {
     try {
-      _logger.d('ProgramRepositoryImpl: Getting program by ID: $id');
-
       final program = await _localSource.getProgramById(id);
 
       if (program != null) {

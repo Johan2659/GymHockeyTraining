@@ -20,43 +20,62 @@ class ProgramsScreen extends ConsumerWidget {
         backgroundColor: AppTheme.surfaceColor,
         foregroundColor: AppTheme.onSurfaceColor,
       ),
-      body: programsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Failed to load programs',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString(),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        data: (programs) => appStateAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Center(
-            child: Text('Error loading app state: $error'),
-          ),
-          data: (appState) =>
-              _buildProgramsList(context, ref, programs, appState),
-        ),
-      ),
+      body: _buildBody(context, ref, programsAsync, appStateAsync),
     );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    WidgetRef ref,
+    AsyncValue<List<Program>> programsAsync,
+    AsyncValue<AppStateData> appStateAsync,
+  ) {
+    // Check if both are loaded - if so, render immediately
+    if (programsAsync.hasValue && appStateAsync.hasValue) {
+      return _buildProgramsList(
+        context,
+        ref,
+        programsAsync.value!,
+        appStateAsync.value!,
+      );
+    }
+
+    // Show loading only if both are loading
+    if (programsAsync.isLoading || appStateAsync.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Handle errors
+    final error = programsAsync.error ?? appStateAsync.error;
+    if (error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Failed to load programs',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error.toString(),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildProgramsList(BuildContext context, WidgetRef ref,

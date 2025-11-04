@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 
 /// Comprehensive Defender program - 5 weeks, 3 sessions per week
 /// Follows the specified structure with strength focus, stability, and power phases
 class DefenderProgramData {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // =============================================================================
   // WEEK 1-2 SESSIONS (Strength Focus)

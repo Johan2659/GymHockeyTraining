@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../../core/logging/logger_config.dart';
 import '../../../core/models/models.dart';
 
 /// Bonus challenge extras - achievement-based fitness challenges
 class BonusChallengesData {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // =============================================================================
   // BONUS CHALLENGES

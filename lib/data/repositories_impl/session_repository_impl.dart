@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/session_repository.dart';
 import '../../core/services/logger_service.dart';
@@ -7,7 +7,7 @@ import '../datasources/local_session_source.dart';
 /// Implementation of SessionRepository using local data source
 class SessionRepositoryImpl implements SessionRepository {
   final LocalSessionSource _localSource;
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   SessionRepositoryImpl({
     LocalSessionSource? localSource,

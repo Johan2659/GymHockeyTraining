@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 
 /// Comprehensive hockey exercises database
 /// Contains all exercises with proper categorization and variants
 class HockeyExercisesDatabase {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // =============================================================================
   // STRENGTH EXERCISES

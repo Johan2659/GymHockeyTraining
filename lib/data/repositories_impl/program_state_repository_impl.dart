@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/program_state_repository.dart';
 import '../datasources/local_prefs_source.dart';
@@ -6,7 +6,7 @@ import '../datasources/local_prefs_source.dart';
 /// Implementation of ProgramStateRepository using local data source
 class ProgramStateRepositoryImpl implements ProgramStateRepository {
   final LocalPrefsSource _localSource;
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   ProgramStateRepositoryImpl({
     LocalPrefsSource? localSource,

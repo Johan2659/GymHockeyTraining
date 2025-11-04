@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import 'extras/express_workouts.dart';
 import 'extras/bonus_challenges.dart';
@@ -7,7 +7,7 @@ import 'extras/mobility_recovery.dart';
 /// Central database for all extras (express workouts, challenges, mobility)
 /// Organized by category similar to program structure
 class ExtrasDatabase {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // =============================================================================
   // PUBLIC METHODS

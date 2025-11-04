@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/profile_repository.dart';
 import '../datasources/local_prefs_source.dart';
@@ -6,7 +6,7 @@ import '../datasources/local_prefs_source.dart';
 /// Implementation of ProfileRepository using local data source
 class ProfileRepositoryImpl implements ProfileRepository {
   final LocalPrefsSource _localSource;
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   ProfileRepositoryImpl({
     LocalPrefsSource? localSource,

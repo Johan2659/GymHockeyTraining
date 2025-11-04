@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import 'attacker_program_data.dart';
 import 'defender_program_data.dart';
@@ -8,7 +8,7 @@ import 'referee_program_data.dart';
 /// Local data source for static program definitions
 /// Loads programs from dedicated program data classes
 class LocalProgramSource {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // Static data removed - all programs now use dedicated data classes
 

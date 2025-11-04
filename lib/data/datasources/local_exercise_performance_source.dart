@@ -1,11 +1,11 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/storage/hive_boxes.dart';
 
 /// Local data source for exercise performance using Hive
 class LocalExercisePerformanceSource {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   /// Save an exercise performance record
   Future<bool> savePerformance(ExercisePerformance performance) async {

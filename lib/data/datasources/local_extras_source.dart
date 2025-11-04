@@ -1,11 +1,10 @@
-import 'package:logger/logger.dart';
-
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import 'extras_database.dart';
 
 /// Local data source for extras definitions sourced from the extras database
 class LocalExtrasSource {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   /// Gets all available extras
   Future<List<ExtraItem>> getAllExtras() async {

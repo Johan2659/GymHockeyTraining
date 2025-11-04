@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/storage/hive_boxes.dart';
 import '../../core/storage/local_kv_store.dart';
@@ -10,7 +9,7 @@ import '../../core/persistence/persistence_service.dart';
 /// Local data source for user preferences and profile data
 /// Handles profile storage and program state management
 class LocalPrefsSource {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
   static const String _profileKey = 'user_profile';
   static const String _programStateKey = 'program_state';
 
@@ -22,23 +21,17 @@ class LocalPrefsSource {
   /// Gets the user profile with fallback support
   Future<Profile?> getProfile() async {
     try {
-      _logger.d('LocalPrefsSource: Loading user profile');
-
       // Use PersistenceService for enhanced read with fallback
       final profileJson = await PersistenceService.readWithFallback(
           HiveBoxes.profile, _profileKey);
       if (profileJson == null) {
-        _logger.d('LocalPrefsSource: No profile found');
         return null;
       }
 
       final profileData = jsonDecode(profileJson) as Map<String, dynamic>;
-      final profile = Profile.fromJson(profileData);
-
-      _logger.d('LocalPrefsSource: Successfully loaded profile');
-      return profile;
+      return Profile.fromJson(profileData);
     } catch (e, stackTrace) {
-      _logger.e('LocalPrefsSource: Failed to load profile',
+      _logger.e('Failed to load profile',
           error: e, stackTrace: stackTrace);
       return null;
     }
@@ -47,9 +40,6 @@ class LocalPrefsSource {
   /// Saves the user profile with enhanced persistence and fallback
   Future<bool> saveProfile(Profile profile) async {
     try {
-      _logger.d('LocalPrefsSource: Saving user profile');
-      PersistenceService.logStateChange('User profile updated');
-
       final profileJson = jsonEncode(profile.toJson());
 
       // Use PersistenceService for enhanced write with fallback

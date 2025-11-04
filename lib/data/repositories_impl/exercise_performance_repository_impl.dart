@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/exercise_performance_repository.dart';
 import '../datasources/local_exercise_performance_source.dart';
@@ -7,7 +7,7 @@ import '../datasources/local_exercise_performance_source.dart';
 class ExercisePerformanceRepositoryImpl
     implements ExercisePerformanceRepository {
   final LocalExercisePerformanceSource _localSource;
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   ExercisePerformanceRepositoryImpl({
     LocalExercisePerformanceSource? localSource,

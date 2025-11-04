@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/storage/hive_boxes.dart';
 import '../../core/storage/local_kv_store.dart';
@@ -8,7 +8,7 @@ import '../../core/storage/local_kv_store.dart';
 /// Local data source for progress events using Hive storage
 /// Provides append-only journaling with streaming capabilities
 class LocalProgressSource {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
   static const String _progressKeyPrefix = 'progress_';
   static const String _counterKey = 'progress_counter';
 
@@ -19,8 +19,6 @@ class LocalProgressSource {
   /// Appends a new progress event to storage
   Future<bool> appendEvent(ProgressEvent event) async {
     try {
-      _logger.d('LocalProgressSource: Appending progress event: ${event.type}');
-
       // Generate unique key using timestamp and counter
       final counter = await _getNextCounter();
       final key =
@@ -53,8 +51,6 @@ class LocalProgressSource {
   /// Gets all progress events sorted by timestamp
   Future<List<ProgressEvent>> getAllEvents() async {
     try {
-      _logger.d('LocalProgressSource: Loading all progress events');
-
       final keys = await LocalKVStore.getKeys(HiveBoxes.progress);
       final progressKeys = keys
           .where(
@@ -63,8 +59,12 @@ class LocalProgressSource {
 
       final events = <ProgressEvent>[];
 
-      for (final key in progressKeys) {
-        final eventJson = await LocalKVStore.read(HiveBoxes.progress, key);
+      // Use bulk read for better performance
+      final eventJsonMap =
+          await LocalKVStore.readBulk(HiveBoxes.progress, progressKeys);
+
+      for (final entry in eventJsonMap.entries) {
+        final eventJson = entry.value;
         if (eventJson != null && eventJson.isNotEmpty) {
           try {
             final eventData = jsonDecode(eventJson) as Map<String, dynamic>;
@@ -72,9 +72,8 @@ class LocalProgressSource {
             events.add(event);
           } catch (e) {
             _logger.w(
-                'LocalProgressSource: Failed to parse event $key - skipping',
+                'Failed to parse event ${entry.key}',
                 error: e);
-            // Continue processing other events instead of failing
             continue;
           }
         }
@@ -83,10 +82,9 @@ class LocalProgressSource {
       // Sort by timestamp (newest first)
       events.sort((a, b) => b.ts.compareTo(a.ts));
 
-      _logger.d('LocalProgressSource: Loaded ${events.length} progress events');
       return events;
     } catch (e, stackTrace) {
-      _logger.e('LocalProgressSource: Failed to load progress events',
+      _logger.e('Failed to load progress events',
           error: e, stackTrace: stackTrace);
       return [];
     }
@@ -95,18 +93,11 @@ class LocalProgressSource {
   /// Gets progress events for a specific program
   Future<List<ProgressEvent>> getEventsByProgram(String programId) async {
     try {
-      _logger.d('LocalProgressSource: Loading events for program: $programId');
-
       final allEvents = await getAllEvents();
-      final programEvents =
-          allEvents.where((event) => event.programId == programId).toList();
-
-      _logger.d(
-          'LocalProgressSource: Found ${programEvents.length} events for program $programId');
-      return programEvents;
+      return allEvents.where((event) => event.programId == programId).toList();
     } catch (e, stackTrace) {
       _logger.e(
-          'LocalProgressSource: Failed to load events for program $programId',
+          'Failed to load events for program $programId',
           error: e,
           stackTrace: stackTrace);
       return [];
@@ -117,18 +108,12 @@ class LocalProgressSource {
   Future<List<ProgressEvent>> getEventsByDateRange(
       DateTime start, DateTime end) async {
     try {
-      _logger.d('LocalProgressSource: Loading events from $start to $end');
-
       final allEvents = await getAllEvents();
-      final rangeEvents = allEvents
+      return allEvents
           .where((event) => event.ts.isAfter(start) && event.ts.isBefore(end))
           .toList();
-
-      _logger.d(
-          'LocalProgressSource: Found ${rangeEvents.length} events in date range');
-      return rangeEvents;
     } catch (e, stackTrace) {
-      _logger.e('LocalProgressSource: Failed to load events for date range',
+      _logger.e('Failed to load events for date range',
           error: e, stackTrace: stackTrace);
       return [];
     }
@@ -137,14 +122,8 @@ class LocalProgressSource {
   /// Gets the most recent progress events
   Future<List<ProgressEvent>> getRecentEvents({int limit = 50}) async {
     try {
-      _logger.d('LocalProgressSource: Loading $limit recent events');
-
       final allEvents = await getAllEvents();
-      final recentEvents = allEvents.take(limit).toList();
-
-      _logger.d(
-          'LocalProgressSource: Loaded ${recentEvents.length} recent events');
-      return recentEvents;
+      return allEvents.take(limit).toList();
     } catch (e, stackTrace) {
       _logger.e('LocalProgressSource: Failed to load recent events',
           error: e, stackTrace: stackTrace);

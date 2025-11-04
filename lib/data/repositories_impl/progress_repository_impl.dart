@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/progress_repository.dart';
 import '../../core/services/logger_service.dart';
@@ -7,7 +7,7 @@ import '../datasources/local_progress_source.dart';
 /// Implementation of ProgressRepository using local data source
 class ProgressRepositoryImpl implements ProgressRepository {
   final LocalProgressSource _localSource;
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   ProgressRepositoryImpl({
     LocalProgressSource? localSource,

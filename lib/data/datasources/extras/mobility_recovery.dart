@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../../core/logging/logger_config.dart';
 import '../../../core/models/models.dart';
 
 /// Mobility and recovery extras - stretching and mobility work
 class MobilityRecoveryData {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // =============================================================================
   // MOBILITY & RECOVERY

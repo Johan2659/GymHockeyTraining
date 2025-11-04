@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../../core/logging/logger_config.dart';
 import '../../../core/models/models.dart';
 
 /// Express workout extras - quick 15-20 minute training sessions
 class ExpressWorkoutsData {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // =============================================================================
   // EXPRESS WORKOUTS

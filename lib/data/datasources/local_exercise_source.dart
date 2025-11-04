@@ -1,11 +1,11 @@
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import 'hockey_exercises_database.dart';
 
 /// Local data source for exercises using comprehensive hockey database
 /// Provides exercise definitions with metadata
 class LocalExerciseSource {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   /// Gets all available exercises
   Future<List<Exercise>> getAllExercises() async {

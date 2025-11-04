@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 
 /// Comprehensive Goalie program - 5 weeks, 3 sessions per week
 /// Focuses on reflexes, flexibility, and explosive power
 class GoalieProgramData {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // =============================================================================
   // WEEK 1-2 SESSIONS (Foundation Focus)

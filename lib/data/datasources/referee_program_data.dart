@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:logger/logger.dart';
+import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 
 /// Comprehensive Referee program - 5 weeks, 3 sessions per week
 /// Focuses on conditioning, mobility, and decision-making under fatigue
 class RefereeProgramData {
-  static final _logger = Logger();
+  static final _logger = AppLogger.getLogger();
 
   // =============================================================================
   // WEEK 1-2 SESSIONS (Conditioning Focus)

@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.gymhockeytraining"
+    namespace = "com.johantoso.beastleague"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -16,12 +16,12 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = "11"
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.gymhockeytraining"
+        // Application ID - can be changed anytime before final store submission
+        applicationId = "com.johantoso.beastleague"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
