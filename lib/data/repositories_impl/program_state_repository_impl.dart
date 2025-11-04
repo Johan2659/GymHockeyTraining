@@ -1,23 +1,30 @@
 import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/program_state_repository.dart';
+import '../../core/repositories/auth_repository.dart';
 import '../datasources/local_prefs_source.dart';
 
 /// Implementation of ProgramStateRepository using local data source
 class ProgramStateRepositoryImpl implements ProgramStateRepository {
   final LocalPrefsSource _localSource;
+  final AuthRepository _authRepository;
   static final _logger = AppLogger.getLogger();
 
   ProgramStateRepositoryImpl({
     LocalPrefsSource? localSource,
-  }) : _localSource = localSource ?? LocalPrefsSource();
+    required AuthRepository authRepository,
+  })  : _localSource = localSource ?? LocalPrefsSource(),
+        _authRepository = authRepository;
 
   @override
   Future<ProgramState?> get() async {
     try {
       _logger.d('ProgramStateRepositoryImpl: Getting program state');
 
-      final state = await _localSource.getProgramState();
+      final currentUser = await _authRepository.getCurrentUser();
+      final userId = currentUser?.id ?? '';
+
+      final state = await _localSource.getProgramState(userId);
 
       if (state != null) {
         _logger.i('ProgramStateRepositoryImpl: Found program state');
@@ -56,15 +63,19 @@ class ProgramStateRepositoryImpl implements ProgramStateRepository {
   }
 
   @override
-  Stream<ProgramState?> watch() {
+  Stream<ProgramState?> watch() async* {
     try {
       _logger.d(
           'ProgramStateRepositoryImpl: Creating watch stream for program state');
-      return _localSource.watchProgramState();
+      
+      final currentUser = await _authRepository.getCurrentUser();
+      final userId = currentUser?.id ?? '';
+      
+      yield* _localSource.watchProgramState(userId);
     } catch (e, stackTrace) {
       _logger.e('ProgramStateRepositoryImpl: Error creating watch stream',
           error: e, stackTrace: stackTrace);
-      return Stream.value(null);
+      yield null;
     }
   }
 
@@ -73,7 +84,10 @@ class ProgramStateRepositoryImpl implements ProgramStateRepository {
     try {
       _logger.w('ProgramStateRepositoryImpl: Clearing program state');
 
-      final success = await _localSource.clearProgramState();
+      final currentUser = await _authRepository.getCurrentUser();
+      final userId = currentUser?.id ?? '';
+
+      final success = await _localSource.clearProgramState(userId);
 
       if (success) {
         _logger.w(

@@ -11,7 +11,7 @@ import '../../core/persistence/persistence_service.dart';
 class LocalPrefsSource {
   static final _logger = AppLogger.getLogger();
   static const String _profileKey = 'user_profile';
-  static const String _programStateKey = 'program_state';
+  static const String _programStateKeyPrefix = 'program_state_'; // Changed to prefix for per-user states
 
   // Stream controllers for watching changes
   static final _profileController = StreamController<Profile?>.broadcast();
@@ -109,23 +109,24 @@ class LocalPrefsSource {
     return _profileController.stream;
   }
 
-  /// Gets the program state with fallback support
-  Future<ProgramState?> getProgramState() async {
+  /// Gets the program state with fallback support (user-specific)
+  Future<ProgramState?> getProgramState(String userId) async {
     try {
-      _logger.d('LocalPrefsSource: Loading program state');
+      _logger.d('LocalPrefsSource: Loading program state for user $userId');
 
+      final key = _programStateKey(userId);
       // Use PersistenceService for enhanced read with fallback
       final stateJson = await PersistenceService.readWithFallback(
-          HiveBoxes.settings, _programStateKey);
+          HiveBoxes.settings, key);
       if (stateJson == null) {
-        _logger.d('LocalPrefsSource: No program state found');
+        _logger.d('LocalPrefsSource: No program state found for user $userId');
         return null;
       }
 
       final stateData = jsonDecode(stateJson) as Map<String, dynamic>;
       final state = ProgramState.fromJson(stateData);
 
-      _logger.d('LocalPrefsSource: Successfully loaded program state');
+      _logger.d('LocalPrefsSource: Successfully loaded program state for user $userId');
       return state;
     } catch (e, stackTrace) {
       _logger.e('LocalPrefsSource: Failed to load program state',
@@ -134,24 +135,25 @@ class LocalPrefsSource {
     }
   }
 
-  /// Saves the program state with enhanced persistence and fallback
+  /// Saves the program state with enhanced persistence and fallback (user-specific)
   Future<bool> saveProgramState(ProgramState state) async {
     try {
-      _logger.d('LocalPrefsSource: Saving program state');
+      _logger.d('LocalPrefsSource: Saving program state for user ${state.userId}');
       PersistenceService.logStateChange(
-          'Program state updated - Week: ${state.currentWeek}, Session: ${state.currentSession}');
+          'Program state updated - User: ${state.userId}, Week: ${state.currentWeek}, Session: ${state.currentSession}');
 
       final stateJson = jsonEncode(state.toJson());
+      final key = _programStateKey(state.userId);
 
       // Use PersistenceService for enhanced write with fallback
       final success = await PersistenceService.writeWithFallback(
         HiveBoxes.settings,
-        _programStateKey,
+        key,
         stateJson,
       );
 
       if (success) {
-        _logger.i('LocalPrefsSource: Successfully saved program state');
+        _logger.i('LocalPrefsSource: Successfully saved program state for user ${state.userId}');
         _notifyProgramStateChanged();
         return true;
       } else {
@@ -165,17 +167,18 @@ class LocalPrefsSource {
     }
   }
 
-  /// Clears the program state
-  Future<bool> clearProgramState() async {
+  /// Clears the program state for a specific user
+  Future<bool> clearProgramState(String userId) async {
     try {
-      _logger.w('LocalPrefsSource: Clearing program state');
+      _logger.w('LocalPrefsSource: Clearing program state for user $userId');
 
+      final key = _programStateKey(userId);
       // Use PersistenceService to clear from both Hive and SharedPreferences
       final success = await PersistenceService.clearWithFallback(
-          HiveBoxes.settings, _programStateKey);
+          HiveBoxes.settings, key);
 
       if (success) {
-        _logger.w('LocalPrefsSource: Successfully cleared program state');
+        _logger.w('LocalPrefsSource: Successfully cleared program state for user $userId');
         _notifyProgramStateChanged();
       }
 
@@ -187,10 +190,10 @@ class LocalPrefsSource {
     }
   }
 
-  /// Provides a stream of program state changes
-  Stream<ProgramState?> watchProgramState() {
+  /// Provides a stream of program state changes for a specific user
+  Stream<ProgramState?> watchProgramState(String userId) {
     // Emit current state immediately
-    getProgramState().then((state) {
+    getProgramState(userId).then((state) {
       if (!_programStateController.isClosed) {
         _programStateController.add(state);
       }
@@ -216,15 +219,11 @@ class LocalPrefsSource {
   }
 
   /// Notifies stream listeners of program state changes
-  void _notifyProgramStateChanged() async {
-    try {
-      final state = await getProgramState();
-      if (!_programStateController.isClosed) {
-        _programStateController.add(state);
-      }
-    } catch (e) {
-      _logger.e('LocalPrefsSource: Error notifying program state changes',
-          error: e);
+  /// Note: This emits null since we don't know which user's state changed
+  /// Consumers should re-query with their userId
+  void _notifyProgramStateChanged() {
+    if (!_programStateController.isClosed) {
+      _programStateController.add(null); // Signal change, consumers re-query
     }
   }
 
@@ -237,4 +236,7 @@ class LocalPrefsSource {
       _programStateController.close();
     }
   }
+
+  // Helper method to generate user-specific key
+  String _programStateKey(String userId) => '${_programStateKeyPrefix}$userId';
 }

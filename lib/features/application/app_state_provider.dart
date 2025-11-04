@@ -14,6 +14,18 @@ part 'app_state_provider.g.dart';
 /// Aggregates all repositories and computes derived values
 
 // =============================================================================
+// Helper Providers
+// =============================================================================
+
+/// Helper to get current user ID
+@riverpod
+Future<String> currentUserId(Ref ref) async {
+  final authRepo = ref.watch(authRepositoryProvider);
+  final user = await authRepo.getCurrentUser();
+  return user?.id ?? '';
+}
+
+// =============================================================================
 // Stream Providers for Real-time Data
 // =============================================================================
 
@@ -81,6 +93,8 @@ Future<List<ExtraItem>> mobilityRecovery(Ref ref) {
 @riverpod
 Future<PerformanceAnalytics?> performanceAnalytics(Ref ref) async {
   final repository = ref.watch(performanceAnalyticsRepositoryProvider);
+  final authRepo = ref.watch(authRepositoryProvider);
+  
   try {
     final existing = await repository.get();
     if (existing != null) {
@@ -88,7 +102,11 @@ Future<PerformanceAnalytics?> performanceAnalytics(Ref ref) async {
     }
 
     // Create default analytics if none exist
+    final currentUser = await authRepo.getCurrentUser();
+    final userId = currentUser?.id ?? '';
+    
     final defaultAnalytics = PerformanceAnalytics(
+      userId: userId,
       weeklyStats: WeeklyStats(
         totalSessions: 0,
         totalExercises: 0,
@@ -282,10 +300,14 @@ Future<void> startProgramAction(Ref ref, String programId) async {
 
     final stateRepo = ref.read(programStateRepositoryProvider);
     final progressRepo = ref.read(progressRepositoryProvider);
+    final authRepo = ref.read(authRepositoryProvider);
+    final currentUser = await authRepo.getCurrentUser();
+    final userId = currentUser?.id ?? '';
 
     PersistenceService.logStateChange('Starting program: $programId');
 
     final newState = ProgramState(
+      userId: userId,
       activeProgramId: programId,
       currentWeek: 0,
       currentSession: 0,
@@ -295,6 +317,7 @@ Future<void> startProgramAction(Ref ref, String programId) async {
     await stateRepo.save(newState);
 
     final event = ProgressEvent(
+      userId: userId,
       ts: DateTime.now(),
       type: ProgressEventType.sessionStarted,
       programId: programId,
@@ -322,6 +345,9 @@ Future<void> markExerciseDoneAction(Ref ref, String exerciseId) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   final progressRepo = ref.read(progressRepositoryProvider);
   final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
+  final authRepo = ref.read(authRepositoryProvider);
+  final currentUser = await authRepo.getCurrentUser();
+  final userId = currentUser?.id ?? '';
 
   final currentState = await stateRepo.get();
   if (currentState?.activeProgramId == null) return;
@@ -329,6 +355,7 @@ Future<void> markExerciseDoneAction(Ref ref, String exerciseId) async {
   await stateRepo.addCompletedExercise(exerciseId);
 
   final event = ProgressEvent(
+    userId: userId,
     ts: DateTime.now(),
     type: ProgressEventType.exerciseDone,
     programId: currentState!.activeProgramId!,
@@ -369,6 +396,9 @@ Future<void> _completeSessionWithDuration(Ref ref, int? durationSeconds) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   final progressRepo = ref.read(progressRepositoryProvider);
   final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
+  final authRepo = ref.read(authRepositoryProvider);
+  final currentUser = await authRepo.getCurrentUser();
+  final userId = currentUser?.id ?? '';
 
   final currentState = await stateRepo.get();
   if (currentState?.activeProgramId == null) return;
@@ -377,6 +407,7 @@ Future<void> _completeSessionWithDuration(Ref ref, int? durationSeconds) async {
       'Completing session - Week: ${currentState!.currentWeek}, Session: ${currentState.currentSession}');
 
   final event = ProgressEvent(
+    userId: userId,
     ts: DateTime.now(),
     type: ProgressEventType.sessionCompleted,
     programId: currentState.activeProgramId!,
@@ -446,11 +477,15 @@ Future<void> resetSessionAction(Ref ref) async {
 Future<void> completeBonusChallengeAction(Ref ref) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   final progressRepo = ref.read(progressRepositoryProvider);
+  final authRepo = ref.read(authRepositoryProvider);
+  final currentUser = await authRepo.getCurrentUser();
+  final userId = currentUser?.id ?? '';
 
   final currentState = await stateRepo.get();
   if (currentState?.activeProgramId == null) return;
 
   final event = ProgressEvent(
+    userId: userId,
     ts: DateTime.now(),
     type: ProgressEventType.bonusDone,
     programId: currentState!.activeProgramId!,
@@ -466,8 +501,12 @@ Future<void> completeBonusChallengeAction(Ref ref) async {
 Future<void> startSessionAction(
     Ref ref, String programId, int week, int session) async {
   final progressRepo = ref.read(progressRepositoryProvider);
+  final authRepo = ref.read(authRepositoryProvider);
+  final currentUser = await authRepo.getCurrentUser();
+  final userId = currentUser?.id ?? '';
 
   final event = ProgressEvent(
+    userId: userId,
     ts: DateTime.now(),
     type: ProgressEventType.sessionStarted,
     programId: programId,
@@ -488,7 +527,12 @@ Future<void> startExtraAction(Ref ref, String extraId) async {
     PersistenceService.logStateChange('Starting extra session: $extraId');
 
     final progressRepo = ref.read(progressRepositoryProvider);
+    final authRepo = ref.read(authRepositoryProvider);
+    final currentUser = await authRepo.getCurrentUser();
+    final userId = currentUser?.id ?? '';
+    
     final event = ProgressEvent(
+      userId: userId,
       ts: DateTime.now(),
       type: ProgressEventType.sessionStarted,
       programId: extraId,
@@ -513,6 +557,9 @@ Future<void> startExtraAction(Ref ref, String extraId) async {
 @riverpod
 Future<void> completeExtraAction(Ref ref, String extraId, int xpReward, {int? durationSeconds}) async {
   final progressRepo = ref.read(progressRepositoryProvider);
+  final authRepo = ref.read(authRepositoryProvider);
+  final currentUser = await authRepo.getCurrentUser();
+  final userId = currentUser?.id ?? '';
 
   PersistenceService.logStateChange(
       'Completing extra: $extraId with XP reward: $xpReward');
@@ -527,6 +574,7 @@ Future<void> completeExtraAction(Ref ref, String extraId, int xpReward, {int? du
   }
 
   final event = ProgressEvent(
+    userId: userId,
     ts: DateTime.now(),
     type: ProgressEventType.extraCompleted,
     programId: extraId, // Using extraId as programId for extras
@@ -878,11 +926,16 @@ Future<bool> deleteAccountAction(Ref ref) async {
 Future<void> initializePerformanceAnalyticsAction(Ref ref) async {
   try {
     final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
+    final authRepo = ref.read(authRepositoryProvider);
+    final currentUser = await authRepo.getCurrentUser();
+    final userId = currentUser?.id ?? '';
+    
     final existing = await analyticsRepo.get();
 
     // Only initialize if analytics don't exist
     if (existing == null) {
       final initialAnalytics = PerformanceAnalytics(
+        userId: userId,
         categoryProgress: <ExerciseCategory, double>{
           for (ExerciseCategory category in ExerciseCategory.values)
             category: 0.0,

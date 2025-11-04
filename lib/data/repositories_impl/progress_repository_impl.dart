@@ -1,17 +1,21 @@
 import '../../core/logging/logger_config.dart';
 import '../../core/models/models.dart';
 import '../../core/repositories/progress_repository.dart';
+import '../../core/repositories/auth_repository.dart';
 import '../../core/services/logger_service.dart';
 import '../datasources/local_progress_source.dart';
 
 /// Implementation of ProgressRepository using local data source
 class ProgressRepositoryImpl implements ProgressRepository {
   final LocalProgressSource _localSource;
+  final AuthRepository _authRepository;
   static final _logger = AppLogger.getLogger();
 
   ProgressRepositoryImpl({
     LocalProgressSource? localSource,
-  }) : _localSource = localSource ?? LocalProgressSource();
+    required AuthRepository authRepository,
+  })  : _localSource = localSource ?? LocalProgressSource(),
+        _authRepository = authRepository;
 
   @override
   Future<bool> appendEvent(ProgressEvent event) async {
@@ -55,14 +59,18 @@ class ProgressRepositoryImpl implements ProgressRepository {
   }
 
   @override
-  Stream<List<ProgressEvent>> watchAll() {
+  Stream<List<ProgressEvent>> watchAll() async* {
     try {
       _logger.d('ProgressRepositoryImpl: Creating watch stream for all events');
-      return _localSource.watchAllEvents();
+      // Get current user and watch their events
+      final currentUser = await _authRepository.getCurrentUser();
+      final userId = currentUser?.id ?? '';
+      
+      yield* _localSource.watchAllEvents(userId: userId);
     } catch (e, stackTrace) {
       _logger.e('ProgressRepositoryImpl: Error creating watch stream',
           error: e, stackTrace: stackTrace);
-      return Stream.value([]);
+      yield [];
     }
   }
 
@@ -72,7 +80,10 @@ class ProgressRepositoryImpl implements ProgressRepository {
       _logger
           .d('ProgressRepositoryImpl: Getting events for program: $programId');
 
-      final events = await _localSource.getEventsByProgram(programId);
+      final currentUser = await _authRepository.getCurrentUser();
+      final userId = currentUser?.id ?? '';
+
+      final events = await _localSource.getEventsByProgram(programId, userId: userId);
 
       _logger.i(
           'ProgressRepositoryImpl: Found ${events.length} events for program $programId');

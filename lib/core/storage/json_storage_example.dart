@@ -96,6 +96,7 @@ class ExampleStorageService {
   /// Example of creating sample data
   static ProgressEvent createSampleProgressEvent() {
     return ProgressEvent(
+      userId: 'example-user-id',
       ts: DateTime.now(),
       type: ProgressEventType.sessionStarted,
       programId: 'attacker_program_1',
@@ -121,6 +122,7 @@ class ExampleStorageService {
 
   static ProgramState createSampleProgramState() {
     return const ProgramState(
+      userId: 'example-user-id',
       activeProgramId: 'attacker_program_1',
       currentWeek: 1,
       currentSession: 1,

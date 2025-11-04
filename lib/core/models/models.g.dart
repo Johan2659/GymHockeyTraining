@@ -139,6 +139,7 @@ Map<String, dynamic> _$SessionInProgressToJson(SessionInProgress instance) =>
     };
 
 ProgramState _$ProgramStateFromJson(Map<String, dynamic> json) => ProgramState(
+      userId: json['userId'] as String,
       activeProgramId: json['activeProgramId'] as String?,
       currentWeek: (json['currentWeek'] as num).toInt(),
       currentSession: (json['currentSession'] as num).toInt(),
@@ -154,6 +155,7 @@ ProgramState _$ProgramStateFromJson(Map<String, dynamic> json) => ProgramState(
 
 Map<String, dynamic> _$ProgramStateToJson(ProgramState instance) =>
     <String, dynamic>{
+      'userId': instance.userId,
       'activeProgramId': instance.activeProgramId,
       'currentWeek': instance.currentWeek,
       'currentSession': instance.currentSession,
@@ -165,6 +167,7 @@ Map<String, dynamic> _$ProgramStateToJson(ProgramState instance) =>
 
 ProgressEvent _$ProgressEventFromJson(Map<String, dynamic> json) =>
     ProgressEvent(
+      userId: json['userId'] as String,
       ts: DateTime.parse(json['ts'] as String),
       type: $enumDecode(_$ProgressEventTypeEnumMap, json['type']),
       programId: json['programId'] as String,
@@ -176,6 +179,7 @@ ProgressEvent _$ProgressEventFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ProgressEventToJson(ProgressEvent instance) =>
     <String, dynamic>{
+      'userId': instance.userId,
       'ts': instance.ts.toIso8601String(),
       'type': _$ProgressEventTypeEnumMap[instance.type]!,
       'programId': instance.programId,
@@ -252,6 +256,7 @@ const _$ExtraTypeEnumMap = {
 PerformanceAnalytics _$PerformanceAnalyticsFromJson(
         Map<String, dynamic> json) =>
     PerformanceAnalytics(
+      userId: json['userId'] as String,
       categoryProgress: (json['categoryProgress'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(
             $enumDecode(_$ExerciseCategoryEnumMap, k), (e as num).toDouble()),
@@ -270,6 +275,7 @@ PerformanceAnalytics _$PerformanceAnalyticsFromJson(
 Map<String, dynamic> _$PerformanceAnalyticsToJson(
         PerformanceAnalytics instance) =>
     <String, dynamic>{
+      'userId': instance.userId,
       'categoryProgress': instance.categoryProgress
           .map((k, e) => MapEntry(_$ExerciseCategoryEnumMap[k]!, e)),
       'weeklyStats':
@@ -405,6 +411,8 @@ Map<String, dynamic> _$ExercisePerformanceToJson(
     };
 
 UserProfile _$UserProfileFromJson(Map<String, dynamic> json) => UserProfile(
+      id: json['id'] as String,
+      username: json['username'] as String,
       role: $enumDecode(_$PlayerRoleEnumMap, json['role']),
       goal: $enumDecode(_$TrainingGoalEnumMap, json['goal']),
       onboardingCompleted: json['onboardingCompleted'] as bool,
@@ -415,6 +423,8 @@ UserProfile _$UserProfileFromJson(Map<String, dynamic> json) => UserProfile(
 
 Map<String, dynamic> _$UserProfileToJson(UserProfile instance) =>
     <String, dynamic>{
+      'id': instance.id,
+      'username': instance.username,
       'role': _$PlayerRoleEnumMap[instance.role]!,
       'goal': _$TrainingGoalEnumMap[instance.goal]!,
       'onboardingCompleted': instance.onboardingCompleted,

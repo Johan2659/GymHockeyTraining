@@ -6,10 +6,29 @@ part of 'app_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$progressEventsHash() => r'4122494ed95db842a66d182e0852d5dbbb2d1633';
+String _$currentUserIdHash() => r'5282a80a57d49d8604284b4c2252bbdf963d9251';
 
 /// Comprehensive app state provider that serves as the Single Source of Truth (SSOT)
 /// Aggregates all repositories and computes derived values
+/// Helper to get current user ID
+///
+/// Copied from [currentUserId].
+@ProviderFor(currentUserId)
+final currentUserIdProvider = AutoDisposeFutureProvider<String>.internal(
+  currentUserId,
+  name: r'currentUserIdProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$currentUserIdHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CurrentUserIdRef = AutoDisposeFutureProviderRef<String>;
+String _$progressEventsHash() => r'4122494ed95db842a66d182e0852d5dbbb2d1633';
+
 /// Stream of all progress events
 ///
 /// Copied from [progressEvents].
@@ -165,7 +184,7 @@ final mobilityRecoveryProvider =
 // ignore: unused_element
 typedef MobilityRecoveryRef = AutoDisposeFutureProviderRef<List<ExtraItem>>;
 String _$performanceAnalyticsHash() =>
-    r'5a3eeb1ea2eb38109d62a5c2e6fcfc97799d2ae4';
+    r'4fedb84cc1f1000b6de9215e4d1139bb5738c2e2';
 
 /// Performance analytics provider
 ///
@@ -415,7 +434,7 @@ final nextSessionRefProvider = AutoDisposeFutureProvider<Session?>.internal(
 // ignore: unused_element
 typedef NextSessionRefRef = AutoDisposeFutureProviderRef<Session?>;
 String _$startProgramActionHash() =>
-    r'696205d1cfc800bbec7f1750cbeab450477ce88a';
+    r'c80b5ade7f581f9af30a09d42b3bc9d8455fa398';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -579,7 +598,7 @@ class _StartProgramActionProviderElement
 }
 
 String _$markExerciseDoneActionHash() =>
-    r'7fe5f242927371fc4910ef9f225cea08d7327496';
+    r'7a4818f84c219fa040c909bab2e0f8ad5c9dea20';
 
 /// Mark exercise done action provider
 ///
@@ -955,7 +974,7 @@ final resetSessionActionProvider = AutoDisposeFutureProvider<void>.internal(
 // ignore: unused_element
 typedef ResetSessionActionRef = AutoDisposeFutureProviderRef<void>;
 String _$completeBonusChallengeActionHash() =>
-    r'55ceeb21b92843629d60c81f7fb2f77f631c012b';
+    r'b340ee53885c2976db2b79c8df2a3bc0f917f932';
 
 /// Complete bonus challenge action provider
 ///
@@ -976,7 +995,7 @@ final completeBonusChallengeActionProvider =
 // ignore: unused_element
 typedef CompleteBonusChallengeActionRef = AutoDisposeFutureProviderRef<void>;
 String _$startSessionActionHash() =>
-    r'b933f2a6f4d05b478c97d07c2ba842100a96784e';
+    r'10b6f49ec57769f4d7eb76aa9153bb9451feeb90';
 
 /// Start session action provider
 ///
@@ -1151,7 +1170,7 @@ class _StartSessionActionProviderElement
   int get session => (origin as StartSessionActionProvider).session;
 }
 
-String _$startExtraActionHash() => r'3ea0d06d5b7d9de8976d148814223607a9e0305d';
+String _$startExtraActionHash() => r'3b30ac876c8f5fd22d9c4c027c4f6f7cbe6f21bd';
 
 /// Start extra action provider
 ///
@@ -1294,7 +1313,7 @@ class _StartExtraActionProviderElement
 }
 
 String _$completeExtraActionHash() =>
-    r'd14ba404388078298b4949759fa2a26b9b532455';
+    r'58f62418d0af2645acb20e61f4684786e50da8a9';
 
 /// Complete extra action provider
 ///
@@ -2560,7 +2579,7 @@ final deleteAccountActionProvider = AutoDisposeFutureProvider<bool>.internal(
 // ignore: unused_element
 typedef DeleteAccountActionRef = AutoDisposeFutureProviderRef<bool>;
 String _$initializePerformanceAnalyticsActionHash() =>
-    r'be9bc07d7023181c0c24df57ae612c924831e16c';
+    r'ab65b95b9ff1b567a72b3583eab4ce2c2ecca401';
 
 /// Initialize performance analytics action provider
 ///

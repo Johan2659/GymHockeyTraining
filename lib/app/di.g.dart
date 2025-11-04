@@ -191,7 +191,7 @@ final programRepositoryProvider =
 // ignore: unused_element
 typedef ProgramRepositoryRef = AutoDisposeProviderRef<ProgramRepository>;
 String _$progressRepositoryHash() =>
-    r'615024d507d2a0695ce53088ec0166de375096ca';
+    r'bdfe8ac9a1ecf735e463ff33388e43516f9ae3b1';
 
 /// Provider for progress repository
 ///
@@ -212,7 +212,7 @@ final progressRepositoryProvider =
 // ignore: unused_element
 typedef ProgressRepositoryRef = AutoDisposeProviderRef<ProgressRepository>;
 String _$programStateRepositoryHash() =>
-    r'455d129d7e50595b82d20aeec4c5d940ccd6ce2b';
+    r'e30da89e1b9d00ae1042543fb15f549d88a02754';
 
 /// Provider for program state repository
 ///
@@ -314,7 +314,7 @@ final extrasRepositoryProvider = AutoDisposeProvider<ExtrasRepository>.internal(
 // ignore: unused_element
 typedef ExtrasRepositoryRef = AutoDisposeProviderRef<ExtrasRepository>;
 String _$performanceAnalyticsRepositoryHash() =>
-    r'a95bbc17cfa61a61f8016ef79e6f445a3cbb5974';
+    r'd6e2043b1180bdae181d64c91474cce22c804392';
 
 /// Provider for performance analytics repository
 ///
@@ -378,5 +378,24 @@ final onboardingRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef OnboardingRepositoryRef = AutoDisposeProviderRef<OnboardingRepository>;
+String _$authRepositoryHash() => r'a8767550d220ede9bb05149c073a651c4422d5ef';
+
+/// Provider for authentication repository
+///
+/// Copied from [authRepository].
+@ProviderFor(authRepository)
+final authRepositoryProvider = AutoDisposeProvider<AuthRepository>.internal(
+  authRepository,
+  name: r'authRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$authRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AuthRepositoryRef = AutoDisposeProviderRef<AuthRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

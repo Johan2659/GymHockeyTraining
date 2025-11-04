@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/models/models.dart';
 import '../../../core/services/logger_service.dart';
 import '../../../app/theme.dart';
 import '../../application/app_state_provider.dart';
+import '../../auth/application/auth_controller.dart';
 
 /// Step 12 — Profile/MenuScreen with comprehensive user settings
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -20,14 +22,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(userProfileProvider);
+    final authUserAsync = ref.watch(currentUserProfileProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile & Settings'),
         backgroundColor: AppTheme.surfaceColor,
         foregroundColor: AppTheme.onSurfaceColor,
+        actions: [
+          // Logout button
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () => _handleLogout(context),
+          ),
+        ],
       ),
-      body: profileAsync.when(
+      body: authUserAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -38,20 +49,101 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Text('Error loading profile: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => ref.refresh(userProfileProvider),
+                onPressed: () {
+                  ref.refresh(userProfileProvider);
+                  ref.refresh(currentUserProfileProvider);
+                },
                 child: const Text('Retry'),
               ),
             ],
           ),
         ),
-        data: (profile) => _buildProfileContent(context, profile),
+        data: (authUser) {
+          return profileAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('Error: $error')),
+            data: (profile) => _buildProfileContent(context, authUser, profile),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildProfileContent(BuildContext context, Profile? profile) {
+  Future<void> _handleLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      setState(() => _isLoading = true);
+      
+      try {
+        final authController = ref.read(authControllerProvider.notifier);
+        final success = await authController.logout();
+        
+        if (success && context.mounted) {
+          LoggerService.instance.info('Logout successful, clearing app state',
+              source: 'ProfileScreen');
+          
+          // Invalidate all app state providers to clear cached data
+          ref.invalidate(progressEventsProvider);
+          ref.invalidate(programStateProvider);
+          ref.invalidate(userProfileProvider);
+          ref.invalidate(performanceAnalyticsProvider);
+          
+          // Invalidate auth providers
+          ref.invalidate(currentAuthUserProvider);
+          ref.invalidate(isUserLoggedInProvider);
+          ref.invalidate(currentUserProfileProvider);
+          
+          // Small delay to ensure state is cleared
+          await Future.delayed(const Duration(milliseconds: 50));
+          
+          if (context.mounted) {
+            // Navigate to auth welcome - router should keep us there since we're logged out
+            context.go('/auth/welcome');
+            
+            LoggerService.instance.info('Navigated to auth welcome',
+                source: 'ProfileScreen');
+          }
+        } else if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Logout failed')),
+          );
+          setState(() => _isLoading = false);
+        }
+      } catch (e, stackTrace) {
+        LoggerService.instance.error('Error during logout',
+            source: 'ProfileScreen', error: e, stackTrace: stackTrace);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Logout error occurred')),
+          );
+          setState(() => _isLoading = false);
+        }
+      }
+    }
+  }
+
+  Widget _buildProfileContent(BuildContext context, UserProfile? authUser, Profile? profile) {
     // Use safe defaults for nullable fields
-    final role = profile?.role ?? UserRole.attacker;
+    final username = authUser?.username ?? 'User';
+    // Convert PlayerRole to UserRole for display
+    final userRole = profile?.role ?? _playerRoleToUserRole(authUser?.role ?? PlayerRole.forward);
     final language = profile?.language ?? 'English';
     final units = profile?.units ?? 'kg';
     final theme = profile?.theme ?? 'dark';
@@ -61,23 +153,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // Header with username
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
                   Container(
-                    width: 48,
-                    height: 48,
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppTheme.primaryColor.withOpacity(0.2),
                     ),
-                    child: Icon(
-                      _getRoleIcon(role),
-                      size: 24,
-                      color: AppTheme.primaryColor,
+                    child: Center(
+                      child: Text(
+                        username.isNotEmpty ? username[0].toUpperCase() : 'U',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.primaryColor,
+                            ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -86,18 +182,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _getRoleDisplayName(role),
+                          username,
                           style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Hockey Training Profile',
+                          _getRoleDisplayName(userRole),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[400],
+                                  ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Hockey Training',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[400],
+                                    color: Colors.grey[500],
                                   ),
                         ),
                       ],
@@ -122,9 +226,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // Role Selection
           _buildSettingCard(
             title: 'Role',
-            subtitle: _getRoleDisplayName(role),
+            subtitle: _getRoleDisplayName(userRole),
             icon: Icons.sports_hockey,
-            onTap: () => _showRoleSelector(context, role),
+            onTap: () => _showRoleSelector(context, userRole),
           ),
 
           // Units Selection
@@ -578,6 +682,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         return 'System Default';
       default:
         return theme;
+    }
+  }
+
+  // Convert PlayerRole to UserRole for display
+  UserRole _playerRoleToUserRole(PlayerRole role) {
+    switch (role) {
+      case PlayerRole.forward:
+        return UserRole.attacker;
+      case PlayerRole.defence:
+        return UserRole.defender;
+      case PlayerRole.goalie:
+        return UserRole.goalie;
+      case PlayerRole.referee:
+        return UserRole.referee;
     }
   }
 }

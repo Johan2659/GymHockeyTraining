@@ -47,16 +47,29 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
     });
 
     try {
-      // Create and save the user profile
-      final profile = UserProfile(
+      // Update the current user profile with onboarding completion
+      final authRepo = ref.read(authRepositoryProvider);
+      final currentUser = await authRepo.getCurrentUser();
+      
+      if (currentUser == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No user logged in. Please login again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      final updatedProfile = currentUser.copyWith(
         role: widget.role,
         goal: widget.goal,
         onboardingCompleted: true,
-        createdAt: DateTime.now(),
       );
 
-      final repository = ref.read(onboardingRepositoryProvider);
-      final success = await repository.saveUserProfile(profile);
+      final success = await authRepo.updateUserProfile(updatedProfile);
 
       if (!success) {
         if (mounted) {

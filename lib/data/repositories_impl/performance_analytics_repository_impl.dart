@@ -3,6 +3,7 @@ import '../../core/models/models.dart';
 import '../../core/repositories/performance_analytics_repository.dart';
 import '../../core/repositories/exercise_repository.dart';
 import '../../core/repositories/exercise_performance_repository.dart';
+import '../../core/repositories/auth_repository.dart';
 import '../../core/services/logger_service.dart';
 import '../datasources/local_performance_source.dart';
 
@@ -12,18 +13,23 @@ class PerformanceAnalyticsRepositoryImpl
     required LocalPerformanceSource dataSource,
     required ExerciseRepository exerciseRepository,
     required ExercisePerformanceRepository exercisePerformanceRepository,
+    required AuthRepository authRepository,
   })  : _dataSource = dataSource,
         _exerciseRepository = exerciseRepository,
-        _exercisePerformanceRepository = exercisePerformanceRepository;
+        _exercisePerformanceRepository = exercisePerformanceRepository,
+        _authRepository = authRepository;
 
   final LocalPerformanceSource _dataSource;
   final ExerciseRepository _exerciseRepository;
   final ExercisePerformanceRepository _exercisePerformanceRepository;
+  final AuthRepository _authRepository;
 
   @override
   Future<PerformanceAnalytics?> get() async {
     try {
-      return await _dataSource.getPerformanceAnalytics();
+      final currentUser = await _authRepository.getCurrentUser();
+      final userId = currentUser?.id ?? '';
+      return await _dataSource.getPerformanceAnalytics(userId);
     } catch (e) {
       LoggerService.instance.error('Failed to get performance analytics',
           error: e, source: 'PerformanceAnalyticsRepository');
@@ -32,8 +38,10 @@ class PerformanceAnalyticsRepositoryImpl
   }
 
   @override
-  Stream<PerformanceAnalytics?> watch() {
-    return _dataSource.watchPerformanceAnalytics();
+  Stream<PerformanceAnalytics?> watch() async* {
+    final currentUser = await _authRepository.getCurrentUser();
+    final userId = currentUser?.id ?? '';
+    yield* _dataSource.watchPerformanceAnalytics(userId);
   }
 
   @override
@@ -54,6 +62,9 @@ class PerformanceAnalyticsRepositoryImpl
     ProgramState? currentState,
   ) async {
     try {
+      final currentUser = await _authRepository.getCurrentUser();
+      final userId = currentUser?.id ?? '';
+      
       final now = DateTime.now();
       final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
       final weeklyEvents =
@@ -112,6 +123,7 @@ class PerformanceAnalyticsRepositoryImpl
       }
 
       return PerformanceAnalytics(
+        userId: userId,
         categoryProgress: categoryProgress,
         weeklyStats: weeklyStats,
         streakData: streakData,
@@ -455,11 +467,15 @@ class PerformanceAnalyticsRepositoryImpl
   @override
   Future<bool> clear() async {
     try {
+      final currentUser = await _authRepository.getCurrentUser();
+      final userId = currentUser?.id ?? '';
+      
       LoggerService.instance.warning('Clearing performance analytics data',
           source: 'PerformanceAnalyticsRepository');
 
       // We'll clear by saving a reset analytics object
       final resetAnalytics = PerformanceAnalytics(
+        userId: userId,
         categoryProgress: <ExerciseCategory, double>{
           for (final category in ExerciseCategory.values) category: 0.0,
         },

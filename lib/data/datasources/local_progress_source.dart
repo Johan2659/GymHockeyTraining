@@ -48,8 +48,8 @@ class LocalProgressSource {
     }
   }
 
-  /// Gets all progress events sorted by timestamp
-  Future<List<ProgressEvent>> getAllEvents() async {
+  /// Gets all progress events sorted by timestamp (optionally filtered by userId)
+  Future<List<ProgressEvent>> getAllEvents({String? userId}) async {
     try {
       final keys = await LocalKVStore.getKeys(HiveBoxes.progress);
       final progressKeys = keys
@@ -69,7 +69,11 @@ class LocalProgressSource {
           try {
             final eventData = jsonDecode(eventJson) as Map<String, dynamic>;
             final event = ProgressEvent.fromJson(eventData);
-            events.add(event);
+            
+            // Filter by userId if provided
+            if (userId == null || event.userId == userId) {
+              events.add(event);
+            }
           } catch (e) {
             _logger.w(
                 'Failed to parse event ${entry.key}',
@@ -90,10 +94,10 @@ class LocalProgressSource {
     }
   }
 
-  /// Gets progress events for a specific program
-  Future<List<ProgressEvent>> getEventsByProgram(String programId) async {
+  /// Gets progress events for a specific program and user
+  Future<List<ProgressEvent>> getEventsByProgram(String programId, {String? userId}) async {
     try {
-      final allEvents = await getAllEvents();
+      final allEvents = await getAllEvents(userId: userId);
       return allEvents.where((event) => event.programId == programId).toList();
     } catch (e, stackTrace) {
       _logger.e(
@@ -131,10 +135,10 @@ class LocalProgressSource {
     }
   }
 
-  /// Provides a stream of all progress events
-  Stream<List<ProgressEvent>> watchAllEvents() {
+  /// Provides a stream of all progress events for a specific user
+  Stream<List<ProgressEvent>> watchAllEvents({String? userId}) {
     // Emit current state immediately
-    getAllEvents().then((events) {
+    getAllEvents(userId: userId).then((events) {
       if (!_progressController.isClosed) {
         _progressController.add(events);
       }

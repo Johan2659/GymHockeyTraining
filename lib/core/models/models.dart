@@ -305,10 +305,11 @@ class SessionInProgress {
   }
 }
 
-/// Program state model for tracking user progress in a program
+/// Program state model for tracking progress in the current active program
 @JsonSerializable()
 class ProgramState {
   const ProgramState({
+    required this.userId,
     this.activeProgramId,
     required this.currentWeek,
     required this.currentSession,
@@ -317,6 +318,7 @@ class ProgramState {
     this.sessionInProgress,
   });
 
+  final String userId; // User this state belongs to
   final String? activeProgramId;
   final int currentWeek;
   final int currentSession;
@@ -331,6 +333,7 @@ class ProgramState {
   Map<String, dynamic> toJson() => _$ProgramStateToJson(this);
 
   ProgramState copyWith({
+    String? userId,
     String? activeProgramId,
     int? currentWeek,
     int? currentSession,
@@ -340,6 +343,7 @@ class ProgramState {
     bool clearSessionInProgress = false,
   }) {
     return ProgramState(
+      userId: userId ?? this.userId,
       activeProgramId: activeProgramId ?? this.activeProgramId,
       currentWeek: currentWeek ?? this.currentWeek,
       currentSession: currentSession ?? this.currentSession,
@@ -364,6 +368,7 @@ class ProgramState {
 @JsonSerializable()
 class ProgressEvent {
   const ProgressEvent({
+    required this.userId,
     required this.ts,
     required this.type,
     required this.programId,
@@ -373,6 +378,7 @@ class ProgressEvent {
     this.payload,
   });
 
+  final String userId; // User this event belongs to
   final DateTime ts;
   final ProgressEventType type;
   final String programId;
@@ -508,6 +514,7 @@ class ExtraItem {
 @JsonSerializable()
 class PerformanceAnalytics {
   const PerformanceAnalytics({
+    required this.userId,
     required this.categoryProgress,
     required this.weeklyStats,
     required this.streakData,
@@ -516,6 +523,8 @@ class PerformanceAnalytics {
     required this.lastUpdated,
   });
 
+  final String userId; // User these analytics belong to
+  
   /// Progress percentage per exercise category (0.0 to 1.0)
   final Map<ExerciseCategory, double> categoryProgress;
 
@@ -543,6 +552,7 @@ class PerformanceAnalytics {
   Map<String, dynamic> toJson() => _$PerformanceAnalyticsToJson(this);
 
   PerformanceAnalytics copyWith({
+    String? userId,
     Map<ExerciseCategory, double>? categoryProgress,
     WeeklyStats? weeklyStats,
     StreakData? streakData,
@@ -551,6 +561,7 @@ class PerformanceAnalytics {
     DateTime? lastUpdated,
   }) {
     return PerformanceAnalytics(
+      userId: userId ?? this.userId,
       categoryProgress: categoryProgress ?? this.categoryProgress,
       weeklyStats: weeklyStats ?? this.weeklyStats,
       streakData: streakData ?? this.streakData,
@@ -788,16 +799,20 @@ class ExercisePerformance {
       sets.map((e) => e.toJson()).toList();
 }
 
-/// User profile model for onboarding
+/// User profile model for onboarding and authentication
 @JsonSerializable()
 class UserProfile {
   const UserProfile({
+    required this.id,
+    required this.username,
     required this.role,
     required this.goal,
     required this.onboardingCompleted,
     this.createdAt,
   });
 
+  final String id; // Unique user identifier
+  final String username; // Display name
   final PlayerRole role;
   final TrainingGoal goal;
   final bool onboardingCompleted;
@@ -808,12 +823,16 @@ class UserProfile {
   Map<String, dynamic> toJson() => _$UserProfileToJson(this);
 
   UserProfile copyWith({
+    String? id,
+    String? username,
     PlayerRole? role,
     TrainingGoal? goal,
     bool? onboardingCompleted,
     DateTime? createdAt,
   }) {
     return UserProfile(
+      id: id ?? this.id,
+      username: username ?? this.username,
       role: role ?? this.role,
       goal: goal ?? this.goal,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,

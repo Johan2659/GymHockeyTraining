@@ -1,55 +1,54 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'onboarding_controller.dart';
+part of 'auth_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userProfileStreamHash() => r'b99382a93e134b3cb4f5a67479d88297bd952547';
+String _$currentAuthUserHash() => r'7171daf0b76eef4186b1a24fb6c8c5daaf5e03c6';
 
-/// Provider for the current user profile from onboarding
+/// Provider for the current authenticated user
 ///
-/// Copied from [userProfileStream].
-@ProviderFor(userProfileStream)
-final userProfileStreamProvider =
+/// Copied from [currentAuthUser].
+@ProviderFor(currentAuthUser)
+final currentAuthUserProvider =
     AutoDisposeStreamProvider<UserProfile?>.internal(
-  userProfileStream,
-  name: r'userProfileStreamProvider',
+  currentAuthUser,
+  name: r'currentAuthUserProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$userProfileStreamHash,
+      : _$currentAuthUserHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef UserProfileStreamRef = AutoDisposeStreamProviderRef<UserProfile?>;
-String _$hasCompletedOnboardingHash() =>
-    r'e439bb2c3051cf9f6ee1267c44cf4d8f58ee1f9d';
+typedef CurrentAuthUserRef = AutoDisposeStreamProviderRef<UserProfile?>;
+String _$isUserLoggedInHash() => r'67f315a6bd554e1253f2f63a1ac569349a89922c';
 
-/// Provider to check if onboarding is completed
+/// Provider to check if a user is logged in
 ///
-/// Copied from [hasCompletedOnboarding].
-@ProviderFor(hasCompletedOnboarding)
-final hasCompletedOnboardingProvider = AutoDisposeFutureProvider<bool>.internal(
-  hasCompletedOnboarding,
-  name: r'hasCompletedOnboardingProvider',
+/// Copied from [isUserLoggedIn].
+@ProviderFor(isUserLoggedIn)
+final isUserLoggedInProvider = AutoDisposeFutureProvider<bool>.internal(
+  isUserLoggedIn,
+  name: r'isUserLoggedInProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$hasCompletedOnboardingHash,
+      : _$isUserLoggedInHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef HasCompletedOnboardingRef = AutoDisposeFutureProviderRef<bool>;
+typedef IsUserLoggedInRef = AutoDisposeFutureProviderRef<bool>;
 String _$currentUserProfileHash() =>
-    r'5cc335e466ccc75d506682a7df1211a4ba7f5864';
+    r'32c1e4a7af6d54bed65a2e4eb5780babb986d4fb';
 
-/// Provider for getting the current user profile
+/// Provider for getting current user synchronously from async provider
 ///
 /// Copied from [currentUserProfile].
 @ProviderFor(currentUserProfile)
@@ -67,24 +66,23 @@ final currentUserProfileProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentUserProfileRef = AutoDisposeFutureProviderRef<UserProfile?>;
-String _$onboardingControllerHash() =>
-    r'fc7478113a95d7e6ec1fafcd407ec15bdddc3ef8';
+String _$authControllerHash() => r'2085571b90b697d0b1cf05c8779a378ab9abf9d1';
 
-/// Controller for managing onboarding flow state
+/// Authentication state controller
 ///
-/// Copied from [OnboardingController].
-@ProviderFor(OnboardingController)
-final onboardingControllerProvider =
-    AutoDisposeNotifierProvider<OnboardingController, OnboardingState>.internal(
-  OnboardingController.new,
-  name: r'onboardingControllerProvider',
+/// Copied from [AuthController].
+@ProviderFor(AuthController)
+final authControllerProvider =
+    AutoDisposeAsyncNotifierProvider<AuthController, void>.internal(
+  AuthController.new,
+  name: r'authControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$onboardingControllerHash,
+      : _$authControllerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$OnboardingController = AutoDisposeNotifier<OnboardingState>;
+typedef _$AuthController = AutoDisposeAsyncNotifier<void>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

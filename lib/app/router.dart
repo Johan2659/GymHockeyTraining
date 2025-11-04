@@ -17,33 +17,61 @@ import '../features/onboarding/presentation/welcome_screen.dart';
 import '../features/onboarding/presentation/role_selection_screen.dart';
 import '../features/onboarding/presentation/goal_selection_screen.dart';
 import '../features/onboarding/presentation/plan_preview_screen.dart';
+import '../features/auth/presentation/auth_welcome_screen.dart';
+import '../features/auth/presentation/login_screen.dart';
+import '../features/auth/presentation/signup_screen.dart';
+import '../features/auth/application/auth_controller.dart';
 import 'di.dart';
 
 part 'router.g.dart';
 
 @riverpod
 GoRouter router(Ref ref) {
+  // Watch auth state so router rebuilds when user logs in/out
+  ref.watch(currentAuthUserProvider);
+  
   return GoRouter(
     initialLocation: '/',
     redirect: (context, state) async {
-      final repository = ref.read(onboardingRepositoryProvider);
-      final hasCompleted = await repository.hasCompletedOnboarding();
+      // Use fresh read to get current auth state (not cached)
+      final authRepo = ref.read(authRepositoryProvider);
+      final isLoggedIn = await authRepo.isLoggedIn();
+      final currentUser = await authRepo.getCurrentUser();
       
+      final isAuthRoute = state.matchedLocation.startsWith('/auth');
       final isOnboardingRoute = state.matchedLocation.startsWith('/onboarding');
       
-      // If not completed onboarding and not already on onboarding route
-      if (!hasCompleted && !isOnboardingRoute) {
+      // Not logged in - redirect to auth
+      if (!isLoggedIn && !isAuthRoute) {
+        return '/auth/welcome';
+      }
+      
+      // Logged in but onboarding not completed - redirect to onboarding
+      if (isLoggedIn && currentUser != null && !currentUser.onboardingCompleted && !isOnboardingRoute) {
         return '/onboarding/welcome';
       }
       
-      // If completed onboarding and trying to access onboarding route
-      if (hasCompleted && isOnboardingRoute) {
+      // Logged in, onboarding completed, trying to access auth/onboarding - redirect to main app
+      if (isLoggedIn && currentUser != null && currentUser.onboardingCompleted && (isAuthRoute || isOnboardingRoute)) {
         return '/';
       }
       
       return null; // No redirect needed
     },
     routes: [
+      // Authentication routes
+      GoRoute(
+        path: '/auth/welcome',
+        builder: (context, state) => const AuthWelcomeScreen(),
+      ),
+      GoRoute(
+        path: '/auth/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/auth/signup',
+        builder: (context, state) => const SignUpScreen(),
+      ),
       // Shell route with bottom navigation for main sections
       ShellRoute(
         builder: (context, state, child) {

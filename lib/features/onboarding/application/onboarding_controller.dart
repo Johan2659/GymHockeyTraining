@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../app/di.dart';
 import '../../../core/models/models.dart';
 import '../../../core/services/logger_service.dart';
+import '../../../core/repositories/auth_repository.dart';
 
 part 'onboarding_controller.g.dart';
 
@@ -77,15 +78,26 @@ class OnboardingController extends _$OnboardingController {
       return false;
     }
 
-    final profile = UserProfile(
+    // Get current authenticated user
+    final authRepo = ref.read(authRepositoryProvider);
+    final currentUser = await authRepo.getCurrentUser();
+    
+    if (currentUser == null) {
+      LoggerService.instance.error(
+        'Cannot complete onboarding: no authenticated user',
+        source: 'OnboardingController',
+      );
+      return false;
+    }
+
+    // Update user profile with onboarding data
+    final updatedProfile = currentUser.copyWith(
       role: state.selectedRole!,
       goal: state.selectedGoal!,
       onboardingCompleted: true,
-      createdAt: DateTime.now(),
     );
 
-    final repository = ref.read(onboardingRepositoryProvider);
-    final success = await repository.saveUserProfile(profile);
+    final success = await authRepo.updateUserProfile(updatedProfile);
 
     if (success) {
       LoggerService.instance.info(

@@ -6,6 +6,7 @@ import 'dart:convert';
 void main() {
   test('Debug JSON structure', () {
     final analytics = PerformanceAnalytics(
+      userId: 'test-user-1',
       categoryProgress: <ExerciseCategory, double>{
         ExerciseCategory.strength: 0.5,
       },

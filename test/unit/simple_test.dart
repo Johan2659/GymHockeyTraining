@@ -8,6 +8,7 @@ void main() {
   group('Simple Tests', () {
     test('should create a ProgramState', () {
       const state = ProgramState(
+        userId: 'test-user-1',
         activeProgramId: 'test',
         currentWeek: 0,
         currentSession: 0,
@@ -20,6 +21,7 @@ void main() {
 
     test('should create a ProgressEvent', () {
       final event = ProgressEvent(
+        userId: 'test-user-1',
         ts: DateTime.now(),
         type: ProgressEventType.sessionStarted,
         programId: 'test',

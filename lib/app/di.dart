@@ -3,7 +3,9 @@ import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/repositories/repositories.dart';
+import '../core/repositories/auth_repository.dart';
 import '../data/repositories_impl/repositories_impl.dart';
+import '../data/repositories_impl/auth_repository_impl.dart';
 import '../data/datasources/datasources.dart';
 import '../data/datasources/local_performance_source.dart';
 
@@ -92,14 +94,22 @@ ProgramRepository programRepository(Ref ref) {
 @riverpod
 ProgressRepository progressRepository(Ref ref) {
   final localSource = ref.watch(localProgressSourceProvider);
-  return ProgressRepositoryImpl(localSource: localSource);
+  final authRepo = ref.watch(authRepositoryProvider);
+  return ProgressRepositoryImpl(
+    localSource: localSource,
+    authRepository: authRepo,
+  );
 }
 
 /// Provider for program state repository
 @riverpod
 ProgramStateRepository programStateRepository(Ref ref) {
   final localSource = ref.watch(localPrefsSourceProvider);
-  return ProgramStateRepositoryImpl(localSource: localSource);
+  final authRepo = ref.watch(authRepositoryProvider);
+  return ProgramStateRepositoryImpl(
+    localSource: localSource,
+    authRepository: authRepo,
+  );
 }
 
 /// Provider for profile repository
@@ -136,10 +146,12 @@ PerformanceAnalyticsRepository performanceAnalyticsRepository(Ref ref) {
   final dataSource = ref.watch(localPerformanceSourceProvider);
   final exerciseRepo = ref.watch(exerciseRepositoryProvider);
   final performanceRepo = ref.watch(exercisePerformanceRepositoryProvider);
+  final authRepo = ref.watch(authRepositoryProvider);
   return PerformanceAnalyticsRepositoryImpl(
     dataSource: dataSource,
     exerciseRepository: exerciseRepo,
     exercisePerformanceRepository: performanceRepo,
+    authRepository: authRepo,
   );
 }
 
@@ -153,4 +165,10 @@ ExercisePerformanceRepository exercisePerformanceRepository(Ref ref) {
 @riverpod
 OnboardingRepository onboardingRepository(Ref ref) {
   return OnboardingRepositoryImpl();
+}
+
+/// Provider for authentication repository
+@riverpod
+AuthRepository authRepository(Ref ref) {
+  return AuthRepositoryImpl();
 }
