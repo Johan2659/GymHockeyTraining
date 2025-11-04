@@ -453,7 +453,7 @@ class HubScreen extends ConsumerWidget {
                 final programId = data.state?.activeProgramId ?? '';
                 final week = data.state?.currentWeek ?? 0;
                 final session = data.state?.currentSession ?? 0;
-                context.go('/session/$programId/$week/$session');
+                context.go('/session/$programId/$week/$session/preview');
               }
             : null,
         style: FilledButton.styleFrom(
