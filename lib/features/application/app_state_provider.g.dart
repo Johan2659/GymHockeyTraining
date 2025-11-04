@@ -1294,7 +1294,7 @@ class _StartExtraActionProviderElement
 }
 
 String _$completeExtraActionHash() =>
-    r'ef4d9465baa36548bbd524b80c239585b0fbc1d0';
+    r'd14ba404388078298b4949759fa2a26b9b532455';
 
 /// Complete extra action provider
 ///
@@ -1471,7 +1471,7 @@ class _CompleteExtraActionProviderElement
 }
 
 String _$saveExercisePerformanceActionHash() =>
-    r'86d91c3ede436a69247061251f8405c845725804';
+    r'9e10ee6c45f9f6cc9871c07aff53491696fc680c';
 
 /// Save exercise performance action provider
 ///

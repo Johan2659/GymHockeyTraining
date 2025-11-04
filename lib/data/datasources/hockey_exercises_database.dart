@@ -23,7 +23,8 @@ class HockeyExercisesDatabase {
   "rest": 180,
   "youtubeQuery": "back squat hockey training",
   "gymAltId": "goblet_squat",
-  "homeAltId": "jump_squat"
+  "homeAltId": "jump_squat",
+  "tracksWeight": true
 }
 ''',
     'goblet_squat': '''
@@ -35,7 +36,8 @@ class HockeyExercisesDatabase {
   "reps": 8,
   "rest": 120,
   "youtubeQuery": "goblet squat technique",
-  "homeAltId": "bodyweight_squat"
+  "homeAltId": "bodyweight_squat",
+  "tracksWeight": true
 }
 ''',
     'jump_squat': '''
@@ -46,7 +48,8 @@ class HockeyExercisesDatabase {
   "sets": 5,
   "reps": 5,
   "rest": 90,
-  "youtubeQuery": "jump squat explosive power"
+  "youtubeQuery": "jump squat explosive power",
+  "tracksWeight": false
 }
 ''',
     'front_squat': '''
@@ -59,7 +62,8 @@ class HockeyExercisesDatabase {
   "rest": 180,
   "youtubeQuery": "front squat technique",
   "gymAltId": "split_squat_heavy",
-  "homeAltId": "pistol_squat_assist"
+  "homeAltId": "pistol_squat_assist",
+  "tracksWeight": true
 }
 ''',
     'walking_lunge': '''
@@ -72,7 +76,8 @@ class HockeyExercisesDatabase {
   "rest": 90,
   "youtubeQuery": "walking lunge hockey",
   "gymAltId": "split_squat",
-  "homeAltId": "bodyweight_lunge"
+  "homeAltId": "bodyweight_lunge",
+  "tracksWeight": true
 }
 ''',
     'bulgarian_split_squat': '''
@@ -84,7 +89,8 @@ class HockeyExercisesDatabase {
   "reps": 10,
   "rest": 90,
   "youtubeQuery": "bulgarian split squat",
-  "homeAltId": "reverse_lunge"
+  "homeAltId": "reverse_lunge",
+  "tracksWeight": true
 }
 ''',
     'step_up': '''
@@ -96,7 +102,8 @@ class HockeyExercisesDatabase {
   "reps": 12,
   "rest": 90,
   "youtubeQuery": "step up exercise hockey",
-  "homeAltId": "stair_step_up"
+  "homeAltId": "stair_step_up",
+  "tracksWeight": true
 }
 ''',
 
@@ -111,7 +118,8 @@ class HockeyExercisesDatabase {
   "rest": 180,
   "youtubeQuery": "deadlift hockey training",
   "gymAltId": "hip_thrust",
-  "homeAltId": "hip_hinge_backpack"
+  "homeAltId": "hip_hinge_backpack",
+  "tracksWeight": true
 }
 ''',
     'hip_thrust': '''
@@ -123,7 +131,8 @@ class HockeyExercisesDatabase {
   "reps": 8,
   "rest": 120,
   "youtubeQuery": "hip thrust exercise",
-  "homeAltId": "single_leg_glute_bridge"
+  "homeAltId": "single_leg_glute_bridge",
+  "tracksWeight": true
 }
 ''',
     'romanian_deadlift': '''
@@ -135,7 +144,8 @@ class HockeyExercisesDatabase {
   "reps": 8,
   "rest": 120,
   "youtubeQuery": "RDL romanian deadlift",
-  "homeAltId": "single_leg_rdl"
+  "homeAltId": "single_leg_rdl",
+  "tracksWeight": true
 }
 ''',
     'nordic_hamstring': '''
@@ -148,7 +158,8 @@ class HockeyExercisesDatabase {
   "rest": 120,
   "youtubeQuery": "nordic hamstring curl",
   "gymAltId": "leg_curl",
-  "homeAltId": "hamstring_curl_towel"
+  "homeAltId": "hamstring_curl_towel",
+  "tracksWeight": true
 }
 ''',
 
@@ -163,7 +174,8 @@ class HockeyExercisesDatabase {
   "rest": 150,
   "youtubeQuery": "bench press hockey training",
   "gymAltId": "dumbbell_bench",
-  "homeAltId": "push_ups_weighted"
+  "homeAltId": "push_ups_weighted",
+  "tracksWeight": false
 }
 ''',
     'dumbbell_bench': '''
@@ -175,7 +187,8 @@ class HockeyExercisesDatabase {
   "reps": 8,
   "rest": 120,
   "youtubeQuery": "dumbbell bench press",
-  "homeAltId": "push_ups_decline"
+  "homeAltId": "push_ups_decline",
+  "tracksWeight": false
 }
 ''',
     'overhead_press': '''
@@ -188,7 +201,8 @@ class HockeyExercisesDatabase {
   "rest": 150,
   "youtubeQuery": "overhead press military",
   "gymAltId": "dumbbell_press",
-  "homeAltId": "pike_push_ups"
+  "homeAltId": "pike_push_ups",
+  "tracksWeight": true
 }
 ''',
     'landmine_press': '''
@@ -201,7 +215,8 @@ class HockeyExercisesDatabase {
   "rest": 120,
   "youtubeQuery": "landmine press unilateral",
   "gymAltId": "dumbbell_incline_unilateral",
-  "homeAltId": "single_arm_push_up"
+  "homeAltId": "single_arm_push_up",
+  "tracksWeight": false
 }
 ''',
     'arnold_press': '''
@@ -213,7 +228,8 @@ class HockeyExercisesDatabase {
   "reps": 10,
   "rest": 90,
   "youtubeQuery": "arnold press shoulders",
-  "homeAltId": "pike_push_ups"
+  "homeAltId": "pike_push_ups",
+  "tracksWeight": true
 }
 ''',
 
@@ -228,7 +244,8 @@ class HockeyExercisesDatabase {
   "rest": 150,
   "youtubeQuery": "weighted pull ups",
   "gymAltId": "lat_pulldown",
-  "homeAltId": "towel_door_rows"
+  "homeAltId": "towel_door_rows",
+  "tracksWeight": false
 }
 ''',
     'lat_pulldown': '''
@@ -240,7 +257,8 @@ class HockeyExercisesDatabase {
   "reps": 10,
   "rest": 120,
   "youtubeQuery": "lat pulldown technique",
-  "homeAltId": "resistance_band_rows"
+  "homeAltId": "resistance_band_rows",
+  "tracksWeight": true
 }
 ''',
     'barbell_row': '''
@@ -253,7 +271,8 @@ class HockeyExercisesDatabase {
   "rest": 120,
   "youtubeQuery": "barbell row hockey",
   "gymAltId": "chest_supported_row",
-  "homeAltId": "backpack_row_table"
+  "homeAltId": "backpack_row_table",
+  "tracksWeight": true
 }
 ''',
     'chest_supported_row': '''
@@ -265,7 +284,8 @@ class HockeyExercisesDatabase {
   "reps": 10,
   "rest": 90,
   "youtubeQuery": "chest supported row",
-  "homeAltId": "resistance_band_rows"
+  "homeAltId": "resistance_band_rows",
+  "tracksWeight": true
 }
 ''',
     'one_arm_row': '''
@@ -277,7 +297,8 @@ class HockeyExercisesDatabase {
   "reps": 8,
   "rest": 90,
   "youtubeQuery": "one arm dumbbell row",
-  "homeAltId": "backpack_row"
+  "homeAltId": "backpack_row",
+  "tracksWeight": true
 }
 ''',
 
@@ -291,7 +312,8 @@ class HockeyExercisesDatabase {
   "reps": 15,
   "rest": 60,
   "youtubeQuery": "standing calf raise",
-  "homeAltId": "single_leg_calf_raise"
+  "homeAltId": "single_leg_calf_raise",
+  "tracksWeight": true
 }
 ''',
 
@@ -304,7 +326,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 15,
   "rest": 60,
-  "youtubeQuery": "bodyweight squat form"
+  "youtubeQuery": "bodyweight squat form",
+  "tracksWeight": false
 }
 ''',
     'bodyweight_lunge': '''
@@ -315,7 +338,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 60,
-  "youtubeQuery": "bodyweight lunge technique"
+  "youtubeQuery": "bodyweight lunge technique",
+  "tracksWeight": false
 }
 ''',
     'split_squat': '''
@@ -326,7 +350,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "split squat exercise"
+  "youtubeQuery": "split squat exercise",
+  "tracksWeight": true
 }
 ''',
     'split_squat_heavy': '''
@@ -337,7 +362,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 120,
-  "youtubeQuery": "weighted split squat"
+  "youtubeQuery": "weighted split squat",
+  "tracksWeight": true
 }
 ''',
     'pistol_squat_assist': '''
@@ -348,7 +374,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 5,
   "rest": 120,
-  "youtubeQuery": "assisted pistol squat"
+  "youtubeQuery": "assisted pistol squat",
+  "tracksWeight": true
 }
 ''',
     'hip_hinge_backpack': '''
@@ -359,7 +386,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "hip hinge deadlift home"
+  "youtubeQuery": "hip hinge deadlift home",
+  "tracksWeight": true
 }
 ''',
     'single_leg_glute_bridge': '''
@@ -370,7 +398,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "single leg glute bridge"
+  "youtubeQuery": "single leg glute bridge",
+  "tracksWeight": true
 }
 ''',
     'single_leg_rdl': '''
@@ -381,7 +410,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "single leg romanian deadlift"
+  "youtubeQuery": "single leg romanian deadlift",
+  "tracksWeight": true
 }
 ''',
     'hamstring_curl_towel': '''
@@ -392,7 +422,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "towel hamstring curl home"
+  "youtubeQuery": "towel hamstring curl home",
+  "tracksWeight": true
 }
 ''',
     'leg_curl': '''
@@ -403,7 +434,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "leg curl machine technique"
+  "youtubeQuery": "leg curl machine technique",
+  "tracksWeight": true
 }
 ''',
     'push_ups_weighted': '''
@@ -414,7 +446,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "weighted push ups backpack"
+  "youtubeQuery": "weighted push ups backpack",
+  "tracksWeight": false
 }
 ''',
     'push_ups_decline': '''
@@ -425,7 +458,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "decline push ups feet elevated"
+  "youtubeQuery": "decline push ups feet elevated",
+  "tracksWeight": false
 }
 ''',
     'pike_push_ups': '''
@@ -436,7 +470,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "pike push ups shoulders"
+  "youtubeQuery": "pike push ups shoulders",
+  "tracksWeight": false
 }
 ''',
     'single_arm_push_up': '''
@@ -447,7 +482,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 4,
   "rest": 120,
-  "youtubeQuery": "single arm push up progression"
+  "youtubeQuery": "single arm push up progression",
+  "tracksWeight": false
 }
 ''',
     'dumbbell_incline_unilateral': '''
@@ -458,7 +494,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 120,
-  "youtubeQuery": "single arm incline dumbbell press"
+  "youtubeQuery": "single arm incline dumbbell press",
+  "tracksWeight": true
 }
 ''',
     'dumbbell_press': '''
@@ -469,7 +506,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "dumbbell shoulder press"
+  "youtubeQuery": "dumbbell shoulder press",
+  "tracksWeight": true
 }
 ''',
     'towel_door_rows': '''
@@ -480,7 +518,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "towel door row home exercise"
+  "youtubeQuery": "towel door row home exercise",
+  "tracksWeight": true
 }
 ''',
     'resistance_band_rows': '''
@@ -491,7 +530,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "resistance band rows"
+  "youtubeQuery": "resistance band rows",
+  "tracksWeight": true
 }
 ''',
     'backpack_row_table': '''
@@ -502,7 +542,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "inverted row under table"
+  "youtubeQuery": "inverted row under table",
+  "tracksWeight": true
 }
 ''',
     'backpack_row': '''
@@ -513,7 +554,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "bent over row backpack"
+  "youtubeQuery": "bent over row backpack",
+  "tracksWeight": true
 }
 ''',
     'single_leg_calf_raise': '''
@@ -524,7 +566,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 12,
   "rest": 60,
-  "youtubeQuery": "single leg calf raise"
+  "youtubeQuery": "single leg calf raise",
+  "tracksWeight": true
 }
 ''',
     'cable_rotation': '''
@@ -535,7 +578,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 60,
-  "youtubeQuery": "cable rotation core exercise"
+  "youtubeQuery": "cable rotation core exercise",
+  "tracksWeight": true
 }
 ''',
     'resistance_band_rotation': '''
@@ -546,7 +590,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 60,
-  "youtubeQuery": "resistance band core rotation"
+  "youtubeQuery": "resistance band core rotation",
+  "tracksWeight": true
 }
 ''',
     'pallof_resistance_band': '''
@@ -557,7 +602,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 60,
-  "youtubeQuery": "pallof press resistance band"
+  "youtubeQuery": "pallof press resistance band",
+  "tracksWeight": true
 }
 ''',
     'adductor_squeeze': '''
@@ -568,7 +614,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 15,
   "rest": 60,
-  "youtubeQuery": "adductor squeeze ball exercise"
+  "youtubeQuery": "adductor squeeze ball exercise",
+  "tracksWeight": true
 }
 ''',
     'lying_leg_raises': '''
@@ -579,7 +626,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "lying leg raises abs"
+  "youtubeQuery": "lying leg raises abs",
+  "tracksWeight": true
 }
 ''',
     'jump_rotation_arms': '''
@@ -590,7 +638,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 5,
   "rest": 90,
-  "youtubeQuery": "rotational jump training"
+  "youtubeQuery": "rotational jump training",
+  "tracksWeight": false
 }
 ''',
     'squat_jump_clap': '''
@@ -601,7 +650,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "squat jump clap overhead"
+  "youtubeQuery": "squat jump clap overhead",
+  "tracksWeight": false
 }
 ''',
     'reverse_lunge': '''
@@ -612,7 +662,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "reverse lunge technique"
+  "youtubeQuery": "reverse lunge technique",
+  "tracksWeight": true
 }
 ''',
     'stair_step_up': '''
@@ -623,7 +674,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "stair step up exercise"
+  "youtubeQuery": "stair step up exercise",
+  "tracksWeight": true
 }
 ''',
     'burpee_intervals': '''
@@ -635,7 +687,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 15,
   "rest": 45,
-  "youtubeQuery": "burpee intervals workout"
+  "youtubeQuery": "burpee intervals workout",
+  "tracksWeight": false
 }
 ''',
     'jump_squat_intervals': '''
@@ -647,7 +700,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 10,
   "rest": 50,
-  "youtubeQuery": "jump squat intervals training"
+  "youtubeQuery": "jump squat intervals training",
+  "tracksWeight": false
 }
 ''',
   };
@@ -667,7 +721,8 @@ class HockeyExercisesDatabase {
   "rest": 180,
   "youtubeQuery": "power clean technique",
   "gymAltId": "kettlebell_swing",
-  "homeAltId": "broad_jump"
+  "homeAltId": "broad_jump",
+  "tracksWeight": false
 }
 ''',
     'kettlebell_swing': '''
@@ -679,7 +734,8 @@ class HockeyExercisesDatabase {
   "reps": 10,
   "rest": 90,
   "youtubeQuery": "kettlebell swing hockey",
-  "homeAltId": "jump_squat"
+  "homeAltId": "jump_squat",
+  "tracksWeight": false
 }
 ''',
     'medicine_ball_slam': '''
@@ -691,7 +747,8 @@ class HockeyExercisesDatabase {
   "reps": 8,
   "rest": 90,
   "youtubeQuery": "medicine ball slam",
-  "homeAltId": "squat_jump_clap"
+  "homeAltId": "squat_jump_clap",
+  "tracksWeight": false
 }
 ''',
     'medicine_ball_side_throw': '''
@@ -703,7 +760,8 @@ class HockeyExercisesDatabase {
   "reps": 5,
   "rest": 90,
   "youtubeQuery": "medicine ball rotational throw",
-  "homeAltId": "jump_rotation_arms"
+  "homeAltId": "jump_rotation_arms",
+  "tracksWeight": false
 }
 ''',
     'broad_jump': '''
@@ -714,7 +772,8 @@ class HockeyExercisesDatabase {
   "sets": 6,
   "reps": 3,
   "rest": 120,
-  "youtubeQuery": "broad jump training"
+  "youtubeQuery": "broad jump training",
+  "tracksWeight": false
 }
 ''',
     'box_jump': '''
@@ -725,7 +784,8 @@ class HockeyExercisesDatabase {
   "sets": 5,
   "reps": 5,
   "rest": 120,
-  "youtubeQuery": "box jump technique"
+  "youtubeQuery": "box jump technique",
+  "tracksWeight": false
 }
 ''',
   };
@@ -743,7 +803,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 90,
-  "youtubeQuery": "skater bounds hockey agility"
+  "youtubeQuery": "skater bounds hockey agility",
+  "tracksWeight": false
 }
 ''',
     'five_ten_five_shuttle': '''
@@ -754,7 +815,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 1,
   "rest": 120,
-  "youtubeQuery": "5 10 5 shuttle run"
+  "youtubeQuery": "5 10 5 shuttle run",
+  "tracksWeight": false
 }
 ''',
     'sprint_10m': '''
@@ -765,7 +827,8 @@ class HockeyExercisesDatabase {
   "sets": 6,
   "reps": 1,
   "rest": 90,
-  "youtubeQuery": "10 meter sprint training"
+  "youtubeQuery": "10 meter sprint training",
+  "tracksWeight": false
 }
 ''',
     'sprint_flying_start': '''
@@ -776,7 +839,8 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 1,
   "rest": 120,
-  "youtubeQuery": "flying start sprint"
+  "youtubeQuery": "flying start sprint",
+  "tracksWeight": false
 }
 ''',
     'lateral_shuffle': '''
@@ -788,7 +852,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 20,
   "rest": 60,
-  "youtubeQuery": "lateral shuffle drill"
+  "youtubeQuery": "lateral shuffle drill",
+  "tracksWeight": false
 }
 ''',
     'crossovers_off_ice': '''
@@ -800,7 +865,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 20,
   "rest": 60,
-  "youtubeQuery": "hockey crossovers off ice"
+  "youtubeQuery": "hockey crossovers off ice",
+  "tracksWeight": false
 }
 ''',
     't_test': '''
@@ -811,7 +877,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 1,
   "rest": 120,
-  "youtubeQuery": "t test agility drill"
+  "youtubeQuery": "t test agility drill",
+  "tracksWeight": false
 }
 ''',
     'sprint_ladder': '''
@@ -822,7 +889,21 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 1,
   "rest": 180,
-  "youtubeQuery": "sprint ladder progression"
+  "youtubeQuery": "sprint ladder progression",
+  "tracksWeight": false
+}
+''',
+    'ladder_footwork': '''
+{
+  "id": "ladder_footwork",
+  "name": "Ladder Footwork Drills",
+  "category": "agility",
+  "sets": 3,
+  "reps": 1,
+  "duration": 30,
+  "rest": 60,
+  "youtubeQuery": "agility ladder footwork drills",
+  "tracksWeight": false
 }
 ''',
   };
@@ -842,7 +923,8 @@ class HockeyExercisesDatabase {
   "rest": 60,
   "youtubeQuery": "pallof press anti rotation",
   "gymAltId": "cable_rotation",
-  "homeAltId": "pallof_resistance_band"
+  "homeAltId": "pallof_resistance_band",
+  "tracksWeight": true
 }
 ''',
     'pallof_press_rotation': '''
@@ -854,7 +936,8 @@ class HockeyExercisesDatabase {
   "reps": 8,
   "rest": 60,
   "youtubeQuery": "pallof press rotation",
-  "homeAltId": "resistance_band_rotation"
+  "homeAltId": "resistance_band_rotation",
+  "tracksWeight": true
 }
 ''',
     'copenhagen_plank': '''
@@ -867,7 +950,8 @@ class HockeyExercisesDatabase {
   "duration": 25,
   "rest": 90,
   "youtubeQuery": "copenhagen plank adductors",
-  "gymAltId": "adductor_squeeze"
+  "gymAltId": "adductor_squeeze",
+  "tracksWeight": false
 }
 ''',
     'side_plank_reach': '''
@@ -879,7 +963,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 45,
   "rest": 60,
-  "youtubeQuery": "side plank with reach"
+  "youtubeQuery": "side plank with reach",
+  "tracksWeight": false
 }
 ''',
     'hanging_leg_raises': '''
@@ -891,7 +976,8 @@ class HockeyExercisesDatabase {
   "reps": 10,
   "rest": 90,
   "youtubeQuery": "hanging leg raises",
-  "homeAltId": "lying_leg_raises"
+  "homeAltId": "lying_leg_raises",
+  "tracksWeight": true
 }
 ''',
     'face_pulls': '''
@@ -903,7 +989,8 @@ class HockeyExercisesDatabase {
   "reps": 15,
   "rest": 60,
   "youtubeQuery": "face pulls rear delt",
-  "homeAltId": "ytw_raises"
+  "homeAltId": "ytw_raises",
+  "tracksWeight": false
 }
 ''',
     'ytw_raises': '''
@@ -914,7 +1001,8 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 15,
   "rest": 60,
-  "youtubeQuery": "ytw raises shoulders"
+  "youtubeQuery": "ytw raises shoulders",
+  "tracksWeight": false
 }
 ''',
   };
@@ -934,7 +1022,8 @@ class HockeyExercisesDatabase {
   "duration": 20,
   "rest": 40,
   "youtubeQuery": "bike intervals hockey training",
-  "homeAltId": "high_knees_intervals"
+  "homeAltId": "high_knees_intervals",
+  "tracksWeight": false
 }
 ''',
     'bike_intervals_30_30': '''
@@ -947,7 +1036,8 @@ class HockeyExercisesDatabase {
   "duration": 30,
   "rest": 30,
   "youtubeQuery": "30 30 intervals bike",
-  "homeAltId": "mountain_climber_intervals"
+  "homeAltId": "mountain_climber_intervals",
+  "tracksWeight": false
 }
 ''',
     'bike_intervals_15_45': '''
@@ -960,7 +1050,8 @@ class HockeyExercisesDatabase {
   "duration": 15,
   "rest": 45,
   "youtubeQuery": "15 45 sprint intervals",
-  "homeAltId": "burpee_intervals"
+  "homeAltId": "burpee_intervals",
+  "tracksWeight": false
 }
 ''',
     'bike_intervals_10_50': '''
@@ -973,7 +1064,8 @@ class HockeyExercisesDatabase {
   "duration": 10,
   "rest": 50,
   "youtubeQuery": "10 50 power intervals",
-  "homeAltId": "jump_squat_intervals"
+  "homeAltId": "jump_squat_intervals",
+  "tracksWeight": false
 }
 ''',
     'high_knees_intervals': '''
@@ -985,7 +1077,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 20,
   "rest": 40,
-  "youtubeQuery": "high knees cardio intervals"
+  "youtubeQuery": "high knees cardio intervals",
+  "tracksWeight": false
 }
 ''',
     'mountain_climber_intervals': '''
@@ -997,7 +1090,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 30,
-  "youtubeQuery": "mountain climber intervals"
+  "youtubeQuery": "mountain climber intervals",
+  "tracksWeight": false
 }
 ''',
   };
@@ -1016,7 +1110,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 480,
   "rest": 0,
-  "youtubeQuery": "hockey ramp warmup dynamic"
+  "youtubeQuery": "hockey ramp warmup dynamic",
+  "tracksWeight": false
 }
 ''',
     'leg_swings': '''
@@ -1027,7 +1122,8 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 30,
-  "youtubeQuery": "leg swings dynamic warmup"
+  "youtubeQuery": "leg swings dynamic warmup",
+  "tracksWeight": false
 }
 ''',
     'hip_circles': '''
@@ -1038,7 +1134,8 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 30,
-  "youtubeQuery": "hip circles mobility"
+  "youtubeQuery": "hip circles mobility",
+  "tracksWeight": false
 }
 ''',
     'arm_circles': '''
@@ -1049,7 +1146,145 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 30,
-  "youtubeQuery": "arm circles warmup"
+  "youtubeQuery": "arm circles warmup",
+  "tracksWeight": false
+}
+''',
+    'hip_flexor_stretch': '''
+{
+  "id": "hip_flexor_stretch",
+  "name": "Hip Flexor Stretch",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 1,
+  "duration": 30,
+  "rest": 15,
+  "youtubeQuery": "hip flexor stretch",
+  "tracksWeight": false
+}
+''',
+    'pigeon_stretch': '''
+{
+  "id": "pigeon_stretch",
+  "name": "Pigeon Stretch",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 1,
+  "duration": 30,
+  "rest": 15,
+  "youtubeQuery": "pigeon stretch hip mobility",
+  "tracksWeight": false
+}
+''',
+    'ankle_circles': '''
+{
+  "id": "ankle_circles",
+  "name": "Ankle Circles",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 10,
+  "rest": 15,
+  "youtubeQuery": "ankle circles mobility",
+  "tracksWeight": false
+}
+''',
+    'calf_raises': '''
+{
+  "id": "calf_raises",
+  "name": "Calf Raises",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 15,
+  "rest": 30,
+  "youtubeQuery": "calf raises exercise",
+  "tracksWeight": false
+}
+''',
+    'ankle_dorsiflexion': '''
+{
+  "id": "ankle_dorsiflexion",
+  "name": "Ankle Dorsiflexion",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 10,
+  "rest": 15,
+  "youtubeQuery": "ankle dorsiflexion mobility",
+  "tracksWeight": false
+}
+''',
+    'toe_raises': '''
+{
+  "id": "toe_raises",
+  "name": "Toe Raises",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 15,
+  "rest": 15,
+  "youtubeQuery": "toe raises shin exercise",
+  "tracksWeight": false
+}
+''',
+    'quad_stretch': '''
+{
+  "id": "quad_stretch",
+  "name": "Quad Stretch",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 1,
+  "duration": 30,
+  "rest": 15,
+  "youtubeQuery": "quadriceps stretch standing",
+  "tracksWeight": false
+}
+''',
+    'hamstring_stretch': '''
+{
+  "id": "hamstring_stretch",
+  "name": "Hamstring Stretch",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 1,
+  "duration": 30,
+  "rest": 15,
+  "youtubeQuery": "hamstring stretch seated",
+  "tracksWeight": false
+}
+''',
+    'shoulder_stretch': '''
+{
+  "id": "shoulder_stretch",
+  "name": "Shoulder Stretch",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 1,
+  "duration": 30,
+  "rest": 15,
+  "youtubeQuery": "shoulder stretch across body",
+  "tracksWeight": false
+}
+''',
+    'back_stretch': '''
+{
+  "id": "back_stretch",
+  "name": "Back Stretch (Cat-Cow)",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 10,
+  "rest": 15,
+  "youtubeQuery": "cat cow back stretch",
+  "tracksWeight": false
+}
+''',
+    'neck_rolls': '''
+{
+  "id": "neck_rolls",
+  "name": "Neck Rolls",
+  "category": "warmup",
+  "sets": 2,
+  "reps": 10,
+  "rest": 15,
+  "youtubeQuery": "neck rolls mobility",
+  "tracksWeight": false
 }
 ''',
   };
@@ -1069,7 +1304,8 @@ class HockeyExercisesDatabase {
   "duration": 30,
   "rest": 90,
   "youtubeQuery": "farmer walk strength",
-  "homeAltId": "heavy_bag_carry"
+  "homeAltId": "heavy_bag_carry",
+  "tracksWeight": true
 }
 ''',
     'heavy_bag_carry': '''
@@ -1081,7 +1317,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 90,
-  "youtubeQuery": "heavy bag carry workout"
+  "youtubeQuery": "heavy bag carry workout",
+  "tracksWeight": true
 }
 ''',
     'conditioning_5x30_30': '''
@@ -1093,160 +1330,8 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 30,
-  "youtubeQuery": "30 30 intervals conditioning"
-}
-''',
-  };
-
-  // =============================================================================
-  // EXTRAS DEFINITIONS (EXPRESS WORKOUTS, CHALLENGES, MOBILITY)
-  // =============================================================================
-
-  static const Map<String, String> _extrasData = {
-    'express_cardio_15': '''
-{
-  "id": "express_cardio_15",
-  "title": "15-Min Cardio Blast",
-  "description": "High-intensity cardio circuit to boost endurance and agility",
-  "type": "express_workout",
-  "xpReward": 50,
-  "duration": 15,
-  "difficulty": "medium",
-  "blocks": [
-    {"exerciseId": "high_knees_intervals"},
-    {"exerciseId": "bike_intervals_20_40"},
-    {"exerciseId": "burpee_intervals"},
-    {"exerciseId": "jump_squat"}
-  ]
-}
-''',
-    'express_strength_20': '''
-{
-  "id": "express_strength_20",
-  "title": "20-Min Strength Circuit",
-  "description": "Full-body strength workout for hockey power development",
-  "type": "express_workout",
-  "xpReward": 75,
-  "duration": 20,
-  "difficulty": "hard",
-  "blocks": [
-    {"exerciseId": "dynamic_warmup_ramp"},
-    {"exerciseId": "goblet_squat"},
-    {"exerciseId": "bench_press"},
-    {"exerciseId": "side_plank_reach"},
-    {"exerciseId": "bike_intervals_15_45"}
-  ]
-}
-''',
-    'express_agility_15': '''
-{
-  "id": "express_agility_15",
-  "title": "15-Min Agility Focus",
-  "description": "Quick agility and coordination drills for better on-ice movement",
-  "type": "express_workout",
-  "xpReward": 60,
-  "duration": 15,
-  "difficulty": "easy",
-  "blocks": [
-    {"exerciseId": "ladder_footwork"},
-    {"exerciseId": "five_ten_five_shuttle"},
-    {"exerciseId": "skater_bounds"},
-    {"exerciseId": "pallof_press_rotation"}
-  ]
-}
-''',
-    'challenge_100_pushups': '''
-{
-  "id": "challenge_100_pushups",
-  "title": "100 Push-ups Challenge",
-  "description": "Complete 100 push-ups in one session. Break them into sets as needed!",
-  "type": "bonus_challenge",
-  "xpReward": 100,
-  "duration": 30,
-  "difficulty": "hard",
-  "blocks": [
-    {"exerciseId": "push_ups_weighted"}
-  ]
-}
-''',
-    'challenge_plank_5min': '''
-{
-  "id": "challenge_plank_5min",
-  "title": "5-Minute Plank Hold",
-  "description": "Hold a plank position for 5 minutes total. Rest breaks allowed!",
-  "type": "bonus_challenge",
-  "xpReward": 80,
-  "duration": 10,
-  "difficulty": "medium",
-  "blocks": [
-    {"exerciseId": "side_plank_reach"}
-  ]
-}
-''',
-    'challenge_burpee_ladder': '''
-{
-  "id": "challenge_burpee_ladder",
-  "title": "Burpee Ladder",
-  "description": "Do 1 burpee, then 2, then 3... up to 10, then back down to 1",
-  "type": "bonus_challenge",
-  "xpReward": 120,
-  "duration": 25,
-  "difficulty": "hard",
-  "blocks": [
-    {"exerciseId": "burpee_intervals"}
-  ]
-}
-''',
-    'mobility_hip_flow': '''
-{
-  "id": "mobility_hip_flow",
-  "title": "Hip Mobility Flow",
-  "description": "Essential hip stretches and mobility work for hockey players",
-  "type": "mobility_recovery",
-  "xpReward": 25,
-  "duration": 10,
-  "difficulty": "easy",
-  "blocks": [
-    {"exerciseId": "hip_circles"},
-    {"exerciseId": "leg_swings"},
-    {"exerciseId": "hip_flexor_stretch"},
-    {"exerciseId": "pigeon_stretch"}
-  ]
-}
-''',
-    'mobility_ankle_prep': '''
-{
-  "id": "mobility_ankle_prep",
-  "title": "Ankle Preparation",
-  "description": "Pre-skate ankle mobility and strengthening routine",
-  "type": "mobility_recovery",
-  "xpReward": 20,
-  "duration": 8,
-  "difficulty": "easy",
-  "blocks": [
-    {"exerciseId": "ankle_circles"},
-    {"exerciseId": "calf_raises"},
-    {"exerciseId": "ankle_dorsiflexion"},
-    {"exerciseId": "toe_raises"}
-  ]
-}
-''',
-    'mobility_cool_down': '''
-{
-  "id": "mobility_cool_down",
-  "title": "Post-Training Cool Down",
-  "description": "Full-body stretching sequence for recovery",
-  "type": "mobility_recovery",
-  "xpReward": 30,
-  "duration": 15,
-  "difficulty": "easy",
-  "blocks": [
-    {"exerciseId": "quad_stretch"},
-    {"exerciseId": "hamstring_stretch"},
-    {"exerciseId": "shoulder_stretch"},
-    {"exerciseId": "back_stretch"},
-    {"exerciseId": "neck_rolls"}
-  ]
+  "youtubeQuery": "30 30 intervals conditioning",
+  "tracksWeight": false
 }
 ''',
   };
@@ -1369,70 +1454,6 @@ class HockeyExercisesDatabase {
     }
   }
 
-  /// Gets all extras from the database
-  static Future<List<ExtraItem>> getAllExtras() async {
-    try {
-      _logger.d('HockeyExercisesDatabase: Loading all extras');
-
-      final extras = <ExtraItem>[];
-
-      for (final entry in _extrasData.entries) {
-        final extra = await _loadExtra(entry.key, entry.value);
-        if (extra != null) {
-          extras.add(extra);
-        }
-      }
-
-      _logger.i('HockeyExercisesDatabase: Loaded ${extras.length} extras');
-      return extras;
-    } catch (e, stackTrace) {
-      _logger.e('HockeyExercisesDatabase: Failed to load extras',
-          error: e, stackTrace: stackTrace);
-      return [];
-    }
-  }
-
-  /// Gets extras filtered by type
-  static Future<List<ExtraItem>> getExtrasByType(ExtraType type) async {
-    try {
-      _logger
-          .d('HockeyExercisesDatabase: Loading extras for type: ${type.name}');
-
-      final allExtras = await getAllExtras();
-      final filteredExtras =
-          allExtras.where((extra) => extra.type == type).toList();
-
-      _logger.d(
-          'HockeyExercisesDatabase: Found ${filteredExtras.length} extras for type ${type.name}');
-      return filteredExtras;
-    } catch (e, stackTrace) {
-      _logger.e(
-          'HockeyExercisesDatabase: Failed to load extras for type ${type.name}',
-          error: e,
-          stackTrace: stackTrace);
-      return [];
-    }
-  }
-
-  /// Gets a specific extra by ID
-  static Future<ExtraItem?> getExtraById(String id) async {
-    try {
-      _logger.d('HockeyExercisesDatabase: Loading extra with ID: $id');
-
-      final extraJson = _extrasData[id];
-      if (extraJson == null) {
-        _logger.w('HockeyExercisesDatabase: Extra not found: $id');
-        return null;
-      }
-
-      return await _loadExtra(id, extraJson);
-    } catch (e, stackTrace) {
-      _logger.e('HockeyExercisesDatabase: Failed to load extra $id',
-          error: e, stackTrace: stackTrace);
-      return null;
-    }
-  }
-
   // =============================================================================
   // PRIVATE METHODS
   // =============================================================================
@@ -1451,22 +1472,6 @@ class HockeyExercisesDatabase {
           'HockeyExercisesDatabase: Failed to parse exercise JSON for $id',
           error: e,
           stackTrace: stackTrace);
-      return null;
-    }
-  }
-
-  /// Loads an extra from JSON string
-  static Future<ExtraItem?> _loadExtra(String id, String jsonString) async {
-    try {
-      final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
-      final extra = ExtraItem.fromJson(jsonData);
-
-      _logger.d(
-          'HockeyExercisesDatabase: Successfully loaded extra: ${extra.title}');
-      return extra;
-    } catch (e, stackTrace) {
-      _logger.e('HockeyExercisesDatabase: Failed to parse extra JSON for $id',
-          error: e, stackTrace: stackTrace);
       return null;
     }
   }

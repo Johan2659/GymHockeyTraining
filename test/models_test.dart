@@ -15,6 +15,7 @@ void main() {
         youtubeQuery: 'hockey push ups',
         gymAltId: 'gym1',
         homeAltId: 'home1',
+        tracksWeight: false, // Push-ups don't track weight
       );
 
       final json = exercise.toJson();
@@ -30,6 +31,7 @@ void main() {
       expect(restored.youtubeQuery, equals(exercise.youtubeQuery));
       expect(restored.gymAltId, equals(exercise.gymAltId));
       expect(restored.homeAltId, equals(exercise.homeAltId));
+      expect(restored.tracksWeight, equals(exercise.tracksWeight));
     });
 
     test('UserRole enum serialization', () {

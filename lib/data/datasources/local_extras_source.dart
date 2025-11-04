@@ -1,9 +1,9 @@
 import 'package:logger/logger.dart';
 
 import '../../core/models/models.dart';
-import 'hockey_exercises_database.dart';
+import 'extras_database.dart';
 
-/// Local data source for extras definitions sourced from the central database
+/// Local data source for extras definitions sourced from the extras database
 class LocalExtrasSource {
   static final _logger = Logger();
 
@@ -12,7 +12,7 @@ class LocalExtrasSource {
     try {
       _logger.d('LocalExtrasSource: Loading all extras from database');
 
-      final extras = await HockeyExercisesDatabase.getAllExtras();
+      final extras = await ExtrasDatabase.getAllExtras();
 
       _logger.i('LocalExtrasSource: Loaded ${extras.length} extras');
       return extras;
@@ -28,7 +28,7 @@ class LocalExtrasSource {
     try {
       _logger.d('LocalExtrasSource: Loading extras for type: ${type.name}');
 
-      final extras = await HockeyExercisesDatabase.getExtrasByType(type);
+      final extras = await ExtrasDatabase.getExtrasByType(type);
 
       _logger.d(
           'LocalExtrasSource: Found ${extras.length} extras for type ${type.name}');
@@ -47,7 +47,7 @@ class LocalExtrasSource {
     try {
       _logger.d('LocalExtrasSource: Loading extra with ID: $id');
 
-      final extra = await HockeyExercisesDatabase.getExtraById(id);
+      final extra = await ExtrasDatabase.getExtraById(id);
 
       if (extra == null) {
         _logger.w('LocalExtrasSource: Extra not found with id: $id');

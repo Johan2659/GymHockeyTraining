@@ -1410,6 +1410,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
 
           // Reps input
           Expanded(
+            flex: (exercise.tracksWeight ?? true) ? 1 : 2, // Wider if no weight tracking
             child: _buildValueButton(
               context,
               label: 'Reps',
@@ -1420,18 +1421,20 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
           ),
           const SizedBox(width: 10),
 
-          // Weight input
-          Expanded(
-            child: _buildValueButton(
-              context,
-              label: 'Weight',
-              value: weight > 0 ? '${weight.toStringAsFixed(1)} kg' : '-',
-              icon: Icons.fitness_center,
-              onTap:
-                  completed ? null : () => _showWeightPicker(exercise, index),
+          // Weight input (only show if exercise tracks weight)
+          if (exercise.tracksWeight ?? true) ...[
+            Expanded(
+              child: _buildValueButton(
+                context,
+                label: 'Weight',
+                value: weight > 0 ? '${weight.toStringAsFixed(1)} kg' : '-',
+                icon: Icons.fitness_center,
+                onTap:
+                    completed ? null : () => _showWeightPicker(exercise, index),
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
+            const SizedBox(width: 10),
+          ],
 
           // Complete set button
           IconButton(
@@ -1546,13 +1549,18 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
       setState(() {
         _exercisePerformances[exercise.id]![setIndex]['reps'] = result.toInt();
 
-        // Auto-complete set if both reps and weight are filled
+        // Auto-complete set if reps are filled (and weight if exercise tracks it)
         final setData = _exercisePerformances[exercise.id]![setIndex];
         final weight = setData['weight'] as double;
         final isCompleted = setData['completed'] as bool;
+        final tracksWeight = exercise.tracksWeight ?? true;
 
-        if (!isCompleted && result > 0 && weight > 0) {
-          _autoCompleteSet(exercise, setIndex);
+        // For bodyweight exercises, auto-complete when reps > 0
+        // For weighted exercises, auto-complete when both reps and weight > 0
+        if (!isCompleted && result > 0) {
+          if (!tracksWeight || weight > 0) {
+            _autoCompleteSet(exercise, setIndex);
+          }
         }
       });
     }
@@ -1586,6 +1594,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         final reps = setData['reps'] as int;
         final isCompleted = setData['completed'] as bool;
 
+        // Only auto-complete if reps are also filled
         if (!isCompleted && result > 0 && reps > 0) {
           _autoCompleteSet(exercise, setIndex);
         }

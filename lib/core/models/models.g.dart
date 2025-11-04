@@ -17,6 +17,7 @@ Exercise _$ExerciseFromJson(Map<String, dynamic> json) => Exercise(
       youtubeQuery: json['youtubeQuery'] as String,
       gymAltId: json['gymAltId'] as String?,
       homeAltId: json['homeAltId'] as String?,
+      tracksWeight: json['tracksWeight'] as bool?,
     );
 
 Map<String, dynamic> _$ExerciseToJson(Exercise instance) => <String, dynamic>{
@@ -30,6 +31,7 @@ Map<String, dynamic> _$ExerciseToJson(Exercise instance) => <String, dynamic>{
       'youtubeQuery': instance.youtubeQuery,
       'gymAltId': instance.gymAltId,
       'homeAltId': instance.homeAltId,
+      'tracksWeight': instance.tracksWeight,
     };
 
 const _$ExerciseCategoryEnumMap = {

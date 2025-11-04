@@ -83,6 +83,7 @@ class Exercise {
     required this.youtubeQuery,
     this.gymAltId,
     this.homeAltId,
+    this.tracksWeight,
   });
 
   final String id;
@@ -95,6 +96,7 @@ class Exercise {
   final String youtubeQuery;
   final String? gymAltId;
   final String? homeAltId;
+  final bool? tracksWeight; // Whether this exercise tracks weight (null/true = yes, false = no weight needed)
 
   factory Exercise.fromJson(Map<String, dynamic> json) =>
       _$ExerciseFromJson(json);
