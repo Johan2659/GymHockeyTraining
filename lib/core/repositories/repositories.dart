@@ -8,6 +8,7 @@ export 'program_state_repository.dart';
 export 'profile_repository.dart';
 export 'session_repository.dart';
 export 'exercise_repository.dart';
+export 'onboarding_repository.dart';
 export 'extras_repository.dart';
 export 'performance_analytics_repository.dart';
 export 'exercise_performance_repository.dart';

@@ -403,3 +403,33 @@ Map<String, dynamic> _$ExercisePerformanceToJson(
       'duration': instance.duration,
       'notes': instance.notes,
     };
+
+UserProfile _$UserProfileFromJson(Map<String, dynamic> json) => UserProfile(
+      role: $enumDecode(_$PlayerRoleEnumMap, json['role']),
+      goal: $enumDecode(_$TrainingGoalEnumMap, json['goal']),
+      onboardingCompleted: json['onboardingCompleted'] as bool,
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+    );
+
+Map<String, dynamic> _$UserProfileToJson(UserProfile instance) =>
+    <String, dynamic>{
+      'role': _$PlayerRoleEnumMap[instance.role]!,
+      'goal': _$TrainingGoalEnumMap[instance.goal]!,
+      'onboardingCompleted': instance.onboardingCompleted,
+      'createdAt': instance.createdAt?.toIso8601String(),
+    };
+
+const _$PlayerRoleEnumMap = {
+  PlayerRole.forward: 'forward',
+  PlayerRole.defence: 'defence',
+  PlayerRole.goalie: 'goalie',
+  PlayerRole.referee: 'referee',
+};
+
+const _$TrainingGoalEnumMap = {
+  TrainingGoal.strength: 'strength',
+  TrainingGoal.speed: 'speed',
+  TrainingGoal.endurance: 'endurance',
+};

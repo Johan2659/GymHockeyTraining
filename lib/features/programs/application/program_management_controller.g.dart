@@ -7,7 +7,7 @@ part of 'program_management_controller.dart';
 // **************************************************************************
 
 String _$currentActiveProgramHash() =>
-    r'bb3360e2c114154cfdd91326b60f477df3f11da8';
+    r'8d4447412c92cd3192c67bf0ce923080fc7512dd';
 
 /// Provider for current active program information
 ///
@@ -28,7 +28,7 @@ final currentActiveProgramProvider =
 // ignore: unused_element
 typedef CurrentActiveProgramRef = AutoDisposeFutureProviderRef<Program?>;
 String _$currentProgramProgressCountHash() =>
-    r'ab67c9bc3d7a86088425c7d97e1731ca73f999d0';
+    r'fe7fde7df215c35f8d4bf9e189ca65c02d3cd320';
 
 /// Provider for current program progress event count
 ///

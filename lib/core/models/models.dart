@@ -17,6 +17,28 @@ enum UserRole {
   referee,
 }
 
+/// Player role enum for onboarding (hockey positions)
+enum PlayerRole {
+  @JsonValue('forward')
+  forward,
+  @JsonValue('defence')
+  defence,
+  @JsonValue('goalie')
+  goalie,
+  @JsonValue('referee')
+  referee,
+}
+
+/// Training goal enum for onboarding
+enum TrainingGoal {
+  @JsonValue('strength')
+  strength,
+  @JsonValue('speed')
+  speed,
+  @JsonValue('endurance')
+  endurance,
+}
+
 /// Progress event type enum for tracking different types of events
 enum ProgressEventType {
   @JsonValue('session_started')
@@ -764,4 +786,38 @@ class ExercisePerformance {
   static List<Map<String, dynamic>> _setsToJson(
           List<ExerciseSetPerformance> sets) =>
       sets.map((e) => e.toJson()).toList();
+}
+
+/// User profile model for onboarding
+@JsonSerializable()
+class UserProfile {
+  const UserProfile({
+    required this.role,
+    required this.goal,
+    required this.onboardingCompleted,
+    this.createdAt,
+  });
+
+  final PlayerRole role;
+  final TrainingGoal goal;
+  final bool onboardingCompleted;
+  final DateTime? createdAt;
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) =>
+      _$UserProfileFromJson(json);
+  Map<String, dynamic> toJson() => _$UserProfileToJson(this);
+
+  UserProfile copyWith({
+    PlayerRole? role,
+    TrainingGoal? goal,
+    bool? onboardingCompleted,
+    DateTime? createdAt,
+  }) {
+    return UserProfile(
+      role: role ?? this.role,
+      goal: goal ?? this.goal,
+      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }

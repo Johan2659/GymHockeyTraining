@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../core/models/models.dart';
 import '../features/hub/presentation/hub_screen.dart';
 import '../features/programs/presentation/programs_screen.dart';
 import '../features/programs/presentation/program_detail_screen.dart';
@@ -12,6 +13,11 @@ import '../features/extras/presentation/extra_session_player_screen.dart';
 import '../features/progress/presentation/modern_progress_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/session/presentation/session_player_screen.dart';
+import '../features/onboarding/presentation/welcome_screen.dart';
+import '../features/onboarding/presentation/role_selection_screen.dart';
+import '../features/onboarding/presentation/goal_selection_screen.dart';
+import '../features/onboarding/presentation/plan_preview_screen.dart';
+import 'di.dart';
 
 part 'router.g.dart';
 
@@ -19,6 +25,24 @@ part 'router.g.dart';
 GoRouter router(Ref ref) {
   return GoRouter(
     initialLocation: '/',
+    redirect: (context, state) async {
+      final repository = ref.read(onboardingRepositoryProvider);
+      final hasCompleted = await repository.hasCompletedOnboarding();
+      
+      final isOnboardingRoute = state.matchedLocation.startsWith('/onboarding');
+      
+      // If not completed onboarding and not already on onboarding route
+      if (!hasCompleted && !isOnboardingRoute) {
+        return '/onboarding/welcome';
+      }
+      
+      // If completed onboarding and trying to access onboarding route
+      if (hasCompleted && isOnboardingRoute) {
+        return '/';
+      }
+      
+      return null; // No redirect needed
+    },
     routes: [
       // Shell route with bottom navigation for main sections
       ShellRoute(
@@ -93,6 +117,35 @@ GoRouter router(Ref ref) {
         builder: (context, state) {
           final extraId = state.pathParameters['extraId']!;
           return ExtraSessionPlayerScreen(extraId: extraId);
+        },
+      ),
+      // Onboarding routes (fullscreen, no bottom nav)
+      GoRoute(
+        path: '/onboarding/welcome',
+        name: 'onboarding-welcome',
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/role',
+        name: 'onboarding-role',
+        builder: (context, state) => const RoleSelectionScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/goal',
+        name: 'onboarding-goal',
+        builder: (context, state) {
+          final role = state.extra as PlayerRole;
+          return GoalSelectionScreen(role: role);
+        },
+      ),
+      GoRoute(
+        path: '/onboarding/plan_preview',
+        name: 'onboarding-plan-preview',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          final role = data['role'] as PlayerRole;
+          final goal = data['goal'] as TrainingGoal;
+          return PlanPreviewScreen(role: role, goal: goal);
         },
       ),
     ],

@@ -148,3 +148,9 @@ PerformanceAnalyticsRepository performanceAnalyticsRepository(Ref ref) {
 ExercisePerformanceRepository exercisePerformanceRepository(Ref ref) {
   return ExercisePerformanceRepositoryImpl();
 }
+
+/// Provider for onboarding repository
+@riverpod
+OnboardingRepository onboardingRepository(Ref ref) {
+  return OnboardingRepositoryImpl();
+}
