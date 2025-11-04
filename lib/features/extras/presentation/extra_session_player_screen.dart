@@ -63,7 +63,7 @@ class _ExtraSessionPlayerScreenState
 
     // Initialize page transition animation (fast and snappy)
     _pageTransitionController = AnimationController(
-      duration: const Duration(milliseconds: 200), // Reduced from 300ms
+      duration: const Duration(milliseconds: 150), // Faster: 150ms (was 200ms)
       vsync: this,
     );
     _slideAnimation = Tween<Offset>(
@@ -71,14 +71,14 @@ class _ExtraSessionPlayerScreenState
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _pageTransitionController,
-      curve: Curves.easeOutCubic,
+      curve: Curves.easeOutQuart, // Smoother curve for quick feel
     ));
     _fadeAnimation = Tween<double>(
       begin: 1.0,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _pageTransitionController,
-      curve: Curves.easeInOut,
+      curve: Curves.easeOut, // Simpler, faster fade
     ));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -122,18 +122,18 @@ class _ExtraSessionPlayerScreenState
         ? -1.0
         : 1.0; // -1 = slide left (next), 1 = slide right (prev)
 
-    // Set up slide out animation
+    // Set up slide out animation - reduced distance for faster feel
     setState(() {
       _slideAnimation = Tween<Offset>(
         begin: Offset.zero,
-        end: Offset(direction, 0),
+        end: Offset(direction * 0.3, 0), // Reduced from 1.0 to 0.3 for subtlety
       ).animate(CurvedAnimation(
         parent: _pageTransitionController,
-        curve: Curves.easeInQuart, // Snappier curve
+        curve: Curves.easeInCubic, // Faster initial movement
       ));
       _fadeAnimation = Tween<double>(
         begin: 1.0,
-        end: 0.0,
+        end: 0.3, // Don't fade all the way out - keeps it visible
       ).animate(CurvedAnimation(
         parent: _pageTransitionController,
         curve: Curves.easeIn,
@@ -147,16 +147,16 @@ class _ExtraSessionPlayerScreenState
     setState(() {
       _currentPage = newPage;
 
-      // Set up slide in animation (from opposite direction)
+      // Set up slide in animation (from opposite direction) - reduced distance
       _slideAnimation = Tween<Offset>(
-        begin: Offset(-direction, 0),
+        begin: Offset(-direction * 0.3, 0), // Reduced from 1.0 to 0.3
         end: Offset.zero,
       ).animate(CurvedAnimation(
         parent: _pageTransitionController,
-        curve: Curves.easeOutQuart, // Snappier curve
+        curve: Curves.easeOutCubic, // Smooth deceleration
       ));
       _fadeAnimation = Tween<double>(
-        begin: 0.0,
+        begin: 0.3, // Start from partially visible
         end: 1.0,
       ).animate(CurvedAnimation(
         parent: _pageTransitionController,
@@ -551,14 +551,14 @@ class _ExtraSessionPlayerScreenState
               // Main content with swipe gesture
               GestureDetector(
                 // Swipe to change exercises (right = previous, left = next)
-                // Very low threshold (200) for easy swiping, always allow navigation
+                // Very low threshold (150) for easy, fast swiping
                 behavior: HitTestBehavior.translucent,
                 onHorizontalDragEnd: (details) {
                   final velocity = details.primaryVelocity ?? 0;
-                  if (velocity > 200 && _currentPage > 0) {
+                  if (velocity > 150 && _currentPage > 0) {
                     // Swipe right - go to previous
                     _navigateToPage(_currentPage - 1);
-                  } else if (velocity < -200 &&
+                  } else if (velocity < -150 &&
                       _currentPage < exercises.length - 1) {
                     // Swipe left - go to next
                     _navigateToPage(_currentPage + 1);

@@ -563,6 +563,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
+                physics: const PageScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ).applyTo(const BouncingScrollPhysics()),
                 onPageChanged: (index) {
                   setState(() {
                     _currentPage = index;
