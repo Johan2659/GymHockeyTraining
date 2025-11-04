@@ -725,7 +725,7 @@ class _MarkExerciseDoneActionProviderElement
 }
 
 String _$completeSessionActionHash() =>
-    r'8b5d8613a1487ffc555266c35e9595f14d396bd0';
+    r'e2bf0ff953402625813bbf44fdcb7041214bb227';
 
 /// Complete session action provider
 ///
@@ -744,6 +744,156 @@ final completeSessionActionProvider = AutoDisposeFutureProvider<void>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CompleteSessionActionRef = AutoDisposeFutureProviderRef<void>;
+String _$completeSessionWithDurationActionHash() =>
+    r'a0320c242981d17ca8b511cc1ed55bd2ab072ff2';
+
+/// Complete session with duration action provider
+///
+/// Copied from [completeSessionWithDurationAction].
+@ProviderFor(completeSessionWithDurationAction)
+const completeSessionWithDurationActionProvider =
+    CompleteSessionWithDurationActionFamily();
+
+/// Complete session with duration action provider
+///
+/// Copied from [completeSessionWithDurationAction].
+class CompleteSessionWithDurationActionFamily extends Family<AsyncValue<void>> {
+  /// Complete session with duration action provider
+  ///
+  /// Copied from [completeSessionWithDurationAction].
+  const CompleteSessionWithDurationActionFamily();
+
+  /// Complete session with duration action provider
+  ///
+  /// Copied from [completeSessionWithDurationAction].
+  CompleteSessionWithDurationActionProvider call(
+    int durationSeconds,
+  ) {
+    return CompleteSessionWithDurationActionProvider(
+      durationSeconds,
+    );
+  }
+
+  @override
+  CompleteSessionWithDurationActionProvider getProviderOverride(
+    covariant CompleteSessionWithDurationActionProvider provider,
+  ) {
+    return call(
+      provider.durationSeconds,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'completeSessionWithDurationActionProvider';
+}
+
+/// Complete session with duration action provider
+///
+/// Copied from [completeSessionWithDurationAction].
+class CompleteSessionWithDurationActionProvider
+    extends AutoDisposeFutureProvider<void> {
+  /// Complete session with duration action provider
+  ///
+  /// Copied from [completeSessionWithDurationAction].
+  CompleteSessionWithDurationActionProvider(
+    int durationSeconds,
+  ) : this._internal(
+          (ref) => completeSessionWithDurationAction(
+            ref as CompleteSessionWithDurationActionRef,
+            durationSeconds,
+          ),
+          from: completeSessionWithDurationActionProvider,
+          name: r'completeSessionWithDurationActionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$completeSessionWithDurationActionHash,
+          dependencies: CompleteSessionWithDurationActionFamily._dependencies,
+          allTransitiveDependencies: CompleteSessionWithDurationActionFamily
+              ._allTransitiveDependencies,
+          durationSeconds: durationSeconds,
+        );
+
+  CompleteSessionWithDurationActionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.durationSeconds,
+  }) : super.internal();
+
+  final int durationSeconds;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(CompleteSessionWithDurationActionRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: CompleteSessionWithDurationActionProvider._internal(
+        (ref) => create(ref as CompleteSessionWithDurationActionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        durationSeconds: durationSeconds,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _CompleteSessionWithDurationActionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CompleteSessionWithDurationActionProvider &&
+        other.durationSeconds == durationSeconds;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, durationSeconds.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin CompleteSessionWithDurationActionRef
+    on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `durationSeconds` of this provider.
+  int get durationSeconds;
+}
+
+class _CompleteSessionWithDurationActionProviderElement
+    extends AutoDisposeFutureProviderElement<void>
+    with CompleteSessionWithDurationActionRef {
+  _CompleteSessionWithDurationActionProviderElement(super.provider);
+
+  @override
+  int get durationSeconds =>
+      (origin as CompleteSessionWithDurationActionProvider).durationSeconds;
+}
+
 String _$pauseProgramActionHash() =>
     r'cc53bed956d0a73aa7d9e7264c651979d1495b1b';
 
@@ -1144,7 +1294,7 @@ class _StartExtraActionProviderElement
 }
 
 String _$completeExtraActionHash() =>
-    r'94d2105925bc6c42cfd8b59053eebe91e962e0f0';
+    r'ef4d9465baa36548bbd524b80c239585b0fbc1d0';
 
 /// Complete extra action provider
 ///
@@ -1166,11 +1316,13 @@ class CompleteExtraActionFamily extends Family<AsyncValue<void>> {
   /// Copied from [completeExtraAction].
   CompleteExtraActionProvider call(
     String extraId,
-    int xpReward,
-  ) {
+    int xpReward, {
+    int? durationSeconds,
+  }) {
     return CompleteExtraActionProvider(
       extraId,
       xpReward,
+      durationSeconds: durationSeconds,
     );
   }
 
@@ -1181,6 +1333,7 @@ class CompleteExtraActionFamily extends Family<AsyncValue<void>> {
     return call(
       provider.extraId,
       provider.xpReward,
+      durationSeconds: provider.durationSeconds,
     );
   }
 
@@ -1208,12 +1361,14 @@ class CompleteExtraActionProvider extends AutoDisposeFutureProvider<void> {
   /// Copied from [completeExtraAction].
   CompleteExtraActionProvider(
     String extraId,
-    int xpReward,
-  ) : this._internal(
+    int xpReward, {
+    int? durationSeconds,
+  }) : this._internal(
           (ref) => completeExtraAction(
             ref as CompleteExtraActionRef,
             extraId,
             xpReward,
+            durationSeconds: durationSeconds,
           ),
           from: completeExtraActionProvider,
           name: r'completeExtraActionProvider',
@@ -1226,6 +1381,7 @@ class CompleteExtraActionProvider extends AutoDisposeFutureProvider<void> {
               CompleteExtraActionFamily._allTransitiveDependencies,
           extraId: extraId,
           xpReward: xpReward,
+          durationSeconds: durationSeconds,
         );
 
   CompleteExtraActionProvider._internal(
@@ -1237,10 +1393,12 @@ class CompleteExtraActionProvider extends AutoDisposeFutureProvider<void> {
     required super.from,
     required this.extraId,
     required this.xpReward,
+    required this.durationSeconds,
   }) : super.internal();
 
   final String extraId;
   final int xpReward;
+  final int? durationSeconds;
 
   @override
   Override overrideWith(
@@ -1257,6 +1415,7 @@ class CompleteExtraActionProvider extends AutoDisposeFutureProvider<void> {
         debugGetCreateSourceHash: null,
         extraId: extraId,
         xpReward: xpReward,
+        durationSeconds: durationSeconds,
       ),
     );
   }
@@ -1270,7 +1429,8 @@ class CompleteExtraActionProvider extends AutoDisposeFutureProvider<void> {
   bool operator ==(Object other) {
     return other is CompleteExtraActionProvider &&
         other.extraId == extraId &&
-        other.xpReward == xpReward;
+        other.xpReward == xpReward &&
+        other.durationSeconds == durationSeconds;
   }
 
   @override
@@ -1278,6 +1438,7 @@ class CompleteExtraActionProvider extends AutoDisposeFutureProvider<void> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, extraId.hashCode);
     hash = _SystemHash.combine(hash, xpReward.hashCode);
+    hash = _SystemHash.combine(hash, durationSeconds.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -1291,6 +1452,9 @@ mixin CompleteExtraActionRef on AutoDisposeFutureProviderRef<void> {
 
   /// The parameter `xpReward` of this provider.
   int get xpReward;
+
+  /// The parameter `durationSeconds` of this provider.
+  int? get durationSeconds;
 }
 
 class _CompleteExtraActionProviderElement
@@ -1301,6 +1465,9 @@ class _CompleteExtraActionProviderElement
   String get extraId => (origin as CompleteExtraActionProvider).extraId;
   @override
   int get xpReward => (origin as CompleteExtraActionProvider).xpReward;
+  @override
+  int? get durationSeconds =>
+      (origin as CompleteExtraActionProvider).durationSeconds;
 }
 
 String _$saveExercisePerformanceActionHash() =>

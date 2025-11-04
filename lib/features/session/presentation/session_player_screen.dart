@@ -221,10 +221,15 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   // Track last used weight for each exercise (to auto-fill next sets)
   final Map<String, double> _lastWeightUsed = {};
 
+  // Session duration tracking
+  Timer? _durationTimer;
+  int _elapsedSeconds = 0;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _startDurationTimer();
     // Log session start event on next frame to ensure ref is available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _logSessionStart();
@@ -236,7 +241,28 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   void dispose() {
     _pageController.dispose();
     _restTimer?.cancel();
+    _durationTimer?.cancel();
     super.dispose();
+  }
+
+  void _startDurationTimer() {
+    _durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          _elapsedSeconds++;
+        });
+      }
+    });
+  }
+
+  String _formatDuration(int seconds) {
+    final hours = seconds ~/ 3600;
+    final minutes = (seconds % 3600) ~/ 60;
+    final secs = seconds % 60;
+    if (hours > 0) {
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+    }
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
   Future<void> _logSessionStart() async {
@@ -367,10 +393,39 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              programAsync.value?.title ?? 'Loading...',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    programAsync.value?.title ?? 'Loading...',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.primaryColor.withOpacity(0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.timer, size: 14, color: AppTheme.primaryColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        _formatDuration(_elapsedSeconds),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             Text(
               'Week ${int.parse(widget.week) + 1} • Session ${int.parse(widget.session) + 1}',
@@ -1675,8 +1730,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     });
 
     try {
-      // Complete the session through app state
-      await ref.read(completeSessionActionProvider.future);
+      // Stop the duration timer
+      _durationTimer?.cancel();
+      
+      // Complete the session through app state with duration
+      await ref.read(completeSessionWithDurationActionProvider(_elapsedSeconds).future);
 
       // Clear the session-in-progress since it's completed
       await ref.read(clearSessionInProgressActionProvider.future);

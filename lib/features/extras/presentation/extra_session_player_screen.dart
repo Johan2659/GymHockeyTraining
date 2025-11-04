@@ -50,10 +50,15 @@ class _ExtraSessionPlayerScreenState
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
 
+  // Session duration tracking
+  Timer? _durationTimer;
+  int _elapsedSeconds = 0;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _startDurationTimer();
 
     // Initialize page transition animation (fast and snappy)
     _pageTransitionController = AnimationController(
@@ -84,8 +89,29 @@ class _ExtraSessionPlayerScreenState
   void dispose() {
     _pageController.dispose();
     _intervalTimer?.cancel();
+    _durationTimer?.cancel();
     _pageTransitionController.dispose();
     super.dispose();
+  }
+
+  void _startDurationTimer() {
+    _durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          _elapsedSeconds++;
+        });
+      }
+    });
+  }
+
+  String _formatDuration(int seconds) {
+    final hours = seconds ~/ 3600;
+    final minutes = (seconds % 3600) ~/ 60;
+    final secs = seconds % 60;
+    if (hours > 0) {
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+    }
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
   void _navigateToPage(int newPage) async {
@@ -323,10 +349,14 @@ class _ExtraSessionPlayerScreenState
       _isFinishing = true;
     });
 
+    // Stop the timer
+    _durationTimer?.cancel();
+
     try {
       await ref.read(completeExtraActionProvider(
         session.extra.id,
         session.extra.xpReward,
+        durationSeconds: _elapsedSeconds,
       ).future);
 
       if (!mounted) return;
@@ -387,15 +417,44 @@ class _ExtraSessionPlayerScreenState
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              extraTitle,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.3,
-                height: 1.1,
-              ),
-              overflow: TextOverflow.ellipsis,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    extraTitle,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.3,
+                      height: 1.1,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.primaryColor.withOpacity(0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.timer, size: 14, color: AppTheme.primaryColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        _formatDuration(_elapsedSeconds),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 2),
             const Text(

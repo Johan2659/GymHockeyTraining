@@ -948,7 +948,53 @@ class ModernProgressScreen extends ConsumerWidget {
 
   Widget _buildPerformanceEvolutionSection(
       BuildContext context, WidgetRef ref) {
-    return _PerformanceEvolutionWidget();
+    final progressEventsAsync = ref.watch(progressEventsProvider);
+    final analyticsAsync = ref.watch(performanceAnalyticsProvider);
+
+    return progressEventsAsync.when(
+      loading: () => const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+      error: (error, stack) => const SizedBox.shrink(),
+      data: (events) {
+        return analyticsAsync.when(
+          loading: () => const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
+          error: (error, stack) => const SizedBox.shrink(),
+          data: (analytics) {
+            final personalBests = analytics?.personalBests ?? {};
+
+            // Calculate real-time stats from events
+            final sessionEvents = events.where((e) => 
+              e.type == ProgressEventType.sessionCompleted || 
+              e.type == ProgressEventType.extraCompleted
+            ).toList();
+
+            final exerciseEvents = events.where((e) => 
+              e.type == ProgressEventType.exerciseDone
+            ).toList();
+
+            // Only show if we have data
+            if (sessionEvents.isEmpty && personalBests.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return _PerformanceEvolutionWidget(
+              sessionEvents: sessionEvents,
+              exerciseEvents: exerciseEvents,
+              personalBests: personalBests,
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildTrainingBalanceSection(BuildContext context, WidgetRef ref) {
@@ -1027,39 +1073,17 @@ class ModernProgressScreen extends ConsumerWidget {
 
         // Determine balance quality for hockey performance
         String balanceQuality;
-        Color balanceColor;
-        IconData balanceIcon;
-        String balanceMessage;
 
         if (balanceScore >= 85) {
           balanceQuality = 'Elite Hockey Balance';
-          balanceColor = Colors.green;
-          balanceIcon = Icons.emoji_events;
-          balanceMessage =
-              'Your training distribution is ideal for hockey performance!';
         } else if (balanceScore >= 70) {
           balanceQuality = 'Good Hockey Balance';
-          balanceColor = Colors.lightGreen;
-          balanceIcon = Icons.trending_up;
-          balanceMessage = 'Solid distribution. Keep following your program!';
         } else if (balanceScore >= 50) {
           balanceQuality = 'Building Your Foundation';
-          balanceColor = Colors.blue;
-          balanceIcon = Icons.trending_up;
-          balanceMessage =
-              'Your program is on track. Add extras to fine-tune specific areas.';
         } else if (totalProgress > 0) {
           balanceQuality = 'Early Progress';
-          balanceColor = Colors.blue;
-          balanceIcon = Icons.fitness_center;
-          balanceMessage =
-              'Keep following your program. Balance will improve naturally!';
         } else {
           balanceQuality = 'Ready to Start';
-          balanceColor = Colors.grey;
-          balanceIcon = Icons.play_arrow;
-          balanceMessage =
-              'Start your training program for optimal hockey development.';
         }
 
         return Card(
@@ -1071,7 +1095,7 @@ class ModernProgressScreen extends ConsumerWidget {
                 Row(
                   children: [
                     Icon(Icons.sports_hockey,
-                        color: AppTheme.accentColor, size: 24),
+                        color: Colors.blue, size: 24),
                     const SizedBox(width: 10),
                     Text(
                       'Performance Profile',
@@ -1080,120 +1104,25 @@ class ModernProgressScreen extends ConsumerWidget {
                             color: AppTheme.primaryColor,
                           ),
                     ),
-                    const SizedBox(width: 8),
+                    const Spacer(),
                     GestureDetector(
                       onTap: () => _showPerformanceProfileInfo(context),
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: AppTheme.accentColor.withOpacity(0.2),
+                          color: Colors.blue.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.info_outline,
                           size: 18,
-                          color: AppTheme.accentColor,
+                          color: Colors.blue,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-
-                // Balance Score
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: balanceColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: balanceColor.withValues(alpha: 0.4), width: 1.5),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(balanceIcon, color: balanceColor, size: 28),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  balanceQuality,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: balanceColor,
-                                      ),
-                                ),
-                                Text(
-                                  'Score: ${balanceScore.toInt()}/100',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        color: balanceColor,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      LinearProgressIndicator(
-                        value: balanceScore / 100,
-                        backgroundColor: Colors.grey[800],
-                        valueColor: AlwaysStoppedAnimation(balanceColor),
-                        minHeight: 6,
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        balanceMessage,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: balanceColor,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-
                 const SizedBox(height: 20),
-
-                // Category Distribution with target comparison
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Your Training Mix',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                    GestureDetector(
-                      onTap: () => _showPerformanceProfileInfo(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.info_outline,
-                          size: 18,
-                          color: Colors.white.withOpacity(0.7),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
 
                 // Simple, clean category breakdown (like Strava/WHOOP)
                 _CategoryBreakdownWidget(
@@ -1205,54 +1134,6 @@ class ModernProgressScreen extends ConsumerWidget {
                   balanceScore: balanceScore,
                   balanceQuality: balanceQuality,
                 ),
-
-                const SizedBox(height: 16),
-
-                if (totalProgress == 0) ...[
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
-                      border:
-                          Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(Icons.info_outline, color: Colors.blue, size: 20),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'How It Works',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Your training programs are already designed with optimal hockey balance. Follow your program and use Extras to target specific areas when needed!',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.blue,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ],
             ),
           ),
@@ -1475,43 +1356,44 @@ class ModernProgressScreen extends ConsumerWidget {
 
               const SizedBox(height: 16),
 
-              // How to read it
+              // How it works
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.amber.withOpacity(0.15),
-                      Colors.amber.withOpacity(0.05),
+                      Colors.blue.withOpacity(0.15),
+                      Colors.blue.withOpacity(0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.amber.withOpacity(0.3)),
+                  border: Border.all(color: Colors.blue.withOpacity(0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.insights, color: Colors.amber, size: 20),
+                        Icon(Icons.info_outline, color: Colors.blue, size: 20),
                         const SizedBox(width: 8),
                         Text(
-                          'How to read it',
+                          'How It Works',
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.amber,
+                                    color: Colors.blue,
                                   ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _buildReadingTip(
-                        context, 'Dashed amber line', 'Optimal hockey profile'),
-                    _buildReadingTip(context, 'Filled colored area',
-                        'Your current training'),
-                    _buildReadingTip(
-                        context, '✓ Checkmarks', 'You\'re on target!'),
+                    Text(
+                      'Your training programs are already designed with optimal hockey balance. Follow your program and use Extras to target specific areas when needed!',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[300],
+                            height: 1.5,
+                          ),
+                    ),
                   ],
                 ),
               ),
@@ -1821,415 +1703,254 @@ class _CategoryBreakdownWidgetState extends State<_CategoryBreakdownWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Donut Chart
-        TweenAnimationBuilder<double>(
-          duration: const Duration(milliseconds: 1200),
-          curve: Curves.easeOutCubic,
-          tween: Tween(begin: 0.0, end: 1.0),
-          builder: (context, animation, child) {
-            return CustomPaint(
-              size: const Size(320, 320),
-              painter: _DonutChartPainter(
-                categories: widget.categories,
-                actualValues: widget.actualValues,
-                optimalValues: widget.optimalValues,
-                getCategoryColor: widget.getCategoryColor,
-                getCategoryName: widget.getCategoryName,
-                balanceScore: widget.balanceScore,
-                balanceQuality: widget.balanceQuality,
-                animation: animation,
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-// =============================================================================
-// Donut Chart Painter
-// =============================================================================
-
-class _DonutChartPainter extends CustomPainter {
-  final List<ExerciseCategory> categories;
-  final Map<ExerciseCategory, double> actualValues;
-  final Map<ExerciseCategory, double> optimalValues;
-  final Color Function(ExerciseCategory) getCategoryColor;
-  final String Function(ExerciseCategory) getCategoryName;
-  final double balanceScore;
-  final String balanceQuality;
-  final double animation;
-
-  _DonutChartPainter({
-    required this.categories,
-    required this.actualValues,
-    required this.optimalValues,
-    required this.getCategoryColor,
-    required this.getCategoryName,
-    required this.balanceScore,
-    required this.balanceQuality,
-    required this.animation,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    // Modern 2025 design parameters - inspired by WHOOP, Apple Fitness+
-    final radius = size.width / 2.3;
-    final strokeWidth = 56.0; // Thicker for modern look
-
-    // Add subtle outer glow for depth
-    final glowPaint = Paint()
-      ..color = Colors.cyan.withValues(alpha: 0.1)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth + 8
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
-
-    canvas.drawCircle(center, radius, glowPaint);
-
-    // Start angle at top (-90 degrees)
-    double startAngle = -pi / 2;
-
-    for (final category in categories) {
-      final optimalPercent = optimalValues[category] ?? 0.0;
-      final actualPercent = actualValues[category] ?? 0.0;
-      final categoryColor = getCategoryColor(category);
-
-      // Calculate sweep angle based on optimal percentage
-      final sweepAngle = (2 * pi * optimalPercent / 100) * animation;
-
-      // Draw background ring segment with subtle gradient
-      final bgGradient = SweepGradient(
-        colors: [
-          Colors.grey[850]!,
-          Colors.grey[800]!,
-          Colors.grey[850]!,
-        ],
-        startAngle: startAngle,
-        endAngle: startAngle + sweepAngle,
-      );
-
-      final bgPaint = Paint()
-        ..shader = bgGradient
-            .createShader(Rect.fromCircle(center: center, radius: radius))
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth
-        ..strokeCap = StrokeCap.round;
-
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        startAngle,
-        sweepAngle,
-        false,
-        bgPaint,
-      );
-
-      // Calculate how much to fill (actual vs optimal)
-      final fillRatio = optimalPercent > 0
-          ? (actualPercent / optimalPercent).clamp(0.0, 1.5)
-          : 0.0;
-      final fillSweep = sweepAngle * fillRatio;
-
-      if (fillRatio > 0) {
-        // Main fill with vibrant gradient (Apple Fitness+ style)
-        final mainFillSweep = fillSweep.clamp(0.0, sweepAngle);
-
-        final fillPaint = Paint()
-          ..shader = SweepGradient(
-            colors: [
-              categoryColor.withValues(alpha: 0.85),
-              categoryColor,
-              categoryColor.withValues(alpha: 0.95),
-              categoryColor.withValues(alpha: 1.0),
-            ],
-            startAngle: startAngle,
-            endAngle: startAngle + mainFillSweep,
-          ).createShader(Rect.fromCircle(center: center, radius: radius))
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = strokeWidth
-          ..strokeCap = StrokeCap.round;
-
-        canvas.drawArc(
-          Rect.fromCircle(center: center, radius: radius),
-          startAngle,
-          mainFillSweep,
-          false,
-          fillPaint,
-        );
-
-        // If over target, show overflow with modern pulsing effect
-        if (fillRatio > 1.0) {
-          final overflowSweep = fillSweep - sweepAngle;
-
-          // Overflow with warning color gradient
-          final overflowPaint = Paint()
-            ..shader = SweepGradient(
-              colors: [
-                categoryColor.withValues(alpha: 0.5),
-                Colors.amber.withValues(alpha: 0.7),
-                Colors.orange.withValues(alpha: 0.6),
-              ],
-              startAngle: startAngle + sweepAngle,
-              endAngle: startAngle +
-                  sweepAngle +
-                  overflowSweep.clamp(0.0, sweepAngle * 0.5),
-            ).createShader(Rect.fromCircle(center: center, radius: radius))
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = strokeWidth
-            ..strokeCap = StrokeCap.round;
-
-          canvas.drawArc(
-            Rect.fromCircle(center: center, radius: radius),
-            startAngle + sweepAngle,
-            overflowSweep.clamp(0.0, sweepAngle * 0.5),
-            false,
-            overflowPaint,
-          );
-
-          // Modern warning indicator with glow
-          final overflowRadius = radius + strokeWidth / 2 + 10;
-          final overflowAngle = startAngle +
-              sweepAngle +
-              (overflowSweep / 2).clamp(0.0, sweepAngle * 0.25);
-          final indicatorPos = Offset(
-            center.dx + overflowRadius * cos(overflowAngle),
-            center.dy + overflowRadius * sin(overflowAngle),
-          );
-
-          // Glow effect
-          final glowWarning = Paint()
-            ..color = Colors.amber.withValues(alpha: 0.4)
-            ..style = PaintingStyle.fill
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-          canvas.drawCircle(indicatorPos, 8, glowWarning);
-
-          // Solid indicator
-          final warningPaint = Paint()
-            ..color = Colors.amber
-            ..style = PaintingStyle.fill;
-          canvas.drawCircle(indicatorPos, 5, warningPaint);
-
-          // Inner white dot
-          final whiteDot = Paint()
-            ..color = Colors.white
-            ..style = PaintingStyle.fill;
-          canvas.drawCircle(indicatorPos, 2, whiteDot);
-        }
+    // Get category icons
+    String getCategoryIcon(ExerciseCategory category) {
+      switch (category) {
+        case ExerciseCategory.power:
+          return '⚡';
+        case ExerciseCategory.strength:
+          return '💪';
+        case ExerciseCategory.speed:
+          return '⚡';
+        case ExerciseCategory.conditioning:
+          return '❤️';
+        case ExerciseCategory.agility:
+          return '✖️';
+        case ExerciseCategory.technique:
+          return '🎯';
+        case ExerciseCategory.balance:
+          return '⚖️';
+        case ExerciseCategory.flexibility:
+          return '🤸';
+        case ExerciseCategory.warmup:
+          return '🔥';
+        case ExerciseCategory.recovery:
+          return '🛀';
+        default:
+          return '🏒';
       }
-
-      // Thin separator for modern look (less harsh than before)
-      if (categories.indexOf(category) < categories.length - 1) {
-        final separatorPaint = Paint()
-          ..color = Colors.black.withValues(alpha: 0.6)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5;
-
-        final separatorAngle = startAngle + sweepAngle;
-        final innerRadius = radius - strokeWidth / 2;
-        final outerRadius = radius + strokeWidth / 2;
-
-        canvas.drawLine(
-          Offset(
-            center.dx + innerRadius * cos(separatorAngle),
-            center.dy + innerRadius * sin(separatorAngle),
-          ),
-          Offset(
-            center.dx + outerRadius * cos(separatorAngle),
-            center.dy + outerRadius * sin(separatorAngle),
-          ),
-          separatorPaint,
-        );
-      }
-
-      // Modern label positioning - cleaner typography
-      final midAngle = startAngle + (sweepAngle / 2);
-      final labelRadius = radius + strokeWidth / 2 + 32;
-      final labelPos = Offset(
-        center.dx + labelRadius * cos(midAngle),
-        center.dy + labelRadius * sin(midAngle),
-      );
-
-      // Category name with modern font weight
-      final categoryName = getCategoryName(category);
-      final nameSpan = TextSpan(
-        text: categoryName.toUpperCase(),
-        style: TextStyle(
-          color: categoryColor,
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.8,
-        ),
-      );
-
-      final namePainter = TextPainter(
-        text: nameSpan,
-        textDirection: TextDirection.ltr,
-        textAlign: TextAlign.center,
-      );
-
-      namePainter.layout();
-      namePainter.paint(
-        canvas,
-        Offset(
-          labelPos.dx - namePainter.width / 2,
-          labelPos.dy - namePainter.height / 2 - 12,
-        ),
-      );
-
-      // Modern stats display - larger actual, smaller target
-      final statsSpan = TextSpan(
-        children: [
-          TextSpan(
-            text: '${actualPercent.toInt()}',
-            style: TextStyle(
-              color: categoryColor,
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              height: 1.0,
-            ),
-          ),
-          TextSpan(
-            text: '%',
-            style: TextStyle(
-              color: categoryColor.withValues(alpha: 0.8),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          TextSpan(
-            text: '\n/${optimalPercent.toInt()}%',
-            style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              height: 1.3,
-            ),
-          ),
-        ],
-      );
-
-      final statsPainter = TextPainter(
-        text: statsSpan,
-        textDirection: TextDirection.ltr,
-        textAlign: TextAlign.center,
-      );
-
-      statsPainter.layout();
-      statsPainter.paint(
-        canvas,
-        Offset(
-          labelPos.dx - statsPainter.width / 2,
-          labelPos.dy - statsPainter.height / 2 + 8,
-        ),
-      );
-
-      startAngle += sweepAngle;
     }
 
-    // Modern center circle with depth effect
-    // Outer shadow for depth
-    final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.5)
-      ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
-    canvas.drawCircle(center, radius - strokeWidth / 2 - 4, shadowPaint);
+    // Get category descriptions
+    String getCategoryDescription(ExerciseCategory category) {
+      switch (category) {
+        case ExerciseCategory.power:
+          return 'Explosive skating & shots';
+        case ExerciseCategory.strength:
+          return 'Foundation & injury prevention';
+        case ExerciseCategory.speed:
+          return 'Acceleration & transitions';
+        case ExerciseCategory.conditioning:
+          return 'Stamina & endurance';
+        case ExerciseCategory.agility:
+          return 'Edge work & quickness';
+        case ExerciseCategory.technique:
+          return 'Skill & precision';
+        case ExerciseCategory.balance:
+          return 'Stability & control';
+        case ExerciseCategory.flexibility:
+          return 'Mobility & range';
+        case ExerciseCategory.warmup:
+          return 'Preparation & activation';
+        case ExerciseCategory.recovery:
+          return 'Rest & regeneration';
+        default:
+          return 'Training focus';
+      }
+    }
 
-    // Gradient center background (premium look)
-    final centerGradient = RadialGradient(
-      colors: [
-        Colors.grey[900]!,
-        Colors.grey[850]!,
-        Colors.black,
-      ],
-      stops: const [0.0, 0.5, 1.0],
-    );
+    // Calculate balance score color (yellow)
+    final balanceColor = widget.balanceScore >= 70
+        ? Colors.amber[400]!
+        : widget.balanceScore >= 50
+            ? Colors.amber[600]!
+            : Colors.orange[600]!;
 
-    final centerPaint = Paint()
-      ..shader = centerGradient.createShader(
-        Rect.fromCircle(center: center, radius: radius - strokeWidth / 2 - 5),
-      )
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(center, radius - strokeWidth / 2 - 5, centerPaint);
-
-    // Subtle inner border for definition
-    final borderPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    canvas.drawCircle(center, radius - strokeWidth / 2 - 5, borderPaint);
-
-    // Modern center text - WHOOP-inspired large number
-    final centerSpan = TextSpan(
-      children: [
-        TextSpan(
-          text: '${balanceScore.toInt()}',
-          style: TextStyle(
-            fontSize: 64,
-            fontWeight: FontWeight.w900,
-            color: balanceScore >= 85
-                ? const Color(0xFF00E676) // Material green accent
-                : balanceScore >= 70
-                    ? const Color(0xFF00E5FF) // Cyan accent
-                    : balanceScore >= 50
-                        ? const Color(0xFF448AFF) // Blue accent
-                        : const Color(0xFFFFAB40), // Amber accent
-            height: 1.0,
-            letterSpacing: -2,
+    return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.grey[900]!,
+              Colors.grey[850]!,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.grey[700]!,
+            width: 1.5,
           ),
         ),
-        TextSpan(
-          text: '%',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            color: balanceScore >= 85
-                ? const Color(0xFF00E676).withValues(alpha: 0.7)
-                : balanceScore >= 70
-                    ? const Color(0xFF00E5FF).withValues(alpha: 0.7)
-                    : balanceScore >= 50
-                        ? const Color(0xFF448AFF).withValues(alpha: 0.7)
-                        : const Color(0xFFFFAB40).withValues(alpha: 0.7),
-            height: 1.0,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Balance score header
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'BALANCE SCORE',
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          widget.balanceQuality,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: balanceColor.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: balanceColor.withValues(alpha: 0.5),
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${widget.balanceScore.toInt()}',
+                        style: TextStyle(
+                          color: balanceColor,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Divider
+              Container(
+                height: 1,
+                color: Colors.grey[800],
+              ),
+              const SizedBox(height: 12),
+              // Category stats - compact rows
+              ...widget.categories.map((category) {
+                final color = widget.getCategoryColor(category);
+                final name = widget.getCategoryName(category);
+                final optimal = widget.optimalValues[category] ?? 0.0;
+                final actual = widget.actualValues[category] ?? 0.0;
+                final icon = getCategoryIcon(category);
+                final description = getCategoryDescription(category);
+                final progress =
+                    optimal > 0 ? (actual / optimal).clamp(0.0, 1.0) : 0.0;
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          // Icon - smaller
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: color.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Center(
+                              child: Text(
+                                icon,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          // Category name and description
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                    color: color,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  description,
+                                  style: TextStyle(
+                                    color: Colors.grey[500],
+                                    fontSize: 10,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Stats - compact
+                          Text(
+                            '${actual.toInt()}%',
+                            style: TextStyle(
+                              color: color,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          Text(
+                            ' / ${optimal.toInt()}%',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      // Progress bar - thinner
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 6,
+                          backgroundColor: Colors.grey[850],
+                          valueColor: AlwaysStoppedAnimation(color),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ],
           ),
         ),
-        TextSpan(
-          text: '\n${balanceQuality.toUpperCase()}',
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w700,
-            color: Colors.grey[500],
-            letterSpacing: 1.2,
-            height: 2.0,
-          ),
-        ),
-      ],
-    );
-
-    final centerPainter = TextPainter(
-      text: centerSpan,
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.center,
-    );
-
-    centerPainter.layout(maxWidth: radius * 1.5);
-    centerPainter.paint(
-      canvas,
-      Offset(
-        center.dx - centerPainter.width / 2,
-        center.dy - centerPainter.height / 2,
-      ),
     );
   }
-
-  @override
-  bool shouldRepaint(_DonutChartPainter oldDelegate) => true;
 }
 
+// =============================================================================
 // Simple animated bar widget
+// =============================================================================
+
 class FractionallySizedBar extends StatelessWidget {
   final double fraction;
   final double animation;
@@ -2589,6 +2310,16 @@ class PerformanceGraphPainter extends CustomPainter {
 // =============================================================================
 
 class _PerformanceEvolutionWidget extends StatefulWidget {
+  const _PerformanceEvolutionWidget({
+    required this.sessionEvents,
+    required this.exerciseEvents,
+    required this.personalBests,
+  });
+
+  final List<ProgressEvent> sessionEvents;
+  final List<ProgressEvent> exerciseEvents;
+  final Map<String, PersonalBest> personalBests;
+
   @override
   State<_PerformanceEvolutionWidget> createState() =>
       _PerformanceEvolutionWidgetState();
@@ -2598,142 +2329,323 @@ class _PerformanceEvolutionWidgetState
     extends State<_PerformanceEvolutionWidget> {
   String _selectedPeriod = 'Month'; // 'Week', 'Month', or 'Year'
 
-  List<PerformanceDataPoint> _generatePerformanceData(String period) {
-    final now = DateTime.now();
-
-    switch (period) {
-      case 'Week':
-        // Last 7 days
-        return List.generate(7, (index) {
-          return PerformanceDataPoint(
-            date: now.subtract(Duration(days: 6 - index)),
-            value: 1500 + (index * 100) + (index * index * 10),
-          );
-        });
-
-      case 'Month':
-        // Last 8 weeks
-        return List.generate(8, (index) {
-          return PerformanceDataPoint(
-            date: now.subtract(Duration(days: (7 - index) * 7)),
-            value: 8000 + (index * 600) + (index * index * 50),
-          );
-        });
-
-      case 'Year':
-        // Last 12 months
-        return List.generate(12, (index) {
-          return PerformanceDataPoint(
-            date: DateTime(now.year, now.month - (11 - index), 1),
-            value: 30000 + (index * 2500) + (index * index * 200),
-          );
-        });
-
-      default:
-        return [];
+  @override
+  Widget build(BuildContext context) {
+    // Get all available data
+    final allSessions = widget.sessionEvents;
+    final allBests = widget.personalBests;
+    
+    // Calculate period-specific stats
+    final filteredSessions = _filterEventsByPeriod(allSessions, _selectedPeriod);
+    
+    // Separate program sessions from extras
+    final programSessions = filteredSessions.where((e) => 
+      e.type == ProgressEventType.sessionCompleted
+    ).length;
+    
+    final extraSessions = filteredSessions.where((e) => 
+      e.type == ProgressEventType.extraCompleted
+    ).length;
+    
+    final totalSessions = filteredSessions.length;
+    
+    // Count completed programs (sessions at week 4, session 4 of a program)
+    final completedPrograms = filteredSessions.where((e) => 
+      e.type == ProgressEventType.sessionCompleted && 
+      e.week == 4 && 
+      e.session == 4
+    ).length;
+    
+    // Calculate training time from event payloads
+    // For events without duration, estimate based on typical session lengths
+    int totalTrainingSeconds = 0;
+    int programTrainingSeconds = 0;
+    int extraTrainingSeconds = 0;
+    int estimatedSessionCount = 0; // Track how many are estimated
+    
+    for (final event in filteredSessions) {
+      int? durationFromPayload = event.payload?['duration'] as int?;
+      
+      // If no duration recorded, estimate based on session type
+      int duration;
+      if (durationFromPayload == null) {
+        estimatedSessionCount++;
+        if (event.type == ProgressEventType.sessionCompleted) {
+          duration = 2400; // Estimate 40 minutes for program sessions
+        } else {
+          duration = 1800; // Estimate 30 minutes for extra sessions
+        }
+      } else {
+        duration = durationFromPayload;
+      }
+      
+      totalTrainingSeconds += duration;
+      if (event.type == ProgressEventType.sessionCompleted) {
+        programTrainingSeconds += duration;
+      } else if (event.type == ProgressEventType.extraCompleted) {
+        extraTrainingSeconds += duration;
+      }
     }
+    
+    // Get top 3 personal records (most recent)
+    final sortedBests = allBests.values.toList()
+      ..sort((a, b) => b.achievedAt.compareTo(a.achievedAt));
+    final top3Bests = sortedBests.take(3).toList();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                Icon(Icons.trending_up, color: AppTheme.primaryColor, size: 22),
+                const SizedBox(width: 8),
+                Text(
+                  'Training Stats',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+
+            // Period Selector (Professional chip style)
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.grey[900],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  _buildPeriodTab('Week', _selectedPeriod == 'Week'),
+                  _buildPeriodTab('Month', _selectedPeriod == 'Month'),
+                  _buildPeriodTab('Year', _selectedPeriod == 'Year'),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Key Metrics Grid
+            if (totalSessions > 0) ...[
+              // First Row: Total Sessions & Programs
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildMetricCard(
+                      context,
+                      'Total Sessions',
+                      totalSessions.toString(),
+                      Icons.calendar_today,
+                      AppTheme.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildMetricCard(
+                      context,
+                      'Programs Done',
+                      completedPrograms.toString(),
+                      Icons.emoji_events,
+                      Colors.amber,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Second Row: Program Sessions & Extras
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildMetricCard(
+                      context,
+                      'Program Training',
+                      programSessions.toString(),
+                      Icons.fitness_center,
+                      Colors.blue,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildMetricCard(
+                      context,
+                      'Extra Training',
+                      extraSessions.toString(),
+                      Icons.add_circle,
+                      Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+              
+              // Training Time Section (if any duration data exists)
+              if (totalTrainingSeconds > 0) ...[
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Text(
+                      'Training Time',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    if (estimatedSessionCount > 0) ...[
+                      const SizedBox(width: 6),
+                      Tooltip(
+                        message: '$estimatedSessionCount ${estimatedSessionCount == 1 ? 'session' : 'sessions'} estimated at typical duration',
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Third Row: Training Time Stats
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildMetricCard(
+                        context,
+                        'Total Time',
+                        _formatTrainingTime(totalTrainingSeconds),
+                        Icons.timer,
+                        Colors.purple,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildMetricCard(
+                        context,
+                        'Program Time',
+                        _formatTrainingTime(programTrainingSeconds),
+                        Icons.schedule,
+                        Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildMetricCard(
+                        context,
+                        'Extra Time',
+                        _formatTrainingTime(extraTrainingSeconds),
+                        Icons.access_time,
+                        Colors.green,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Average time per session
+                    Expanded(
+                      child: _buildMetricCard(
+                        context,
+                        'Avg/Session',
+                        _formatTrainingTime(totalTrainingSeconds ~/ totalSessions),
+                        Icons.trending_up,
+                        Colors.orange,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 16),
+            ],
+
+            // Personal Records Section
+            if (top3Bests.isNotEmpty) ...[
+              Text(
+                'Personal Records',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[400],
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...top3Bests.map((best) => _buildPersonalBestItem(best)),
+              const SizedBox(height: 8),
+            ],
+
+            // Empty State
+            if (totalSessions == 0 && top3Bests.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.insights,
+                      size: 64,
+                      color: Colors.grey[700],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No data yet',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Complete sessions to track your progress',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget _buildTimePeriodChip(String label, {required bool isSelected}) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedPeriod = label;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? AppTheme.primaryColor : Colors.grey[700]!,
-            width: 1.5,
+  Widget _buildPeriodTab(String label, bool isSelected) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedPeriod = label),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.primaryColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : Colors.grey[400],
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : Colors.grey[500],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildPerformanceStatTile(
+  Widget _buildMetricCard(
     BuildContext context,
     String label,
     String value,
-    String change,
-    IconData icon,
-    Color color, {
-    required bool isPositive,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Icon(
-                isPositive ? Icons.arrow_upward : Icons.arrow_downward,
-                size: 12,
-                color: isPositive ? Colors.green : Colors.red,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                change,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isPositive ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBestLiftTile(
-    BuildContext context,
-    String exerciseName,
-    String weight,
-    String date,
     IconData icon,
     Color color,
   ) {
@@ -2742,169 +2654,155 @@ class _PerformanceEvolutionWidgetState
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: color),
+              Icon(icon, color: color, size: 18),
               const SizedBox(width: 6),
-              Text(
-                'Best Lift',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey[500],
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
-            weight,
+            value,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
               color: color,
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            exerciseName,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[300],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Row(
-            children: [
-              Icon(Icons.calendar_today, size: 10, color: Colors.grey[500]),
-              const SizedBox(width: 4),
-              Text(
-                date,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[500],
-                ),
-              ),
-            ],
           ),
         ],
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final List<PerformanceDataPoint> performanceData =
-        _generatePerformanceData(_selectedPeriod);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.trending_up,
-                        color: AppTheme.primaryColor, size: 24),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Performance Evolution',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
-                          ),
-                    ),
-                  ],
-                ),
-              ],
+  Widget _buildPersonalBestItem(PersonalBest best) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.amber.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.amber.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.amber.withOpacity(0.2),
+              shape: BoxShape.circle,
             ),
-
-            const SizedBox(height: 8),
-
-            Text(
-              'Track your strength gains over time',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                  ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Stats summary
-            Row(
+            child: Icon(Icons.emoji_events, color: Colors.amber, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: _buildPerformanceStatTile(
-                    context,
-                    'Total Volume',
-                    '12.5K kg',
-                    '+15%',
-                    Icons.fitness_center,
-                    Colors.blue,
-                    isPositive: true,
+                Text(
+                  best.exerciseName,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildBestLiftTile(
-                    context,
-                    'Squat',
-                    '125 kg',
-                    'Nov 1, 2025',
-                    Icons.military_tech,
-                    Colors.amber,
+                const SizedBox(height: 2),
+                Text(
+                  _formatDate(best.achievedAt),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[500],
                   ),
                 ),
               ],
             ),
-
-            const SizedBox(height: 20),
-
-            // Time period selector
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildTimePeriodChip('Week',
-                    isSelected: _selectedPeriod == 'Week'),
-                const SizedBox(width: 8),
-                _buildTimePeriodChip('Month',
-                    isSelected: _selectedPeriod == 'Month'),
-                const SizedBox(width: 8),
-                _buildTimePeriodChip('Year',
-                    isSelected: _selectedPeriod == 'Year'),
-              ],
+          ),
+          Text(
+            '${best.bestValue.toStringAsFixed(best.unit == 'kg' ? 1 : 0)} ${best.unit}',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.amber,
             ),
-
-            const SizedBox(height: 20),
-
-            // Performance graph
-            SizedBox(
-              height: 200,
-              child: CustomPaint(
-                size: const Size(double.infinity, 200),
-                painter: PerformanceGraphPainter(
-                  dataPoints: performanceData,
-                  color: AppTheme.primaryColor,
-                  bestLiftIndex: 5, // Index of the best lift in the data
-                  bestLiftColor: Colors.amber,
-                  period:
-                      _selectedPeriod, // Pass the selected period for label formatting
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+  }
+
+  List<ProgressEvent> _filterEventsByPeriod(
+    List<ProgressEvent> events,
+    String period,
+  ) {
+    if (events.isEmpty) return [];
+    
+    final now = DateTime.now();
+    DateTime cutoffDate;
+
+    switch (period) {
+      case 'Week':
+        cutoffDate = now.subtract(const Duration(days: 7));
+        break;
+      case 'Month':
+        cutoffDate = now.subtract(const Duration(days: 30));
+        break;
+      case 'Year':
+        cutoffDate = now.subtract(const Duration(days: 365));
+        break;
+      default:
+        cutoffDate = now.subtract(const Duration(days: 30));
+    }
+
+    return events.where((event) => event.ts.isAfter(cutoffDate)).toList()
+      ..sort((a, b) => a.ts.compareTo(b.ts));
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date).inDays;
+
+    if (difference == 0) {
+      return 'Today';
+    } else if (difference == 1) {
+      return 'Yesterday';
+    } else if (difference < 7) {
+      return '$difference days ago';
+    } else {
+      final months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      return '${months[date.month - 1]} ${date.day}, ${date.year}';
+    }
+  }
+
+  String _formatTrainingTime(int seconds) {
+    if (seconds == 0) return '0m';
+    
+    final hours = seconds ~/ 3600;
+    final minutes = (seconds % 3600) ~/ 60;
+    
+    if (hours > 0) {
+      return '${hours}h ${minutes}m';
+    } else {
+      return '${minutes}m';
+    }
   }
 }

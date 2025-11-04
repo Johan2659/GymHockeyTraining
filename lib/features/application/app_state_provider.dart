@@ -356,6 +356,16 @@ Future<void> markExerciseDoneAction(Ref ref, String exerciseId) async {
 /// Complete session action provider
 @riverpod
 Future<void> completeSessionAction(Ref ref) async {
+  await _completeSessionWithDuration(ref, null);
+}
+
+/// Complete session with duration action provider
+@riverpod
+Future<void> completeSessionWithDurationAction(Ref ref, int durationSeconds) async {
+  await _completeSessionWithDuration(ref, durationSeconds);
+}
+
+Future<void> _completeSessionWithDuration(Ref ref, int? durationSeconds) async {
   final stateRepo = ref.read(programStateRepositoryProvider);
   final progressRepo = ref.read(progressRepositoryProvider);
   final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
@@ -372,6 +382,7 @@ Future<void> completeSessionAction(Ref ref) async {
     programId: currentState.activeProgramId!,
     week: currentState.currentWeek,
     session: currentState.currentSession,
+    payload: durationSeconds != null ? {'duration': durationSeconds} : null,
   );
 
   await progressRepo.appendEvent(event);
@@ -493,11 +504,20 @@ Future<void> startExtraAction(Ref ref, String extraId) async {
 
 /// Complete extra action provider
 @riverpod
-Future<void> completeExtraAction(Ref ref, String extraId, int xpReward) async {
+Future<void> completeExtraAction(Ref ref, String extraId, int xpReward, {int? durationSeconds}) async {
   final progressRepo = ref.read(progressRepositoryProvider);
 
   PersistenceService.logStateChange(
       'Completing extra: $extraId with XP reward: $xpReward');
+
+  final payload = {
+    'xp_reward': xpReward,
+    'extra_type': 'extra_completion',
+  };
+  
+  if (durationSeconds != null) {
+    payload['duration'] = durationSeconds;
+  }
 
   final event = ProgressEvent(
     ts: DateTime.now(),
@@ -506,13 +526,33 @@ Future<void> completeExtraAction(Ref ref, String extraId, int xpReward) async {
     week: 0, // Extras don't have weeks
     session: 0, // Extras don't have sessions
     exerciseId: extraId,
-    payload: {
-      'xp_reward': xpReward,
-      'extra_type': 'extra_completion',
-    },
+    payload: payload,
   );
 
   await progressRepo.appendEvent(event);
+
+  // Update performance analytics after completing extra
+  try {
+    final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
+    final events = await progressRepo.getRecent(limit: 1000); // Get all recent events
+    final currentState = await ref.read(appStateProvider.future);
+    final programs = await ref.read(programRepositoryProvider).getAll();
+    final updatedAnalytics = await analyticsRepo.calculateAnalytics(
+      events,
+      programs,
+      currentState.state, // Pass the ProgramState from AppStateData
+    );
+    await analyticsRepo.save(updatedAnalytics);
+
+    // Invalidate the cache so the UI updates immediately
+    ref.invalidate(performanceAnalyticsProvider);
+    ref.invalidate(categoryProgressProvider);
+  } catch (e) {
+    LoggerService.instance.warning(
+        'Failed to update performance analytics after extra completion',
+        source: 'completeExtraAction',
+        error: e);
+  }
 }
 
 /// Save exercise performance action provider
