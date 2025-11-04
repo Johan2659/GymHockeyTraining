@@ -243,35 +243,70 @@ class PerformanceAnalyticsRepositoryImpl
       int matchedCount = 0;
       int skippedCount = 0;
 
-      // Calculate volume for each completed exercise
+      // Group performances by session (programId + week + session + timestamp)
+      final sessionMap = <String, List<ExercisePerformance>>{};
+      
       for (final performance in allPerformances) {
-        // Get the exercise to know its category
-        final exercise =
-            await _exerciseRepository.getById(performance.exerciseId);
-        if (exercise == null) {
-          skippedCount++;
-          continue;
+        // Create session key: date-based grouping (same day = same session)
+        final sessionKey = '${performance.programId}_${performance.timestamp.year}_${performance.timestamp.month}_${performance.timestamp.day}_${performance.timestamp.hour}';
+        sessionMap.putIfAbsent(sessionKey, () => []).add(performance);
+      }
+
+      LoggerService.instance.info(
+        'Grouped into ${sessionMap.length} unique sessions',
+        source: 'PerformanceAnalyticsRepository',
+      );
+
+      // Analyze each session and determine its primary focus
+      for (final sessionPerformances in sessionMap.values) {
+        // Count exercises by category in this session
+        final sessionCategoryCounts = <ExerciseCategory, int>{
+          for (final category in mainCategories) category: 0,
+        };
+
+        for (final performance in sessionPerformances) {
+          final exercise = await _exerciseRepository.getById(performance.exerciseId);
+          if (exercise == null) {
+            skippedCount++;
+            continue;
+          }
+
+          if (!mainCategories.contains(exercise.category)) {
+            skippedCount++;
+            continue;
+          }
+
+          matchedCount++;
+          sessionCategoryCounts[exercise.category] = 
+              (sessionCategoryCounts[exercise.category] ?? 0) + 1;
         }
 
-        // Only count the 5 main categories (ignore warmup, recovery, technique, etc.)
-        if (!mainCategories.contains(exercise.category)) {
-          skippedCount++;
-          continue;
+        // Find the dominant category in this session (category with most exercises)
+        ExerciseCategory? dominantCategory;
+        int maxCount = 0;
+        
+        for (final entry in sessionCategoryCounts.entries) {
+          if (entry.value > maxCount) {
+            maxCount = entry.value;
+            dominantCategory = entry.key;
+          }
         }
 
-        matchedCount++;
-
-        // Calculate total volume: sum(sets × reps × weight)
-        double exerciseVolume = 0.0;
-        for (final set in performance.sets) {
-          // For bodyweight exercises, weight might be null, treat as 1.0
-          final weight = set.weight ?? 1.0;
-          exerciseVolume += set.reps * weight;
+        // Award session points based on exercises done
+        // Dominant category gets bonus to reflect session focus
+        if (dominantCategory != null) {
+          for (final entry in sessionCategoryCounts.entries) {
+            if (entry.value > 0) {
+              // Dominant category gets 50% bonus, others get base points
+              final isDominant = entry.key == dominantCategory;
+              final basePoints = entry.value.toDouble();
+              final bonusMultiplier = isDominant ? 1.5 : 1.0;
+              
+              categoryVolumes[entry.key] = 
+                  (categoryVolumes[entry.key] ?? 0.0) + (basePoints * bonusMultiplier);
+            }
+          }
         }
-
-        // Add to category total
-        categoryVolumes[exercise.category] =
-            (categoryVolumes[exercise.category] ?? 0.0) + exerciseVolume;
       }
 
       LoggerService.instance.info(

@@ -390,6 +390,9 @@ Future<void> _completeSessionWithDuration(Ref ref, int? durationSeconds) async {
 
   // Update performance analytics with session completion
   try {
+    // Small delay to ensure all exercise performances are fully saved
+    await Future.delayed(const Duration(milliseconds: 500));
+    
     final events =
         await progressRepo.getRecent(limit: 1000); // Get all recent events
     final programs = await ref.read(programRepositoryProvider).getAll();
@@ -403,6 +406,10 @@ Future<void> _completeSessionWithDuration(Ref ref, int? durationSeconds) async {
     // Invalidate the cache so the UI updates immediately
     ref.invalidate(performanceAnalyticsProvider);
     ref.invalidate(categoryProgressProvider);
+    
+    LoggerService.instance.info(
+        'Performance analytics updated successfully after session completion',
+        source: 'completeSessionAction');
   } catch (e) {
     LoggerService.instance.warning(
         'Failed to update performance analytics after session completion',
@@ -533,6 +540,9 @@ Future<void> completeExtraAction(Ref ref, String extraId, int xpReward, {int? du
 
   // Update performance analytics after completing extra
   try {
+    // Small delay to ensure all exercise performances are fully saved
+    await Future.delayed(const Duration(milliseconds: 500));
+    
     final analyticsRepo = ref.read(performanceAnalyticsRepositoryProvider);
     final events = await progressRepo.getRecent(limit: 1000); // Get all recent events
     final currentState = await ref.read(appStateProvider.future);
@@ -547,6 +557,10 @@ Future<void> completeExtraAction(Ref ref, String extraId, int xpReward, {int? du
     // Invalidate the cache so the UI updates immediately
     ref.invalidate(performanceAnalyticsProvider);
     ref.invalidate(categoryProgressProvider);
+    
+    LoggerService.instance.info(
+        'Performance analytics updated successfully after extra completion',
+        source: 'completeExtraAction');
   } catch (e) {
     LoggerService.instance.warning(
         'Failed to update performance analytics after extra completion',

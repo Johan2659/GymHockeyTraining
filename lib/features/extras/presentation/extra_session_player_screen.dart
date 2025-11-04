@@ -353,6 +353,39 @@ class _ExtraSessionPlayerScreenState
     _durationTimer?.cancel();
 
     try {
+      // Save exercise performances for all exercises in the extra session
+      // This ensures category progress updates correctly
+      for (final exercise in session.exercises) {
+        try {
+          // Create performance sets - for extras, create one record per set
+          final performanceSets = <ExerciseSetPerformance>[];
+          for (int i = 0; i < exercise.sets; i++) {
+            performanceSets.add(ExerciseSetPerformance(
+              setNumber: i + 1,
+              reps: exercise.reps,
+              weight: null, // Extras don't track weight
+              completed: true,
+            ));
+          }
+          
+          final performance = ExercisePerformance(
+            id: '${exercise.id}_${DateTime.now().millisecondsSinceEpoch}',
+            exerciseId: exercise.id,
+            exerciseName: exercise.name,
+            programId: session.extra.id,
+            week: 0, // Extras don't have weeks
+            session: 0, // Extras don't have sessions
+            timestamp: DateTime.now(),
+            sets: performanceSets,
+          );
+          
+          await ref.read(saveExercisePerformanceActionProvider(performance).future);
+        } catch (e) {
+          // Log but don't fail the entire session if one exercise fails to save
+          print('Warning: Failed to save performance for ${exercise.name}: $e');
+        }
+      }
+      
       await ref.read(completeExtraActionProvider(
         session.extra.id,
         session.extra.xpReward,

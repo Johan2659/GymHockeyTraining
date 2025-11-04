@@ -756,7 +756,7 @@ class ExercisePerformance {
   }
 
   static List<ExerciseSetPerformance> _setsFromJson(List<dynamic> json) => json
-      .map((e) => ExerciseSetPerformance.fromJson(e as Map<String, dynamic>))
+      .map((e) => ExerciseSetPerformance.fromJson(Map<String, dynamic>.from(e as Map)))
       .toList();
 
   static List<Map<String, dynamic>> _setsToJson(
