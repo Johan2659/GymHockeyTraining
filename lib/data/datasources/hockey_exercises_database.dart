@@ -21,7 +21,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 5,
   "rest": 180,
-  "youtubeQuery": "back squat hockey training",
+  "youtubeQuery": "back squat hockey",
   "gymAltId": "goblet_squat",
   "homeAltId": "jump_squat",
   "tracksWeight": true
@@ -35,7 +35,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "goblet squat technique",
+  "youtubeQuery": "goblet squat hockey",
   "homeAltId": "bodyweight_squat",
   "tracksWeight": true
 }
@@ -48,7 +48,7 @@ class HockeyExercisesDatabase {
   "sets": 5,
   "reps": 5,
   "rest": 90,
-  "youtubeQuery": "jump squat explosive power",
+  "youtubeQuery": "jump squat hockey",
   "tracksWeight": false
 }
 ''',
@@ -60,7 +60,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 5,
   "rest": 180,
-  "youtubeQuery": "front squat technique",
+  "youtubeQuery": "front squat hockey",
   "gymAltId": "split_squat_heavy",
   "homeAltId": "pistol_squat_assist",
   "tracksWeight": true
@@ -88,7 +88,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "bulgarian split squat",
+  "youtubeQuery": "bulgarian split squat hockey",
   "homeAltId": "reverse_lunge",
   "tracksWeight": true
 }
@@ -101,7 +101,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "step up exercise hockey",
+  "youtubeQuery": "step-up (high) hockey",
   "homeAltId": "stair_step_up",
   "tracksWeight": true
 }
@@ -116,7 +116,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 5,
   "rest": 180,
-  "youtubeQuery": "deadlift hockey training",
+  "youtubeQuery": "deadlift hockey",
   "gymAltId": "hip_thrust",
   "homeAltId": "hip_hinge_backpack",
   "tracksWeight": true
@@ -130,7 +130,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "hip thrust exercise",
+  "youtubeQuery": "hip thrust hockey",
   "homeAltId": "single_leg_glute_bridge",
   "tracksWeight": true
 }
@@ -143,7 +143,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "RDL romanian deadlift",
+  "youtubeQuery": "romanian deadlift (rdl) hockey",
   "homeAltId": "single_leg_rdl",
   "tracksWeight": true
 }
@@ -156,7 +156,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 5,
   "rest": 120,
-  "youtubeQuery": "nordic hamstring curl",
+  "youtubeQuery": "nordic hamstring curl hockey",
   "gymAltId": "leg_curl",
   "homeAltId": "hamstring_curl_towel",
   "tracksWeight": true
@@ -172,7 +172,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 150,
-  "youtubeQuery": "bench press hockey training",
+  "youtubeQuery": "bench press (développé couché) hockey",
   "gymAltId": "dumbbell_bench",
   "homeAltId": "push_ups_weighted",
   "tracksWeight": false
@@ -186,7 +186,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "dumbbell bench press",
+  "youtubeQuery": "dumbbell bench press hockey",
   "homeAltId": "push_ups_decline",
   "tracksWeight": false
 }
@@ -199,7 +199,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 150,
-  "youtubeQuery": "overhead press military",
+  "youtubeQuery": "overhead press (military) hockey",
   "gymAltId": "dumbbell_press",
   "homeAltId": "pike_push_ups",
   "tracksWeight": true
@@ -213,7 +213,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 120,
-  "youtubeQuery": "landmine press unilateral",
+  "youtubeQuery": "landmine press (unilateral) hockey",
   "gymAltId": "dumbbell_incline_unilateral",
   "homeAltId": "single_arm_push_up",
   "tracksWeight": false
@@ -227,7 +227,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "arnold press shoulders",
+  "youtubeQuery": "arnold press hockey",
   "homeAltId": "pike_push_ups",
   "tracksWeight": true
 }
@@ -242,7 +242,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 150,
-  "youtubeQuery": "weighted pull ups",
+  "youtubeQuery": "weighted pull-ups hockey",
   "gymAltId": "lat_pulldown",
   "homeAltId": "towel_door_rows",
   "tracksWeight": false
@@ -256,7 +256,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 10,
   "rest": 120,
-  "youtubeQuery": "lat pulldown technique",
+  "youtubeQuery": "lat pulldown hockey",
   "homeAltId": "resistance_band_rows",
   "tracksWeight": true
 }
@@ -283,7 +283,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "chest supported row",
+  "youtubeQuery": "chest-supported row hockey",
   "homeAltId": "resistance_band_rows",
   "tracksWeight": true
 }
@@ -296,7 +296,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "one arm dumbbell row",
+  "youtubeQuery": "one-arm row hockey",
   "homeAltId": "backpack_row",
   "tracksWeight": true
 }
@@ -311,7 +311,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 15,
   "rest": 60,
-  "youtubeQuery": "standing calf raise",
+  "youtubeQuery": "standing calf raise hockey",
   "homeAltId": "single_leg_calf_raise",
   "tracksWeight": true
 }
@@ -326,7 +326,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 15,
   "rest": 60,
-  "youtubeQuery": "bodyweight squat form",
+  "youtubeQuery": "bodyweight squat hockey",
   "tracksWeight": false
 }
 ''',
@@ -338,7 +338,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 60,
-  "youtubeQuery": "bodyweight lunge technique",
+  "youtubeQuery": "bodyweight lunge hockey",
   "tracksWeight": false
 }
 ''',
@@ -350,7 +350,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "split squat exercise",
+  "youtubeQuery": "split squat hockey",
   "tracksWeight": true
 }
 ''',
@@ -362,7 +362,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 120,
-  "youtubeQuery": "weighted split squat",
+  "youtubeQuery": "split squat (heavy) hockey",
   "tracksWeight": true
 }
 ''',
@@ -374,7 +374,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 5,
   "rest": 120,
-  "youtubeQuery": "assisted pistol squat",
+  "youtubeQuery": "pistol squat (assisted) hockey",
   "tracksWeight": true
 }
 ''',
@@ -386,7 +386,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "hip hinge deadlift home",
+  "youtubeQuery": "hip hinge with backpack hockey",
   "tracksWeight": true
 }
 ''',
@@ -398,7 +398,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "single leg glute bridge",
+  "youtubeQuery": "single leg glute bridge hockey",
   "tracksWeight": true
 }
 ''',
@@ -410,7 +410,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "single leg romanian deadlift",
+  "youtubeQuery": "single leg rdl hockey",
   "tracksWeight": true
 }
 ''',
@@ -422,7 +422,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "towel hamstring curl home",
+  "youtubeQuery": "hamstring curl (towel) hockey",
   "tracksWeight": true
 }
 ''',
@@ -434,7 +434,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "leg curl machine technique",
+  "youtubeQuery": "leg curl machine hockey",
   "tracksWeight": true
 }
 ''',
@@ -446,7 +446,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "weighted push ups backpack",
+  "youtubeQuery": "weighted push-ups hockey",
   "tracksWeight": false
 }
 ''',
@@ -458,7 +458,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "decline push ups feet elevated",
+  "youtubeQuery": "decline push-ups hockey",
   "tracksWeight": false
 }
 ''',
@@ -470,7 +470,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "pike push ups shoulders",
+  "youtubeQuery": "pike push-ups hockey",
   "tracksWeight": false
 }
 ''',
@@ -482,7 +482,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 4,
   "rest": 120,
-  "youtubeQuery": "single arm push up progression",
+  "youtubeQuery": "single arm push-up hockey",
   "tracksWeight": false
 }
 ''',
@@ -494,7 +494,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 120,
-  "youtubeQuery": "single arm incline dumbbell press",
+  "youtubeQuery": "dumbbell incline press (unilateral) hockey",
   "tracksWeight": true
 }
 ''',
@@ -506,7 +506,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 120,
-  "youtubeQuery": "dumbbell shoulder press",
+  "youtubeQuery": "dumbbell overhead press hockey",
   "tracksWeight": true
 }
 ''',
@@ -518,7 +518,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "towel door row home exercise",
+  "youtubeQuery": "towel door rows hockey",
   "tracksWeight": true
 }
 ''',
@@ -530,7 +530,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "resistance band rows",
+  "youtubeQuery": "resistance band rows hockey",
   "tracksWeight": true
 }
 ''',
@@ -542,7 +542,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "inverted row under table",
+  "youtubeQuery": "backpack row under table hockey",
   "tracksWeight": true
 }
 ''',
@@ -554,7 +554,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "bent over row backpack",
+  "youtubeQuery": "backpack row hockey",
   "tracksWeight": true
 }
 ''',
@@ -566,7 +566,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 12,
   "rest": 60,
-  "youtubeQuery": "single leg calf raise",
+  "youtubeQuery": "single leg calf raise hockey",
   "tracksWeight": true
 }
 ''',
@@ -578,7 +578,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 60,
-  "youtubeQuery": "cable rotation core exercise",
+  "youtubeQuery": "cable rotation hockey",
   "tracksWeight": true
 }
 ''',
@@ -590,7 +590,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 60,
-  "youtubeQuery": "resistance band core rotation",
+  "youtubeQuery": "resistance band rotation hockey",
   "tracksWeight": true
 }
 ''',
@@ -602,7 +602,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 60,
-  "youtubeQuery": "pallof press resistance band",
+  "youtubeQuery": "pallof press (resistance band) hockey",
   "tracksWeight": true
 }
 ''',
@@ -614,7 +614,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 15,
   "rest": 60,
-  "youtubeQuery": "adductor squeeze ball exercise",
+  "youtubeQuery": "adductor squeeze hockey",
   "tracksWeight": true
 }
 ''',
@@ -626,7 +626,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "lying leg raises abs",
+  "youtubeQuery": "lying leg raises hockey",
   "tracksWeight": true
 }
 ''',
@@ -638,7 +638,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 5,
   "rest": 90,
-  "youtubeQuery": "rotational jump training",
+  "youtubeQuery": "jump + rotation (arms extended) hockey",
   "tracksWeight": false
 }
 ''',
@@ -650,7 +650,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "squat jump clap overhead",
+  "youtubeQuery": "squat jump + clap hockey",
   "tracksWeight": false
 }
 ''',
@@ -662,7 +662,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "reverse lunge technique",
+  "youtubeQuery": "reverse lunge hockey",
   "tracksWeight": true
 }
 ''',
@@ -674,7 +674,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 12,
   "rest": 90,
-  "youtubeQuery": "stair step up exercise",
+  "youtubeQuery": "stair step-up hockey",
   "tracksWeight": true
 }
 ''',
@@ -687,7 +687,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 15,
   "rest": 45,
-  "youtubeQuery": "burpee intervals workout",
+  "youtubeQuery": "burpee intervals hockey",
   "tracksWeight": false
 }
 ''',
@@ -700,7 +700,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 10,
   "rest": 50,
-  "youtubeQuery": "jump squat intervals training",
+  "youtubeQuery": "jump squat intervals hockey",
   "tracksWeight": false
 }
 ''',
@@ -719,7 +719,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 3,
   "rest": 180,
-  "youtubeQuery": "power clean technique",
+  "youtubeQuery": "power clean hockey",
   "gymAltId": "kettlebell_swing",
   "homeAltId": "broad_jump",
   "tracksWeight": false
@@ -746,7 +746,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 90,
-  "youtubeQuery": "medicine ball slam",
+  "youtubeQuery": "medicine ball slam hockey",
   "homeAltId": "squat_jump_clap",
   "tracksWeight": false
 }
@@ -759,7 +759,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 5,
   "rest": 90,
-  "youtubeQuery": "medicine ball rotational throw",
+  "youtubeQuery": "medicine ball side throw hockey",
   "homeAltId": "jump_rotation_arms",
   "tracksWeight": false
 }
@@ -772,7 +772,7 @@ class HockeyExercisesDatabase {
   "sets": 6,
   "reps": 3,
   "rest": 120,
-  "youtubeQuery": "broad jump training",
+  "youtubeQuery": "broad jump hockey",
   "tracksWeight": false
 }
 ''',
@@ -784,7 +784,7 @@ class HockeyExercisesDatabase {
   "sets": 5,
   "reps": 5,
   "rest": 120,
-  "youtubeQuery": "box jump technique",
+  "youtubeQuery": "box jump hockey",
   "tracksWeight": false
 }
 ''',
@@ -803,7 +803,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 6,
   "rest": 90,
-  "youtubeQuery": "skater bounds hockey agility",
+  "youtubeQuery": "skater bounds hockey",
   "tracksWeight": false
 }
 ''',
@@ -815,7 +815,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 1,
   "rest": 120,
-  "youtubeQuery": "5 10 5 shuttle run",
+  "youtubeQuery": "5-10-5 shuttle run hockey",
   "tracksWeight": false
 }
 ''',
@@ -827,7 +827,7 @@ class HockeyExercisesDatabase {
   "sets": 6,
   "reps": 1,
   "rest": 90,
-  "youtubeQuery": "10 meter sprint training",
+  "youtubeQuery": "10m sprint hockey",
   "tracksWeight": false
 }
 ''',
@@ -839,7 +839,7 @@ class HockeyExercisesDatabase {
   "sets": 4,
   "reps": 1,
   "rest": 120,
-  "youtubeQuery": "flying start sprint",
+  "youtubeQuery": "flying start sprint hockey",
   "tracksWeight": false
 }
 ''',
@@ -852,7 +852,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 20,
   "rest": 60,
-  "youtubeQuery": "lateral shuffle drill",
+  "youtubeQuery": "lateral shuffle hockey",
   "tracksWeight": false
 }
 ''',
@@ -865,7 +865,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 20,
   "rest": 60,
-  "youtubeQuery": "hockey crossovers off ice",
+  "youtubeQuery": "crossovers off-ice hockey",
   "tracksWeight": false
 }
 ''',
@@ -877,7 +877,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 1,
   "rest": 120,
-  "youtubeQuery": "t test agility drill",
+  "youtubeQuery": "t-test agility hockey",
   "tracksWeight": false
 }
 ''',
@@ -889,7 +889,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 1,
   "rest": 180,
-  "youtubeQuery": "sprint ladder progression",
+  "youtubeQuery": "sprint ladder (10-20-30m) hockey",
   "tracksWeight": false
 }
 ''',
@@ -902,7 +902,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 60,
-  "youtubeQuery": "agility ladder footwork drills",
+  "youtubeQuery": "ladder footwork drills hockey",
   "tracksWeight": false
 }
 ''',
@@ -921,7 +921,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 60,
-  "youtubeQuery": "pallof press anti rotation",
+  "youtubeQuery": "pallof press hockey",
   "gymAltId": "cable_rotation",
   "homeAltId": "pallof_resistance_band",
   "tracksWeight": true
@@ -935,7 +935,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 8,
   "rest": 60,
-  "youtubeQuery": "pallof press rotation",
+  "youtubeQuery": "pallof press with rotation hockey",
   "homeAltId": "resistance_band_rotation",
   "tracksWeight": true
 }
@@ -949,7 +949,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 25,
   "rest": 90,
-  "youtubeQuery": "copenhagen plank adductors",
+  "youtubeQuery": "copenhagen plank hockey",
   "gymAltId": "adductor_squeeze",
   "tracksWeight": false
 }
@@ -963,7 +963,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 45,
   "rest": 60,
-  "youtubeQuery": "side plank with reach",
+  "youtubeQuery": "side plank + reach hockey",
   "tracksWeight": false
 }
 ''',
@@ -975,7 +975,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 10,
   "rest": 90,
-  "youtubeQuery": "hanging leg raises",
+  "youtubeQuery": "hanging leg raises hockey",
   "homeAltId": "lying_leg_raises",
   "tracksWeight": true
 }
@@ -988,7 +988,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 15,
   "rest": 60,
-  "youtubeQuery": "face pulls rear delt",
+  "youtubeQuery": "face pulls hockey",
   "homeAltId": "ytw_raises",
   "tracksWeight": false
 }
@@ -1001,7 +1001,7 @@ class HockeyExercisesDatabase {
   "sets": 3,
   "reps": 15,
   "rest": 60,
-  "youtubeQuery": "ytw raises shoulders",
+  "youtubeQuery": "y-t-w raises hockey",
   "tracksWeight": false
 }
 ''',
@@ -1021,7 +1021,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 20,
   "rest": 40,
-  "youtubeQuery": "bike intervals hockey training",
+  "youtubeQuery": "bike intervals 20s/40s hockey",
   "homeAltId": "high_knees_intervals",
   "tracksWeight": false
 }
@@ -1035,7 +1035,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 30,
-  "youtubeQuery": "30 30 intervals bike",
+  "youtubeQuery": "bike intervals 30s/30s hockey",
   "homeAltId": "mountain_climber_intervals",
   "tracksWeight": false
 }
@@ -1049,7 +1049,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 15,
   "rest": 45,
-  "youtubeQuery": "15 45 sprint intervals",
+  "youtubeQuery": "bike intervals 15s/45s hockey",
   "homeAltId": "burpee_intervals",
   "tracksWeight": false
 }
@@ -1063,7 +1063,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 10,
   "rest": 50,
-  "youtubeQuery": "10 50 power intervals",
+  "youtubeQuery": "bike intervals 10s/50s hockey",
   "homeAltId": "jump_squat_intervals",
   "tracksWeight": false
 }
@@ -1077,7 +1077,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 20,
   "rest": 40,
-  "youtubeQuery": "high knees cardio intervals",
+  "youtubeQuery": "high knees intervals hockey",
   "tracksWeight": false
 }
 ''',
@@ -1090,7 +1090,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 30,
-  "youtubeQuery": "mountain climber intervals",
+  "youtubeQuery": "mountain climber intervals hockey",
   "tracksWeight": false
 }
 ''',
@@ -1110,7 +1110,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 480,
   "rest": 0,
-  "youtubeQuery": "hockey ramp warmup dynamic",
+  "youtubeQuery": "dynamic ramp warmup hockey",
   "tracksWeight": false
 }
 ''',
@@ -1122,7 +1122,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 30,
-  "youtubeQuery": "leg swings dynamic warmup",
+  "youtubeQuery": "leg swings hockey",
   "tracksWeight": false
 }
 ''',
@@ -1134,7 +1134,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 30,
-  "youtubeQuery": "hip circles mobility",
+  "youtubeQuery": "hip circles hockey",
   "tracksWeight": false
 }
 ''',
@@ -1146,7 +1146,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 30,
-  "youtubeQuery": "arm circles warmup",
+  "youtubeQuery": "arm circles hockey",
   "tracksWeight": false
 }
 ''',
@@ -1159,7 +1159,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 15,
-  "youtubeQuery": "hip flexor stretch",
+  "youtubeQuery": "hip flexor stretch hockey",
   "tracksWeight": false
 }
 ''',
@@ -1172,7 +1172,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 15,
-  "youtubeQuery": "pigeon stretch hip mobility",
+  "youtubeQuery": "pigeon stretch hockey",
   "tracksWeight": false
 }
 ''',
@@ -1184,7 +1184,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 15,
-  "youtubeQuery": "ankle circles mobility",
+  "youtubeQuery": "ankle circles hockey",
   "tracksWeight": false
 }
 ''',
@@ -1196,7 +1196,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 15,
   "rest": 30,
-  "youtubeQuery": "calf raises exercise",
+  "youtubeQuery": "calf raises hockey",
   "tracksWeight": false
 }
 ''',
@@ -1208,7 +1208,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 15,
-  "youtubeQuery": "ankle dorsiflexion mobility",
+  "youtubeQuery": "ankle dorsiflexion hockey",
   "tracksWeight": false
 }
 ''',
@@ -1220,7 +1220,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 15,
   "rest": 15,
-  "youtubeQuery": "toe raises shin exercise",
+  "youtubeQuery": "toe raises hockey",
   "tracksWeight": false
 }
 ''',
@@ -1233,7 +1233,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 15,
-  "youtubeQuery": "quadriceps stretch standing",
+  "youtubeQuery": "quad stretch hockey",
   "tracksWeight": false
 }
 ''',
@@ -1246,7 +1246,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 15,
-  "youtubeQuery": "hamstring stretch seated",
+  "youtubeQuery": "hamstring stretch hockey",
   "tracksWeight": false
 }
 ''',
@@ -1259,7 +1259,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 15,
-  "youtubeQuery": "shoulder stretch across body",
+  "youtubeQuery": "shoulder stretch hockey",
   "tracksWeight": false
 }
 ''',
@@ -1271,7 +1271,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 15,
-  "youtubeQuery": "cat cow back stretch",
+  "youtubeQuery": "back stretch (cat-cow) hockey",
   "tracksWeight": false
 }
 ''',
@@ -1283,7 +1283,7 @@ class HockeyExercisesDatabase {
   "sets": 2,
   "reps": 10,
   "rest": 15,
-  "youtubeQuery": "neck rolls mobility",
+  "youtubeQuery": "neck rolls hockey",
   "tracksWeight": false
 }
 ''',
@@ -1303,7 +1303,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 90,
-  "youtubeQuery": "farmer walk strength",
+  "youtubeQuery": "farmer walk hockey",
   "homeAltId": "heavy_bag_carry",
   "tracksWeight": true
 }
@@ -1317,7 +1317,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 90,
-  "youtubeQuery": "heavy bag carry workout",
+  "youtubeQuery": "heavy bag carry hockey",
   "tracksWeight": true
 }
 ''',
@@ -1330,7 +1330,7 @@ class HockeyExercisesDatabase {
   "reps": 1,
   "duration": 30,
   "rest": 30,
-  "youtubeQuery": "30 30 intervals conditioning",
+  "youtubeQuery": "5x30/30 rpe 8 intervals hockey",
   "tracksWeight": false
 }
 ''',

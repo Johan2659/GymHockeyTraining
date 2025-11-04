@@ -41,5 +41,14 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Query for YouTube app -->
+        <package android:name="com.google.android.youtube" />
+        <!-- Query for web browsers -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
     </queries>
+    <!-- Internet permission for opening web links -->
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

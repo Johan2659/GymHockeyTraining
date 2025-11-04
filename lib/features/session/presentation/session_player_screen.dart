@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../app/di.dart';
 import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
+import '../../../core/services/youtube_service.dart';
 import '../../application/app_state_provider.dart';
 import 'widgets/bonus_exercise_badge.dart';
 
@@ -879,8 +880,25 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: OutlinedButton.icon(
-                                onPressed: () =>
-                                    _showVideoDialog(context, exercise),
+                                onPressed: () async {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Opening YouTube...'),
+                                      duration: Duration(seconds: 1),
+                                    ),
+                                  );
+                                  final success = await YouTubeService.searchYouTube(
+                                      exercise.youtubeQuery);
+                                  if (!success && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'Unable to open YouTube. Please check your internet connection.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                },
                                 icon: const Icon(Icons.play_circle_outline,
                                     size: 18),
                                 label: const Text('Watch Video',
@@ -1851,38 +1869,6 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
               ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showVideoDialog(BuildContext context, Exercise exercise) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(exercise.name),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.play_circle_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(
-              'Search YouTube for: "${exercise.youtubeQuery}"',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'This would open a video player in a real app.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-          ],
         ),
         actions: [
           TextButton(

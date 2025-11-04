@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
+import '../../../core/services/youtube_service.dart';
 import '../../application/app_state_provider.dart';
 import '../application/extra_session_model.dart';
 import '../application/extra_session_provider.dart';
@@ -1134,19 +1135,51 @@ class _ExtraSessionPlayerScreenState
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        IconButton(
-          icon: Icon(
-            Icons.play_circle_outline,
-            color: const Color(0xFF42A5F5),
-            size: (screenWidth * 0.08).clamp(28.0, 34.0),
-          ),
-          onPressed: () {},
-          tooltip: 'Watch demo',
-          padding: EdgeInsets.all((screenWidth * 0.018).clamp(6.0, 8.0)),
-          constraints: BoxConstraints(
-            minWidth: (screenWidth * 0.11).clamp(40.0, 46.0),
-            minHeight: (screenWidth * 0.11).clamp(40.0, 46.0),
-          ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.play_circle_outline,
+                color: const Color(0xFF42A5F5),
+                size: (screenWidth * 0.08).clamp(28.0, 34.0),
+              ),
+              onPressed: exercise.youtubeQuery.isNotEmpty
+                  ? () async {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Opening YouTube...'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                      final success = await YouTubeService.searchYouTube(
+                          exercise.youtubeQuery);
+                      if (!success && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Unable to open YouTube. Please check your internet connection.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
+                  : null,
+              padding: EdgeInsets.all((screenWidth * 0.018).clamp(6.0, 8.0)),
+              constraints: BoxConstraints(
+                minWidth: (screenWidth * 0.11).clamp(40.0, 46.0),
+                minHeight: (screenWidth * 0.11).clamp(40.0, 46.0),
+              ),
+            ),
+            Text(
+              'Watch demo',
+              style: TextStyle(
+                color: const Color(0xFF42A5F5),
+                fontSize: (screenWidth * 0.028).clamp(10.0, 11.0),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ],
     );
