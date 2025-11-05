@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -385,64 +386,49 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   Widget build(BuildContext context) {
     final sessionAsync = ref
         .watch(_sessionProvider(widget.programId, widget.week, widget.session));
-    final programAsync = ref.watch(_programProvider(widget.programId));
 
     return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        backgroundColor: AppTheme.surfaceColor,
+        backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.onSurfaceColor,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    programAsync.value?.title ?? 'Loading...',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+        elevation: 0,
+        title: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppTheme.surfaceColor.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.timer_outlined,
+                size: 20,
+                color: AppTheme.primaryColor,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _formatDuration(_elapsedSeconds),
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.primaryColor.withOpacity(0.5)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.timer, size: 14, color: AppTheme.primaryColor),
-                      const SizedBox(width: 4),
-                      Text(
-                        _formatDuration(_elapsedSeconds),
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              'Week ${int.parse(widget.week) + 1} • Session ${int.parse(widget.session) + 1}',
-              style:
-                  const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline, size: 24),
             onPressed: () => _showSessionInfo(context, sessionAsync.value),
             tooltip: 'Session Info',
           ),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_vert, size: 24),
             tooltip: 'More options',
             onSelected: (value) {
               if (value == 'save_exit') {
@@ -456,7 +442,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                   children: [
                     Icon(Icons.save_outlined, color: AppTheme.primaryColor),
                     SizedBox(width: 12),
-                    Text('Save & Exit'),
+                    Text('Pause & Save'),
                   ],
                 ),
               ),
@@ -507,57 +493,24 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         // Main content
         Column(
           children: [
-            // Session header with progress
+            // Session header breadcrumb
             Container(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Exercise ${_currentPage + 1} of $totalCount',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryColor,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: LinearProgressIndicator(
-                            value: totalCount > 0
-                                ? (_currentPage + 1) / totalCount
-                                : 0,
-                            backgroundColor: Colors.grey[800],
-                            valueColor: AlwaysStoppedAnimation(
-                              isAllCompleted
-                                  ? Colors.green
-                                  : AppTheme.primaryColor,
-                            ),
-                            minHeight: 6,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        '$completedCount/$totalCount',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: isAllCompleted
-                                  ? Colors.green
-                                  : AppTheme.primaryColor,
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey[850]!, width: 1),
+                ),
+              ),
+              child: Text(
+                'Exercise ${_currentPage + 1} of $totalCount',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[500],
+                  letterSpacing: 0.3,
+                ),
               ),
             ),
-
-            // Page indicator dots
-            _buildPageIndicator(totalCount),
 
             // Horizontal swipeable exercise pages
             Expanded(
@@ -582,32 +535,31 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             // Bottom action bar
             SafeArea(
               child: Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
                 decoration: BoxDecoration(
-                  color: AppTheme.surfaceColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
+                  color: AppTheme.backgroundColor,
+                  border: Border(
+                    top: BorderSide(color: Colors.grey[800]!, width: 1),
+                  ),
                 ),
                 child: Row(
                   children: [
                     if (!isLastPage)
                       Expanded(
-                        child: OutlinedButton(
+                        child: ElevatedButton(
                           onPressed: _nextExercise,
-                          style: OutlinedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            side: BorderSide(color: AppTheme.primaryColor),
+                            elevation: 0,
                           ),
                           child: const Text(
-                            'Next Exercise',
+                            'NEXT EXERCISE',
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.8,
                             ),
                           ),
                         ),
@@ -620,9 +572,10 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                               : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                isAllCompleted ? Colors.green : null,
+                                isAllCompleted ? const Color(0xFF4CAF50) : Colors.grey[800],
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
+                            elevation: 0,
                           ),
                           child: _isFinishing
                               ? const SizedBox(
@@ -636,11 +589,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                                 )
                               : Text(
                                   isAllCompleted
-                                      ? 'Complete Session'
-                                      : 'Mark all exercises',
+                                      ? 'FINISH SESSION'
+                                      : 'COMPLETE ALL EXERCISES',
                                   style: const TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.8,
                                   ),
                                 ),
                         ),
@@ -669,74 +623,58 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         .watch(_sessionProvider(widget.programId, widget.week, widget.session));
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(count, (index) {
-          // Determine the color based on completion status
           Color dotColor;
 
           if (sessionAsync.hasValue) {
             final exerciseId = sessionAsync.value!.blocks[index].exerciseId;
-
-            // Check if this is the bonus exercise (last exercise in session)
             final isBonus = sessionAsync.value!.blocks.isNotEmpty &&
                 sessionAsync.value!.blocks.last.exerciseId == exerciseId;
 
             if (isBonus) {
-              // Bonus exercise - always use bonus color (amber)
-              dotColor = Colors.yellow;
+              dotColor = Colors.amber;
             } else {
-              // Normal exercises - apply status-based coloring
               final isCompleted = _completedExercises.contains(exerciseId);
               final hasPerformance =
                   _exercisePerformances.containsKey(exerciseId);
               final allSetsCompleted = _areAllSetsCompleted(exerciseId);
 
               if (isCompleted || allSetsCompleted) {
-                // Fully completed (marked or all sets done) - green
-                dotColor = Colors.green;
+                dotColor = const Color(0xFF4CAF50);
               } else if (hasPerformance) {
-                // Check if partially completed (some sets done)
                 final sets = _exercisePerformances[exerciseId] ?? [];
                 final hasCompletedSets =
                     sets.any((set) => set['completed'] as bool);
 
                 if (hasCompletedSets) {
-                  // Partially completed - orange
                   dotColor = Colors.orange;
                 } else if (index == _currentPage) {
-                  // Current page - primary color
                   dotColor = AppTheme.primaryColor;
                 } else {
-                  // Not started - gray
-                  dotColor = Colors.grey[700]!;
+                  dotColor = Colors.grey[800]!;
                 }
               } else if (index == _currentPage) {
-                // Current page - primary color
                 dotColor = AppTheme.primaryColor;
               } else {
-                // Not started - gray
-                dotColor = Colors.grey[700]!;
+                dotColor = Colors.grey[800]!;
               }
             }
           } else {
-            // Loading state
             dotColor = index == _currentPage
                 ? AppTheme.primaryColor
-                : Colors.grey[700]!;
+                : Colors.grey[800]!;
           }
 
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: index == _currentPage ? 24 : 8,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: index == _currentPage ? 28 : 8,
             height: 8,
             decoration: BoxDecoration(
               color: dotColor,
               borderRadius: BorderRadius.circular(4),
-              border: index == _currentPage
-                  ? Border.all(color: Colors.white.withOpacity(0.3), width: 1)
-                  : null,
             ),
           );
         }),
@@ -785,198 +723,136 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             sessionAsync.value!.blocks.last.exerciseId == exercise.id;
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Stack(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: isBonus
-                      ? AppTheme.primaryColor.withOpacity(0.08)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
-                  border: isBonus
-                      ? Border.all(
-                          color: Colors.amber.withOpacity(0.4),
-                          width: 1.5,
-                        )
-                      : null,
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Add some top padding if bonus to make room for the badge
-                    if (isBonus) const SizedBox(height: 24),
+              // Bonus badge (if applicable)
+              if (isBonus) ...[
+                const BonusExerciseBadge(),
+                const SizedBox(height: 10),
+              ],
 
-                    // Exercise info card
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceColor,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 12,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Exercise name and number
-                          Row(
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppTheme.primaryColor.withOpacity(0.2),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '$exerciseNumber',
-                                    style: const TextStyle(
-                                      color: AppTheme.primaryColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  exercise.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Prescribed details
-                          _buildPrescribedDetails(context, exercise),
-
-                          // Last performance history
-                          lastPerfAsync.when(
-                            data: (lastPerf) => lastPerf != null
-                                ? _buildLastPerformance(context, lastPerf)
-                                : const SizedBox.shrink(),
-                            loading: () => const SizedBox.shrink(),
-                            error: (_, __) => const SizedBox.shrink(),
-                          ),
-
-                          // Watch video button
-                          if (exercise.youtubeQuery.isNotEmpty) ...[
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton.icon(
-                                onPressed: () async {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Opening YouTube...'),
-                                      duration: Duration(seconds: 1),
-                                    ),
-                                  );
-                                  final success = await YouTubeService.searchYouTube(
-                                      exercise.youtubeQuery);
-                                  if (!success && context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            'Unable to open YouTube. Please check your internet connection.'),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
-                                },
-                                icon: const Icon(Icons.play_circle_outline,
-                                    size: 18),
-                                label: const Text('Watch Video',
-                                    style: TextStyle(fontSize: 14)),
-                                style: OutlinedButton.styleFrom(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Performance input section
-                    _buildPerformanceInput(context, exercise),
-
-                    const SizedBox(height: 16),
-
-                    // Mark as done and go to next button
-                    SizedBox(
-                      width: double.infinity,
-                      child: Builder(
-                        builder: (context) {
-                          final allSetsCompleted =
-                              _areAllSetsCompleted(exercise.id);
-                          final isCompleted =
-                              _completedExercises.contains(exercise.id);
-
-                          return ElevatedButton.icon(
-                            onPressed: isCompleted
-                                ? null
-                                : () =>
-                                    _saveExercisePerformanceAndNext(exercise),
-                            icon: Icon(
-                              isCompleted
-                                  ? Icons.check_circle
-                                  : (allSetsCompleted
-                                      ? Icons.check_circle
-                                      : Icons.arrow_forward),
-                              size: 20,
-                            ),
-                            label: Text(
-                              isCompleted
-                                  ? 'Completed'
-                                  : (allSetsCompleted
-                                      ? 'Next Exercise ✓'
-                                      : 'Next Exercise'),
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: (isCompleted || allSetsCompleted)
-                                  ? Colors.green
-                                  : AppTheme.primaryColor,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+              // Exercise name (large, prominent)
+              Text(
+                exercise.name.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
+                  height: 1.2,
                 ),
               ),
 
-              // Bonus badge overlay
-              if (isBonus)
-                const Positioned(
-                  top: 12,
-                  left: 12,
-                  child: BonusExerciseBadge(),
+              const SizedBox(height: 12),
+
+              // Prescribed details (no border, just spacing)
+              _buildPrescribedDetails(context, exercise),
+
+              // Last performance history
+              lastPerfAsync.when(
+                data: (lastPerf) => lastPerf != null
+                    ? _buildLastPerformance(context, lastPerf)
+                    : const SizedBox.shrink(),
+                loading: () => const SizedBox.shrink(),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+
+              // Watch video button
+              if (exercise.youtubeQuery.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Opening YouTube...'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                      final success = await YouTubeService.searchYouTube(
+                          exercise.youtubeQuery);
+                      if (!success && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Unable to open YouTube. Please check your internet connection.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.play_circle_outline, size: 20),
+                    label: const Text('WATCH VIDEO',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                        )),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(color: AppTheme.primaryColor.withOpacity(0.5)),
+                    ),
+                  ),
                 ),
+              ],
+
+              const SizedBox(height: 24),
+
+              // Performance input section
+              _buildPerformanceInput(context, exercise),
+
+              const SizedBox(height: 20),
+
+              // Mark as done and go to next button
+              SizedBox(
+                width: double.infinity,
+                child: Builder(
+                  builder: (context) {
+                    final allSetsCompleted =
+                        _areAllSetsCompleted(exercise.id);
+                    final isCompleted =
+                        _completedExercises.contains(exercise.id);
+
+                    return ElevatedButton.icon(
+                      onPressed: isCompleted
+                          ? null
+                          : () =>
+                              _saveExercisePerformanceAndNext(exercise),
+                      icon: Icon(
+                        isCompleted
+                            ? Icons.check_circle
+                            : (allSetsCompleted
+                                ? Icons.check_circle
+                                : Icons.arrow_forward),
+                        size: 22,
+                      ),
+                      label: Text(
+                        isCompleted
+                            ? 'COMPLETED'
+                            : (allSetsCompleted
+                                ? 'NEXT EXERCISE ✓'
+                                : 'NEXT EXERCISE'),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: (isCompleted || allSetsCompleted)
+                            ? Colors.green
+                            : AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        elevation: 0,
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         );
@@ -1066,44 +942,44 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }
 
   Widget _buildPrescribedDetails(BuildContext context, Exercise exercise) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          if (exercise.sets > 0)
-            _buildDetailItem(context, 'Sets', '${exercise.sets}'),
-          if (exercise.reps > 0)
-            _buildDetailItem(context, 'Reps', '${exercise.reps}'),
-          if (exercise.rest != null && exercise.rest! > 0)
-            _buildDetailItem(context, 'Rest', '${exercise.rest}s'),
-        ],
-      ),
+    return Row(
+      children: [
+        if (exercise.sets > 0)
+          Expanded(child: _buildDetailItem(context, 'SETS', '${exercise.sets}', Icons.repeat_rounded)),
+        if (exercise.sets > 0 && (exercise.reps > 0 || exercise.rest != null))
+          Container(width: 1, height: 50, color: Colors.grey[800]),
+        if (exercise.reps > 0)
+          Expanded(child: _buildDetailItem(context, 'REPS', '${exercise.reps}', Icons.fitness_center)),
+        if (exercise.reps > 0 && exercise.rest != null && exercise.rest! > 0)
+          Container(width: 1, height: 50, color: Colors.grey[800]),
+        if (exercise.rest != null && exercise.rest! > 0)
+          Expanded(child: _buildDetailItem(context, 'REST', '${exercise.rest}s', Icons.timer_outlined)),
+      ],
     );
   }
 
-  Widget _buildDetailItem(BuildContext context, String label, String value) {
+  Widget _buildDetailItem(BuildContext context, String label, String value, IconData icon) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
+        Icon(icon, size: 28, color: AppTheme.primaryColor),
+        const SizedBox(height: 8),
         Text(
           value,
           style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.primaryColor,
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            height: 1,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
             fontSize: 11,
-            color: Colors.grey[400],
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[500],
+            letterSpacing: 1,
           ),
         ),
       ],
@@ -1113,12 +989,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   Widget _buildLastPerformance(
       BuildContext context, ExercisePerformance lastPerf) {
     return Container(
-      margin: const EdgeInsets.only(top: 12),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blueGrey.withOpacity(0.1),
+        color: Colors.blueGrey.withOpacity(0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blueGrey.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1157,74 +1032,49 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   Widget _buildPerformanceInput(BuildContext context, Exercise exercise) {
     final sets = _exercisePerformances[exercise.id] ?? [];
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Your Performance',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
-                ),
-          ),
-          const SizedBox(height: 16),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Set cards
+        ...List.generate(sets.length, (index) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _buildSetCard(
+              context,
+              exercise,
+              sets[index],
+              index,
+            ),
+          );
+        }),
 
-          // Set cards
-          ...List.generate(sets.length, (index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _buildSetCard(
-                context,
-                exercise,
-                sets[index],
-                index,
+        const SizedBox(height: 12),
+
+        // Add/Remove set buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (sets.length > 1)
+              TextButton.icon(
+                onPressed: () => _removeSet(exercise),
+                icon: const Icon(Icons.remove, size: 18),
+                label: const Text('Remove set'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey[400],
+                ),
               ),
-            );
-          }),
-
-          const SizedBox(height: 12),
-
-          // Add/Remove set buttons (simple icons)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (sets.length > 1)
-                IconButton.filled(
-                  onPressed: () => _removeSet(exercise),
-                  icon: const Icon(Icons.remove, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.red.withOpacity(0.2),
-                    foregroundColor: Colors.red,
-                  ),
-                  tooltip: 'Remove Set',
-                ),
-              const SizedBox(width: 16),
-              IconButton.filled(
-                onPressed: () => _addSet(exercise),
-                icon: const Icon(Icons.add, size: 20),
-                style: IconButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-                  foregroundColor: AppTheme.primaryColor,
-                ),
-                tooltip: 'Add Set',
+            if (sets.length > 1) const SizedBox(width: 12),
+            TextButton.icon(
+              onPressed: () => _addSet(exercise),
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('Add set'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.primaryColor,
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -1236,86 +1086,59 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     return SafeArea(
       child: Container(
         width: double.infinity,
-        margin: const EdgeInsets.all(12),
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.orange.withOpacity(0.95),
-              Colors.deepOrange.withOpacity(0.9),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16),
+          color: const Color(0xFFFF6B35),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.orange.withOpacity(0.4),
-              blurRadius: 12,
-              offset: const Offset(0, -4),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, -2),
+              color: const Color(0xFFFF6B35).withOpacity(0.5),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Progress bar at top of timer
+              // Progress bar
               LinearProgressIndicator(
                 value: progress,
-                backgroundColor: Colors.white.withOpacity(0.2),
+                backgroundColor: Colors.white.withOpacity(0.15),
                 valueColor: const AlwaysStoppedAnimation(Colors.white),
-                minHeight: 4,
+                minHeight: 3,
               ),
 
               // Timer content
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    // Timer icon and label
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _isRestTimerPaused ? Icons.pause : Icons.timer,
-                        color: Colors.white,
-                        size: 22,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-
                     // Timer display
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Rest Time',
+                            'REST TIME',
                             style: TextStyle(
                               fontSize: 11,
-                              color: Colors.white.withOpacity(0.9),
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
+                              color: Colors.white.withOpacity(0.8),
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: 4),
                           Text(
                             _formatTime(_restSecondsRemaining),
                             style: const TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w800,
                               color: Colors.white,
-                              letterSpacing: 1,
+                              height: 1,
+                              fontFeatures: [FontFeature.tabularFigures()],
                             ),
                           ),
                         ],
@@ -1328,15 +1151,15 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                         // Restart button
                         IconButton(
                           onPressed: _restartRestTimer,
-                          icon: const Icon(Icons.restart_alt, size: 22),
+                          icon: const Icon(Icons.restart_alt, size: 24),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withOpacity(0.15),
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(12),
                           ),
                           tooltip: 'Restart',
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
 
                         // Play/Pause button
                         IconButton(
@@ -1345,25 +1168,25 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                               : _pauseRestTimer,
                           icon: Icon(
                             _isRestTimerPaused ? Icons.play_arrow : Icons.pause,
-                            size: 22,
+                            size: 24,
                           ),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withOpacity(0.15),
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(12),
                           ),
                           tooltip: _isRestTimerPaused ? 'Resume' : 'Pause',
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
 
                         // Skip button
                         IconButton(
                           onPressed: _skipRestTimer,
-                          icon: const Icon(Icons.skip_next, size: 22),
+                          icon: const Icon(Icons.skip_next, size: 24),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withOpacity(0.15),
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(12),
                           ),
                           tooltip: 'Skip',
                         ),
@@ -1391,47 +1214,45 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     final completed = setData['completed'] as bool;
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: completed
-            ? Colors.green.withOpacity(0.1)
-            : AppTheme.backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: completed ? Colors.green.withOpacity(0.4) : Colors.grey[800]!,
-          width: 2,
+            ? Colors.green.withOpacity(0.06)
+            : Colors.transparent,
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[850]!, width: 1),
         ),
       ),
       child: Row(
         children: [
-          // Set number badge
+          // Set number
           Container(
-            width: 36,
-            height: 36,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: completed
-                  ? Colors.green.withOpacity(0.3)
-                  : AppTheme.primaryColor.withOpacity(0.2),
+                  ? const Color(0xFF4CAF50)
+                  : Colors.grey[800],
             ),
             child: Center(
               child: completed
-                  ? const Icon(Icons.check, color: Colors.green, size: 20)
+                  ? const Icon(Icons.check, color: Colors.white, size: 18)
                   : Text(
                       '$setNumber',
-                      style: const TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                      style: TextStyle(
+                        color: Colors.grey[400],
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                       ),
                     ),
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 16),
 
           // Reps input
           Expanded(
-            flex: (exercise.tracksWeight ?? true) ? 1 : 2, // Wider if no weight tracking
+            flex: (exercise.tracksWeight ?? true) ? 1 : 2,
             child: _buildValueButton(
               context,
               label: 'Reps',
@@ -1440,21 +1261,21 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
               onTap: completed ? null : () => _showRepsPicker(exercise, index),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
 
           // Weight input (only show if exercise tracks weight)
           if (exercise.tracksWeight ?? true) ...[
             Expanded(
               child: _buildValueButton(
                 context,
-                label: 'Weight',
-                value: weight > 0 ? '${weight.toStringAsFixed(1)} kg' : '-',
+                label: 'kg',
+                value: weight > 0 ? '${weight.toStringAsFixed(1)}' : '-',
                 icon: Icons.fitness_center,
                 onTap:
                     completed ? null : () => _showWeightPicker(exercise, index),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
           ],
 
           // Complete set button
@@ -1462,7 +1283,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             onPressed: completed ? null : () => _completeSet(exercise, index),
             icon: Icon(
               completed ? Icons.check_circle : Icons.check_circle_outline,
-              color: completed ? Colors.green : AppTheme.primaryColor,
+              color: completed ? const Color(0xFF4CAF50) : Colors.grey[600],
               size: 28,
             ),
             tooltip: completed ? 'Completed' : 'Complete Set',
@@ -1481,45 +1302,43 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: AppTheme.surfaceColor,
-          borderRadius: BorderRadius.circular(8),
+          color: AppTheme.primaryColor.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: onTap == null
-                ? Colors.grey[700]!
-                : AppTheme.primaryColor.withOpacity(0.3),
+            color: AppTheme.primaryColor.withOpacity(0.15),
+            width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 12, color: Colors.grey[400]),
-                const SizedBox(width: 4),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.grey[400],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: AppTheme.primaryColor.withOpacity(0.7),
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               value,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color:
-                    onTap == null ? Colors.grey[600] : AppTheme.onSurfaceColor,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: onTap == null ? Colors.grey[600] : Colors.white,
               ),
             ),
           ],

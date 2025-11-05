@@ -8,18 +8,11 @@ import 'session_preview_model.dart';
 final _logger = Logger();
 
 /// Provides a [ResolvedSession] with exercises loaded from the database.
-<<<<<<< HEAD
 /// Takes a tuple of (programId, week, sessionIndex) as the family parameter.
 final resolvedSessionProvider = FutureProvider.autoDispose
     .family<ResolvedSession?, (String, int, int)>((ref, params) async {
   final (programId, week, sessionIndex) = params;
 
-=======
-final resolvedSessionProvider = FutureProvider.autoDispose
-    .family<ResolvedSession?, (String, int, int)>((ref, params) async {
-  final (programId, week, sessionIndex) = params;
-  
->>>>>>> b3d69919293f86865060415829b2d128c5028820
   final programRepository = ref.watch(programRepositoryProvider);
   final sessionRepository = ref.watch(sessionRepositoryProvider);
   final exerciseRepository = ref.watch(exerciseRepositoryProvider);
@@ -27,59 +20,38 @@ final resolvedSessionProvider = FutureProvider.autoDispose
   // Get the program to find the session ID
   final program = await programRepository.getById(programId);
   if (program == null) {
-<<<<<<< HEAD
     _logger.w(
         'resolvedSessionProvider: Program not found (programId: $programId)');
-=======
-    _logger.w('resolvedSessionProvider: Program not found (programId: $programId)');
->>>>>>> b3d69919293f86865060415829b2d128c5028820
     return null;
   }
 
   if (week >= program.weeks.length) {
-<<<<<<< HEAD
     _logger.w(
         'resolvedSessionProvider: Week index $week is out of bounds for program $programId');
-=======
-    _logger.w('resolvedSessionProvider: Week index $week is out of bounds for program $programId');
->>>>>>> b3d69919293f86865060415829b2d128c5028820
     return null;
   }
 
   final weekData = program.weeks[week];
   if (sessionIndex >= weekData.sessions.length) {
-<<<<<<< HEAD
     _logger.w(
         'resolvedSessionProvider: Session index $sessionIndex is out of bounds for week $week in program $programId');
-=======
-    _logger.w('resolvedSessionProvider: Session index $sessionIndex is out of bounds for week $week');
->>>>>>> b3d69919293f86865060415829b2d128c5028820
     return null;
   }
 
   final sessionId = weekData.sessions[sessionIndex];
-<<<<<<< HEAD
 
   // Get the session
   final session = await sessionRepository.getById(sessionId);
   if (session == null) {
     _logger
         .w('resolvedSessionProvider: Session not found (sessionId: $sessionId)');
-=======
-  final session = await sessionRepository.getById(sessionId);
-  if (session == null) {
-    _logger.w('resolvedSessionProvider: Session not found (sessionId: $sessionId)');
->>>>>>> b3d69919293f86865060415829b2d128c5028820
     return null;
   }
 
   final placeholderIds = <String>{};
   final exercises = <Exercise>[];
 
-<<<<<<< HEAD
   // Resolve all exercises
-=======
->>>>>>> b3d69919293f86865060415829b2d128c5028820
   for (final block in session.blocks) {
     final exercise = await exerciseRepository.getById(block.exerciseId);
     if (exercise != null) {
@@ -135,7 +107,3 @@ String _humanizeId(String rawId) {
 
   return capitalized;
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> b3d69919293f86865060415829b2d128c5028820
