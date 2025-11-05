@@ -471,6 +471,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.onSurfaceColor,
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
@@ -514,11 +515,6 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline, size: 24),
-            onPressed: () => _showSessionInfo(context, sessionAsync.value),
-            tooltip: 'Session Info',
-          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, size: 24),
             tooltip: 'More options',
@@ -633,40 +629,68 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   decoration: BoxDecoration(
                     color: AppTheme.backgroundColor,
                     border: Border(
-                      top: BorderSide(color: Colors.grey[800]!, width: 1),
+                      top: BorderSide(color: Colors.grey[850]!, width: 1),
                     ),
                   ),
-                  child: ElevatedButton(
-                    onPressed: isAllCompleted && !_isFinishing
-                        ? _finishSession
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          isAllCompleted ? const Color(0xFF4CAF50) : Colors.grey[800],
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      elevation: 0,
-                    ),
-                    child: _isFinishing
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation(Colors.white),
-                            ),
-                          )
-                        : Text(
-                            isAllCompleted
-                                ? 'FINISH SESSION'
-                                : 'COMPLETE ALL EXERCISES',
-                            style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Thin accent line above button
+                      if (isAllCompleted)
+                        Container(
+                          height: 1,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                const Color(0xFF4CAF50).withOpacity(0.4),
+                                Colors.transparent,
+                              ],
                             ),
                           ),
+                        ),
+                      
+                      // Button - full width
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: isAllCompleted && !_isFinishing
+                              ? _finishSession
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                isAllCompleted ? const Color(0xFF4CAF50) : Colors.grey[800],
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: _isFinishing
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor:
+                                        AlwaysStoppedAnimation(Colors.white),
+                                  ),
+                                )
+                              : Text(
+                                  isAllCompleted
+                                      ? 'FINISH SESSION'
+                                      : 'COMPLETE ALL EXERCISES',
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -849,54 +873,86 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               // Performance input section
               _buildPerformanceInput(context, exercise),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              // Mark as done and go to next button
-              SizedBox(
-                width: double.infinity,
-                child: Builder(
-                  builder: (context) {
-                    final allSetsCompleted =
-                        _areAllSetsCompleted(exercise.id);
-                    final isCompleted =
-                        _completedExercises.contains(exercise.id);
+              // Mark as done and go to next button - Hockey styled
+              Builder(
+                builder: (context) {
+                  final allSetsCompleted =
+                      _areAllSetsCompleted(exercise.id);
+                  final isCompleted =
+                      _completedExercises.contains(exercise.id);
 
-                    return ElevatedButton.icon(
-                      onPressed: isCompleted
-                          ? null
-                          : () =>
-                              _saveExercisePerformanceAndNext(exercise),
-                      icon: Icon(
-                        isCompleted
-                            ? Icons.check_circle
-                            : (allSetsCompleted
-                                ? Icons.check_circle
-                                : Icons.arrow_forward),
-                        size: 22,
-                      ),
-                      label: Text(
-                        isCompleted
-                            ? 'COMPLETED'
-                            : (allSetsCompleted
-                                ? 'NEXT EXERCISE ✓'
-                                : 'NEXT EXERCISE'),
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
+                  return Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Thin top accent line
+                        if (!isCompleted)
+                          Container(
+                            height: 1,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  (allSetsCompleted
+                                          ? const Color(0xFF4CAF50)
+                                          : AppTheme.primaryColor)
+                                      .withOpacity(0.3),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ),
+                        
+                        // Button - full width
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: isCompleted
+                                ? null
+                                : () =>
+                                    _saveExercisePerformanceAndNext(exercise),
+                            icon: Icon(
+                              isCompleted
+                                  ? Icons.check_circle
+                                  : (allSetsCompleted
+                                      ? Icons.check_circle
+                                      : Icons.arrow_forward),
+                              size: 22,
+                            ),
+                            label: Text(
+                              isCompleted
+                                  ? 'COMPLETED'
+                                  : (allSetsCompleted
+                                      ? 'NEXT EXERCISE ✓'
+                                      : 'NEXT EXERCISE'),
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: (isCompleted || allSetsCompleted)
+                                  ? const Color(0xFF4CAF50)
+                                  : AppTheme.primaryColor,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: (isCompleted || allSetsCompleted)
-                            ? Colors.green
-                            : AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        elevation: 0,
-                      ),
-                    );
-                  },
-                ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           ),

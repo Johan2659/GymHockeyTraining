@@ -39,42 +39,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         'Week ${weekIndex + 1}, Session ${sessionIndex + 1}';
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppTheme.backgroundColor,
-        foregroundColor: AppTheme.onSurfaceColor,
-        elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              sessionTitle.toUpperCase(),
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.3,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              'Week ${weekIndex + 1} • Session ${sessionIndex + 1}',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.primaryColor.withOpacity(0.7),
-                letterSpacing: 0.5,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline, size: 24),
-            onPressed: () =>
-                _showSessionInfo(context, resolvedSession?.session),
-            tooltip: 'Session Info',
-          ),
-        ],
-      ),
+      backgroundColor: AppTheme.backgroundColor,
       body: sessionAsync.when(
         loading: () => const Center(
           child: Column(
@@ -196,53 +161,66 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
     return Column(
       children: [
         // Header with session overview - Glassmorphism + Hockey lines
-        Container(
-          margin: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Session title with thin accent line
-              Row(
-                children: [
-                  // Very thin vertical accent line
-                  Container(
-                    width: 2,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          AppTheme.primaryColor,
-                          AppTheme.primaryColor.withOpacity(0.3),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(1),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      sessionData.title.toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        letterSpacing: 0.3,
-                        height: 1.1,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black26,
-                            offset: Offset(0, 2),
-                            blurRadius: 4,
-                          ),
-                        ],
+        SafeArea(
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Session title with thin accent line + info icon
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Very thin vertical accent line
+                    Container(
+                      width: 2,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            AppTheme.primaryColor,
+                            AppTheme.primaryColor.withOpacity(0.3),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(1),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        sessionData.title.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 0.3,
+                          height: 1.1,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black26,
+                              offset: Offset(0, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Info button
+                    IconButton(
+                      onPressed: () => _showSessionInfo(context, sessionData),
+                      icon: const Icon(Icons.info_outline),
+                      iconSize: 24,
+                      color: AppTheme.primaryColor,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      tooltip: 'Session Info',
+                    ),
+                  ],
+                ),
               
               const SizedBox(height: 20),
               
@@ -295,7 +273,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 4),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(16),
@@ -351,6 +329,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
               ),
             ],
           ),
+          ),
         ),
         // Exercise preview list
         Expanded(
@@ -404,65 +383,96 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   ),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(20, 1, 20, 8),
                   itemCount: exercises.length,
                   itemBuilder: (context, index) {
                     final exercise = exercises[index];
+                    final isBonus = index == exercises.length - 1 && 
+                                    sessionData.bonusChallenge.isNotEmpty;
                     return _ExercisePreviewCard(
                       exercise: exercise,
                       index: index,
                       isPlaceholder: session.isPlaceholder(exercise),
+                      isBonus: isBonus,
                     );
                   },
                 ),
         ),
-        // Start Session button - Clean hockey style
-        SafeArea(
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-            decoration: BoxDecoration(
-              color: AppTheme.backgroundColor,
-              border: Border(
-                top: BorderSide(
-                  color: Colors.grey[850]!,
-                  width: 1,
-                ),
+        // Drop the puck button - Powerful hockey style
+        Container(
+          padding: EdgeInsets.fromLTRB(20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
+          decoration: BoxDecoration(
+            color: AppTheme.backgroundColor,
+            border: Border(
+              top: BorderSide(
+                color: Colors.grey[850]!,
+                width: 1,
               ),
             ),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isStarting ? null : _startSession,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  elevation: 0,
-                  disabledBackgroundColor: Colors.grey[800],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Powerful accent line
+              Container(
+                height: 2,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      AppTheme.primaryColor.withOpacity(0.6),
+                      AppTheme.primaryColor,
+                      AppTheme.primaryColor.withOpacity(0.6),
+                      Colors.transparent,
+                    ],
                   ),
+                  borderRadius: BorderRadius.circular(1),
                 ),
-                child: _isStarting
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : const Text(
-                        'START THIS SESSION',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
-                        ),
-                      ),
               ),
-            ),
+              
+              // Button - full width
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isStarting ? null : _startSession,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    elevation: 0,
+                    disabledBackgroundColor: Colors.grey[800],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: _isStarting
+                      ? const SizedBox.shrink()
+                      : const Icon(
+                          Icons.sports_hockey,
+                          size: 24,
+                        ),
+                  label: _isStarting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Text(
+                          'LET\'S GO',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -618,19 +628,24 @@ class _ExercisePreviewCard extends StatelessWidget {
     required this.exercise,
     required this.index,
     this.isPlaceholder = false,
+    this.isBonus = false,
   });
 
   final Exercise exercise;
   final int index;
   final bool isPlaceholder;
+  final bool isBonus;
 
   @override
   Widget build(BuildContext context) {
+    // Colors based on bonus status
+    final accentColor = isBonus ? Colors.amber : AppTheme.primaryColor;
+    
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 14),
       child: Stack(
         children: [
-          // Very thin left accent line - hockey rink inspired
+          // Very thin left accent line - hockey rink inspired (amber for bonus)
           Positioned(
             left: 0,
             top: 0,
@@ -642,9 +657,9 @@ class _ExercisePreviewCard extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppTheme.primaryColor,
-                    AppTheme.primaryColor.withOpacity(0.7),
-                    AppTheme.primaryColor.withOpacity(0.2),
+                    accentColor,
+                    accentColor.withOpacity(0.7),
+                    accentColor.withOpacity(0.2),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(1),
@@ -654,7 +669,7 @@ class _ExercisePreviewCard extends StatelessWidget {
           
           // Content with glassmorphism
           Padding(
-            padding: const EdgeInsets.only(left: 12),
+            padding: const EdgeInsets.only(left: 14),
             child: Column(
               children: [
                 // Top thin line
@@ -664,20 +679,20 @@ class _ExercisePreviewCard extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        AppTheme.primaryColor.withOpacity(0.2),
+                        accentColor.withOpacity(0.2),
                         Colors.transparent,
                       ],
                     ),
                   ),
                 ),
                 
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 
                 // Main content row
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Exercise number badge - hockey puck style
+                    // Exercise number badge - hockey puck style (amber for bonus)
                     Container(
                       width: 32,
                       height: 32,
@@ -685,38 +700,68 @@ class _ExercisePreviewCard extends StatelessWidget {
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
                           colors: [
-                            AppTheme.primaryColor.withOpacity(0.2),
-                            AppTheme.primaryColor.withOpacity(0.1),
+                            accentColor.withOpacity(0.2),
+                            accentColor.withOpacity(0.1),
                           ],
                         ),
                         border: Border.all(
-                          color: AppTheme.primaryColor,
+                          color: accentColor,
                           width: 2,
                         ),
                       ),
                       child: Center(
-                        child: Text(
-                          '${index + 1}',
-                          style: const TextStyle(
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 14,
-                          ),
-                        ),
+                        child: isBonus
+                            ? Icon(
+                                Icons.star,
+                                size: 16,
+                                color: Colors.amber,
+                              )
+                            : Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  color: accentColor,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 14,
+                                ),
+                              ),
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 16),
                     
                     // Exercise details
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Bonus badge
+                          if (isBonus) ...[
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.emoji_events,
+                                  size: 11,
+                                  color: Colors.amber.shade300,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'BONUS CHALLENGE',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.amber.shade300,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                          ],
+                          
                           // Exercise name
                           Text(
                             exercise.name.toUpperCase(),
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 15,
                               fontWeight: FontWeight.w800,
                               color: Colors.white,
                               letterSpacing: 0.3,
@@ -727,12 +772,12 @@ class _ExercisePreviewCard extends StatelessWidget {
                           
                           // Placeholder warning
                           if (isPlaceholder) ...[
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 6),
                             Row(
                               children: [
                                 Icon(
                                   Icons.info_outline,
-                                  size: 11,
+                                  size: 10,
                                   color: Colors.amber.shade300,
                                 ),
                                 const SizedBox(width: 4),
@@ -748,7 +793,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                             ),
                           ],
                           
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 10),
                           
                           // Stats row with thin dot separators
                           Row(
@@ -802,7 +847,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                   ],
                 ),
                 
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 
                 // Bottom thin line
                 Container(
@@ -811,7 +856,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        AppTheme.primaryColor.withOpacity(0.2),
+                        accentColor.withOpacity(0.2),
                         Colors.transparent,
                       ],
                     ),
@@ -835,16 +880,17 @@ class _ExercisePreviewCard extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: 11,
+          size: 14,
           color: AppTheme.primaryColor.withOpacity(0.7),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 6),
         Text(
           '$value${label.isNotEmpty ? ' $label' : ''}',
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: FontWeight.w700,
             color: Colors.grey[400],
+            letterSpacing: 0.3,
           ),
         ),
       ],
