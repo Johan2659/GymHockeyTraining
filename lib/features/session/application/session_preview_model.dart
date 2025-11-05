@@ -25,3 +25,4 @@ class ResolvedSession {
   bool isPlaceholder(Exercise exercise) =>
       placeholderExerciseIds.contains(exercise.id);
 }
+
