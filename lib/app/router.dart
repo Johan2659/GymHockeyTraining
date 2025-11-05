@@ -14,6 +14,7 @@ import '../features/progress/presentation/modern_progress_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/session/presentation/session_detail_screen.dart';
 import '../features/session/presentation/session_player_screen.dart';
+import '../features/session/presentation/session_preview_screen.dart';
 import '../features/onboarding/presentation/welcome_screen.dart';
 import '../features/onboarding/presentation/role_selection_screen.dart';
 import '../features/onboarding/presentation/goal_selection_screen.dart';
@@ -115,7 +116,26 @@ GoRouter router(Ref ref) {
           return ProgramDetailScreen(programId: programId);
         },
       ),
+<<<<<<< HEAD
       // Session detail route (fullscreen, no bottom nav)
+=======
+      // Session preview route (fullscreen, no bottom nav)
+      GoRoute(
+        path: '/session/:programId/:week/:session/preview',
+        name: 'session-preview',
+        builder: (context, state) {
+          final programId = state.pathParameters['programId']!;
+          final week = state.pathParameters['week']!;
+          final session = state.pathParameters['session']!;
+          return SessionPreviewScreen(
+            programId: programId,
+            week: week,
+            session: session,
+          );
+        },
+      ),
+      // Session player route (fullscreen, no bottom nav)
+>>>>>>> b3d69919293f86865060415829b2d128c5028820
       GoRoute(
         path: '/session/:programId/:week/:session',
         name: 'session-detail',
