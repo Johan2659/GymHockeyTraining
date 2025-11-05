@@ -201,7 +201,8 @@ class SessionPlayerScreen extends ConsumerStatefulWidget {
       _SessionPlayerScreenState();
 }
 
-class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
+class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> 
+    with TickerProviderStateMixin {
   final Set<String> _completedExercises = <String>{};
   bool _isFinishing = false;
   bool _bonusChallengeCompleted = false;
@@ -227,15 +228,72 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   Timer? _durationTimer;
   int _elapsedSeconds = 0;
 
+  // Track expanded instructions per exercise
+  final Set<String> _expandedInstructions = <String>{};
+  
+  // Animation controllers for page entrance
+  late AnimationController _titleAnimationController;
+  late AnimationController _statsAnimationController;
+  late Animation<double> _titleSlideAnimation;
+  late Animation<double> _titleScaleAnimation;
+  late Animation<double> _statsAnimation;
+  
+  // Track if ice flash has already been shown (only once ever)
+  bool _hasShownIceFlash = false;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
     _startDurationTimer();
+    
+    // Initialize animation controllers
+    _titleAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _statsAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    
+    // Puck drop: slide from above + scale
+    _titleSlideAnimation = Tween<double>(
+      begin: -50.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _titleAnimationController,
+      curve: Curves.easeOutCubic,
+    ));
+    
+    _titleScaleAnimation = Tween<double>(
+      begin: 0.9,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _titleAnimationController,
+      curve: Curves.easeOutBack,
+    ));
+    
+    // Stats shimmer animation
+    _statsAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _statsAnimationController,
+      curve: Curves.easeOut,
+    ));
+    
     // Log session start event on next frame to ensure ref is available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _logSessionStart();
       _restoreSessionState();
+      // Trigger initial animation
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          _triggerPageAnimations();
+        }
+      });
     });
   }
 
@@ -244,7 +302,27 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     _pageController.dispose();
     _restTimer?.cancel();
     _durationTimer?.cancel();
+    _titleAnimationController.dispose();
+    _statsAnimationController.dispose();
     super.dispose();
+  }
+  
+  void _triggerPageAnimations() {
+    // Always play puck drop on title
+    _titleAnimationController.forward(from: 0.0);
+    
+    // Ice flash on stats ONLY the very first time
+    if (!_hasShownIceFlash) {
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (mounted) {
+          _statsAnimationController.forward(from: 0.0);
+          _hasShownIceFlash = true; // Mark as shown forever
+        }
+      });
+    } else {
+      // If already shown, set stats to fully visible immediately
+      _statsAnimationController.value = 1.0;
+    }
   }
 
   void _startDurationTimer() {
@@ -394,25 +472,39 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
         foregroundColor: AppTheme.onSurfaceColor,
         elevation: 0,
         title: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: AppTheme.surfaceColor.withOpacity(0.6),
-            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                AppTheme.primaryColor.withOpacity(0.2),
+                AppTheme.primaryColor.withOpacity(0.12),
+                AppTheme.primaryColor.withOpacity(0.05),
+                Colors.transparent,
+              ],
+              stops: const [0.0, 0.4, 0.7, 1.0],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppTheme.primaryColor.withOpacity(0.25),
+              width: 1,
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 Icons.timer_outlined,
-                size: 20,
+                size: 18,
                 color: AppTheme.primaryColor,
               ),
               const SizedBox(width: 8),
               Text(
                 _formatDuration(_elapsedSeconds),
                 style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
                   color: Colors.white,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
@@ -504,10 +596,10 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
               child: Text(
                 'Exercise ${_currentPage + 1} of $totalCount',
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[500],
-                  letterSpacing: 0.3,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[400],
+                  letterSpacing: 0.8,
                 ),
               ),
             ),
@@ -523,6 +615,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                   setState(() {
                     _currentPage = index;
                   });
+                  _triggerPageAnimations();
                 },
                 itemCount: totalCount,
                 itemBuilder: (context, index) {
@@ -532,77 +625,51 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
               ),
             ),
 
-            // Bottom action bar
-            SafeArea(
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-                decoration: BoxDecoration(
-                  color: AppTheme.backgroundColor,
-                  border: Border(
-                    top: BorderSide(color: Colors.grey[800]!, width: 1),
+            // Bottom action bar (only for last page - finish session)
+            if (isLastPage)
+              SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundColor,
+                    border: Border(
+                      top: BorderSide(color: Colors.grey[800]!, width: 1),
+                    ),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    if (!isLastPage)
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _nextExercise,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            elevation: 0,
-                          ),
-                          child: const Text(
-                            'NEXT EXERCISE',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.8,
+                  child: ElevatedButton(
+                    onPressed: isAllCompleted && !_isFinishing
+                        ? _finishSession
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          isAllCompleted ? const Color(0xFF4CAF50) : Colors.grey[800],
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      elevation: 0,
+                    ),
+                    child: _isFinishing
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            isAllCompleted
+                                ? 'FINISH SESSION'
+                                : 'COMPLETE ALL EXERCISES',
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1,
                             ),
                           ),
-                        ),
-                      ),
-                    if (isLastPage)
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: isAllCompleted && !_isFinishing
-                              ? _finishSession
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                isAllCompleted ? const Color(0xFF4CAF50) : Colors.grey[800],
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            elevation: 0,
-                          ),
-                          child: _isFinishing
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor:
-                                        AlwaysStoppedAnimation(Colors.white),
-                                  ),
-                                )
-                              : Text(
-                                  isAllCompleted
-                                      ? 'FINISH SESSION'
-                                      : 'COMPLETE ALL EXERCISES',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.8,
-                                  ),
-                                ),
-                        ),
-                      ),
-                  ],
+                  ),
                 ),
               ),
-            ),
           ],
         ),
 
@@ -733,22 +800,40 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                 const SizedBox(height: 10),
               ],
 
-              // Exercise name (large, prominent)
-              Text(
-                exercise.name.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
-                  height: 1.2,
-                ),
+              // Exercise header with integrated actions + Puck Drop animation
+              AnimatedBuilder(
+                animation: _titleAnimationController,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(0, _titleSlideAnimation.value),
+                    child: Transform.scale(
+                      scale: _titleScaleAnimation.value,
+                      child: Opacity(
+                        opacity: _titleAnimationController.value,
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+                child: _buildExerciseHeader(context, exercise),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
 
-              // Prescribed details (no border, just spacing)
-              _buildPrescribedDetails(context, exercise),
+              // Prescribed details (no border, just spacing) + Ice Flash animation
+              AnimatedBuilder(
+                animation: _statsAnimationController,
+                builder: (context, child) {
+                  return Opacity(
+                    opacity: _statsAnimation.value,
+                    child: Transform.scale(
+                      scale: 0.95 + (_statsAnimation.value * 0.05),
+                      child: child,
+                    ),
+                  );
+                },
+                child: _buildPrescribedDetails(context, exercise),
+              ),
 
               // Last performance history
               lastPerfAsync.when(
@@ -758,46 +843,6 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                 loading: () => const SizedBox.shrink(),
                 error: (_, __) => const SizedBox.shrink(),
               ),
-
-              // Watch video button
-              if (exercise.youtubeQuery.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Opening YouTube...'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                      final success = await YouTubeService.searchYouTube(
-                          exercise.youtubeQuery);
-                      if (!success && context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'Unable to open YouTube. Please check your internet connection.'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.play_circle_outline, size: 20),
-                    label: const Text('WATCH VIDEO',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                        )),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: BorderSide(color: AppTheme.primaryColor.withOpacity(0.5)),
-                    ),
-                  ),
-                ),
-              ],
 
               const SizedBox(height: 24),
 
@@ -836,9 +881,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                                 ? 'NEXT EXERCISE ✓'
                                 : 'NEXT EXERCISE'),
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.8,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -942,85 +987,663 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }
 
   Widget _buildPrescribedDetails(BuildContext context, Exercise exercise) {
-    return Row(
-      children: [
-        if (exercise.sets > 0)
-          Expanded(child: _buildDetailItem(context, 'SETS', '${exercise.sets}', Icons.repeat_rounded)),
-        if (exercise.sets > 0 && (exercise.reps > 0 || exercise.rest != null))
-          Container(width: 1, height: 50, color: Colors.grey[800]),
-        if (exercise.reps > 0)
-          Expanded(child: _buildDetailItem(context, 'REPS', '${exercise.reps}', Icons.fitness_center)),
-        if (exercise.reps > 0 && exercise.rest != null && exercise.rest! > 0)
-          Container(width: 1, height: 50, color: Colors.grey[800]),
-        if (exercise.rest != null && exercise.rest! > 0)
-          Expanded(child: _buildDetailItem(context, 'REST', '${exercise.rest}s', Icons.timer_outlined)),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+      child: Row(
+        children: [
+          if (exercise.sets > 0)
+            Expanded(child: _buildDetailItem(context, 'SETS', '${exercise.sets}', Icons.repeat_rounded)),
+          if (exercise.sets > 0 && (exercise.reps > 0 || exercise.rest != null))
+            _buildVerticalDivider(),
+          if (exercise.reps > 0)
+            Expanded(child: _buildDetailItem(context, 'REPS', '${exercise.reps}', Icons.fitness_center)),
+          if (exercise.reps > 0 && exercise.rest != null && exercise.rest! > 0)
+            _buildVerticalDivider(),
+          if (exercise.rest != null && exercise.rest! > 0)
+            Expanded(child: _buildDetailItem(context, 'REST', '${exercise.rest}s', Icons.timer_outlined)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVerticalDivider() {
+    return Container(
+      width: 20,
+      height: 65,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Main divider line
+          Container(
+            width: 1.5,
+            height: 50,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  AppTheme.primaryColor.withOpacity(0.3),
+                  AppTheme.primaryColor.withOpacity(0.5),
+                  AppTheme.primaryColor.withOpacity(0.3),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+          // Accent dot in the middle (like faceoff circle)
+          Container(
+            width: 4,
+            height: 4,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppTheme.primaryColor.withOpacity(0.6),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildDetailItem(BuildContext context, String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Column(
+        children: [
+          // Icon with subtle glow
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppTheme.primaryColor.withOpacity(0.15),
+                  AppTheme.primaryColor.withOpacity(0.05),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+            child: Icon(
+              icon, 
+              size: 26, 
+              color: AppTheme.primaryColor,
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Value with emphasis
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              height: 1,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 6),
+          // Underline accent
+          Container(
+            width: 30,
+            height: 2,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  AppTheme.primaryColor.withOpacity(0.6),
+                  Colors.transparent,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(1),
+            ),
+          ),
+          const SizedBox(height: 6),
+          // Label
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[500],
+              letterSpacing: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExerciseHeader(BuildContext context, Exercise exercise) {
+    final instructions = _getInstructionsForExercise(exercise);
+    
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 28, color: AppTheme.primaryColor),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            height: 1,
+        // Exercise title with chevron button - entire row clickable
+        InkWell(
+          onTap: () {
+            _showInstructionsDrawer(context, exercise, instructions);
+          },
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                // Exercise name
+                Expanded(
+                  child: Text(
+                    exercise.name.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 0.3,
+                      height: 1.1,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black26,
+                          offset: Offset(0, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(width: 16),
+                
+                // Info icon - elegant and intuitive
+                Icon(
+                  Icons.info_outline,
+                  size: 26,
+                  color: AppTheme.primaryColor,
+                ),
+                
+                const SizedBox(width: 16),
+                
+                // Thin classy line
+                Container(
+                  width: 1,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        AppTheme.primaryColor.withOpacity(0.4),
+                        AppTheme.primaryColor.withOpacity(0.6),
+                        AppTheme.primaryColor.withOpacity(0.4),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[500],
-            letterSpacing: 1,
+        
+        // Watch demo link (under title)
+        if (exercise.youtubeQuery.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          InkWell(
+            onTap: () async {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Opening YouTube...'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+              final success = await YouTubeService.searchYouTube(
+                  exercise.youtubeQuery);
+              if (!success && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'Unable to open YouTube. Please check your internet connection.'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.red.withOpacity(0.18),
+                    Colors.red.withOpacity(0.12),
+                    Colors.red.withOpacity(0.06),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.35, 0.65, 1.0],
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.play_circle_outline,
+                    size: 20,
+                    color: Colors.red[400],
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Watch demo',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey[300],
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ],
     );
+  }
+
+  void _showInstructionsDrawer(BuildContext context, Exercise exercise, List<String> instructions) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Instructions',
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Align(
+          alignment: Alignment.topCenter,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              margin: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 120, // Position below title
+                left: 20,
+                right: 20,
+              ),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.7,
+              ),
+              decoration: BoxDecoration(
+                color: AppTheme.surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 3,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.primaryColor,
+                                AppTheme.primaryColor.withOpacity(0.3),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(1.5),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'HOW TO PERFORM',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                exercise.name.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppTheme.primaryColor,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close, size: 22),
+                          color: Colors.grey[400],
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  // Divider line
+                  Container(
+                    height: 1,
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.primaryColor.withOpacity(0.4),
+                          AppTheme.primaryColor.withOpacity(0.1),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                  
+                  // Watch demo button (if available)
+                  if (exercise.youtubeQuery.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                      child: InkWell(
+                        onTap: () async {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Opening YouTube...'),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                          final success = await YouTubeService.searchYouTube(
+                              exercise.youtubeQuery);
+                          if (!success && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Unable to open YouTube. Please check your internet connection.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Colors.red.withOpacity(0.18),
+                                Colors.red.withOpacity(0.12),
+                                Colors.red.withOpacity(0.06),
+                                Colors.transparent,
+                              ],
+                              stops: const [0.0, 0.35, 0.65, 1.0],
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.play_circle_outline,
+                                size: 20,
+                                color: Colors.red[400],
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Watch demo',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.grey[300],
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  
+                  // Instructions list
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(20),
+                      itemCount: instructions.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Numbered badge - hockey puck style
+                              Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppTheme.primaryColor.withOpacity(0.3),
+                                      AppTheme.primaryColor.withOpacity(0.1),
+                                    ],
+                                  ),
+                                  border: Border.all(
+                                    color: AppTheme.primaryColor.withOpacity(0.4),
+                                    width: 2,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppTheme.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 3),
+                                  child: Text(
+                                    instructions[index],
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[300],
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, -1), // Start from above
+            end: Offset.zero, // End at position
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          )),
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+  List<String> _getInstructionsForExercise(Exercise exercise) {
+    // Basic instructions based on exercise name/category
+    final name = exercise.name.toLowerCase();
+    
+    if (name.contains('squat')) {
+      return [
+        'Stand with feet shoulder-width apart',
+        'Keep your chest up and core engaged',
+        'Lower down by bending knees and hips',
+        'Go as low as comfortable, ideally thighs parallel to ground',
+        'Push through heels to return to start',
+      ];
+    } else if (name.contains('bench press')) {
+      return [
+        'Lie flat on bench with feet on floor',
+        'Grip bar slightly wider than shoulder width',
+        'Lower bar to mid-chest with control',
+        'Press bar up until arms fully extended',
+        'Keep shoulder blades retracted throughout',
+      ];
+    } else if (name.contains('deadlift')) {
+      return [
+        'Stand with feet hip-width apart, bar over midfoot',
+        'Bend down and grip bar with hands outside legs',
+        'Keep back straight, chest up',
+        'Drive through heels, extending hips and knees',
+        'Stand fully upright, then lower with control',
+      ];
+    } else if (name.contains('push')) {
+      return [
+        'Position hands shoulder-width apart',
+        'Keep body in straight line from head to heels',
+        'Lower body until chest nearly touches ground',
+        'Push back up to starting position',
+        'Keep core tight throughout movement',
+      ];
+    } else if (name.contains('pull') || name.contains('row')) {
+      return [
+        'Grip bar or handles firmly',
+        'Keep back straight and core engaged',
+        'Pull weight towards your body',
+        'Squeeze shoulder blades together at top',
+        'Lower with control to starting position',
+      ];
+    } else if (name.contains('lunge')) {
+      return [
+        'Stand tall with feet hip-width apart',
+        'Step forward with one leg',
+        'Lower hips until both knees bent at 90°',
+        'Push through front heel to return to start',
+        'Alternate legs and maintain balance',
+      ];
+    } else if (name.contains('curl')) {
+      return [
+        'Stand with feet shoulder-width apart',
+        'Hold weight with underhand grip',
+        'Keep elbows close to torso',
+        'Curl weight up towards shoulders',
+        'Lower slowly back to starting position',
+      ];
+    } else if (name.contains('plank')) {
+      return [
+        'Position forearms on ground, elbows under shoulders',
+        'Extend legs behind you, toes on ground',
+        'Keep body in straight line',
+        'Engage core and glutes',
+        'Hold position without sagging or arching',
+      ];
+    }
+    
+    // Generic instructions
+    return [
+      'Set up in proper starting position',
+      'Maintain good form throughout the movement',
+      'Breathe steadily - exhale on effort',
+      'Control the weight both up and down',
+      'Rest as prescribed between sets',
+    ];
   }
 
   Widget _buildLastPerformance(
       BuildContext context, ExercisePerformance lastPerf) {
     return Container(
       margin: const EdgeInsets.only(top: 20),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.blueGrey.withOpacity(0.08),
+        color: Colors.blueGrey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.blueGrey.withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.history, size: 16, color: Colors.blueGrey),
-              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.blueGrey.withOpacity(0.15),
+                ),
+                child: const Icon(Icons.history, size: 14, color: Colors.blueGrey),
+              ),
+              const SizedBox(width: 10),
               Text(
                 'Last Performance',
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                   color: Colors.grey[300],
+                  letterSpacing: 0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Wrap(
-            spacing: 8,
-            runSpacing: 4,
+            spacing: 10,
+            runSpacing: 6,
             children: lastPerf.sets.map((set) {
               final weightStr = set.weight != null ? '${set.weight}kg' : '-';
               return Text(
                 'Set ${set.setNumber}: ${set.reps} reps @ $weightStr',
-                style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[400],
+                ),
               );
             }).toList(),
           ),
@@ -1037,14 +1660,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
       children: [
         // Set cards
         ...List.generate(sets.length, (index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: _buildSetCard(
-              context,
-              exercise,
-              sets[index],
-              index,
-            ),
+          return _buildSetCard(
+            context,
+            exercise,
+            sets[index],
+            index,
           );
         }),
 
@@ -1057,19 +1677,29 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
             if (sets.length > 1)
               TextButton.icon(
                 onPressed: () => _removeSet(exercise),
-                icon: const Icon(Icons.remove, size: 18),
-                label: const Text('Remove set'),
+                icon: const Icon(Icons.remove_circle_outline, size: 20),
+                label: const Text('Remove set', style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  letterSpacing: 0.3,
+                )),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.grey[400],
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
               ),
-            if (sets.length > 1) const SizedBox(width: 12),
+            if (sets.length > 1) const SizedBox(width: 16),
             TextButton.icon(
               onPressed: () => _addSet(exercise),
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add set'),
+              icon: const Icon(Icons.add_circle_outline, size: 20),
+              label: const Text('Add set', style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+                letterSpacing: 0.3,
+              )),
               style: TextButton.styleFrom(
                 foregroundColor: AppTheme.primaryColor,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
             ),
           ],
@@ -1124,21 +1754,28 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                           Text(
                             'REST TIME',
                             style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.white.withOpacity(0.8),
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.2,
+                              fontSize: 10,
+                              color: Colors.white.withOpacity(0.9),
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.5,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             _formatTime(_restSecondsRemaining),
                             style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w800,
+                              fontSize: 36,
+                              fontWeight: FontWeight.w900,
                               color: Colors.white,
                               height: 1,
                               fontFeatures: [FontFeature.tabularFigures()],
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black26,
+                                  offset: Offset(0, 2),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -1179,16 +1816,16 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
                         ),
                         const SizedBox(width: 8),
 
-                        // Skip button
+                        // End rest button
                         IconButton(
                           onPressed: _skipRestTimer,
-                          icon: const Icon(Icons.skip_next, size: 24),
+                          icon: const Icon(Icons.close, size: 24),
                           style: IconButton.styleFrom(
                             backgroundColor: Colors.white.withOpacity(0.15),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.all(12),
                           ),
-                          tooltip: 'Skip',
+                          tooltip: 'End Rest',
                         ),
                       ],
                     ),
@@ -1213,133 +1850,357 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
     final weight = setData['weight'] as double;
     final completed = setData['completed'] as bool;
 
+    // Calculate progressive line widths based on set number - VERY pronounced
+    final totalSets = _exercisePerformances[exercise.id]?.length ?? 1;
+    final progress = (setNumber - 1) / (totalSets > 1 ? totalSets - 1 : 1);
+    
+    // Progressive width: starts thin (2.5px), ends VERY thin (0.5px) - très prononcé!
+    final mainLineWidth = 2.5 - (progress * 2.0); // 2.5 → 0.5
+    final accentLineWidth = 1.0 - (progress * 0.75); // 1.0 → 0.25
+    
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: completed
-            ? Colors.green.withOpacity(0.06)
-            : Colors.transparent,
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[850]!, width: 1),
-        ),
-      ),
-      child: Row(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Stack(
         children: [
-          // Set number
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: completed
-                  ? const Color(0xFF4CAF50)
-                  : Colors.grey[800],
-            ),
-            child: Center(
-              child: completed
-                  ? const Icon(Icons.check, color: Colors.white, size: 18)
-                  : Text(
-                      '$setNumber',
-                      style: TextStyle(
-                        color: Colors.grey[400],
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+          // Multi-layered hockey rink-inspired lines (left side accent) - very thin
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: SizedBox(
+              width: 6,
+              child: Stack(
+                children: [
+                  // Main thin line (progressive width)
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: mainLineWidth,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: completed
+                              ? [
+                                  const Color(0xFF4CAF50),
+                                  const Color(0xFF4CAF50).withOpacity(0.8),
+                                  const Color(0xFF4CAF50).withOpacity(0.3),
+                                ]
+                              : [
+                                  AppTheme.primaryColor,
+                                  AppTheme.primaryColor.withOpacity(0.7),
+                                  AppTheme.primaryColor.withOpacity(0.2),
+                                ],
+                        ),
+                        borderRadius: BorderRadius.circular(0.5),
                       ),
                     ),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // Reps input
-          Expanded(
-            flex: (exercise.tracksWeight ?? true) ? 1 : 2,
-            child: _buildValueButton(
-              context,
-              label: 'Reps',
-              value: reps.toString(),
-              icon: Icons.repeat,
-              onTap: completed ? null : () => _showRepsPicker(exercise, index),
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Weight input (only show if exercise tracks weight)
-          if (exercise.tracksWeight ?? true) ...[
-            Expanded(
-              child: _buildValueButton(
-                context,
-                label: 'kg',
-                value: weight > 0 ? '${weight.toStringAsFixed(1)}' : '-',
-                icon: Icons.fitness_center,
-                onTap:
-                    completed ? null : () => _showWeightPicker(exercise, index),
+                  ),
+                  // Very thin accent line (progressive width)
+                  Positioned(
+                    left: 4,
+                    top: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: accentLineWidth,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: completed
+                              ? [
+                                  const Color(0xFF4CAF50).withOpacity(0.6),
+                                  const Color(0xFF4CAF50).withOpacity(0.2),
+                                  Colors.transparent,
+                                ]
+                              : [
+                                  AppTheme.primaryColor.withOpacity(0.5),
+                                  AppTheme.primaryColor.withOpacity(0.15),
+                                  Colors.transparent,
+                                ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 12),
-          ],
-
-          // Complete set button
-          IconButton(
-            onPressed: completed ? null : () => _completeSet(exercise, index),
-            icon: Icon(
-              completed ? Icons.check_circle : Icons.check_circle_outline,
-              color: completed ? const Color(0xFF4CAF50) : Colors.grey[600],
-              size: 28,
+          ),
+          
+          // Main content
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Column(
+              children: [
+                // Top line (center ice line inspired)
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        completed ? const Color(0xFF4CAF50).withOpacity(0.3) : AppTheme.primaryColor.withOpacity(0.2),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 12),
+                
+                // Set content
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Set number badge
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: completed
+                            ? const LinearGradient(
+                                colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+                              )
+                            : LinearGradient(
+                                colors: [Colors.grey[850]!, Colors.grey[800]!],
+                              ),
+                        boxShadow: completed
+                            ? [
+                                BoxShadow(
+                                  color: const Color(0xFF4CAF50).withOpacity(0.4),
+                                  blurRadius: 8,
+                                  spreadRadius: 0,
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Center(
+                        child: completed
+                            ? const Icon(Icons.check, color: Colors.white, size: 20)
+                            : Text(
+                                '$setNumber',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                      ),
+                    ),
+                    
+                    const SizedBox(width: 20),
+                    
+                    // Performance inputs with hockey-style lines
+                    Expanded(
+                      child: Row(
+                        children: [
+                          // Reps
+                          Expanded(
+                            child: _buildHockeyStyleInput(
+                              context,
+                              label: 'REPS',
+                              value: reps.toString(),
+                              icon: Icons.repeat,
+                              isActive: !completed,
+                              onTap: completed ? null : () => _showRepsPicker(exercise, index),
+                            ),
+                          ),
+                          
+                          // Vertical divider
+                          if (exercise.tracksWeight ?? true) ...[
+                            Container(
+                              width: 1,
+                              height: 40,
+                              margin: const EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    AppTheme.primaryColor.withOpacity(0.3),
+                                    Colors.transparent,
+                                  ],
+                                ),
+                              ),
+                            ),
+                            
+                            // Weight
+                            Expanded(
+                              child: _buildHockeyStyleInput(
+                                context,
+                                label: 'WEIGHT',
+                                value: weight > 0 ? weight.toStringAsFixed(1) : '-',
+                                unit: 'kg',
+                                icon: Icons.fitness_center,
+                                isActive: !completed,
+                                onTap: completed ? null : () => _showWeightPicker(exercise, index),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(width: 12),
+                    
+                    // Complete/Edit button
+                    InkWell(
+                      onTap: completed 
+                          ? () => _showEditSetDialog(exercise, index)
+                          : () => _completeSet(exercise, index),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: completed 
+                                ? const Color(0xFF4CAF50) 
+                                : AppTheme.primaryColor.withOpacity(0.3),
+                            width: 2,
+                          ),
+                          color: completed 
+                              ? const Color(0xFF4CAF50).withOpacity(0.1)
+                              : Colors.transparent,
+                        ),
+                        child: Icon(
+                          completed ? Icons.check_circle : Icons.check_circle_outline,
+                          color: completed ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
+                          size: 28,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 12),
+                
+                // Bottom line
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        completed ? const Color(0xFF4CAF50).withOpacity(0.3) : AppTheme.primaryColor.withOpacity(0.2),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            tooltip: completed ? 'Completed' : 'Complete Set',
           ),
         ],
       ),
     );
   }
 
-  Widget _buildValueButton(
+  Widget _buildHockeyStyleInput(
     BuildContext context, {
     required String label,
     required String value,
+    String? unit,
     required IconData icon,
+    required bool isActive,
     required VoidCallback? onTap,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppTheme.primaryColor.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: AppTheme.primaryColor.withOpacity(0.15),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.primaryColor.withOpacity(0.7),
-              ),
+            // Label with icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: 12,
+                  color: isActive 
+                      ? AppTheme.primaryColor.withOpacity(0.7) 
+                      : Colors.grey[600],
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: isActive 
+                        ? AppTheme.primaryColor.withOpacity(0.7) 
+                        : Colors.grey[600],
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: onTap == null ? Colors.grey[600] : Colors.white,
-              ),
+            
+            const SizedBox(height: 6),
+            
+            // Value display with underline
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: isActive ? Colors.white : Colors.grey[600],
+                        height: 1,
+                      ),
+                    ),
+                    if (unit != null) ...[
+                      const SizedBox(width: 4),
+                      Text(
+                        unit,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isActive 
+                              ? AppTheme.primaryColor.withOpacity(0.6) 
+                              : Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                
+                const SizedBox(height: 4),
+                
+                // Hockey-style underline
+                Container(
+                  height: 2,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isActive
+                          ? [
+                              AppTheme.primaryColor,
+                              AppTheme.primaryColor.withOpacity(0.3),
+                            ]
+                          : [
+                              Colors.grey[800]!,
+                              Colors.grey[850]!,
+                            ],
+                    ),
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -1443,7 +2304,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   }
 
   void _autoCompleteSet(Exercise exercise, int setIndex) {
-    _exercisePerformances[exercise.id]![setIndex]['completed'] = true;
+    setState(() {
+      _exercisePerformances[exercise.id]![setIndex]['completed'] = true;
+    });
 
     // Check if this is not the last set, then start rest timer
     final sets = _exercisePerformances[exercise.id]!;
@@ -1457,15 +2320,91 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen> {
   void _completeSet(Exercise exercise, int setIndex) {
     setState(() {
       _exercisePerformances[exercise.id]![setIndex]['completed'] = true;
-
-      // Check if this is not the last set, then start rest timer
-      final sets = _exercisePerformances[exercise.id]!;
-      final isLastSet = setIndex == sets.length - 1;
-
-      if (!isLastSet && exercise.rest != null && exercise.rest! > 0) {
-        _startRestTimer(exercise.rest!, exercise.id);
-      }
     });
+
+    // Check if this is not the last set, then start rest timer
+    final sets = _exercisePerformances[exercise.id]!;
+    final isLastSet = setIndex == sets.length - 1;
+
+    if (!isLastSet && exercise.rest != null && exercise.rest! > 0) {
+      _startRestTimer(exercise.rest!, exercise.id);
+    }
+  }
+
+  Future<void> _showEditSetDialog(Exercise exercise, int setIndex) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.surfaceColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Container(
+              width: 3,
+              height: 20,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.3),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(1.5),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Edit Set ${setIndex + 1}?',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Do you want to modify this completed set?',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[400],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.grey[400],
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Edit',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true && mounted) {
+      setState(() {
+        // Uncomplete the set so it can be edited
+        _exercisePerformances[exercise.id]![setIndex]['completed'] = false;
+      });
+    }
   }
 
   Future<void> _saveExercisePerformance(Exercise exercise) async {

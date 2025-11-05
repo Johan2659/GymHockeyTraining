@@ -17,12 +17,6 @@ class AttackerProgramData {
   "title": "Lower Dominante + Rotation",
   "blocks": [
     {
-      "exerciseId": "dynamic_warmup_ramp"
-    },
-    {
-      "exerciseId": "skater_bounds"
-    },
-    {
       "exerciseId": "back_squat",
       "swapGymId": "goblet_squat",
       "swapHomeId": "jump_squat"
