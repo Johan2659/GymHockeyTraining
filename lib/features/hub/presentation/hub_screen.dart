@@ -418,7 +418,7 @@ class HubScreen extends ConsumerWidget {
       child: ElevatedButton.icon(
         onPressed: () {
           context.go(
-              '/session/${sessionInProgress.programId}/${sessionInProgress.week}/${sessionInProgress.session}');
+              '/session/${sessionInProgress.programId}/${sessionInProgress.week}/${sessionInProgress.session}/play');
         },
         icon: const Icon(Icons.play_arrow, size: 22),
         label: const Text(
