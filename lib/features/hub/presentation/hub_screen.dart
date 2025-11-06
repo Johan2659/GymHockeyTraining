@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import '../../../core/models/models.dart';
 import '../../application/app_state_provider.dart';
 import '../../../core/utils/selectors.dart';
 import '../../programs/presentation/program_management_dialog.dart';
+import '../../auth/application/auth_controller.dart';
 
 class HubScreen extends ConsumerWidget {
   const HubScreen({super.key});
@@ -16,29 +18,65 @@ class HubScreen extends ConsumerWidget {
     final appState = ref.watch(appStateProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hockey Gym'),
-        backgroundColor: AppTheme.surfaceColor,
-        foregroundColor: AppTheme.onSurfaceColor,
-      ),
+      backgroundColor: AppTheme.backgroundColor,
       body: appState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(
-                'Error loading app state',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              FilledButton(
-                onPressed: () => ref.invalidate(appStateProvider),
-                child: const Text('Retry'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        Colors.red.withOpacity(0.2),
+                        Colors.red.withOpacity(0.05),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Colors.red,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Error loading app state',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(appStateProvider),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'RETRY',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         data: (data) => _buildDashboard(context, ref, data),
@@ -49,13 +87,26 @@ class HubScreen extends ConsumerWidget {
   Widget _buildDashboard(
       BuildContext context, WidgetRef ref, AppStateData data) {
     final sessionInProgressAsync = ref.watch(sessionInProgressProvider);
+    final weeklyStatsAsync = ref.watch(weeklyStatsProvider);
+    final userProfileAsync = ref.watch(currentUserProfileProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Unified Program Card (includes session in progress if exists)
+          // Powerful Beast League Header
+          _buildBeastLeagueHeader(context, ref, data, userProfileAsync, weeklyStatsAsync),
+          
+          // Content with padding
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                
+                // Unified Program Card (includes session in progress if exists)
           if (data.hasActiveProgram) ...[
             sessionInProgressAsync.when(
               data: (sessionInProgress) => _buildUnifiedProgramCard(
@@ -68,29 +119,504 @@ class HubScreen extends ConsumerWidget {
               error: (_, __) =>
                   _buildUnifiedProgramCard(context, ref, data, null),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
           ] else ...[
             _buildNoProgramCard(context),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
           ],
 
-          // Stats Row
-          _buildStatsRow(context, data),
-          const SizedBox(height: 24),
+          // XP Card (with integrated streak)
+          _buildXPCard(context, data),
+          
+          // Thin separator line
+          const SizedBox(height: 32),
+          _buildSectionDivider(),
+          const SizedBox(height: 32),
 
           // Tip of the Day
           _buildTipOfTheDay(context),
-          const SizedBox(height: 24),
+          
+          const SizedBox(height: 32),
+          _buildSectionDivider(),
+          const SizedBox(height: 32),
 
           // Shortcut Cards
           _buildShortcutCards(context),
-          const SizedBox(height: 24),
+          
+          const SizedBox(height: 32),
+          _buildSectionDivider(),
+          const SizedBox(height: 32),
 
           // Motivational Section
           _buildMotivationalSection(context, data),
 
           const SizedBox(height: 100), // Bottom padding for nav bar
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  /// Powerful Beast League Header with XP bar and weekly stats
+  Widget _buildBeastLeagueHeader(
+    BuildContext context,
+    WidgetRef ref,
+    AppStateData data,
+    AsyncValue<UserProfile?> userProfileAsync,
+    AsyncValue<WeeklyStats?> weeklyStatsAsync,
+  ) {
+    final userProfile = userProfileAsync.valueOrNull;
+    final weeklyStats = weeklyStatsAsync.valueOrNull;
+    final userName = userProfile?.username.toUpperCase() ?? 'ATHLETE';
+    
+    final level = Selectors.calculateLevel(data.currentXP);
+    final xpInCurrentLevel = data.currentXP % Selectors.xpPerLevel;
+    final progressToNextLevel = xpInCurrentLevel / Selectors.xpPerLevel;
+    final xpNeeded = Selectors.xpPerLevel - xpInCurrentLevel;
+    
+    final sessionsThisWeek = weeklyStats?.totalSessions ?? 0;
+    
+    // Motivational message based on weekly performance
+    String weeklyMessage = _getWeeklyMotivationMessage(sessionsThisWeek);
+
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Beast League Title
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Vertical accent line - 2px like session_detail
+                Container(
+                  width: 2,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        AppTheme.primaryColor,
+                        AppTheme.primaryColor.withOpacity(0.3),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title - same as session_detail
+                      Text(
+                        'BEAST LEAGUE',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 0.3,
+                          height: 1.1,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black26,
+                              offset: Offset(0, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      // Welcome message - integrated
+                      Row(
+                        children: [
+                          Text(
+                            'Welcome back, ',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[400],
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          Flexible(
+                            child: Text(
+                              userName,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                                color: AppTheme.primaryColor,
+                                letterSpacing: 0.3,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 14),
+            
+            // XP/Level and Streak - Integrated directly in header
+            // Top row - Level, XP info and Streak
+            Row(
+              children: [
+                // Level badge - Hockey puck style with primary color
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.primaryColor.withOpacity(0.2),
+                        AppTheme.primaryColor.withOpacity(0.1),
+                      ],
+                    ),
+                    border: Border.all(
+                      color: AppTheme.primaryColor,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$level',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // XP Progress Text
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            '${data.currentXP}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          Text(
+                            ' / ${Selectors.xpPerLevel * (level + 1)}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'XP',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.grey[500],
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      // Next level info - clean and simple
+                      Row(
+                        children: [
+                          Text(
+                            'NEXT LEVEL:',
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.grey[500],
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '$xpNeeded XP',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFFB89ECA),
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Streak badge - Consecutive training weeks
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: data.currentStreak > 0 
+                        ? Colors.orange.withOpacity(0.15)
+                        : Colors.grey.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: data.currentStreak > 0 
+                          ? Colors.orange.withOpacity(0.3)
+                          : Colors.grey.withOpacity(0.15),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.local_fire_department,
+                            color: data.currentStreak > 0 
+                                ? Colors.orange 
+                                : Colors.grey[600],
+                            size: 14,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            '${data.currentStreak}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              color: data.currentStreak > 0 
+                                  ? Colors.orange 
+                                  : Colors.grey[600],
+                              letterSpacing: -0.5,
+                              height: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'WEEK${data.currentStreak != 1 ? 'S' : ''}',
+                        style: TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.grey[500],
+                          letterSpacing: 0.8,
+                          height: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Progress bar - Modern slim design
+            Stack(
+              children: [
+                // Background track
+                Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                // Progress fill with gradient
+                FractionallySizedBox(
+                  widthFactor: progressToNextLevel,
+                  child: Container(
+                    height: 8,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF8B5BBF),
+                          const Color(0xFFB89ECA),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF8B5BBF).withOpacity(0.5),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Percentage indicator at the end
+                if (progressToNextLevel > 0)
+                  Positioned(
+                    left: MediaQuery.of(context).size.width * 0.85 * progressToNextLevel - 16,
+                    top: -18,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF8B5BBF),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '${(progressToNextLevel * 100).toInt()}%',
+                        style: const TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            
+            const SizedBox(height: 8),
+            
+            // Milestone dots - Hockey themed
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(5, (index) {
+                final milestone = (index + 1) * 0.2;
+                final isPassed = progressToNextLevel >= milestone;
+                return Container(
+                  width: 4,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isPassed 
+                        ? const Color(0xFF8B5BBF) 
+                        : Colors.grey[800],
+                  ),
+                );
+              }),
+            ),
+            
+            // Weekly Performance badge - only if sessions > 0
+            if (sessionsThisWeek > 0) ...[
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  // Small dot indicator
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFF4CAF50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF4CAF50).withOpacity(0.5),
+                          blurRadius: 6,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      weeklyMessage,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF4CAF50),
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                  // Minimal badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4CAF50).withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: const Color(0xFF4CAF50).withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      '$sessionsThisWeek/7',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF4CAF50),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            
+            // Thin separator line at bottom
+            const SizedBox(height: 20),
+            Container(
+              height: 1,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    AppTheme.primaryColor.withOpacity(0.15),
+                    AppTheme.primaryColor.withOpacity(0.3),
+                    AppTheme.primaryColor.withOpacity(0.15),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getWeeklyMotivationMessage(int sessionsThisWeek) {
+    if (sessionsThisWeek == 0) {
+      return 'Ready to dominate this week? Let\'s get started!';
+    } else if (sessionsThisWeek == 1) {
+      return 'Great start! 1 session down, keep the momentum going!';
+    } else if (sessionsThisWeek == 2) {
+      return 'Crushing it! 2 sessions this week. You\'re on fire! 🔥';
+    } else if (sessionsThisWeek == 3) {
+      return 'Impressive! 3 sessions completed. Beast mode activated!';
+    } else if (sessionsThisWeek >= 4 && sessionsThisWeek < 7) {
+      return 'Unstoppable! $sessionsThisWeek sessions this week. Champion mindset! 💪';
+    } else {
+      return 'LEGENDARY! $sessionsThisWeek sessions! You\'re a training machine! 🏆';
+    }
+  }
+
+  /// Elegant thin divider - hockey rink line inspired
+  Widget _buildSectionDivider() {
+    return Container(
+      height: 1,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.transparent,
+            AppTheme.primaryColor.withOpacity(0.15),
+            AppTheme.primaryColor.withOpacity(0.3),
+            AppTheme.primaryColor.withOpacity(0.15),
+            Colors.transparent,
+          ],
+        ),
       ),
     );
   }
@@ -142,106 +668,196 @@ class HubScreen extends ConsumerWidget {
     final currentSession = (data.state?.currentSession ?? 0) + 1;
     final hasSessionInProgress = sessionInProgress != null;
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      child: Stack(
         children: [
-          // Main Program Header
+          // Subtle left accent line - no container
+          Positioned(
+            left: 0,
+            top: 8,
+            bottom: 8,
+            child: Container(
+              width: 2,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    AppTheme.primaryColor.withOpacity(0.6),
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.6),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
+                ),
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ),
+          
+          // Content - no background box
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.only(left: 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.track_changes,
-                      color: AppTheme.primaryColor,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        'Current Program',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    PopupMenuButton<String>(
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: Colors.grey[400],
-                      ),
-                      onSelected: (value) {
-                        if (value == 'stop') {
-                          _showStopProgramDialog(context);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'stop',
-                          child: Row(
+                // Main Program Header
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 4, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Icon(Icons.stop_circle_outlined,
-                                  color: Colors.orange),
-                              SizedBox(width: 8),
-                              Text('Stop Program'),
+                              Icon(
+                                Icons.sports_hockey,
+                                color: AppTheme.primaryColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'CURRENT PROGRAM',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.grey[500],
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                              const Spacer(),
+                              PopupMenuButton<String>(
+                                icon: Icon(
+                                  Icons.more_vert,
+                                  color: Colors.grey[400],
+                                  size: 20,
+                                ),
+                                onSelected: (value) {
+                                  if (value == 'stop') {
+                                    _showStopProgramDialog(context);
+                                  }
+                                },
+                                itemBuilder: (context) => [
+                                  const PopupMenuItem(
+                                    value: 'stop',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.stop_circle_outlined,
+                                            color: Colors.orange),
+                                        SizedBox(width: 8),
+                                        Text('Stop Program'),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  data.activeProgram?.title ?? 'Unknown Program',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 12),
-                LinearProgressIndicator(
-                  value: data.percentCycle,
-                  backgroundColor: Colors.grey[700],
-                  valueColor: AlwaysStoppedAnimation(AppTheme.primaryColor),
-                  minHeight: 8,
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Week $currentWeek • Session $currentSession',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[400],
+                          const SizedBox(height: 12),
+                          Text(
+                            (data.activeProgram?.title ?? 'Unknown Program').toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              letterSpacing: 0.3,
+                            ),
                           ),
-                    ),
-                    Text(
-                      '${(data.percentCycle * 100).toInt()}%',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(height: 16),
+                          
+                          // Progress bar with hockey style
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[850],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                FractionallySizedBox(
+                                  widthFactor: data.percentCycle,
+                                  child: Container(
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          AppTheme.primaryColor,
+                                          AppTheme.primaryColor.withOpacity(0.8),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                          const SizedBox(height: 12),
+                          
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'WEEK $currentWeek',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 3,
+                                    height: 3,
+                                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppTheme.primaryColor.withOpacity(0.5),
+                                    ),
+                                  ),
+                                  Text(
+                                    'SESSION $currentSession',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                '${(data.percentCycle * 100).toInt()}%',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+
+                    // Session In Progress Banner (embedded)
+                    if (hasSessionInProgress)
+                      _buildSessionInProgressBanner(
+                          context, ref, sessionInProgress, data),
+
+                // Main CTA Button
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 16, 4),
+                  child: hasSessionInProgress
+                      ? _buildResumeSessionButton(context, sessionInProgress)
+                      : _buildStartNextSessionButton(context, data),
                 ),
               ],
             ),
-          ),
-
-          // Session In Progress Banner (embedded)
-          if (hasSessionInProgress)
-            _buildSessionInProgressBanner(
-                context, ref, sessionInProgress, data),
-
-          // Main CTA Button
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: hasSessionInProgress
-                ? _buildResumeSessionButton(context, sessionInProgress)
-                : _buildStartNextSessionButton(context, data),
           ),
         ],
       ),
@@ -273,136 +889,158 @@ class HubScreen extends ConsumerWidget {
 
     final completedCount = sessionInProgress.completedExercises.length;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppTheme.primaryColor.withOpacity(0.15),
-            AppTheme.accentColor.withOpacity(0.1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.primaryColor.withOpacity(0.3),
-          width: 1.5,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.play_circle_filled,
-              color: Colors.orange[300],
-              size: 20,
-            ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 0, 16, 16),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.orange.withOpacity(0.06),
+              Colors.orange.withOpacity(0.03),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.25),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.pause_circle,
-                            size: 12,
-                            color: Colors.orange[300],
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'In Progress',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange[300],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'Paused $timeAgoText',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[400],
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.orange.withOpacity(0.15),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            // Icon with subtle glow
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    Colors.orange.withOpacity(0.2),
+                    Colors.orange.withOpacity(0.05),
+                    Colors.transparent,
                   ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Week ${sessionInProgress.week + 1} • Session ${sessionInProgress.session + 1}',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[300],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (completedCount > 0)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: AppTheme.accentColor.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Icon(
+                Icons.play_circle_filled,
+                color: Colors.amber.shade200,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.check_circle,
-                    size: 14,
-                    color: AppTheme.accentColor,
+                  Row(
+                    children: [
+                      Text(
+                        'IN PROGRESS',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.amber.shade200,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      Container(
+                        width: 2,
+                        height: 2,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.orange.withOpacity(0.5),
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          'Paused $timeAgoText',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[400],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '$completedCount',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.accentColor,
-                    ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Text(
+                        'WEEK ${sessionInProgress.week + 1}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                      Container(
+                        width: 3,
+                        height: 3,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppTheme.primaryColor.withOpacity(0.5),
+                        ),
+                      ),
+                      Text(
+                        'SESSION ${sessionInProgress.session + 1}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.close, size: 18),
-            onPressed: () => _showDiscardSessionDialog(context, ref),
-            color: Colors.grey[400],
-            tooltip: 'Discard session',
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-        ],
+            if (completedCount > 0) ...[
+              // Hockey puck badge style
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF4CAF50).withOpacity(0.2),
+                      const Color(0xFF4CAF50).withOpacity(0.1),
+                    ],
+                  ),
+                  border: Border.all(
+                    color: const Color(0xFF4CAF50),
+                    width: 2,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    '$completedCount',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF4CAF50),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            IconButton(
+              icon: const Icon(Icons.close, size: 18),
+              onPressed: () => _showDiscardSessionDialog(context, ref),
+              color: Colors.grey[400],
+              tooltip: 'Discard session',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -422,10 +1060,11 @@ class HubScreen extends ConsumerWidget {
         },
         icon: const Icon(Icons.play_arrow, size: 22),
         label: const Text(
-          'Resume Session',
+          'RESUME SESSION',
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 17,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1,
           ),
         ),
         style: ElevatedButton.styleFrom(
@@ -447,7 +1086,7 @@ class HubScreen extends ConsumerWidget {
     return SizedBox(
       width: double.infinity,
       height: 52,
-      child: FilledButton(
+      child: ElevatedButton.icon(
         onPressed: isSessionAvailable
             ? () {
                 final programId = data.state?.activeProgramId ?? '';
@@ -456,89 +1095,123 @@ class HubScreen extends ConsumerWidget {
                 context.go('/session/$programId/$week/$session');
               }
             : null,
-        style: FilledButton.styleFrom(
-          backgroundColor: AppTheme.primaryColor,
-          foregroundColor: AppTheme.onPrimaryColor,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isSessionAvailable ? AppTheme.primaryColor : Colors.grey[800],
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          elevation: 0,
+          disabledBackgroundColor: Colors.grey[800],
+          disabledForegroundColor: Colors.grey[600],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isSessionAvailable ? Icons.play_arrow : Icons.check_circle,
-              size: 24,
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                isSessionAvailable ? 'Start Next Session' : 'Program Complete!',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+        icon: Icon(
+          isSessionAvailable ? Icons.sports_hockey : Icons.emoji_events,
+          size: 22,
+        ),
+        label: Text(
+          isSessionAvailable ? 'START NEXT SESSION' : 'PROGRAM COMPLETE',
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildNoProgramCard(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Center(
-          child: Column(
-            children: [
-              Icon(
-                Icons.fitness_center,
-                size: 48,
-                color: Colors.grey[600],
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+      child: Center(
+        child: Column(
+          children: [
+            // Icon with subtle glow - no box
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppTheme.primaryColor.withOpacity(0.15),
+                    AppTheme.primaryColor.withOpacity(0.05),
+                    Colors.transparent,
+                  ],
+                ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                'Ready to Start Training?',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                textAlign: TextAlign.center,
+              child: Icon(
+                Icons.sports_hockey,
+                size: 56,
+                color: AppTheme.primaryColor,
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Choose a training program that matches your hockey position and goals.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[500],
-                    ),
-                textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'READY TO START TRAINING?',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 0.5,
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () => context.go('/programs'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: AppTheme.onPrimaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Choose a training program that matches your hockey position and goals.',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[400],
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 28),
+            
+            // Accent line
+            Container(
+              height: 1,
+              width: 80,
+              margin: const EdgeInsets.only(bottom: 28),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    AppTheme.primaryColor.withOpacity(0.5),
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.5),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+            
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => context.go('/programs'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    'Choose Your Program',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'CHOOSE YOUR PROGRAM',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -559,121 +1232,240 @@ class HubScreen extends ConsumerWidget {
     final xpInCurrentLevel = data.currentXP % Selectors.xpPerLevel;
     final progressToNextLevel = xpInCurrentLevel / Selectors.xpPerLevel;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.star, color: AppTheme.accentColor, size: 20),
-                const SizedBox(width: 6),
-                Text(
-                  'Level $level',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${data.currentXP} XP',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: AppTheme.primaryColor,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            LinearProgressIndicator(
-              value: progressToNextLevel,
-              backgroundColor: Colors.grey[700],
-              valueColor: AlwaysStoppedAnimation(AppTheme.accentColor),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${Selectors.xpPerLevel - xpInCurrentLevel} XP to Level ${level + 1}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                  ),
-            ),
-            if (data.todayXP > 0) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '+${data.todayXP} today',
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primaryColor.withOpacity(0.04),
+            AppTheme.primaryColor.withOpacity(0.02),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppTheme.primaryColor.withOpacity(0.12),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Icon(Icons.star, color: AppTheme.accentColor, size: 18),
+              const SizedBox(width: 6),
+              Text(
+                'LEVEL $level',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[500],
+                  letterSpacing: 1.5,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          
+          // XP Value
+          Text(
+            '${data.currentXP}',
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: -0.5,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'EXPERIENCE POINTS',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[500],
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 12),
+          
+          // Progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: Stack(
+              children: [
+                Container(
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[850],
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: progressToNextLevel,
+                  child: Container(
+                    height: 6,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.accentColor,
+                          AppTheme.accentColor.withOpacity(0.8),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${Selectors.xpPerLevel - xpInCurrentLevel} XP to Level ${level + 1}',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[400],
+            ),
+          ),
+          if (data.todayXP > 0) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 4,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF4CAF50),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '+${data.todayXP} TODAY',
+                  style: const TextStyle(
+                    color: Color(0xFF4CAF50),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ],
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildStreakCard(BuildContext context, AppStateData data) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.local_fire_department,
-                  color: data.currentStreak > 0 ? Colors.orange : Colors.grey,
-                  size: 20,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  'Streak',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${data.currentStreak} days',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: data.currentStreak > 0 ? Colors.orange : Colors.grey,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _getStreakMessage(data.currentStreak),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                  ),
-            ),
-            if (data.xpMultiplier > 1.0) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${((data.xpMultiplier - 1) * 100).toInt()}% XP Bonus',
-                  style: const TextStyle(
-                    color: Colors.orange,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
+    final hasStreak = data.currentStreak > 0;
+    final streakColor = hasStreak ? Colors.orange : Colors.grey[600]!;
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primaryColor.withOpacity(0.04),
+            AppTheme.primaryColor.withOpacity(0.02),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppTheme.primaryColor.withOpacity(0.12),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Icon(
+                Icons.local_fire_department,
+                color: streakColor,
+                size: 18,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'STREAK',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[500],
+                  letterSpacing: 1.5,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          
+          // Streak Value
+          Text(
+            '${data.currentStreak}',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w900,
+              color: hasStreak ? Colors.orange : Colors.grey[600],
+              letterSpacing: -0.5,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'DAYS',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[500],
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 12),
+          
+          Text(
+            _getStreakMessage(data.currentStreak),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[400],
+              height: 1.3,
+            ),
+          ),
+          if (data.xpMultiplier > 1.0) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 4,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.orange,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '+${((data.xpMultiplier - 1) * 100).toInt()}% XP BONUS',
+                  style: const TextStyle(
+                    color: Colors.orange,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ],
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -690,19 +1482,42 @@ class HubScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+        Row(
+          children: [
+            Container(
+              width: 2,
+              height: 20,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.5),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(1),
               ),
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'QUICK ACTIONS',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               child: _buildShortcutCard(
                 context,
-                'Express Workout',
+                'EXPRESS WORKOUT',
                 Icons.flash_on,
                 Colors.orange,
                 () => context.go('/extras'),
@@ -712,9 +1527,9 @@ class HubScreen extends ConsumerWidget {
             Expanded(
               child: _buildShortcutCard(
                 context,
-                'Training Focus',
+                'TRAINING FOCUS',
                 Icons.gps_fixed,
-                Colors.blue,
+                AppTheme.primaryColor,
                 () => context.go('/extras'),
               ),
             ),
@@ -726,27 +1541,61 @@ class HubScreen extends ConsumerWidget {
 
   Widget _buildShortcutCard(BuildContext context, String title, IconData icon,
       Color color, VoidCallback onTap) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 32),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withOpacity(0.06),
+            color.withOpacity(0.02),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: color.withOpacity(0.15),
+          width: 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            child: Column(
+              children: [
+                // Icon with subtle glow
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        color.withOpacity(0.2),
+                        color.withOpacity(0.05),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                  child: Icon(icon, color: color, size: 28),
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                const SizedBox(height: 12),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -759,35 +1608,88 @@ class HubScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Motivation',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+        Row(
+          children: [
+            Container(
+              width: 2,
+              height: 20,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.5),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(1),
               ),
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'MOTIVATION',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.psychology,
-                  color: AppTheme.primaryColor,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    message,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontStyle: FontStyle.italic,
-                        ),
-                    softWrap: true,
-                  ),
-                ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.primaryColor.withOpacity(0.04),
+                AppTheme.primaryColor.withOpacity(0.02),
               ],
             ),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: AppTheme.primaryColor.withOpacity(0.12),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppTheme.primaryColor.withOpacity(0.15),
+                      AppTheme.primaryColor.withOpacity(0.05),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: Icon(
+                  Icons.psychology,
+                  color: AppTheme.primaryColor,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[300],
+                    fontStyle: FontStyle.italic,
+                    height: 1.5,
+                  ),
+                  softWrap: true,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -832,34 +1734,66 @@ class HubScreen extends ConsumerWidget {
 
   Widget _buildTipOfTheDay(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.blue.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.blue.withOpacity(0.06),
+            Colors.blue.withOpacity(0.03),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.blue.withOpacity(0.15),
+          width: 1,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.tips_and_updates, color: Colors.blue[300], size: 20),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  Colors.blue.withOpacity(0.2),
+                  Colors.blue.withOpacity(0.05),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+            child: Icon(
+              Icons.tips_and_updates,
+              color: Colors.blue.shade300,
+              size: 18,
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Tip of the Day',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.blue[300],
-                        fontWeight: FontWeight.bold,
-                      ),
+                  'TIP OF THE DAY',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.blue.shade300,
+                    letterSpacing: 1.2,
+                  ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   _getTipOfTheDay(),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.blue[200],
-                      ),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue.shade200,
+                    height: 1.4,
+                  ),
                 ),
               ],
             ),
