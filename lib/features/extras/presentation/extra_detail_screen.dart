@@ -61,7 +61,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
           children: [
             Text(
               extraTitle,
-              style: AppTextStyles.subtitle.copyWith(fontSize: 16),
+              style: AppTextStyles.body,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
@@ -457,10 +457,9 @@ class _ExercisePreviewCard extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${index + 1}',
-                  style: const TextStyle(
+                  style: AppTextStyles.buttonSmall.copyWith(
                     color: AppTheme.primaryColor,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
                   ),
                 ),
               ),
@@ -472,8 +471,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                 children: [
                   Text(
                     exercise.name,
-                    style: AppTextStyles.subtitle.copyWith(
-                          fontSize: 16,
+                    style: AppTextStyles.body.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                     softWrap: true,

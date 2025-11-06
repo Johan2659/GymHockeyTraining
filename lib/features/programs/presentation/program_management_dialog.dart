@@ -84,7 +84,7 @@ class _ProgramManagementDialogState
             // Options
             Text(
               'What would you like to do?',
-              style: AppTextStyles.subtitle.copyWith(fontSize: 16),
+              style: AppTextStyles.body,
             ),
             const SizedBox(height: AppSpacing.sm + 4),
 

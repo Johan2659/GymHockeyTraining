@@ -210,7 +210,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         )
                       : Text(
                           'Continue',
-                          style: AppTextStyles.button.copyWith(fontSize: 18),
+                          style: AppTextStyles.buttonLarge,
                         ),
                 ),
                 SizedBox(height: AppSpacing.lg),

@@ -456,8 +456,7 @@ class _ExtraSessionPlayerScreenState
                 Expanded(
                   child: Text(
                     extraTitle,
-                    style: AppTextStyles.subtitle.copyWith(
-                      fontSize: 17,
+                    style: AppTextStyles.bodyLargePlus.copyWith(
                       letterSpacing: -0.3,
                       height: 1.1,
                     ),
@@ -478,8 +477,7 @@ class _ExtraSessionPlayerScreenState
                       const SizedBox(width: AppSpacing.xs),
                       Text(
                         _formatDuration(_elapsedSeconds),
-                        style: AppTextStyles.small.copyWith(
-                          fontSize: 13,
+                        style: AppTextStyles.labelMediumSmall.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppTheme.primaryColor,
                         ),

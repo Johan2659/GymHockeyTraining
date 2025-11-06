@@ -146,9 +146,8 @@ class ProgressScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   '+${appState.todayXP} today',
-                  style: const TextStyle(
+                  style: AppTextStyles.caption.copyWith(
                     color: AppTheme.completed,
-                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -208,9 +207,8 @@ class ProgressScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   '${((appState.xpMultiplier - 1) * 100).toInt()}% XP Bonus',
-                  style: const TextStyle(
+                  style: AppTextStyles.caption.copyWith(
                     color: AppTheme.inProgress,
-                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -340,9 +338,8 @@ class ProgressScreen extends ConsumerWidget {
                 children: [
                   Text(
                     _formatWeekday(day),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: AppTextStyles.caption.copyWith(
                           color: AppTheme.secondaryTextColor,
-                          fontSize: 12,
                         ),
                   ),
                   const SizedBox(height: 6),
@@ -368,13 +365,12 @@ class ProgressScreen extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Text(
                     '${day.day}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: AppTextStyles.caption.copyWith(
                           color: isToday
                               ? AppTheme.primaryColor
                               : AppTheme.secondaryTextColor,
                           fontWeight:
                               isToday ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 12,
                         ),
                   ),
                 ],
@@ -688,9 +684,8 @@ class ProgressScreen extends ConsumerWidget {
                             const SizedBox(width: 2),
                             Text(
                               'BONUS',
-                              style: TextStyle(
+                              style: AppTextStyles.caption.copyWith(
                                 color: AppTheme.inProgress,
-                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -1311,9 +1306,8 @@ class ProgressScreen extends ConsumerWidget {
         ),
         title: Text(
           personalBest.exerciseName,
-          style: const TextStyle(
+          style: AppTextStyles.body.copyWith(
             fontWeight: FontWeight.w600,
-            fontSize: 16,
           ),
         ),
         subtitle: Text(

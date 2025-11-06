@@ -181,7 +181,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         )
                       : Text(
                           'Login',
-                          style: AppTextStyles.button.copyWith(fontSize: 18),
+                          style: AppTextStyles.buttonLarge,
                         ),
                 ),
                 SizedBox(height: AppSpacing.lg),

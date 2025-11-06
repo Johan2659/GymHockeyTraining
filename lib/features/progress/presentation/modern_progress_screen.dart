@@ -217,8 +217,7 @@ class ModernProgressScreen extends ConsumerWidget {
           // Value
           Text(
             value,
-            style: AppTextStyles.statValue.copyWith(
-              fontSize: 36,
+            style: AppTextStyles.displayLarge.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
               height: 1,
@@ -356,10 +355,9 @@ class ModernProgressScreen extends ConsumerWidget {
                       // Total minutes
                       Text(
                         '$totalMinutes',
-                        style: AppTextStyles.subtitle.copyWith(
+                        style: AppTextStyles.headlineSmall.copyWith(
                           fontWeight: FontWeight.bold,
                           color: totalMinutes > 0 ? AppTheme.primaryColor : AppTheme.tertiaryTextColor,
-                          fontSize: 20,
                           height: 1,
                         ),
                       ),
@@ -893,8 +891,7 @@ class ModernProgressScreen extends ConsumerWidget {
         const SizedBox(height: AppSpacing.xs),
         Text(
           value,
-          style: AppTextStyles.statValue.copyWith(
-            fontSize: 24,
+          style: AppTextStyles.titleL.copyWith(
             color: color,
           ),
         ),

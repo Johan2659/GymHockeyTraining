@@ -446,7 +446,7 @@ class _ExtraCard extends StatelessWidget {
                       children: [
                         Text(
                           extra.title,
-                          style: AppTextStyles.subtitle.copyWith(fontSize: 16),
+                          style: AppTextStyles.body,
                           softWrap: true,
                         ),
                         const SizedBox(height: AppSpacing.xs),

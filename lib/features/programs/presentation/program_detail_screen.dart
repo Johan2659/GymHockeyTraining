@@ -144,8 +144,7 @@ class ProgramDetailScreen extends ConsumerWidget {
           flexibleSpace: FlexibleSpaceBar(
             title: Text(
               _getRoleTitle(program.role),
-              style: const TextStyle(
-                fontSize: 16,
+              style: AppTextStyles.body.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -303,10 +302,9 @@ class ProgramDetailScreen extends ConsumerWidget {
           child: Center(
             child: Text(
               week.index.toString(),
-              style: const TextStyle(
+              style: AppTextStyles.buttonSmall.copyWith(
                 color: AppTheme.primaryColor,
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
               ),
             ),
           ),
@@ -317,8 +315,7 @@ class ProgramDetailScreen extends ConsumerWidget {
         ),
         subtitle: Text(
           '${week.sessions.length} sessions',
-          style: TextStyle(
-            fontSize: 12,
+          style: AppTextStyles.caption.copyWith(
             color: AppTheme.secondaryTextColor,
           ),
         ),
@@ -348,9 +345,8 @@ class ProgramDetailScreen extends ConsumerWidget {
                       ),
                       Text(
                         sessionId.split('_').last,
-                        style: AppTextStyles.small.copyWith(
+                        style: AppTextStyles.caption.copyWith(
                               color: AppTheme.grey500,
-                              fontSize: 12,
                             ),
                       ),
                     ],

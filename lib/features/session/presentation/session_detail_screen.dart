@@ -181,7 +181,6 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                       child: Text(
                         sessionData.title.toUpperCase(),
                         style: AppTextStyles.titleL.copyWith(
-                          fontSize: 24,
                           letterSpacing: 0.3,
                           height: 1.1,
                           shadows: [
@@ -345,7 +344,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         SizedBox(height: AppSpacing.lg),
                         Text(
                           'Session preview',
-                          style: AppTextStyles.subtitle.copyWith(fontSize: 18),
+                          style: AppTextStyles.subtitleLarge,
                         ),
                         SizedBox(height: AppSpacing.sm + 4),
                         Text(
@@ -442,8 +441,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         )
                       : Text(
                           'LET\'S GO',
-                          style: AppTextStyles.button.copyWith(
-                            fontSize: 18,
+                          style: AppTextStyles.buttonLarge.copyWith(
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -530,10 +528,8 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
           // Value with emphasis
           Text(
             value,
-            style: AppTextStyles.statValue.copyWith(
-              fontSize: 32,
+            style: AppTextStyles.displayXL.copyWith(
               height: 1,
-              letterSpacing: -0.5,
             ),
           ),
           SizedBox(height: AppSpacing.xs + 2),
@@ -730,8 +726,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                           // Exercise name
                           Text(
                             exercise.name.toUpperCase(),
-                            style: AppTextStyles.subtitle.copyWith(
-                              fontSize: 15,
+                            style: AppTextStyles.bodyMedium.copyWith(
                               letterSpacing: 0.3,
                               height: 1.2,
                             ),

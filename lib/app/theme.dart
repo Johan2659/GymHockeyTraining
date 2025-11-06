@@ -599,6 +599,33 @@ class AppTextStyles {
     letterSpacing: 0.8,
     color: AppTheme.onPrimaryColor,
   );
+  
+  /// Headline Medium - Mid-sized headers (22sp)
+  static const TextStyle headlineMedium = TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.5,
+    color: AppTheme.onSurfaceColor,
+    height: 1.3,
+  );
+  
+  /// Label Medium Small - Between label and small (13sp)
+  static const TextStyle labelMediumSmall = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.3,
+    color: AppTheme.secondaryTextColor,
+    height: 1.4,
+  );
+  
+  /// Display XL - Extra-large hero numbers (32sp)
+  static const TextStyle displayXL = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.5,
+    color: AppTheme.onSurfaceColor,
+    height: 1.1,
+  );
 }
 
 /// =============================================================================
@@ -609,12 +636,14 @@ class AppTextStyles {
 /// 
 /// Display:
 ///   displayLarge (36sp)  - Hero numbers, main stats, timers
+///   displayXL (32sp)     - Extra-large hero displays
 ///   displayMedium (30sp) - Secondary large numbers
 ///   statValue (36sp)     - Athletic stat displays
 /// 
 /// Titles:
 ///   titleXL (32sp)       - Page titles, hero sections
 ///   titleL (24sp)        - Main section headers
+///   headlineMedium (22sp)- Mid-sized headers
 ///   headlineSmall (20sp) - Sub-section headers
 ///   subtitle (18sp)      - Secondary headers
 ///   subtitleLarge (18sp) - Emphasized secondary headers
@@ -626,11 +655,12 @@ class AppTextStyles {
 ///   small (13sp)         - Supporting information
 /// 
 /// Labels & Captions:
-///   labelMedium (13sp)   - Category names, tags (bold)
-///   labelSmall (12sp)    - Descriptions, metadata
-///   labelMicro (12sp)    - Compact uppercase labels
-///   caption (12sp)       - Timestamps, footnotes
-///   statLabel (12sp)     - Labels under statistics
+///   labelMedium (13sp)      - Category names, tags (bold)
+///   labelMediumSmall (13sp) - Between label and small
+///   labelSmall (12sp)       - Descriptions, metadata
+///   labelMicro (12sp)       - Compact uppercase labels
+///   caption (12sp)          - Timestamps, footnotes
+///   statLabel (12sp)        - Labels under statistics
 /// 
 /// Buttons:
 ///   buttonLarge (18sp)   - Primary CTAs

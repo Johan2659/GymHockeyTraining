@@ -505,8 +505,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               SizedBox(width: AppSpacing.sm),
               Text(
                 _formatDuration(_elapsedSeconds),
-                style: AppTextStyles.subtitle.copyWith(
-                  fontSize: 16,
+                style: AppTextStyles.body.copyWith(
                   color: AppTheme.onPrimaryColor,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
@@ -681,8 +680,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                   isAllCompleted
                                       ? 'FINISH SESSION'
                                       : 'COMPLETE ALL EXERCISES',
-                                  style: AppTextStyles.button.copyWith(
-                                    fontSize: 17,
+                                  style: AppTextStyles.bodyLargePlus.copyWith(
+                                    fontWeight: FontWeight.bold,
                                     letterSpacing: 1,
                                   ),
                                 ),
@@ -928,8 +927,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                   : (allSetsCompleted
                                       ? 'NEXT EXERCISE ✓'
                                       : 'NEXT EXERCISE'),
-                              style: AppTextStyles.button.copyWith(
-                                fontSize: 17,
+                              style: AppTextStyles.bodyLargePlus.copyWith(
+                                fontWeight: FontWeight.bold,
                                 letterSpacing: 1,
                               ),
                             ),
@@ -1133,10 +1132,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           // Value with emphasis
           Text(
             value,
-            style: AppTextStyles.statValue.copyWith(
-              fontSize: 32,
+            style: AppTextStyles.displayXL.copyWith(
               height: 1,
-              letterSpacing: -0.5,
             ),
           ),
           SizedBox(height: AppSpacing.xs + 2),
@@ -1189,8 +1186,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 Expanded(
                   child: Text(
                     exercise.name.toUpperCase(),
-                    style: AppTextStyles.titleL.copyWith(
-                      fontSize: 30,
+                    style: AppTextStyles.displayMedium.copyWith(
                       letterSpacing: 0.3,
                       height: 1.1,
                       shadows: [
@@ -1363,8 +1359,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                             children: [
                               Text(
                                 'HOW TO PERFORM',
-                                style: TextStyle(
-                                  fontSize: 18,
+                                style: AppTextStyles.subtitleLarge.copyWith(
                                   fontWeight: FontWeight.w800,
                                   color: AppTheme.onPrimaryColor,
                                 ),
@@ -1372,8 +1367,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               const SizedBox(height: 4),
                               Text(
                                 exercise.name.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 12,
+                                style: AppTextStyles.caption.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: AppTheme.primaryColor,
                                   letterSpacing: 0.5,
@@ -1459,9 +1453,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               const SizedBox(width: 10),
                               Text(
                                 'Watch demo',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
+                                style: AppTextStyles.buttonSmall.copyWith(
                                   color: AppTheme.grey300,
                                   letterSpacing: 0.3,
                                 ),
@@ -1505,8 +1497,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                 child: Center(
                                   child: Text(
                                     '${index + 1}',
-                                    style: TextStyle(
-                                      fontSize: 13,
+                                    style: AppTextStyles.labelMediumSmall.copyWith(
                                       fontWeight: FontWeight.w800,
                                       color: AppTheme.primaryColor,
                                     ),
@@ -1519,8 +1510,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                   padding: const EdgeInsets.only(top: 3),
                                   child: Text(
                                     instructions[index],
-                                    style: TextStyle(
-                                      fontSize: 14,
+                                    style: AppTextStyles.buttonSmall.copyWith(
                                       fontWeight: FontWeight.w500,
                                       color: AppTheme.grey300,
                                       height: 1.5,
@@ -1719,9 +1709,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               TextButton.icon(
                 onPressed: () => _removeSet(exercise),
                 icon: const Icon(Icons.remove_circle_outline, size: 20),
-                label: const Text('Remove set', style: TextStyle(
+                label: Text('Remove set', style: AppTextStyles.labelMediumSmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 13,
                   letterSpacing: 0.3,
                 )),
                 style: TextButton.styleFrom(
@@ -1733,9 +1722,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
             TextButton.icon(
               onPressed: () => _addSet(exercise),
               icon: const Icon(Icons.add_circle_outline, size: 20),
-              label: const Text('Add set', style: TextStyle(
+              label: Text('Add set', style: AppTextStyles.labelMediumSmall.copyWith(
                 fontWeight: FontWeight.w700,
-                fontSize: 13,
                 letterSpacing: 0.3,
               )),
               style: TextButton.styleFrom(
@@ -1794,8 +1782,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                         children: [
                           Text(
                             'REST TIME',
-                            style: TextStyle(
-                              fontSize: 12,
+                            style: AppTextStyles.caption.copyWith(
                               color: AppTheme.onPrimaryColor.withOpacity(0.9),
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.5,
@@ -1804,12 +1791,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           const SizedBox(height: 6),
                           Text(
                             _formatTime(_restSecondsRemaining),
-                            style: const TextStyle(
-                              fontSize: 36,
+                            style: AppTextStyles.displayLarge.copyWith(
                               fontWeight: FontWeight.w900,
                               color: AppTheme.onPrimaryColor,
                               height: 1,
-                              fontFeatures: [FontFeature.tabularFigures()],
+                              fontFeatures: const [FontFeature.tabularFigures()],
                               shadows: const [
                                 Shadow(
                                   color: Colors.black54,
@@ -2023,10 +2009,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                             ? const Icon(Icons.check, color: AppTheme.onPrimaryColor, size: 20)
                             : Text(
                                 '$setNumber',
-                                style: const TextStyle(
+                                style: AppTextStyles.body.copyWith(
                                   color: AppTheme.onPrimaryColor,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 16,
                                 ),
                               ),
                       ),
@@ -2173,8 +2158,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 const SizedBox(width: 4),
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: AppTextStyles.caption.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isActive 
                         ? AppTheme.primaryColor.withOpacity(0.7) 
@@ -2198,8 +2182,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   children: [
                     Text(
                       value,
-                      style: TextStyle(
-                        fontSize: 24,
+                      style: AppTextStyles.titleL.copyWith(
                         fontWeight: FontWeight.w800,
                         color: isActive ? AppTheme.onPrimaryColor : Colors.grey[600],
                         height: 1,
@@ -2209,8 +2192,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                       const SizedBox(width: 4),
                       Text(
                         unit,
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: AppTextStyles.caption.copyWith(
                           fontWeight: FontWeight.w600,
                           color: isActive 
                               ? AppTheme.primaryColor.withOpacity(0.6) 
@@ -2396,8 +2378,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
             const SizedBox(width: 12),
             Text(
               'Edit Set ${setIndex + 1}?',
-              style: TextStyle(
-                fontSize: 18,
+              style: AppTextStyles.subtitleLarge.copyWith(
                 fontWeight: FontWeight.w800,
                 color: AppTheme.onPrimaryColor,
               ),
@@ -2406,8 +2387,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         ),
         content: Text(
           'Do you want to modify this completed set?',
-          style: TextStyle(
-            fontSize: 14,
+          style: AppTextStyles.buttonSmall.copyWith(
             color: AppTheme.secondaryTextColor,
           ),
         ),

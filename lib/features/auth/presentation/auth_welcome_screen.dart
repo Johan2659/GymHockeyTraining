@@ -99,7 +99,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   'Enter Username',
-                  style: AppTextStyles.button.copyWith(fontSize: 18),
+                  style: AppTextStyles.buttonLarge,
                 ),
               ),
               SizedBox(height: AppSpacing.md),
