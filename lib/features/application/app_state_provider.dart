@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -48,6 +49,24 @@ Stream<ProgramState?> programState(Ref ref) {
 Stream<Profile?> userProfile(Ref ref) {
   final repository = ref.watch(profileRepositoryProvider);
   return repository.watch();
+}
+
+/// Theme mode provider - converts theme string to ThemeMode
+@riverpod
+Stream<ThemeMode> themeMode(Ref ref) {
+  return ref.watch(userProfileProvider.stream).map((profile) {
+    final theme = profile?.theme ?? 'dark';
+    switch (theme) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      case 'system':
+        return ThemeMode.system;
+      default:
+        return ThemeMode.dark;
+    }
+  });
 }
 
 // =============================================================================

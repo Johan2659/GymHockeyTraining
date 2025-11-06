@@ -62,6 +62,34 @@ class AppTheme {
   static Color glassBackgroundMedium = Colors.white.withOpacity(0.08);
 
   // ============================================================================
+  // LIGHT THEME COLORS
+  // ============================================================================
+  
+  /// Light background - clean white with subtle warmth
+  static const Color lightBackgroundColor = Color(0xFFFAFAFA);
+  
+  /// Light surface color for cards and containers
+  static const Color lightSurfaceColor = Color(0xFFFFFFFF);
+  
+  /// Darker primary for better contrast on light background
+  static const Color lightPrimaryColor = Color(0xFF0096D6);
+  
+  /// Rich amber for light mode accents
+  static const Color lightAccentGold = Color(0xFFFF9500);
+  
+  /// Text color for light backgrounds
+  static const Color lightOnSurfaceColor = Color(0xFF1A1A1A);
+  
+  /// Text on primary color (light mode)
+  static const Color lightOnPrimaryColor = Color(0xFFFFFFFF);
+  
+  /// Secondary text for light mode
+  static const Color lightSecondaryTextColor = Color(0xFF5A5A5A);
+  
+  /// Tertiary text for light mode
+  static const Color lightTertiaryTextColor = Color(0xFF8A8A8A);
+
+  // ============================================================================
   // THEME DATA
   // ============================================================================
   
@@ -184,6 +212,139 @@ class AppTheme {
       // Icon Theme
       iconTheme: const IconThemeData(
         color: onSurfaceColor,
+        size: 24,
+      ),
+    );
+  }
+
+  static ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+
+      // Color scheme
+      colorScheme: const ColorScheme.light(
+        surface: lightBackgroundColor,
+        primary: lightPrimaryColor,
+        secondary: lightAccentGold,
+        onSurface: lightOnSurfaceColor,
+        onPrimary: lightOnPrimaryColor,
+        onSecondary: lightOnSurfaceColor,
+        error: error,
+      ),
+
+      // Scaffold
+      scaffoldBackgroundColor: lightBackgroundColor,
+
+      // AppBar
+      appBarTheme: const AppBarTheme(
+        backgroundColor: lightSurfaceColor,
+        foregroundColor: lightOnSurfaceColor,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+          color: lightOnSurfaceColor,
+        ),
+      ),
+
+      // Card - subtle shadow for depth in light mode
+      cardTheme: CardThemeData(
+        color: lightSurfaceColor,
+        elevation: 1,
+        shadowColor: Colors.black.withOpacity(0.05),
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+
+      // Text Theme
+      textTheme: const TextTheme(
+        headlineLarge: TextStyle(
+          color: lightOnSurfaceColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 32,
+          letterSpacing: 0.5,
+        ),
+        headlineMedium: TextStyle(
+          color: lightOnSurfaceColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          letterSpacing: 0.5,
+        ),
+        titleLarge: TextStyle(
+          color: lightOnSurfaceColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          letterSpacing: 1.0,
+        ),
+        bodyLarge: TextStyle(
+          color: lightOnSurfaceColor,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        bodyMedium: TextStyle(
+          color: lightOnSurfaceColor,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+
+      // Input Decoration
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: lightBackgroundColor,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: lightPrimaryColor, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      ),
+
+      // Elevated Button
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: lightPrimaryColor,
+          foregroundColor: lightOnPrimaryColor,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+          shadowColor: lightPrimaryColor.withOpacity(0.3),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+
+      // Text Button
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: lightPrimaryColor,
+          textStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      // Icon Theme
+      iconTheme: const IconThemeData(
+        color: lightOnSurfaceColor,
         size: 24,
       ),
     );

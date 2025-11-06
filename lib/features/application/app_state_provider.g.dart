@@ -83,6 +83,24 @@ final userProfileProvider = AutoDisposeStreamProvider<Profile?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserProfileRef = AutoDisposeStreamProviderRef<Profile?>;
+String _$themeModeHash() => r'13d50c3f35c0c5ed2f5a82477342d5f1e91e8d1c';
+
+/// Theme mode provider - converts theme string to ThemeMode
+///
+/// Copied from [themeMode].
+@ProviderFor(themeMode)
+final themeModeProvider = AutoDisposeStreamProvider<ThemeMode>.internal(
+  themeMode,
+  name: r'themeModeProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$themeModeHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ThemeModeRef = AutoDisposeStreamProviderRef<ThemeMode>;
 String _$availableProgramsHash() => r'b67952aac14e6a688eeaf6c32a7ab49e07b7922b';
 
 /// Available programs provider

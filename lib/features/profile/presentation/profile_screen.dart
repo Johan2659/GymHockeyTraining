@@ -173,13 +173,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppTheme.primaryColor.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
                     ),
                     child: Center(
                       child: Text(
                         username.isNotEmpty ? username[0].toUpperCase() : 'U',
                         style: AppTextStyles.titleL.copyWith(
-                          color: AppTheme.primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
@@ -191,20 +191,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         Text(
                           username,
-                          style: AppTextStyles.subtitle,
+                          style: AppTextStyles.subtitle.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.xs),
                         Text(
                           _getRoleDisplayName(userRole),
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: Colors.grey[400],
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'Hockey Training',
                           style: AppTextStyles.small.copyWith(
-                            color: Colors.grey[500],
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                           ),
                         ),
                       ],
@@ -220,7 +222,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // Settings Section
           Text(
             'Settings',
-            style: AppTextStyles.subtitle,
+            style: AppTextStyles.subtitle.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm + 4),
 
@@ -261,7 +265,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // Actions Section
           Text(
             'Actions',
-            style: AppTextStyles.subtitle,
+            style: AppTextStyles.subtitle.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm + 4),
 
@@ -305,24 +311,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           height: 40,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppSpacing.sm),
-            color: AppTheme.primaryColor.withOpacity(0.2),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
           ),
-          child: Icon(icon, color: AppTheme.primaryColor, size: 20),
+          child: Icon(
+            icon, 
+            color: Theme.of(context).colorScheme.primary, 
+            size: 20,
+          ),
         ),
         title: Text(
           title,
           style: AppTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: AppTextStyles.small.copyWith(
-            color: Colors.grey[400],
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
           ),
         ),
-        trailing:
-            Icon(Icons.chevron_right, color: AppTheme.primaryColor, size: 20),
+        trailing: Icon(
+          Icons.chevron_right, 
+          color: Theme.of(context).colorScheme.primary, 
+          size: 20,
+        ),
         onTap: onTap,
       ),
     );
@@ -344,7 +358,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           height: 40,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppSpacing.sm),
-            color: color.withOpacity(0.2),
+            color: color.withOpacity(0.15),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
@@ -352,13 +366,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           title,
           style: AppTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: AppTextStyles.small.copyWith(
             fontSize: 11,
-            color: Colors.grey[400],
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
           ),
         ),
         trailing: _isLoading
