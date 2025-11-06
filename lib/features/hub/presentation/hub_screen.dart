@@ -10,6 +10,9 @@ import '../../../core/utils/selectors.dart';
 import '../../programs/presentation/program_management_dialog.dart';
 import '../../auth/application/auth_controller.dart';
 
+/// BEAST LEAGUE Dashboard - Hockey Gym V2
+/// Modern, fluid design inspired by Fitbod × EA Sports × Apple Fitness
+
 class HubScreen extends ConsumerWidget {
   const HubScreen({super.key});
 
@@ -23,18 +26,18 @@ class HubScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: AppSpacing.page,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.red.withOpacity(0.2),
-                        Colors.red.withOpacity(0.05),
+                        AppTheme.error.withOpacity(0.2),
+                        AppTheme.error.withOpacity(0.05),
                         Colors.transparent,
                       ],
                     ),
@@ -42,37 +45,20 @@ class HubScreen extends ConsumerWidget {
                   child: const Icon(
                     Icons.error_outline,
                     size: 64,
-                    color: Colors.red,
+                    color: AppTheme.error,
                   ),
                 ),
-                const SizedBox(height: 24),
-                const Text(
+                const SizedBox(height: AppSpacing.lg),
+                Text(
                   'Error loading app state',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.titleL,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(appStateProvider),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
+                  child: Text(
                     'RETRY',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
-                    ),
+                    style: AppTextStyles.button,
                   ),
                 ),
               ],
@@ -100,11 +86,11 @@ class HubScreen extends ConsumerWidget {
           
           // Content with padding
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: AppSpacing.horizontalPage,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: AppSpacing.lg),
                 
                 // Unified Program Card (includes session in progress if exists)
           if (data.hasActiveProgram) ...[
@@ -119,33 +105,33 @@ class HubScreen extends ConsumerWidget {
               error: (_, __) =>
                   _buildUnifiedProgramCard(context, ref, data, null),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
           ] else ...[
             _buildNoProgramCard(context),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
           ],
 
           // XP Card (with integrated streak)
           _buildXPCard(context, data),
           
           // Thin separator line
-          const SizedBox(height: 32),
-          _buildSectionDivider(),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.xl),
+          const GradientDivider(),
+          const SizedBox(height: AppSpacing.xl),
 
           // Tip of the Day
           _buildTipOfTheDay(context),
           
-          const SizedBox(height: 32),
-          _buildSectionDivider(),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.xl),
+          const GradientDivider(),
+          const SizedBox(height: AppSpacing.xl),
 
           // Shortcut Cards
           _buildShortcutCards(context),
           
-          const SizedBox(height: 32),
-          _buildSectionDivider(),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.xl),
+          const GradientDivider(),
+          const SizedBox(height: AppSpacing.xl),
 
           // Motivational Section
           _buildMotivationalSection(context, data),
@@ -184,7 +170,7 @@ class HubScreen extends ConsumerWidget {
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 28),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -209,21 +195,16 @@ class HubScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(1),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.sm + 4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title - same as session_detail
+                      // Title - using theme text style
                       Text(
                         'BEAST LEAGUE',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: 0.3,
-                          height: 1.1,
-                          shadows: [
+                        style: AppTextStyles.titleL.copyWith(
+                          shadows: const [
                             Shadow(
                               color: Colors.black26,
                               offset: Offset(0, 2),
@@ -238,21 +219,18 @@ class HubScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'Welcome back, ',
-                            style: TextStyle(
+                            style: AppTextStyles.small.copyWith(
                               fontSize: 13,
-                              fontWeight: FontWeight.w600,
                               color: Colors.grey[400],
-                              letterSpacing: 0.3,
                             ),
                           ),
                           Flexible(
                             child: Text(
                               userName,
-                              style: TextStyle(
+                              style: AppTextStyles.small.copyWith(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w800,
                                 color: AppTheme.primaryColor,
-                                letterSpacing: 0.3,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -291,15 +269,14 @@ class HubScreen extends ConsumerWidget {
                   child: Center(
                     child: Text(
                       '$level',
-                      style: TextStyle(
+                      style: AppTextStyles.subtitle.copyWith(
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
                         color: AppTheme.primaryColor,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.sm + 4),
                 // XP Progress Text
                 Expanded(
                   child: Column(
@@ -311,54 +288,45 @@ class HubScreen extends ConsumerWidget {
                         children: [
                           Text(
                             '${data.currentXP}',
-                            style: const TextStyle(
+                            style: AppTextStyles.subtitle.copyWith(
                               fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
                               letterSpacing: -0.5,
                             ),
                           ),
                           Text(
                             ' / ${Selectors.xpPerLevel * (level + 1)}',
-                            style: TextStyle(
+                            style: AppTextStyles.small.copyWith(
                               fontSize: 13,
-                              fontWeight: FontWeight.w600,
                               color: Colors.grey[500],
                             ),
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
                             'XP',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
+                            style: AppTextStyles.labelXS.copyWith(
                               color: Colors.grey[500],
-                              letterSpacing: 1.5,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       // Next level info - clean and simple
                       Row(
                         children: [
                           Text(
                             'NEXT LEVEL:',
-                            style: TextStyle(
+                            style: AppTextStyles.labelXS.copyWith(
                               fontSize: 9,
-                              fontWeight: FontWeight.w700,
                               color: Colors.grey[500],
-                              letterSpacing: 1,
                             ),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             '$xpNeeded XP',
-                            style: const TextStyle(
+                            style: AppTextStyles.small.copyWith(
                               fontSize: 11,
                               fontWeight: FontWeight.w900,
-                              color: Color(0xFFB89ECA),
-                              letterSpacing: 0.3,
+                              color: const Color(0xFFB89ECA),
                             ),
                           ),
                         ],
@@ -373,7 +341,7 @@ class HubScreen extends ConsumerWidget {
                     color: data.currentStreak > 0 
                         ? Colors.orange.withOpacity(0.15)
                         : Colors.grey.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppSpacing.sm),
                     border: Border.all(
                       color: data.currentStreak > 0 
                           ? Colors.orange.withOpacity(0.3)
@@ -397,9 +365,8 @@ class HubScreen extends ConsumerWidget {
                           const SizedBox(width: 3),
                           Text(
                             '${data.currentStreak}',
-                            style: TextStyle(
+                            style: AppTextStyles.subtitle.copyWith(
                               fontSize: 16,
-                              fontWeight: FontWeight.w900,
                               color: data.currentStreak > 0 
                                   ? Colors.orange 
                                   : Colors.grey[600],
@@ -412,12 +379,9 @@ class HubScreen extends ConsumerWidget {
                       const SizedBox(height: 2),
                       Text(
                         'WEEK${data.currentStreak != 1 ? 'S' : ''}',
-                        style: TextStyle(
+                        style: AppTextStyles.labelXS.copyWith(
                           fontSize: 8,
-                          fontWeight: FontWeight.w800,
                           color: Colors.grey[500],
-                          letterSpacing: 0.8,
-                          height: 1,
                         ),
                       ),
                     ],
@@ -519,45 +483,43 @@ class HubScreen extends ConsumerWidget {
                     height: 6,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: const Color(0xFF4CAF50),
+                      color: AppTheme.success,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF4CAF50).withOpacity(0.5),
+                          color: AppTheme.success.withOpacity(0.5),
                           blurRadius: 6,
                           spreadRadius: 1,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.sm + 2),
                   Expanded(
                     child: Text(
                       weeklyMessage,
-                      style: const TextStyle(
-                        fontSize: 12,
+                      style: AppTextStyles.small.copyWith(
+                        color: AppTheme.success,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF4CAF50),
-                        letterSpacing: 0.3,
                       ),
                     ),
                   ),
                   // Minimal badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 3),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF4CAF50).withOpacity(0.15),
+                      color: AppTheme.success.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                        color: const Color(0xFF4CAF50).withOpacity(0.3),
+                        color: AppTheme.success.withOpacity(0.3),
                         width: 1,
                       ),
                     ),
                     child: Text(
                       '$sessionsThisWeek/7',
-                      style: const TextStyle(
+                      style: AppTextStyles.small.copyWith(
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF4CAF50),
+                        color: AppTheme.success,
                       ),
                     ),
                   ),
@@ -603,23 +565,6 @@ class HubScreen extends ConsumerWidget {
     }
   }
 
-  /// Elegant thin divider - hockey rink line inspired
-  Widget _buildSectionDivider() {
-    return Container(
-      height: 1,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.transparent,
-            AppTheme.primaryColor.withOpacity(0.15),
-            AppTheme.primaryColor.withOpacity(0.3),
-            AppTheme.primaryColor.withOpacity(0.15),
-            Colors.transparent,
-          ],
-        ),
-      ),
-    );
-  }
 
   void _showDiscardSessionDialog(BuildContext context, WidgetRef ref) {
     showDialog(
@@ -715,14 +660,11 @@ class HubScreen extends ConsumerWidget {
                                 color: AppTheme.primaryColor,
                                 size: 20,
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AppSpacing.sm),
                               Text(
                                 'CURRENT PROGRAM',
-                                style: TextStyle(
+                                style: AppTextStyles.labelXS.copyWith(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.grey[500],
-                                  letterSpacing: 1.5,
                                 ),
                               ),
                               const Spacer(),
@@ -753,17 +695,14 @@ class HubScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AppSpacing.sm + 4),
                           Text(
                             (data.activeProgram?.title ?? 'Unknown Program').toUpperCase(),
-                            style: const TextStyle(
+                            style: AppTextStyles.subtitle.copyWith(
                               fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              letterSpacing: 0.3,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: AppSpacing.md),
                           
                           // Progress bar with hockey style
                           ClipRRect(
@@ -795,7 +734,7 @@ class HubScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AppSpacing.sm + 4),
                           
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -804,7 +743,7 @@ class HubScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'WEEK $currentWeek',
-                                    style: TextStyle(
+                                    style: AppTextStyles.small.copyWith(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.grey[400],
@@ -813,7 +752,7 @@ class HubScreen extends ConsumerWidget {
                                   Container(
                                     width: 3,
                                     height: 3,
-                                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                                    margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: AppTheme.primaryColor.withOpacity(0.5),
@@ -821,7 +760,7 @@ class HubScreen extends ConsumerWidget {
                                   ),
                                   Text(
                                     'SESSION $currentSession',
-                                    style: TextStyle(
+                                    style: AppTextStyles.small.copyWith(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.grey[400],
@@ -831,10 +770,7 @@ class HubScreen extends ConsumerWidget {
                               ),
                               Text(
                                 '${(data.percentCycle * 100).toInt()}%',
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
+                                style: AppTextStyles.titleL.copyWith(
                                   letterSpacing: -0.5,
                                 ),
                               ),
@@ -890,7 +826,7 @@ class HubScreen extends ConsumerWidget {
     final completedCount = sessionInProgress.completedExercises.length;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 16, 16),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.sm, 0, AppSpacing.md, AppSpacing.md),
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -902,7 +838,7 @@ class HubScreen extends ConsumerWidget {
               Colors.orange.withOpacity(0.03),
             ],
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
           border: Border.all(
             color: Colors.orange.withOpacity(0.15),
             width: 1,
@@ -938,11 +874,8 @@ class HubScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'IN PROGRESS',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                        style: AppTextStyles.labelXS.copyWith(
                           color: Colors.amber.shade200,
-                          letterSpacing: 1.2,
                         ),
                       ),
                       Container(
@@ -957,9 +890,8 @@ class HubScreen extends ConsumerWidget {
                       Flexible(
                         child: Text(
                           'Paused $timeAgoText',
-                          style: TextStyle(
+                          style: AppTextStyles.small.copyWith(
                             fontSize: 11,
-                            fontWeight: FontWeight.w600,
                             color: Colors.grey[400],
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -972,7 +904,7 @@ class HubScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'WEEK ${sessionInProgress.week + 1}',
-                        style: TextStyle(
+                        style: AppTextStyles.small.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: Colors.grey[300],
@@ -989,7 +921,7 @@ class HubScreen extends ConsumerWidget {
                       ),
                       Text(
                         'SESSION ${sessionInProgress.session + 1}',
-                        style: TextStyle(
+                        style: AppTextStyles.small.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: Colors.grey[300],
@@ -1009,27 +941,26 @@ class HubScreen extends ConsumerWidget {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFF4CAF50).withOpacity(0.2),
-                      const Color(0xFF4CAF50).withOpacity(0.1),
+                      AppTheme.success.withOpacity(0.2),
+                      AppTheme.success.withOpacity(0.1),
                     ],
                   ),
                   border: Border.all(
-                    color: const Color(0xFF4CAF50),
+                    color: AppTheme.success,
                     width: 2,
                   ),
                 ),
                 child: Center(
                   child: Text(
                     '$completedCount',
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.w900,
-                      color: Color(0xFF4CAF50),
+                      color: AppTheme.success,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
             ],
             IconButton(
               icon: const Icon(Icons.close, size: 18),
@@ -1059,21 +990,11 @@ class HubScreen extends ConsumerWidget {
               '/session/${sessionInProgress.programId}/${sessionInProgress.week}/${sessionInProgress.session}/play');
         },
         icon: const Icon(Icons.play_arrow, size: 22),
-        label: const Text(
+        label: Text(
           'RESUME SESSION',
-          style: TextStyle(
+          style: AppTextStyles.button.copyWith(
             fontSize: 17,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1,
           ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryColor,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 0,
         ),
       ),
     );
@@ -1099,7 +1020,7 @@ class HubScreen extends ConsumerWidget {
           backgroundColor: isSessionAvailable ? AppTheme.primaryColor : Colors.grey[800],
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
           ),
           elevation: 0,
           disabledBackgroundColor: Colors.grey[800],
@@ -1111,10 +1032,8 @@ class HubScreen extends ConsumerWidget {
         ),
         label: Text(
           isSessionAvailable ? 'START NEXT SESSION' : 'PROGRAM COMPLETE',
-          style: const TextStyle(
+          style: AppTextStyles.button.copyWith(
             fontSize: 17,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1,
           ),
         ),
       ),
@@ -1123,13 +1042,13 @@ class HubScreen extends ConsumerWidget {
 
   Widget _buildNoProgramCard(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl, horizontal: AppSpacing.lg),
       child: Center(
         child: Column(
           children: [
             // Icon with subtle glow - no box
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -1146,25 +1065,20 @@ class HubScreen extends ConsumerWidget {
                 color: AppTheme.primaryColor,
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            const SizedBox(height: AppSpacing.lg),
+            Text(
               'READY TO START TRAINING?',
-              style: TextStyle(
+              style: AppTextStyles.subtitle.copyWith(
                 fontSize: 22,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: 0.5,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm + 4),
             Text(
               'Choose a training program that matches your hockey position and goals.',
-              style: TextStyle(
+              style: AppTextStyles.body.copyWith(
                 fontSize: 15,
-                fontWeight: FontWeight.w600,
                 color: Colors.grey[400],
-                height: 1.5,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1192,21 +1106,10 @@ class HubScreen extends ConsumerWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () => context.go('/programs'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
+                child: Text(
                   'CHOOSE YOUR PROGRAM',
-                  style: TextStyle(
+                  style: AppTextStyles.button.copyWith(
                     fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1,
                   ),
                 ),
               ),
@@ -1233,7 +1136,7 @@ class HubScreen extends ConsumerWidget {
     final progressToNextLevel = xpInCurrentLevel / Selectors.xpPerLevel;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.card,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -1259,39 +1162,28 @@ class HubScreen extends ConsumerWidget {
               const SizedBox(width: 6),
               Text(
                 'LEVEL $level',
-                style: TextStyle(
+                style: AppTextStyles.labelXS.copyWith(
                   fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.grey[500],
-                  letterSpacing: 1.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + 4),
           
           // XP Value
           Text(
             '${data.currentXP}',
-            style: const TextStyle(
+            style: AppTextStyles.statValue.copyWith(
               fontSize: 32,
-              fontWeight: FontWeight.w900,
               color: Colors.white,
-              letterSpacing: -0.5,
-              height: 1,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             'EXPERIENCE POINTS',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey[500],
-              letterSpacing: 1.2,
-            ),
+            style: AppTextStyles.labelXS,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + 4),
           
           // Progress bar
           ClipRRect(
@@ -1323,35 +1215,32 @@ class HubScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             '${Selectors.xpPerLevel - xpInCurrentLevel} XP to Level ${level + 1}',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+            style: AppTextStyles.small.copyWith(
               color: Colors.grey[400],
             ),
           ),
           if (data.todayXP > 0) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.sm + 2),
             Row(
               children: [
                 Container(
                   width: 4,
                   height: 4,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xFF4CAF50),
+                    color: AppTheme.success,
                   ),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   '+${data.todayXP} TODAY',
-                  style: const TextStyle(
-                    color: Color(0xFF4CAF50),
+                  style: AppTextStyles.small.copyWith(
+                    color: AppTheme.success,
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 0.8,
                   ),
                 ),
               ],
@@ -1367,7 +1256,7 @@ class HubScreen extends ConsumerWidget {
     final streakColor = hasStreak ? Colors.orange : Colors.grey[600]!;
     
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.card,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -1397,51 +1286,37 @@ class HubScreen extends ConsumerWidget {
               const SizedBox(width: 6),
               Text(
                 'STREAK',
-                style: TextStyle(
+                style: AppTextStyles.labelXS.copyWith(
                   fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.grey[500],
-                  letterSpacing: 1.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + 4),
           
           // Streak Value
           Text(
             '${data.currentStreak}',
-            style: TextStyle(
+            style: AppTextStyles.statValue.copyWith(
               fontSize: 32,
-              fontWeight: FontWeight.w900,
               color: hasStreak ? Colors.orange : Colors.grey[600],
-              letterSpacing: -0.5,
-              height: 1,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             'DAYS',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey[500],
-              letterSpacing: 1.2,
-            ),
+            style: AppTextStyles.labelXS,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + 4),
           
           Text(
             _getStreakMessage(data.currentStreak),
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+            style: AppTextStyles.small.copyWith(
               color: Colors.grey[400],
-              height: 1.3,
             ),
           ),
           if (data.xpMultiplier > 1.0) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.sm + 2),
             Row(
               children: [
                 Container(
@@ -1455,11 +1330,10 @@ class HubScreen extends ConsumerWidget {
                 const SizedBox(width: 6),
                 Text(
                   '+${((data.xpMultiplier - 1) * 100).toInt()}% XP BONUS',
-                  style: const TextStyle(
+                  style: AppTextStyles.small.copyWith(
                     color: Colors.orange,
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 0.8,
                   ),
                 ),
               ],
@@ -1499,19 +1373,14 @@ class HubScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(1),
               ),
             ),
-            const SizedBox(width: 10),
-            const Text(
+            const SizedBox(width: AppSpacing.sm + 2),
+            Text(
               'QUICK ACTIONS',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: 0.3,
-              ),
+              style: AppTextStyles.subtitle,
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         Row(
           children: [
             Expanded(
@@ -1563,12 +1432,12 @@ class HubScreen extends ConsumerWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(14),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: AppSpacing.md),
             child: Column(
               children: [
                 // Icon with subtle glow
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(AppSpacing.sm + 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -1581,14 +1450,13 @@ class HubScreen extends ConsumerWidget {
                   ),
                   child: Icon(icon, color: color, size: 28),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.sm + 4),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: AppTextStyles.small.copyWith(
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
                     color: Colors.white,
-                    letterSpacing: 0.5,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
@@ -1625,21 +1493,16 @@ class HubScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(1),
               ),
             ),
-            const SizedBox(width: 10),
-            const Text(
+            const SizedBox(width: AppSpacing.sm + 2),
+            Text(
               'MOTIVATION',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: 0.3,
-              ),
+              style: AppTextStyles.subtitle,
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.card,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -1658,7 +1521,7 @@ class HubScreen extends ConsumerWidget {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(AppSpacing.sm + 2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
@@ -1679,12 +1542,9 @@ class HubScreen extends ConsumerWidget {
               Expanded(
                 child: Text(
                   message,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                  style: AppTextStyles.bodyMedium.copyWith(
                     color: Colors.grey[300],
                     fontStyle: FontStyle.italic,
-                    height: 1.5,
                   ),
                   softWrap: true,
                 ),
@@ -1744,7 +1604,7 @@ class HubScreen extends ConsumerWidget {
             Colors.blue.withOpacity(0.03),
           ],
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
         border: Border.all(
           color: Colors.blue.withOpacity(0.15),
           width: 1,
@@ -1754,7 +1614,7 @@ class HubScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
@@ -1771,28 +1631,24 @@ class HubScreen extends ConsumerWidget {
               size: 18,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'TIP OF THE DAY',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                  style: AppTextStyles.labelXS.copyWith(
                     color: Colors.blue.shade300,
-                    letterSpacing: 1.2,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   _getTipOfTheDay(),
-                  style: TextStyle(
+                  style: AppTextStyles.small.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: Colors.blue.shade200,
-                    height: 1.4,
                   ),
                 ),
               ],

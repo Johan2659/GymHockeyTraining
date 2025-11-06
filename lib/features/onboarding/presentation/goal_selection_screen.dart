@@ -6,7 +6,7 @@ import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
 import 'onboarding_widgets.dart';
 
-/// Goal selection screen - third screen in onboarding flow
+/// Goal selection screen - third screen in onboarding flow - Hockey Gym V2
 /// Path: /onboarding/goal
 class GoalSelectionScreen extends ConsumerStatefulWidget {
   final PlayerRole role;
@@ -27,7 +27,7 @@ class _GoalSelectionScreenState extends ConsumerState<GoalSelectionScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.height < 700;
-    final horizontalPadding = size.width < 360 ? 16.0 : 24.0;
+    final horizontalPadding = size.width < 360 ? AppSpacing.md : AppSpacing.lg;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
@@ -53,22 +53,20 @@ class _GoalSelectionScreenState extends ConsumerState<GoalSelectionScreen> {
                     physics: const ClampingScrollPhysics(),
                     padding: EdgeInsets.fromLTRB(
                       horizontalPadding,
-                      isSmallScreen ? 8.0 : 16.0,
+                      isSmallScreen ? AppSpacing.sm : AppSpacing.md,
                       horizontalPadding,
-                      16.0,
+                      AppSpacing.md,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "What's your main goal?",
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                fontSize: isSmallScreen ? 26 : 32,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.onSurfaceColor,
-                              ),
+                          style: AppTextStyles.titleXL.copyWith(
+                            fontSize: isSmallScreen ? 26 : 32,
+                          ),
                         ),
-                        SizedBox(height: isSmallScreen ? 20 : 32),
+                        SizedBox(height: isSmallScreen ? AppSpacing.lg : AppSpacing.xl),
                         // Goal cards
                         OnboardingSelectableCard(
                           title: 'Be stronger on the puck',
@@ -82,7 +80,7 @@ class _GoalSelectionScreenState extends ConsumerState<GoalSelectionScreen> {
                             });
                           },
                         ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
+                        SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                         OnboardingSelectableCard(
                           title: 'Skate faster & explode on first strides',
                           subtitle: 'Improve acceleration and top speed',
@@ -95,7 +93,7 @@ class _GoalSelectionScreenState extends ConsumerState<GoalSelectionScreen> {
                             });
                           },
                         ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
+                        SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                         OnboardingSelectableCard(
                           title: 'Last longer during shifts',
                           subtitle: 'Build endurance and stay strong all game',
@@ -116,9 +114,9 @@ class _GoalSelectionScreenState extends ConsumerState<GoalSelectionScreen> {
                 Container(
                   padding: EdgeInsets.fromLTRB(
                     horizontalPadding,
-                    16.0,
+                    AppSpacing.md,
                     horizontalPadding,
-                    isSmallScreen ? 16.0 : 24.0,
+                    isSmallScreen ? AppSpacing.md : AppSpacing.lg,
                   ),
                   decoration: BoxDecoration(
                     color: AppTheme.backgroundColor,

@@ -73,17 +73,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       appBar: AppBar(
         backgroundColor: AppTheme.surfaceColor,
         foregroundColor: AppTheme.onSurfaceColor,
-        title: const Text('Login'),
+        title: Text('Login', style: AppTextStyles.subtitle),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: AppSpacing.card,
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 40),
+                SizedBox(height: AppSpacing.xxl + 8),
 
                 // Icon
                 Icon(
@@ -91,26 +91,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   size: 80,
                   color: AppTheme.primaryColor,
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: AppSpacing.xl),
 
                 // Title
                 Text(
                   'Welcome Back!',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  style: AppTextStyles.titleL.copyWith(
                         color: Colors.white,
                       ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppSpacing.sm),
                 Text(
                   'Login to continue your training',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: AppTextStyles.body.copyWith(
                         color: Colors.grey[400],
                       ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: AppSpacing.xxl + 8),
 
                 // Username field
                 TextFormField(
@@ -120,7 +119,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     hintText: 'Enter your username',
                     prefixIcon: const Icon(Icons.person),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                     ),
                     filled: true,
                     fillColor: AppTheme.surfaceColor,
@@ -135,31 +134,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   },
                   enabled: !_isLoading,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: AppSpacing.lg),
 
                 // Error message
                 if (_errorMessage != null)
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(AppSpacing.sm + 4),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.red.withOpacity(0.3)),
+                      color: AppTheme.error.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(AppSpacing.sm),
+                      border: Border.all(color: AppTheme.error.withOpacity(0.3)),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline, color: Colors.red),
-                        const SizedBox(width: 8),
+                        Icon(Icons.error_outline, color: AppTheme.error),
+                        SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: Text(
                             _errorMessage!,
-                            style: const TextStyle(color: Colors.red),
+                            style: AppTextStyles.small.copyWith(color: AppTheme.error),
                           ),
                         ),
                       ],
                     ),
                   ),
-                if (_errorMessage != null) const SizedBox(height: 24),
+                if (_errorMessage != null) SizedBox(height: AppSpacing.lg),
 
                 // Login button
                 ElevatedButton(
@@ -167,9 +166,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                     ),
                   ),
                   child: _isLoading
@@ -182,15 +181,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
-                      : const Text(
+                      : Text(
                           'Login',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTextStyles.button.copyWith(fontSize: 18),
                         ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: AppSpacing.lg),
 
                 // Sign up link
                 Row(
@@ -198,7 +194,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     Text(
                       "Don't have an account? ",
-                      style: TextStyle(color: Colors.grey[400]),
+                      style: AppTextStyles.small.copyWith(color: Colors.grey[400]),
                     ),
                     TextButton(
                       onPressed: _isLoading
@@ -206,7 +202,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           : () => context.push('/auth/signup'),
                       child: Text(
                         'Sign Up',
-                        style: TextStyle(
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.bold,
                         ),

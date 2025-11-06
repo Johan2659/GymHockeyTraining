@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme.dart';
 import 'onboarding_widgets.dart';
 
-/// Welcome screen - first screen in onboarding flow
+/// Welcome screen - first screen in onboarding flow - Hockey Gym V2
 /// Path: /onboarding/welcome
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -13,7 +13,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.height < 700;
-    final horizontalPadding = size.width < 360 ? 16.0 : 24.0;
+    final horizontalPadding = size.width < 360 ? AppSpacing.md : AppSpacing.lg;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
@@ -30,12 +30,12 @@ class WelcomeScreen extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: horizontalPadding,
-                      vertical: isSmallScreen ? 16.0 : 24.0,
+                      vertical: isSmallScreen ? AppSpacing.md : AppSpacing.lg,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(height: isSmallScreen ? 20 : 40),
+                        SizedBox(height: isSmallScreen ? AppSpacing.lg : AppSpacing.xxl - 8),
                         // Top section: Logo and title
                         Flexible(
                           child: Column(
@@ -47,51 +47,47 @@ class WelcomeScreen extends StatelessWidget {
                                 height: isSmallScreen ? 100 : 120,
                                 decoration: BoxDecoration(
                                   color: AppTheme.surfaceColor,
-                                  borderRadius: BorderRadius.circular(24),
+                                  borderRadius: BorderRadius.circular(AppSpacing.lg),
                                   border: Border.all(
-                                    color: AppTheme.accentColor,
+                                    color: AppTheme.primaryColor,
                                     width: 2,
                                   ),
                                 ),
                                 child: Center(
                                   child: Text(
                                     'B',
-                                    style: TextStyle(
+                                    style: AppTextStyles.statValue.copyWith(
                                       fontSize: isSmallScreen ? 52 : 64,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppTheme.accentColor,
+                                      color: AppTheme.primaryColor,
                                     ),
                                   ),
                                 ),
                               ),
-                              SizedBox(height: isSmallScreen ? 24 : 40),
+                              SizedBox(height: isSmallScreen ? AppSpacing.lg : AppSpacing.xxl - 8),
                               Text(
                                 'Train like a\nhockey player.',
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                      fontSize: isSmallScreen ? 28 : 36,
-                                      fontWeight: FontWeight.bold,
-                                      height: 1.2,
-                                      color: AppTheme.onSurfaceColor,
-                                    ),
+                                style: AppTextStyles.titleXL.copyWith(
+                                  fontSize: isSmallScreen ? 28 : 36,
+                                  height: 1.2,
+                                ),
                               ),
-                              SizedBox(height: isSmallScreen ? 12 : 16),
+                              SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                                 child: Text(
                                   '5-week off-ice program to get stronger,\nfaster and ready for every shift.',
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        fontSize: isSmallScreen ? 14 : 16,
-                                        height: 1.5,
-                                        color: AppTheme.onSurfaceColor.withOpacity(0.8),
-                                      ),
+                                  style: AppTextStyles.body.copyWith(
+                                    fontSize: isSmallScreen ? 14 : 16,
+                                    color: AppTheme.onSurfaceColor.withOpacity(0.8),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(height: isSmallScreen ? 24 : 40),
+                        SizedBox(height: isSmallScreen ? AppSpacing.lg : AppSpacing.xxl - 8),
                         // Bottom section: CTA buttons
                         Column(
                           children: [
@@ -101,7 +97,7 @@ class WelcomeScreen extends StatelessWidget {
                                 context.push('/onboarding/role');
                               },
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AppSpacing.md),
                             TextButton(
                               onPressed: () {
                                 // TODO: Navigate to login screen
@@ -114,13 +110,12 @@ class WelcomeScreen extends StatelessWidget {
                               },
                               style: TextButton.styleFrom(
                                 minimumSize: const Size(0, 48),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 4),
                               ),
                               child: Text(
                                 'Already have an account? Log in',
-                                style: TextStyle(
+                                style: AppTextStyles.bodyMedium.copyWith(
                                   color: AppTheme.primaryColor,
-                                  fontSize: 14,
                                 ),
                               ),
                             ),

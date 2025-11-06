@@ -14,7 +14,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
       backgroundColor: AppTheme.backgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: AppSpacing.card,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -25,35 +25,34 @@ class AuthWelcomeScreen extends ConsumerWidget {
                 size: 120,
                 color: AppTheme.primaryColor,
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.lg),
 
               // Title
               Text(
                 'Hockey Gym Training',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                style: AppTextStyles.titleXL.copyWith(
                       color: Colors.white,
                     ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AppSpacing.sm + 4),
 
               // Subtitle
               Text(
                 'Your complete hockey training companion',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: AppTextStyles.body.copyWith(
                       color: Colors.grey[400],
                     ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: AppSpacing.sm),
 
               // Privacy message
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(AppSpacing.sm + 4),
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceColor,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm),
                   border: Border.all(
                     color: AppTheme.primaryColor.withOpacity(0.3),
                   ),
@@ -66,11 +65,11 @@ class AuthWelcomeScreen extends ConsumerWidget {
                       size: 16,
                       color: AppTheme.accentColor,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: AppSpacing.sm),
                     Flexible(
                       child: Text(
                         'All data saved locally on your device',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: AppTextStyles.small.copyWith(
                               color: Colors.grey[400],
                             ),
                         textAlign: TextAlign.center,
@@ -79,18 +78,17 @@ class AuthWelcomeScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 48),
+              SizedBox(height: AppSpacing.xxl),
 
               // Main question
               Text(
                 'What is your username?',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                style: AppTextStyles.titleL.copyWith(
                       color: Colors.white,
                     ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.lg),
 
               // Enter username button
               ElevatedButton(
@@ -98,35 +96,32 @@ class AuthWelcomeScreen extends ConsumerWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Enter Username',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyles.button.copyWith(fontSize: 18),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.md),
 
               // Login link for existing users
               TextButton.icon(
                 onPressed: () => context.push('/auth/login'),
                 icon: const Icon(Icons.login, size: 20),
-                label: const Text(
+                label: Text(
                   'Already have an account? Login here',
-                  style: TextStyle(fontSize: 16),
+                  style: AppTextStyles.bodyMedium,
                 ),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.grey[400],
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.sm + 4, horizontal: AppSpacing.md),
                 ),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: AppSpacing.xl),
 
               // Feature highlights
               _buildFeatureItem(
@@ -134,13 +129,13 @@ class AuthWelcomeScreen extends ConsumerWidget {
                 Icons.fitness_center,
                 'Structured training programs',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AppSpacing.sm + 4),
               _buildFeatureItem(
                 context,
                 Icons.trending_up,
                 'Track your progress',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AppSpacing.sm + 4),
               _buildFeatureItem(
                 context,
                 Icons.emoji_events,
@@ -161,10 +156,10 @@ class AuthWelcomeScreen extends ConsumerWidget {
           size: 24,
           color: AppTheme.accentColor,
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: AppSpacing.sm + 4),
         Text(
           text,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          style: AppTextStyles.bodyMedium.copyWith(
                 color: Colors.grey[300],
               ),
         ),

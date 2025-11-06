@@ -25,22 +25,25 @@ class ModernProgressScreen extends ConsumerWidget {
       body: appStateAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(
-                'Error loading progress data',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString(),
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-            ],
+          child: Padding(
+            padding: AppSpacing.card,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, size: 48, color: AppTheme.error),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'Error loading progress data',
+                  style: AppTextStyles.subtitle,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  error.toString(),
+                  style: AppTextStyles.small.copyWith(color: Colors.grey[400]),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
         data: (appState) => _buildProgressContent(context, ref, appState),
@@ -56,23 +59,23 @@ class ModernProgressScreen extends ConsumerWidget {
         children: [
           // Performance Profile - consistent width
           Padding(
-            padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.sm, AppSpacing.md, AppSpacing.sm, 0),
             child: _buildTrainingBalanceSection(context, ref),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
 
           // Performance Evolution Graph - consistent width
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             child: _buildPerformanceEvolutionSection(context, ref),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
 
           // Activity Calendar - consistent width
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             child: ActivityCalendarWidget(events: appState.events),
           ),
 
@@ -90,53 +93,52 @@ class ModernProgressScreen extends ConsumerWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.card,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(Icons.star, color: AppTheme.accentColor, size: 20),
-                const SizedBox(width: 6),
+                SizedBox(width: AppSpacing.xs + 2),
                 Text(
                   'Level $level',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: AppTextStyles.subtitle,
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               '${appState.currentXP} XP',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              style: AppTextStyles.statValue.copyWith(
                     color: AppTheme.primaryColor,
                   ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             LinearProgressIndicator(
               value: progressToNextLevel,
               backgroundColor: Colors.grey[700],
               valueColor: AlwaysStoppedAnimation(AppTheme.accentColor),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.xs),
             Text(
               '${Selectors.xpPerLevel - xpInCurrentLevel} XP to Level ${level + 1}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              style: AppTextStyles.small.copyWith(
                     color: Colors.grey[400],
                   ),
             ),
             if (appState.todayXP > 0) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppTheme.success.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                 ),
                 child: Text(
                   '+${appState.todayXP} today',
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontSize: 12,
+                  style: AppTextStyles.small.copyWith(
+                    color: AppTheme.success,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -151,7 +153,7 @@ class ModernProgressScreen extends ConsumerWidget {
   Widget _buildStreakCard(BuildContext context, AppStateData appState) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.card,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -163,42 +165,41 @@ class ModernProgressScreen extends ConsumerWidget {
                       appState.currentStreak > 0 ? Colors.orange : Colors.grey,
                   size: 20,
                 ),
-                const SizedBox(width: 6),
+                SizedBox(width: AppSpacing.xs + 2),
                 Text(
                   'Streak',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: AppTextStyles.subtitle,
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               '${appState.currentStreak} days',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              style: AppTextStyles.statValue.copyWith(
                     color: appState.currentStreak > 0
                         ? Colors.orange
                         : Colors.grey,
                   ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               _getStreakMessage(appState.currentStreak),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              style: AppTextStyles.small.copyWith(
                     color: Colors.grey[400],
                   ),
             ),
             if (appState.xpMultiplier > 1.0) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: Colors.orange.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                 ),
                 child: Text(
                   '${((appState.xpMultiplier - 1) * 100).toInt()}% XP Bonus',
-                  style: const TextStyle(
+                  style: AppTextStyles.small.copyWith(
                     color: Colors.orange,
-                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -215,7 +216,7 @@ class ModernProgressScreen extends ConsumerWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.card,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -223,52 +224,51 @@ class ModernProgressScreen extends ConsumerWidget {
               children: [
                 Icon(Icons.track_changes,
                     color: AppTheme.primaryColor, size: 20),
-                const SizedBox(width: 6),
+                SizedBox(width: AppSpacing.xs + 2),
                 Text(
                   'Current Program',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: AppTextStyles.subtitle,
                 ),
                 const Spacer(),
                 Text(
                   '$percentComplete%',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: AppTextStyles.subtitle.copyWith(
                         color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
                       ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             if (appState.activeProgram != null) ...[
               Text(
                 appState.activeProgram!.title,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: AppTextStyles.subtitle,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm + 4),
               LinearProgressIndicator(
                 value: appState.percentCycle,
                 backgroundColor: Colors.grey[700],
                 valueColor: AlwaysStoppedAnimation(AppTheme.primaryColor),
                 minHeight: 8,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 _getCycleProgressMessage(appState.percentCycle),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                style: AppTextStyles.small.copyWith(
                       color: Colors.grey[400],
                     ),
               ),
             ] else ...[
               Text(
                 'No active program',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                style: AppTextStyles.bodyMedium.copyWith(
                       color: Colors.grey[400],
                     ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 'Start a program to track your progress',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                style: AppTextStyles.small.copyWith(
                       color: Colors.grey[500],
                     ),
               ),
@@ -286,14 +286,12 @@ class ModernProgressScreen extends ConsumerWidget {
       children: [
         Text(
           'Weekly Activity',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: AppTextStyles.titleL,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.sm + 4),
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.card,
             child: _buildWeeklyActivityChart(context, appState),
           ),
         ),
@@ -328,12 +326,11 @@ class ModernProgressScreen extends ConsumerWidget {
                 children: [
                   Text(
                     _formatWeekday(day),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: AppTextStyles.labelXS.copyWith(
                           color: Colors.grey[400],
-                          fontSize: 10,
                         ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: AppSpacing.xs + 2),
                   Container(
                     width: 28,
                     height: 28,
@@ -353,10 +350,10 @@ class ModernProgressScreen extends ConsumerWidget {
                           )
                         : null,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   Text(
                     '${day.day}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: AppTextStyles.labelXS.copyWith(
                           color: isToday
                               ? AppTheme.primaryColor
                               : Colors.grey[400],
@@ -441,15 +438,13 @@ class ModernProgressScreen extends ConsumerWidget {
       children: [
         Text(
           'Personal Records',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: AppTextStyles.titleL,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.sm + 4),
         if (displayBests.isEmpty) ...[
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: AppSpacing.card,
               child: Center(
                 child: Column(
                   children: [
@@ -458,17 +453,17 @@ class ModernProgressScreen extends ConsumerWidget {
                       size: 48,
                       color: Colors.grey[600],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + 4),
                     Text(
                       'No performance records yet',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      style: AppTextStyles.subtitle.copyWith(
                             color: Colors.grey[400],
                           ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
                       'Complete strength exercises to track your max lifts!',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      style: AppTextStyles.small.copyWith(
                             color: Colors.grey[500],
                           ),
                       textAlign: TextAlign.center,
@@ -495,7 +490,7 @@ class ModernProgressScreen extends ConsumerWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.card,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -503,22 +498,21 @@ class ModernProgressScreen extends ConsumerWidget {
             Row(
               children: [
                 Icon(Icons.history, color: AppTheme.primaryColor, size: 24),
-                const SizedBox(width: 10),
+                SizedBox(width: AppSpacing.sm + 2),
                 Text(
                   'Recent Activity',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  style: AppTextStyles.titleL.copyWith(
                         color: AppTheme.primaryColor,
                       ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
 
             if (combinedEvents.isEmpty) ...[
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: AppSpacing.card,
                 child: Center(
                   child: Column(
                     children: [
@@ -527,18 +521,17 @@ class ModernProgressScreen extends ConsumerWidget {
                         size: 48,
                         color: Colors.grey[600],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.sm + 4),
                       Text(
                         'No milestones yet',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: AppTextStyles.subtitle.copyWith(
                                   color: Colors.grey[400],
                                 ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       Text(
                         'Complete sessions and challenges to see your achievements here',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: AppTextStyles.small.copyWith(
                               color: Colors.grey[500],
                             ),
                         textAlign: TextAlign.center,
@@ -631,7 +624,7 @@ class ModernProgressScreen extends ConsumerWidget {
     final bonusEvent = eventInfo['bonusEvent'] as ProgressEvent?;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.card,
       decoration: BoxDecoration(
         border: isLast
             ? null
@@ -652,7 +645,7 @@ class ModernProgressScreen extends ConsumerWidget {
             child:
                 Icon(Icons.check_circle, color: AppTheme.accentColor, size: 20),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: AppSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -662,18 +655,18 @@ class ModernProgressScreen extends ConsumerWidget {
                     Flexible(
                       child: Text(
                         'Training Session Completed!',
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (bonusEvent != null) ...[
-                      const SizedBox(width: 8),
+                      SizedBox(width: AppSpacing.sm),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xs + 2, vertical: 2),
                         decoration: BoxDecoration(
                           color: Colors.orange.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(AppSpacing.sm),
                           border: Border.all(
                               color: Colors.orange.withValues(alpha: 0.3)),
                         ),
@@ -684,9 +677,8 @@ class ModernProgressScreen extends ConsumerWidget {
                             const SizedBox(width: 2),
                             Text(
                               'BONUS',
-                              style: TextStyle(
+                              style: AppTextStyles.labelXS.copyWith(
                                 color: Colors.orange,
-                                fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -699,7 +691,7 @@ class ModernProgressScreen extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   _getSessionSubtitle(sessionEvent, bonusEvent),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: AppTextStyles.small.copyWith(
                         color: Colors.grey[400],
                       ),
                 ),
@@ -708,7 +700,7 @@ class ModernProgressScreen extends ConsumerWidget {
           ),
           Text(
             _formatTime(sessionEvent.ts),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            style: AppTextStyles.small.copyWith(
                   color: Colors.grey[500],
                 ),
           ),
@@ -722,7 +714,7 @@ class ModernProgressScreen extends ConsumerWidget {
     final event = eventInfo['event'] as ProgressEvent;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.card,
       decoration: BoxDecoration(
         border: isLast
             ? null
@@ -741,19 +733,19 @@ class ModernProgressScreen extends ConsumerWidget {
             ),
             child: Icon(Icons.bolt, color: Colors.purple, size: 20),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: AppSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Extra Challenge Completed!',
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   _getEventSubtitle(event),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: AppTextStyles.small.copyWith(
                         color: Colors.grey[400],
                       ),
                 ),
@@ -762,7 +754,7 @@ class ModernProgressScreen extends ConsumerWidget {
           ),
           Text(
             _formatTime(event.ts),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            style: AppTextStyles.small.copyWith(
                   color: Colors.grey[500],
                 ),
           ),
@@ -999,7 +991,7 @@ class ModernProgressScreen extends ConsumerWidget {
 
         return Card(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.card,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1007,11 +999,10 @@ class ModernProgressScreen extends ConsumerWidget {
                   children: [
                     Icon(Icons.sports_hockey,
                         color: Colors.blue, size: 24),
-                    const SizedBox(width: 10),
+                    SizedBox(width: AppSpacing.sm + 2),
                     Text(
                       'Performance Profile',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                      style: AppTextStyles.titleL.copyWith(
                             color: AppTheme.primaryColor,
                           ),
                     ),
@@ -1019,7 +1010,7 @@ class ModernProgressScreen extends ConsumerWidget {
                     GestureDetector(
                       onTap: () => _showPerformanceProfileInfo(context),
                       child: Container(
-                        padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(AppSpacing.xs),
                         decoration: BoxDecoration(
                           color: Colors.blue.withOpacity(0.2),
                           shape: BoxShape.circle,
@@ -1033,7 +1024,7 @@ class ModernProgressScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: AppSpacing.lg - 4),
 
                 // Simple, clean category breakdown (like Strava/WHOOP)
                 _CategoryBreakdownWidget(
@@ -1077,7 +1068,7 @@ class ModernProgressScreen extends ConsumerWidget {
 
         return Card(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.card,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1085,16 +1076,14 @@ class ModernProgressScreen extends ConsumerWidget {
                   children: [
                     Icon(Icons.calendar_today,
                         color: AppTheme.primaryColor, size: 20),
-                    const SizedBox(width: 8),
+                    SizedBox(width: AppSpacing.sm),
                     Text(
                       'This Week',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: AppTextStyles.subtitle,
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 Row(
                   children: [
                     Expanded(
@@ -1106,7 +1095,7 @@ class ModernProgressScreen extends ConsumerWidget {
                         AppTheme.primaryColor,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.sm + 4),
                     Expanded(
                       child: _buildStatTile(
                         context,
@@ -1118,7 +1107,7 @@ class ModernProgressScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.sm + 4),
                 Row(
                   children: [
                     Expanded(
@@ -1130,7 +1119,7 @@ class ModernProgressScreen extends ConsumerWidget {
                         Colors.orange,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.sm + 4),
                     Expanded(
                       child: _buildStatTile(
                         context,
@@ -1158,26 +1147,26 @@ class ModernProgressScreen extends ConsumerWidget {
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(AppSpacing.sm + 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppSpacing.sm),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
           Icon(icon, color: color, size: 20),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            style: AppTextStyles.subtitle.copyWith(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
           ),
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            style: AppTextStyles.small.copyWith(
                   color: Colors.grey[600],
                 ),
           ),
@@ -1197,7 +1186,7 @@ class ModernProgressScreen extends ConsumerWidget {
         backgroundColor: AppTheme.surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: AppSpacing.card,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1205,7 +1194,7 @@ class ModernProgressScreen extends ConsumerWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(AppSpacing.sm + 4),
                     decoration: BoxDecoration(
                       color: AppTheme.accentColor.withOpacity(0.2),
                       shape: BoxShape.circle,
@@ -1216,13 +1205,11 @@ class ModernProgressScreen extends ConsumerWidget {
                       size: 28,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AppSpacing.sm + 4),
                   Expanded(
                     child: Text(
                       'Performance Profile',
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
+                      style: AppTextStyles.titleL.copyWith(
                                 color: AppTheme.primaryColor,
                               ),
                     ),
@@ -1230,14 +1217,14 @@ class ModernProgressScreen extends ConsumerWidget {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.lg - 4),
 
               // Explanation
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.card,
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                   border: Border.all(color: Colors.white.withOpacity(0.1)),
                 ),
                 child: Column(
@@ -1245,20 +1232,19 @@ class ModernProgressScreen extends ConsumerWidget {
                   children: [
                     Text(
                       'What is this?',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                      style: AppTextStyles.subtitle.copyWith(
                             color: AppTheme.accentColor,
                           ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + 4),
                     Text(
                       'Your Performance Profile shows how balanced your training is across 5 key hockey areas:',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: AppTextStyles.bodyMedium.copyWith(
                             color: Colors.grey[300],
                             height: 1.5,
                           ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.md),
                     _buildProfileCategory(context, '⚡ Power', '30%',
                         'Explosive skating & shots', Colors.orange),
                     _buildProfileCategory(context, '💪 Strength', '25%',
@@ -1273,11 +1259,11 @@ class ModernProgressScreen extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
               // How it works
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.card,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -1285,7 +1271,7 @@ class ModernProgressScreen extends ConsumerWidget {
                       Colors.blue.withOpacity(0.05),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                   border: Border.all(color: Colors.blue.withOpacity(0.3)),
                 ),
                 child: Column(
@@ -1294,21 +1280,19 @@ class ModernProgressScreen extends ConsumerWidget {
                     Row(
                       children: [
                         Icon(Icons.info_outline, color: Colors.blue, size: 20),
-                        const SizedBox(width: 8),
+                        SizedBox(width: AppSpacing.sm),
                         Text(
                           'How It Works',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                          style: AppTextStyles.subtitle.copyWith(
                                     color: Colors.blue,
                                   ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + 4),
                     Text(
                       'Your training programs are already designed with optimal hockey balance. Follow your program and use Extras to target specific areas when needed!',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: AppTextStyles.bodyMedium.copyWith(
                             color: Colors.grey[300],
                             height: 1.5,
                           ),
@@ -1317,7 +1301,7 @@ class ModernProgressScreen extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.lg - 4),
 
               // Close button
               SizedBox(
@@ -1326,9 +1310,9 @@ class ModernProgressScreen extends ConsumerWidget {
                   onPressed: () => Navigator.of(context).pop(),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppTheme.accentColor,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2),
                   ),
-                  child: const Text('Got it!'),
+                  child: Text('Got it!', style: AppTextStyles.button),
                 ),
               ),
             ],
@@ -1497,15 +1481,15 @@ class ModernProgressScreen extends ConsumerWidget {
     }
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.only(bottom: AppSpacing.sm),
       elevation: 2,
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(AppSpacing.sm),
           decoration: BoxDecoration(
             color: iconColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppSpacing.sm),
           ),
           child: Icon(
             icon,
@@ -1515,14 +1499,13 @@ class ModernProgressScreen extends ConsumerWidget {
         ),
         title: Text(
           personalBest.exerciseName,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
+          style: AppTextStyles.subtitle.copyWith(
             fontSize: 16,
           ),
         ),
         subtitle: Text(
           subtitle,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          style: AppTextStyles.small.copyWith(
                 color: Colors.grey[600],
               ),
         ),
@@ -1540,15 +1523,16 @@ class ModernProgressScreen extends ConsumerWidget {
                       personalBest.unit == 'kg' || personalBest.unit == 'lbs'
                           ? 1
                           : 0),
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  style: AppTextStyles.statValue.copyWith(
                         fontWeight: FontWeight.bold,
                         color: iconColor,
+                        fontSize: 20,
                       ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.xs),
                 Text(
                   personalBest.unit,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: AppTextStyles.bodyMedium.copyWith(
                         color: iconColor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1559,7 +1543,7 @@ class ModernProgressScreen extends ConsumerWidget {
               const SizedBox(height: 2),
               Text(
                 'PR',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                style: AppTextStyles.labelXS.copyWith(
                       color: iconColor,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
@@ -2316,7 +2300,7 @@ class _PerformanceEvolutionWidgetState
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.card,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -2324,25 +2308,24 @@ class _PerformanceEvolutionWidgetState
             Row(
               children: [
                 Icon(Icons.trending_up, color: Colors.blue, size: 22),
-                const SizedBox(width: 8),
+                SizedBox(width: AppSpacing.sm),
                 Text(
                   'Training Stats',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  style: AppTextStyles.titleL.copyWith(
                         color: Colors.blue,
                       ),
                 ),
               ],
             ),
             
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
 
             // Period Selector (Professional chip style)
             Container(
-              padding: const EdgeInsets.all(4),
+              padding: EdgeInsets.all(AppSpacing.xs),
               decoration: BoxDecoration(
                 color: Colors.grey[900],
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
               ),
               child: Row(
                 children: [
@@ -2353,7 +2336,7 @@ class _PerformanceEvolutionWidgetState
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg - 4),
 
             // Key Metrics Grid - Always show, even with zeros
             // First Row: Total Sessions & Programs
@@ -2368,7 +2351,7 @@ class _PerformanceEvolutionWidgetState
                       AppTheme.primaryColor,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AppSpacing.sm + 4),
                   Expanded(
                     child: _buildMetricCard(
                       context,
@@ -2380,7 +2363,7 @@ class _PerformanceEvolutionWidgetState
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm + 4),
               // Second Row: Program Sessions & Extras
               Row(
                 children: [
@@ -2393,7 +2376,7 @@ class _PerformanceEvolutionWidgetState
                       Colors.blue,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AppSpacing.sm + 4),
                   Expanded(
                     child: _buildMetricCard(
                       context,
@@ -2407,19 +2390,18 @@ class _PerformanceEvolutionWidgetState
               ),
               
               // Training Time Section - Always show, even with zeros
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.lg - 4),
               Row(
                 children: [
                   Text(
                     'Training Time',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.grey[400],
                     ),
                   ),
                   if (estimatedSessionCount > 0) ...[
-                    const SizedBox(width: 6),
+                    SizedBox(width: AppSpacing.xs + 2),
                     Tooltip(
                       message: '$estimatedSessionCount ${estimatedSessionCount == 1 ? 'session' : 'sessions'} estimated at typical duration',
                       child: Icon(
@@ -2431,7 +2413,7 @@ class _PerformanceEvolutionWidgetState
                   ],
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm + 4),
               // Third Row: Training Time Stats
               Row(
                   children: [
@@ -2444,7 +2426,7 @@ class _PerformanceEvolutionWidgetState
                         Colors.purple,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.sm + 4),
                     Expanded(
                       child: _buildMetricCard(
                         context,
@@ -2456,7 +2438,7 @@ class _PerformanceEvolutionWidgetState
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.sm + 4),
                 Row(
                   children: [
                     Expanded(
@@ -2468,7 +2450,7 @@ class _PerformanceEvolutionWidgetState
                         Colors.green,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.sm + 4),
                     // Average time per session
                     Expanded(
                       child: _buildMetricCard(
@@ -2483,18 +2465,17 @@ class _PerformanceEvolutionWidgetState
                     ),
                   ],
                 ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
 
             // Personal Records Section - Always show
             Text(
               'Personal Records',
-              style: TextStyle(
-                fontSize: 14,
+              style: AppTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.grey[400],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm + 4),
             
             // Show personal records or empty state
             if (top3Bests.isNotEmpty) ...[
@@ -2502,10 +2483,10 @@ class _PerformanceEvolutionWidgetState
             ] else
               // Empty state for personal records
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: AppSpacing.md),
                 decoration: BoxDecoration(
                   color: Colors.grey[900],
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                   border: Border.all(color: Colors.grey[800]!),
                 ),
                 child: Row(
@@ -2515,12 +2496,11 @@ class _PerformanceEvolutionWidgetState
                       color: Colors.grey[600],
                       size: 32,
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.sm + 4),
                     Expanded(
                       child: Text(
                         'No personal records yet\nComplete exercises to set your first record!',
-                        style: TextStyle(
-                          fontSize: 13,
+                        style: AppTextStyles.small.copyWith(
                           color: Colors.grey[500],
                           height: 1.4,
                         ),
@@ -2530,7 +2510,7 @@ class _PerformanceEvolutionWidgetState
                 ),
               ),
             
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
           ],
         ),
       ),
@@ -2543,16 +2523,15 @@ class _PerformanceEvolutionWidgetState
         onTap: () => setState(() => _selectedPeriod = label),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
           decoration: BoxDecoration(
             color: isSelected ? AppTheme.primaryColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppSpacing.sm),
           ),
           child: Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
+            style: AppTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: isSelected ? Colors.white : Colors.grey[500],
             ),
@@ -2570,10 +2549,10 @@ class _PerformanceEvolutionWidgetState
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(AppSpacing.sm + 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
         border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Column(
@@ -2582,12 +2561,11 @@ class _PerformanceEvolutionWidgetState
           Row(
             children: [
               Icon(icon, color: color, size: 18),
-              const SizedBox(width: 6),
+              SizedBox(width: AppSpacing.xs + 2),
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 11,
+                  style: AppTextStyles.labelXS.copyWith(
                     color: Colors.grey[500],
                     fontWeight: FontWeight.w600,
                   ),
@@ -2597,12 +2575,11 @@ class _PerformanceEvolutionWidgetState
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             value,
-            style: TextStyle(
+            style: AppTextStyles.statValue.copyWith(
               fontSize: 24,
-              fontWeight: FontWeight.bold,
               color: color,
             ),
           ),
@@ -2613,32 +2590,31 @@ class _PerformanceEvolutionWidgetState
 
   Widget _buildPersonalBestItem(PersonalBest best) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: AppSpacing.sm),
+      padding: EdgeInsets.all(AppSpacing.sm + 4),
       decoration: BoxDecoration(
         color: Colors.amber.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + 2),
         border: Border.all(color: Colors.amber.withOpacity(0.3)),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               color: Colors.amber.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.emoji_events, color: Colors.amber, size: 20),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: AppSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   best.exerciseName,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
@@ -2646,8 +2622,7 @@ class _PerformanceEvolutionWidgetState
                 const SizedBox(height: 2),
                 Text(
                   _formatDate(best.achievedAt),
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: AppTextStyles.small.copyWith(
                     color: Colors.grey[500],
                   ),
                 ),
@@ -2656,7 +2631,7 @@ class _PerformanceEvolutionWidgetState
           ),
           Text(
             '${best.bestValue.toStringAsFixed(best.unit == 'kg' ? 1 : 0)} ${best.unit}',
-            style: const TextStyle(
+            style: AppTextStyles.subtitle.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.amber,

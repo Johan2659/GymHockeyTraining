@@ -6,7 +6,7 @@ import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
 import 'onboarding_widgets.dart';
 
-/// Role selection screen - second screen in onboarding flow
+/// Role selection screen - second screen in onboarding flow - Hockey Gym V2
 /// Path: /onboarding/role
 class RoleSelectionScreen extends ConsumerStatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -22,7 +22,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.height < 700;
-    final horizontalPadding = size.width < 360 ? 16.0 : 24.0;
+    final horizontalPadding = size.width < 360 ? AppSpacing.md : AppSpacing.lg;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
@@ -48,22 +48,20 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
                     physics: const ClampingScrollPhysics(),
                     padding: EdgeInsets.fromLTRB(
                       horizontalPadding,
-                      isSmallScreen ? 8.0 : 16.0,
+                      isSmallScreen ? AppSpacing.sm : AppSpacing.md,
                       horizontalPadding,
-                      16.0,
+                      AppSpacing.md,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Who are you on the ice?',
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                fontSize: isSmallScreen ? 26 : 32,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.onSurfaceColor,
-                              ),
+                          style: AppTextStyles.titleXL.copyWith(
+                            fontSize: isSmallScreen ? 26 : 32,
+                          ),
                         ),
-                        SizedBox(height: isSmallScreen ? 20 : 32),
+                        SizedBox(height: isSmallScreen ? AppSpacing.lg : AppSpacing.xl),
                         // Role cards
                         OnboardingSelectableCard(
                           title: 'Forward',
@@ -77,7 +75,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
                             });
                           },
                         ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
+                        SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                         OnboardingSelectableCard(
                           title: 'Defence',
                           subtitle: 'Power & stability',
@@ -90,7 +88,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
                             });
                           },
                         ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
+                        SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                         OnboardingSelectableCard(
                           title: 'Goalie',
                           subtitle: 'Mobility & reflexes',
@@ -103,7 +101,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
                             });
                           },
                         ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
+                        SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                         OnboardingSelectableCard(
                           title: 'Referee',
                           subtitle: 'Endurance & agility',
@@ -124,9 +122,9 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
                 Container(
                   padding: EdgeInsets.fromLTRB(
                     horizontalPadding,
-                    16.0,
+                    AppSpacing.md,
                     horizontalPadding,
-                    isSmallScreen ? 16.0 : 24.0,
+                    isSmallScreen ? AppSpacing.md : AppSpacing.lg,
                   ),
                   decoration: BoxDecoration(
                     color: AppTheme.backgroundColor,

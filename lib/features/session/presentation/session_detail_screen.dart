@@ -53,43 +53,37 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         ),
         error: (error, stack) => Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: AppSpacing.card,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(AppSpacing.lg - 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.red.withOpacity(0.2),
-                        Colors.red.withOpacity(0.05),
+                        AppTheme.error.withOpacity(0.2),
+                        AppTheme.error.withOpacity(0.05),
                         Colors.transparent,
                       ],
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.error_outline,
                     size: 64,
-                    color: Colors.red,
+                    color: AppTheme.error,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: AppSpacing.lg),
                 Text(
                   'Failed to load session',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.titleL,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: AppSpacing.sm + 4),
                 Text(
                   error.toString(),
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                  style: AppTextStyles.small.copyWith(
                     color: Colors.grey[400],
                     height: 1.5,
                   ),
@@ -102,12 +96,12 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         data: (session) => session == null
             ? Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: AppSpacing.card,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(AppSpacing.lg - 4),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
@@ -124,21 +118,15 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                           color: Colors.grey[600],
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      const Text(
+                      SizedBox(height: AppSpacing.lg),
+                      Text(
                         'Session not found',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                        ),
+                        style: AppTextStyles.titleL,
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: AppSpacing.sm + 4),
                       Text(
                         'The requested session could not be found.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                        style: AppTextStyles.small.copyWith(
                           color: Colors.grey[400],
                           height: 1.5,
                         ),
@@ -163,7 +151,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         // Header with session overview - Glassmorphism + Hockey lines
         SafeArea(
           child: Container(
-            margin: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+            margin: EdgeInsets.fromLTRB(AppSpacing.lg - 4, AppSpacing.sm, AppSpacing.lg - 4, AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -188,14 +176,12 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         borderRadius: BorderRadius.circular(1),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.sm + 4),
                     Expanded(
                       child: Text(
                         sessionData.title.toUpperCase(),
-                        style: const TextStyle(
+                        style: AppTextStyles.titleL.copyWith(
                           fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
                           letterSpacing: 0.3,
                           height: 1.1,
                           shadows: [
@@ -208,7 +194,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.sm + 4),
                     // Info button
                     IconButton(
                       onPressed: () => _showSessionInfo(context, sessionData),
@@ -222,21 +208,21 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   ],
                 ),
               
-              const SizedBox(height: 20),
+              SizedBox(height: AppSpacing.lg - 4),
               
               // Placeholder warning - glassmorphism
               if (session.hasPlaceholders) ...[
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
-                      padding: const EdgeInsets.all(14),
+                      padding: EdgeInsets.all(AppSpacing.sm + 2),
                       decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppTheme.warning.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                         border: Border.all(
-                          color: Colors.amber.withOpacity(0.25),
+                          color: AppTheme.warning.withOpacity(0.25),
                           width: 1,
                         ),
                       ),
@@ -244,17 +230,15 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         children: [
                           Icon(
                             Icons.info_outline,
-                            color: Colors.amber.shade300,
+                            color: AppTheme.warning,
                             size: 16,
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: AppSpacing.sm + 2),
                           Expanded(
                             child: Text(
                               'Some exercises are placeholders and will be updated soon.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.amber.shade200,
+                              style: AppTextStyles.small.copyWith(
+                                color: AppTheme.warning,
                                 height: 1.4,
                               ),
                             ),
@@ -264,19 +248,19 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: AppSpacing.lg - 4),
               ],
               
               // Stats row - clean with thin divider
               ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppSpacing.md),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 4),
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2, horizontal: AppSpacing.xs),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(AppSpacing.md),
                       border: Border.all(
                         color: AppTheme.primaryColor.withOpacity(0.15),
                         width: 1,
@@ -336,12 +320,12 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
           child: exercises.isEmpty
               ? Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: AppSpacing.card,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(AppSpacing.lg - 4),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: RadialGradient(
@@ -358,21 +342,15 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                             color: Colors.grey[700],
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        const Text(
+                        SizedBox(height: AppSpacing.lg),
+                        Text(
                           'Session preview',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
+                          style: AppTextStyles.subtitle.copyWith(fontSize: 18),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: AppSpacing.sm + 4),
                         Text(
                           'Start the session to see exercises',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                          style: AppTextStyles.small.copyWith(
                             color: Colors.grey[400],
                             height: 1.5,
                           ),
@@ -383,7 +361,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   ),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(20, 1, 20, 8),
+                  padding: EdgeInsets.fromLTRB(AppSpacing.lg - 4, 1, AppSpacing.lg - 4, AppSpacing.sm),
                   itemCount: exercises.length,
                   itemBuilder: (context, index) {
                     final exercise = exercises[index];
@@ -400,7 +378,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         ),
         // Drop the puck button - Powerful hockey style
         Container(
-          padding: EdgeInsets.fromLTRB(20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
+          padding: EdgeInsets.fromLTRB(AppSpacing.lg - 4, AppSpacing.sm + 4, AppSpacing.lg - 4, MediaQuery.of(context).padding.bottom + 12),
           decoration: BoxDecoration(
             color: AppTheme.backgroundColor,
             border: Border(
@@ -416,7 +394,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
               // Powerful accent line
               Container(
                 height: 2,
-                margin: const EdgeInsets.only(bottom: 16),
+                margin: EdgeInsets.only(bottom: AppSpacing.md),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -439,11 +417,11 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2),
                     elevation: 0,
                     disabledBackgroundColor: Colors.grey[800],
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                     ),
                   ),
                   icon: _isStarting
@@ -462,11 +440,10 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
-                      : const Text(
+                      : Text(
                           'LET\'S GO',
-                          style: TextStyle(
+                          style: AppTextStyles.button.copyWith(
                             fontSize: 18,
-                            fontWeight: FontWeight.w900,
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -527,12 +504,12 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
     required String label,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
       child: Column(
         children: [
           // Icon with subtle glow - same as player screen
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
@@ -549,19 +526,17 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
               color: AppTheme.primaryColor,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: AppSpacing.sm + 2),
           // Value with emphasis
           Text(
             value,
-            style: const TextStyle(
+            style: AppTextStyles.statValue.copyWith(
               fontSize: 32,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
               height: 1,
               letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: AppSpacing.xs + 2),
           // Underline accent - hockey style
           Container(
             width: 30,
@@ -577,13 +552,11 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
               borderRadius: BorderRadius.circular(1),
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: AppSpacing.xs + 2),
           // Label
           Text(
             label,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.labelXS.copyWith(
               color: Colors.grey[500],
               letterSpacing: 1.5,
             ),
@@ -642,7 +615,7 @@ class _ExercisePreviewCard extends StatelessWidget {
     final accentColor = isBonus ? Colors.amber : AppTheme.primaryColor;
     
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: EdgeInsets.only(bottom: AppSpacing.sm + 2),
       child: Stack(
         children: [
           // Very thin left accent line - hockey rink inspired (amber for bonus)
@@ -669,7 +642,7 @@ class _ExercisePreviewCard extends StatelessWidget {
           
           // Content with glassmorphism
           Padding(
-            padding: const EdgeInsets.only(left: 14),
+            padding: EdgeInsets.only(left: AppSpacing.sm + 2),
             child: Column(
               children: [
                 // Top thin line
@@ -686,7 +659,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                   ),
                 ),
                 
-                const SizedBox(height: 14),
+                SizedBox(height: AppSpacing.sm + 2),
                 
                 // Main content row
                 Row(
@@ -716,17 +689,16 @@ class _ExercisePreviewCard extends StatelessWidget {
                                 size: 16,
                                 color: Colors.amber,
                               )
-                            : Text(
+                              : Text(
                                 '${index + 1}',
-                                style: TextStyle(
+                                style: AppTextStyles.bodyMedium.copyWith(
                                   color: accentColor,
                                   fontWeight: FontWeight.w800,
-                                  fontSize: 14,
                                 ),
                               ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: AppSpacing.md),
                     
                     // Exercise details
                     Expanded(
@@ -740,30 +712,26 @@ class _ExercisePreviewCard extends StatelessWidget {
                                 Icon(
                                   Icons.emoji_events,
                                   size: 11,
-                                  color: Colors.amber.shade300,
+                                  color: AppTheme.accentColor,
                                 ),
-                                const SizedBox(width: 4),
+                                SizedBox(width: AppSpacing.xs),
                                 Text(
                                   'BONUS CHALLENGE',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.amber.shade300,
+                                  style: AppTextStyles.labelXS.copyWith(
+                                    color: AppTheme.accentColor,
                                     letterSpacing: 1.0,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 6),
+                            SizedBox(height: AppSpacing.xs + 2),
                           ],
                           
                           // Exercise name
                           Text(
                             exercise.name.toUpperCase(),
-                            style: const TextStyle(
+                            style: AppTextStyles.subtitle.copyWith(
                               fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
                               letterSpacing: 0.3,
                               height: 1.2,
                             ),
@@ -772,28 +740,26 @@ class _ExercisePreviewCard extends StatelessWidget {
                           
                           // Placeholder warning
                           if (isPlaceholder) ...[
-                            const SizedBox(height: 6),
+                            SizedBox(height: AppSpacing.xs + 2),
                             Row(
                               children: [
                                 Icon(
                                   Icons.info_outline,
                                   size: 10,
-                                  color: Colors.amber.shade300,
+                                  color: AppTheme.warning,
                                 ),
-                                const SizedBox(width: 4),
+                                SizedBox(width: AppSpacing.xs),
                                 Text(
                                   'Placeholder',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.amber.shade200,
+                                  style: AppTextStyles.labelXS.copyWith(
+                                    color: AppTheme.warning,
                                   ),
                                 ),
                               ],
                             ),
                           ],
                           
-                          const SizedBox(height: 10),
+                          SizedBox(height: AppSpacing.sm + 2),
                           
                           // Stats row with thin dot separators
                           Row(
@@ -809,7 +775,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                                 Container(
                                   width: 2,
                                   height: 2,
-                                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                                  margin: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: AppTheme.primaryColor.withOpacity(0.5),
@@ -827,7 +793,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                                 Container(
                                   width: 2,
                                   height: 2,
-                                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                                  margin: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: AppTheme.primaryColor.withOpacity(0.5),
@@ -847,7 +813,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                   ],
                 ),
                 
-                const SizedBox(height: 14),
+                SizedBox(height: AppSpacing.sm + 2),
                 
                 // Bottom thin line
                 Container(
@@ -883,12 +849,10 @@ class _ExercisePreviewCard extends StatelessWidget {
           size: 14,
           color: AppTheme.primaryColor.withOpacity(0.7),
         ),
-        const SizedBox(width: 6),
+        SizedBox(width: AppSpacing.xs + 2),
         Text(
           '$value${label.isNotEmpty ? ' $label' : ''}',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.bodyMedium.copyWith(
             color: Colors.grey[400],
             letterSpacing: 0.3,
           ),

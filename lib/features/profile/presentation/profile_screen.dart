@@ -8,7 +8,7 @@ import '../../../app/theme.dart';
 import '../../application/app_state_provider.dart';
 import '../../auth/application/auth_controller.dart';
 
-/// Step 12 — Profile/MenuScreen with comprehensive user settings
+/// Step 12 — Profile/MenuScreen with comprehensive user settings - Hockey Gym V2
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
@@ -26,7 +26,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile & Settings'),
+        title: Text(
+          'Profile & Settings',
+          style: AppTextStyles.subtitle,
+        ),
         backgroundColor: AppTheme.surfaceColor,
         foregroundColor: AppTheme.onSurfaceColor,
         actions: [
@@ -44,16 +47,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Error loading profile: $error'),
-              const SizedBox(height: 16),
+              Icon(Icons.error, size: 48, color: AppTheme.error),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Error loading profile: $error',
+                style: AppTextStyles.body,
+              ),
+              const SizedBox(height: AppSpacing.md),
               ElevatedButton(
                 onPressed: () {
                   ref.refresh(userProfileProvider);
                   ref.refresh(currentUserProfileProvider);
                 },
-                child: const Text('Retry'),
+                child: Text(
+                  'Retry',
+                  style: AppTextStyles.button,
+                ),
               ),
             ],
           ),
@@ -149,14 +158,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final theme = profile?.theme ?? 'dark';
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: AppSpacing.card,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header with username
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.card,
               child: Row(
                 children: [
                   Container(
@@ -169,40 +178,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     child: Center(
                       child: Text(
                         username.isNotEmpty ? username[0].toUpperCase() : 'U',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryColor,
-                            ),
+                        style: AppTextStyles.titleL.copyWith(
+                          color: AppTheme.primaryColor,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           username,
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: AppTextStyles.subtitle,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           _getRoleDisplayName(userRole),
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[400],
-                                  ),
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: Colors.grey[400],
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'Hockey Training',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[500],
-                                  ),
+                          style: AppTextStyles.small.copyWith(
+                            color: Colors.grey[500],
+                          ),
                         ),
                       ],
                     ),
@@ -212,16 +215,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
 
           // Settings Section
           Text(
             'Settings',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: AppTextStyles.subtitle,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + 4),
 
           // Role Selection
           _buildSettingCard(
@@ -255,16 +256,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onTap: () => _showThemeSelector(context, theme),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
 
           // Actions Section
           Text(
             'Actions',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: AppTextStyles.subtitle,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + 4),
 
           // Export Logs Button
           _buildActionCard(
@@ -298,25 +297,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     required VoidCallback onTap,
   }) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppSpacing.sm),
             color: AppTheme.primaryColor.withOpacity(0.2),
           ),
           child: Icon(icon, color: AppTheme.primaryColor, size: 20),
         ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          style: AppTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+          style: AppTextStyles.small.copyWith(
+            color: Colors.grey[400],
+          ),
         ),
         trailing:
             Icon(Icons.chevron_right, color: AppTheme.primaryColor, size: 20),
@@ -333,25 +336,30 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     required VoidCallback? onTap,
   }) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppSpacing.sm),
             color: color.withOpacity(0.2),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          style: AppTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+          style: AppTextStyles.small.copyWith(
+            fontSize: 11,
+            color: Colors.grey[400],
+          ),
         ),
         trailing: _isLoading
             ? const SizedBox(

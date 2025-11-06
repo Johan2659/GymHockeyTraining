@@ -61,13 +61,12 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
           children: [
             Text(
               extraTitle,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: AppTextStyles.subtitle.copyWith(fontSize: 16),
               overflow: TextOverflow.ellipsis,
             ),
             Text(
               typeLabel,
-              style:
-                  const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+              style: AppTextStyles.small,
             ),
           ],
         ),
@@ -93,21 +92,21 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.error_outline,
                 size: 64,
-                color: Theme.of(context).colorScheme.error,
+                color: AppTheme.error,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 'Failed to load extra',
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: AppTextStyles.titleL,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 error.toString(),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                style: AppTextStyles.bodyMedium.copyWith(
+                      color: Colors.grey[400],
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -122,19 +121,18 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                     Icon(
                       Icons.search_off,
                       size: 64,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: Colors.grey[600],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
                       'Extra not found',
-                      style: Theme.of(context).textTheme.headlineSmall,
+                      style: AppTextStyles.titleL,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.sm),
                     Text(
                       'The requested extra could not be found.',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                            color: Colors.grey[400],
                           ),
                       textAlign: TextAlign.center,
                     ),
@@ -155,53 +153,49 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
       children: [
         // Header with session overview
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.card,
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.card,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Session Overview',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: AppTextStyles.subtitle,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.sm + 4),
                   Text(
                     extra.description,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: AppTextStyles.bodyMedium,
                   ),
                   if (session.hasPlaceholders) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + 4),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(AppSpacing.sm + 4),
                       decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.amber.shade400),
+                        color: AppTheme.warning.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
+                        border: Border.all(color: AppTheme.warning),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.info_outline,
-                              color: Colors.amber, size: 18),
-                          const SizedBox(width: 8),
+                          Icon(Icons.info_outline,
+                              color: AppTheme.warning, size: 18),
+                          const SizedBox(width: AppSpacing.sm),
                           Expanded(
                             child: Text(
                               'Some exercises are placeholders and will be updated soon.',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(color: Colors.amber.shade200),
+                              style: AppTextStyles.small.copyWith(
+                                  color: AppTheme.warning),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ],
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.sm + 4),
                   Row(
                     children: [
                       Icon(
@@ -209,42 +203,37 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                         size: 16,
                         color: Colors.grey[400],
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.xs),
                       Text(
                         '${extra.duration} min',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[400],
-                            ),
+                        style: AppTextStyles.small,
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: AppSpacing.md),
                       if (extra.difficulty != null) ...[
                         Icon(
                           Icons.trending_up,
                           size: 16,
                           color: _getDifficultyColor(extra.difficulty!),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AppSpacing.xs),
                         Text(
                           extra.difficulty!.toUpperCase(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
+                          style: AppTextStyles.small.copyWith(
                                 color: _getDifficultyColor(extra.difficulty!),
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: AppSpacing.md),
                       ],
                       Icon(
                         Icons.emoji_events,
                         size: 16,
                         color: AppTheme.accentColor,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.xs),
                       Text(
                         '+${extra.xpReward} XP',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: AppTextStyles.small.copyWith(
                               color: AppTheme.accentColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -261,7 +250,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
           child: exercises.isEmpty
               ? Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: AppSpacing.card,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -270,19 +259,15 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                           size: 64,
                           color: Colors.grey[700],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AppSpacing.md),
                         Text(
                           'Session preview',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: AppTextStyles.subtitle,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.sm),
                         Text(
                           'Start the session to see exercises',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: AppTextStyles.bodyMedium.copyWith(
                                     color: Colors.grey[400],
                                   ),
                           textAlign: TextAlign.center,
@@ -292,7 +277,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                   ),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                   itemCount: exercises.length,
                   itemBuilder: (context, index) {
                     final exercise = exercises[index];
@@ -307,7 +292,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
         // Start Session button - always visible
         SafeArea(
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.card,
             decoration: BoxDecoration(
               color: AppTheme.surfaceColor,
               boxShadow: [
@@ -326,7 +311,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                   disabledBackgroundColor: Colors.grey[800],
                 ),
                 child: _isCompleting
@@ -339,10 +324,9 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                               AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : const Text(
+                    : Text(
                         'Start this session',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                        style: AppTextStyles.button,
                       ),
               ),
             ),
@@ -454,9 +438,9 @@ class _ExercisePreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm + 4),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.card,
         child: Row(
           children: [
             Container(
@@ -481,62 +465,52 @@ class _ExercisePreviewCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm + 4),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     exercise.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: AppTextStyles.subtitle.copyWith(
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                     softWrap: true,
                   ),
                   if (isPlaceholder) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xs),
                     Row(
                       children: [
                         Icon(Icons.info_outline,
-                            size: 14, color: Colors.amber.shade300),
-                        const SizedBox(width: 4),
+                            size: 14, color: AppTheme.warning),
+                        const SizedBox(width: AppSpacing.xs),
                         Text(
                           'Placeholder exercise',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.amber.shade200),
+                          style: AppTextStyles.small.copyWith(
+                              color: AppTheme.warning),
                         ),
                       ],
                     ),
                   ],
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   Wrap(
-                    spacing: 8,
+                    spacing: AppSpacing.sm,
                     children: [
                       if (exercise.sets > 0)
                         Text(
                           '${exercise.sets} sets',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[400],
-                                  ),
+                          style: AppTextStyles.small,
                         ),
                       if (exercise.reps > 0)
                         Text(
                           '${exercise.reps} reps',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[400],
-                                  ),
+                          style: AppTextStyles.small,
                         ),
                       if (exercise.duration != null)
                         Text(
                           '${exercise.duration}s',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[400],
-                                  ),
+                          style: AppTextStyles.small,
                         ),
                     ],
                   ),

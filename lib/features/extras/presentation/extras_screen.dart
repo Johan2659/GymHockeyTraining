@@ -32,7 +32,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
 
   Widget _buildCategorySelection(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.card,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -41,14 +41,12 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
             subtitle: 'Optional content to enhance your hockey skills',
             icon: Icons.flash_on,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.xl),
           Text(
             'Choose a Category',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: AppTextStyles.subtitle,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           _buildCategoryTile(
             context,
             title: 'Express Workouts',
@@ -58,7 +56,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
             color: Colors.orange,
             category: ExtraType.expressWorkout,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           _buildCategoryTile(
             context,
             title: 'Bonus Challenges',
@@ -68,7 +66,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
             color: Colors.amber,
             category: ExtraType.bonusChallenge,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           _buildCategoryTile(
             context,
             title: 'Mobility & Recovery',
@@ -94,15 +92,15 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
     required ExtraType category,
   }) {
     return Card(
-      elevation: 2,
+      elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppSpacing.md),
       ),
       child: InkWell(
         onTap: () => setState(() => _selectedCategory = category),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppSpacing.md),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSpacing.lg - 4),
           child: Row(
             children: [
               Container(
@@ -110,7 +108,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
                 height: 72,
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppSpacing.md),
                   border: Border.all(
                     color: color.withOpacity(0.3),
                     width: 2,
@@ -122,30 +120,27 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
                   color: color,
                 ),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: AppSpacing.lg - 4),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: AppTextStyles.subtitle,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
                       subtitle,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: AppTextStyles.bodyMedium.copyWith(
                             color: color,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: AppSpacing.sm + 2),
                     Text(
                       description,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[400],
+                      style: AppTextStyles.small.copyWith(
                             height: 1.4,
                           ),
                       maxLines: 2,
@@ -154,7 +149,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.sm + 4),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 20,
@@ -193,7 +188,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 4),
         child: Row(
           children: [
             IconButton(
@@ -204,13 +199,13 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
                 foregroundColor: categoryInfo.color,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm + 4),
             Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
                 color: categoryInfo.color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                 border: Border.all(
                   color: categoryInfo.color.withOpacity(0.3),
                   width: 1.5,
@@ -222,21 +217,19 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
                 color: categoryInfo.color,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     categoryInfo.title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: AppTextStyles.subtitle,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     categoryInfo.subtitle,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: AppTextStyles.small.copyWith(
                           color: categoryInfo.color,
                           fontWeight: FontWeight.w500,
                         ),
@@ -269,29 +262,27 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: AppSpacing.card,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
                 Icons.error_outline,
                 size: 64,
-                color: Colors.red,
+                color: AppTheme.error,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 'Failed to load content',
-                style: Theme.of(context).textTheme.titleMedium,
+                style: AppTextStyles.subtitle,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 error.toString(),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[400],
-                    ),
+                style: AppTextStyles.small,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               FilledButton(
                 onPressed: () {
                   switch (category) {
@@ -306,7 +297,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
                       break;
                   }
                 },
-                child: const Text('Retry'),
+                child: Text('Retry', style: AppTextStyles.button),
               ),
             ],
           ),
@@ -315,7 +306,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
       data: (extras) => extras.isEmpty
           ? Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: AppSpacing.card,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -324,17 +315,17 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
                       size: 64,
                       color: Colors.grey[600],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
                       'No extras available',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: AppTextStyles.subtitle,
                     ),
                   ],
                 ),
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.card,
               itemCount: extras.length,
               itemBuilder: (context, index) => _ExtraCard(
                 extra: extras[index],
@@ -407,22 +398,20 @@ class _SectionHeader extends StatelessWidget {
               size: 28,
               color: AppTheme.primaryColor,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm + 4),
             Flexible(
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: AppTextStyles.titleL,
                 softWrap: true,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Text(
           subtitle,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          style: AppTextStyles.body.copyWith(
                 color: Colors.grey[400],
               ),
         ),
@@ -439,12 +428,12 @@ class _ExtraCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm + 4),
       child: InkWell(
         onTap: () => context.push('/extras/${extra.id}'),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.card,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -457,17 +446,13 @@ class _ExtraCard extends StatelessWidget {
                       children: [
                         Text(
                           extra.title,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: AppTextStyles.subtitle.copyWith(fontSize: 16),
                           softWrap: true,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           extra.description,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: AppTextStyles.bodyMedium.copyWith(
                                     color: Colors.grey[400],
                                   ),
                           softWrap: true,
@@ -477,42 +462,39 @@ class _ExtraCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppSpacing.sm + 4),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                         decoration: BoxDecoration(
                           color: AppTheme.accentColor.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                         ),
                         child: Text(
                           '+${extra.xpReward} XP',
-                          style: const TextStyle(
+                          style: AppTextStyles.small.copyWith(
                             color: AppTheme.accentColor,
-                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       if (extra.difficulty != null)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
+                              horizontal: AppSpacing.sm, vertical: 2),
                           decoration: BoxDecoration(
                             color: _getDifficultyColor(extra.difficulty!)
                                 .withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(AppSpacing.sm),
                           ),
                           child: Text(
                             extra.difficulty!.toUpperCase(),
-                            style: TextStyle(
+                            style: AppTextStyles.labelXS.copyWith(
                               color: _getDifficultyColor(extra.difficulty!),
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -520,7 +502,7 @@ class _ExtraCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm + 4),
               Row(
                 children: [
                   Icon(
@@ -528,30 +510,26 @@ class _ExtraCard extends StatelessWidget {
                     size: 16,
                     color: Colors.grey[400],
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppSpacing.xs),
                   Text(
                     '${extra.duration} min',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[400],
-                        ),
+                    style: AppTextStyles.small,
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppSpacing.md),
                   Icon(
                     Icons.fitness_center,
                     size: 16,
                     color: Colors.grey[400],
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppSpacing.xs),
                   Flexible(
                     child: Text(
                       '${extra.blocks.length} exercises',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[400],
-                          ),
+                      style: AppTextStyles.small,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.sm),
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 16,

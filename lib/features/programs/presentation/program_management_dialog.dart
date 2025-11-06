@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../app/theme.dart';
 import '../application/program_management_controller.dart';
 import '../../application/app_state_provider.dart';
 
@@ -25,11 +26,11 @@ class _ProgramManagementDialogState
     final progressCountAsync = ref.watch(currentProgramProgressCountProvider);
 
     return AlertDialog(
-      title: const Row(
+      title: Row(
         children: [
-          Icon(Icons.stop_circle_outlined, color: Colors.orange),
-          SizedBox(width: 8),
-          Text('Stop Training Program'),
+          Icon(Icons.stop_circle_outlined, color: AppTheme.warning),
+          const SizedBox(width: AppSpacing.sm),
+          const Text('Stop Training Program'),
         ],
       ),
       content: SingleChildScrollView(
@@ -42,7 +43,7 @@ class _ProgramManagementDialogState
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Text(
                 'Error loading program info',
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+                style: TextStyle(color: AppTheme.error),
               ),
               data: (program) => program == null
                   ? const Text('No active program found')
@@ -51,33 +52,24 @@ class _ProgramManagementDialogState
                       children: [
                         Text(
                           'Current Program:',
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                          style: AppTextStyles.small.copyWith(
+                                    color: Colors.grey[400],
                                   ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           program.title,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: AppTextStyles.subtitle,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.sm),
                         progressCountAsync.when(
                           loading: () => const Text('Loading progress...'),
                           error: (error, stack) =>
                               const Text('Error loading progress'),
                           data: (count) => Text(
                             '$count progress events recorded',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
+                            style: AppTextStyles.small.copyWith(
+                                      color: Colors.grey[400],
                                     ),
                           ),
                         ),
@@ -85,16 +77,16 @@ class _ProgramManagementDialogState
                     ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             const Divider(),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
 
             // Options
             Text(
               'What would you like to do?',
-              style: Theme.of(context).textTheme.titleSmall,
+              style: AppTextStyles.subtitle.copyWith(fontSize: 16),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm + 4),
 
             // Option 1: Stop only
             RadioListTile<ProgramDeletionOption>(
@@ -151,32 +143,29 @@ class _ProgramManagementDialogState
             ),
 
             if (_selectedOption != ProgramDeletionOption.stopOnly) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm + 4),
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(AppSpacing.sm + 4),
                 decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .errorContainer
-                      .withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppTheme.error.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm),
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.error.withOpacity(0.5),
+                    color: AppTheme.error.withOpacity(0.5),
                   ),
                 ),
                 child: Row(
                   children: [
                     Icon(
                       Icons.warning_amber_outlined,
-                      color: Theme.of(context).colorScheme.error,
+                      color: AppTheme.error,
                       size: 20,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
                         'This action cannot be undone!',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.error,
+                        style: AppTextStyles.small.copyWith(
+                              color: AppTheme.error,
                               fontWeight: FontWeight.w500,
                             ),
                       ),

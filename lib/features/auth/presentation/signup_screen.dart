@@ -92,17 +92,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       appBar: AppBar(
         backgroundColor: AppTheme.surfaceColor,
         foregroundColor: AppTheme.onSurfaceColor,
-        title: const Text('Create Account'),
+        title: Text('Create Account', style: AppTextStyles.subtitle),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: AppSpacing.card,
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 40),
+                SizedBox(height: AppSpacing.xxl + 8),
 
                 // Icon
                 Icon(
@@ -110,26 +110,25 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   size: 80,
                   color: AppTheme.primaryColor,
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: AppSpacing.xl),
 
                 // Title
                 Text(
                   'What is your username?',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  style: AppTextStyles.titleL.copyWith(
                         color: Colors.white,
                       ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppSpacing.sm),
                 Text(
                   'Choose a unique username to get started',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: AppTextStyles.body.copyWith(
                         color: Colors.grey[400],
                       ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: AppSpacing.xxl + 8),
 
                 // Username field
                 TextFormField(
@@ -139,9 +138,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     hintText: 'Choose a unique username',
                     prefixIcon: const Icon(Icons.person),
                     suffixIcon: _isCheckingUsername
-                        ? const Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: SizedBox(
+                        ? Padding(
+                            padding: EdgeInsets.all(AppSpacing.sm + 4),
+                            child: const SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
@@ -149,11 +148,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           )
                         : _errorMessage == null &&
                                 _usernameController.text.trim().length >= 3
-                            ? const Icon(Icons.check_circle,
-                                color: Colors.green)
+                            ? Icon(Icons.check_circle,
+                                color: AppTheme.success)
                             : null,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                     ),
                     filled: true,
                     fillColor: AppTheme.surfaceColor,
@@ -186,7 +185,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   },
                   enabled: !_isLoading,
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: AppSpacing.xl),
 
                 // Sign up button
                 ElevatedButton(
@@ -196,9 +195,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                     ),
                   ),
                   child: _isLoading
@@ -211,15 +210,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
-                      : const Text(
+                      : Text(
                           'Continue',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTextStyles.button.copyWith(fontSize: 18),
                         ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: AppSpacing.lg),
 
                 // Login link
                 Row(
@@ -227,7 +223,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: TextStyle(color: Colors.grey[400]),
+                      style: AppTextStyles.small.copyWith(color: Colors.grey[400]),
                     ),
                     TextButton(
                       onPressed: _isLoading
@@ -235,7 +231,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           : () => context.push('/auth/login'),
                       child: Text(
                         'Login',
-                        style: TextStyle(
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.bold,
                         ),

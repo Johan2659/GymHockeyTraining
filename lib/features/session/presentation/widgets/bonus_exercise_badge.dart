@@ -7,29 +7,28 @@ class BonusExerciseBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
       decoration: BoxDecoration(
-        color: Colors.amber.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
+        color: AppTheme.accentColor.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
         border: Border.all(
-          color: Colors.amber.withOpacity(0.4),
+          color: AppTheme.accentColor.withOpacity(0.4),
           width: 1.5,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.star_rounded,
-            color: Colors.amber,
+            color: AppTheme.accentColor,
             size: 16,
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: AppSpacing.xs),
           Text(
             'BONUS',
-            style: TextStyle(
-              color: Colors.amber[300],
-              fontSize: 12,
+            style: AppTextStyles.small.copyWith(
+              color: AppTheme.accentColor,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,
             ),

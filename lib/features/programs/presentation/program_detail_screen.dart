@@ -64,28 +64,26 @@ class ProgramDetailScreen extends ConsumerWidget {
             const Icon(
               Icons.error_outline,
               size: 48,
-              color: Colors.red,
+              color: AppTheme.error,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Error Loading Program',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: AppTextStyles.subtitle,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Text(
                 error,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[400],
-                    ),
+                style: AppTextStyles.small,
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             ElevatedButton(
               onPressed: () => context.pop(),
-              child: const Text('Go Back'),
+              child: Text('Go Back', style: AppTextStyles.button),
             ),
           ],
         ),
@@ -109,22 +107,20 @@ class ProgramDetailScreen extends ConsumerWidget {
               size: 48,
               color: Colors.grey[600],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Program Not Found',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: AppTextStyles.subtitle,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'The requested program could not be found.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                  ),
+              style: AppTextStyles.small,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             ElevatedButton(
               onPressed: () => context.pop(),
-              child: const Text('Go Back'),
+              child: Text('Go Back', style: AppTextStyles.button),
             ),
           ],
         ),
@@ -178,15 +174,15 @@ class ProgramDetailScreen extends ConsumerWidget {
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.card,
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               _buildProgramHeader(context, program),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               _buildProgramStats(context, program),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               _buildWeeklyBreakdown(context, program),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
               _buildStartButton(
                   context, ref, program, hasActiveProgram, isCurrentProgram),
               const SizedBox(height: 100), // Bottom padding
@@ -203,14 +199,12 @@ class ProgramDetailScreen extends ConsumerWidget {
       children: [
         Text(
           program.title,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: AppTextStyles.titleL,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Text(
           _getRoleDescription(program.role),
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          style: AppTextStyles.body.copyWith(
                 color: Colors.grey[400],
               ),
         ),
@@ -226,7 +220,7 @@ class ProgramDetailScreen extends ConsumerWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.card,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -266,19 +260,16 @@ class ProgramDetailScreen extends ConsumerWidget {
           color: color,
           size: 24,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Text(
           value,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+          style: AppTextStyles.subtitle.copyWith(
                 color: color,
               ),
         ),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[400],
-              ),
+          style: AppTextStyles.small,
         ),
       ],
     );
@@ -290,11 +281,9 @@ class ProgramDetailScreen extends ConsumerWidget {
       children: [
         Text(
           'Weekly Breakdown',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: AppTextStyles.subtitle,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.sm + 4),
         ...program.weeks.map((week) => _buildWeekCard(context, week)),
       ],
     );
@@ -302,7 +291,7 @@ class ProgramDetailScreen extends ConsumerWidget {
 
   Widget _buildWeekCard(BuildContext context, Week week) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: ExpansionTile(
         leading: Container(
           width: 32,
@@ -335,14 +324,14 @@ class ProgramDetailScreen extends ConsumerWidget {
         ),
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: week.sessions.asMap().entries.map((entry) {
                 final index = entry.key;
                 final sessionId = entry.value;
                 return Padding(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.only(top: AppSpacing.sm),
                   child: Row(
                     children: [
                       Icon(
@@ -350,16 +339,16 @@ class ProgramDetailScreen extends ConsumerWidget {
                         size: 16,
                         color: AppTheme.primaryColor,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           'Session ${index + 1}',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: AppTextStyles.small,
                         ),
                       ),
                       Text(
                         sessionId.split('_').last,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: AppTextStyles.small.copyWith(
                               color: Colors.grey[500],
                               fontSize: 11,
                             ),
@@ -385,14 +374,11 @@ class ProgramDetailScreen extends ConsumerWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppTheme.primaryColor,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
           ),
-          child: const Text(
+          child: Text(
             'Resume Program',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.button,
           ),
         ),
       );
@@ -403,7 +389,7 @@ class ProgramDetailScreen extends ConsumerWidget {
         children: [
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSpacing.sm + 4),
               child: Row(
                 children: [
                   Icon(
@@ -411,33 +397,28 @@ class ProgramDetailScreen extends ConsumerWidget {
                     color: AppTheme.primaryColor,
                     size: 20,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppSpacing.sm + 4),
                   Expanded(
                     child: Text(
                       'Complete your current program to start this one.',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[400],
-                          ),
+                      style: AppTextStyles.small,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + 4),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
               onPressed: () => context.go('/hub'),
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
               ),
-              child: const Text(
+              child: Text(
                 'Go to Hub',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTextStyles.button,
               ),
             ),
           ),
@@ -452,14 +433,11 @@ class ProgramDetailScreen extends ConsumerWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: _getRoleColor(program.role),
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         ),
-        child: const Text(
+        child: Text(
           'Start Program',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTextStyles.button,
         ),
       ),
     );

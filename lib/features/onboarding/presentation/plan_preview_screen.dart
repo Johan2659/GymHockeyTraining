@@ -8,7 +8,7 @@ import '../../../app/di.dart';
 import '../../application/app_state_provider.dart';
 import 'onboarding_widgets.dart';
 
-/// Plan preview screen - final screen in onboarding flow
+/// Plan preview screen - final screen in onboarding flow - Hockey Gym V2
 /// Path: /onboarding/plan_preview
 class PlanPreviewScreen extends ConsumerStatefulWidget {
   final PlayerRole role;
@@ -117,7 +117,7 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.height < 700;
-    final horizontalPadding = size.width < 360 ? 16.0 : 24.0;
+    final horizontalPadding = size.width < 360 ? AppSpacing.md : AppSpacing.lg;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
@@ -143,31 +143,28 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
                     physics: const ClampingScrollPhysics(),
                     padding: EdgeInsets.fromLTRB(
                       horizontalPadding,
-                      isSmallScreen ? 8.0 : 16.0,
+                      isSmallScreen ? AppSpacing.sm : AppSpacing.md,
                       horizontalPadding,
-                      16.0,
+                      AppSpacing.md,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Your 5-week Beast Cycle',
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                fontSize: isSmallScreen ? 26 : 32,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.onSurfaceColor,
-                              ),
+                          style: AppTextStyles.titleXL.copyWith(
+                            fontSize: isSmallScreen ? 26 : 32,
+                          ),
                         ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
+                        SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                         Text(
                           'We rotate strength, hypertrophy and Beast PR so you build real on-ice power. You can restart the 5-week cycle anytime.',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontSize: isSmallScreen ? 14 : 16,
-                                height: 1.5,
-                                color: AppTheme.onSurfaceColor.withOpacity(0.8),
-                              ),
+                          style: AppTextStyles.body.copyWith(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            color: AppTheme.onSurfaceColor.withOpacity(0.8),
+                          ),
                         ),
-                        SizedBox(height: isSmallScreen ? 24 : 32),
+                        SizedBox(height: isSmallScreen ? AppSpacing.lg : AppSpacing.xl),
                         // Timeline steps
                         _buildTimelineStep(
                           context,
@@ -196,20 +193,20 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
                           isLast: true,
                           isCompact: isSmallScreen,
                         ),
-                        SizedBox(height: isSmallScreen ? 24 : 32),
+                        SizedBox(height: isSmallScreen ? AppSpacing.lg : AppSpacing.xl),
                         // Bullet points
                         _buildBulletPoint(
                           context,
                           'Hockey-specific workouts for your role',
                           isCompact: isSmallScreen,
                         ),
-                        SizedBox(height: isSmallScreen ? 8 : 12),
+                        SizedBox(height: isSmallScreen ? AppSpacing.sm : AppSpacing.sm + 4),
                         _buildBulletPoint(
                           context,
                           'Simple sessions — just hit Start and follow the timer',
                           isCompact: isSmallScreen,
                         ),
-                        SizedBox(height: isSmallScreen ? 8 : 12),
+                        SizedBox(height: isSmallScreen ? AppSpacing.sm : AppSpacing.sm + 4),
                         _buildBulletPoint(
                           context,
                           'Advanced players can customize later with Beast League Pro',
@@ -223,9 +220,9 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
                 Container(
                   padding: EdgeInsets.fromLTRB(
                     horizontalPadding,
-                    16.0,
+                    AppSpacing.md,
                     horizontalPadding,
-                    isSmallScreen ? 16.0 : 24.0,
+                    isSmallScreen ? AppSpacing.md : AppSpacing.lg,
                   ),
                   decoration: BoxDecoration(
                     color: AppTheme.backgroundColor,
@@ -245,7 +242,7 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
                         onPressed: _isLoading ? null : _completeOnboarding,
                         isLoading: _isLoading,
                       ),
-                      SizedBox(height: isSmallScreen ? 8 : 12),
+                      SizedBox(height: isSmallScreen ? AppSpacing.sm : AppSpacing.sm + 4),
                       TextButton(
                         onPressed: _isLoading
                             ? null
@@ -254,13 +251,12 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
                               },
                         style: TextButton.styleFrom(
                           minimumSize: const Size(0, 48),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 4),
                         ),
                         child: Text(
                           'How it works',
-                          style: TextStyle(
+                          style: AppTextStyles.bodyMedium.copyWith(
                             color: AppTheme.primaryColor,
-                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -297,15 +293,14 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
               width: circleSize,
               height: circleSize,
               decoration: BoxDecoration(
-                color: AppTheme.accentColor,
+                color: AppTheme.primaryColor,
                 shape: BoxShape.circle,
               ),
               child: Center(
                 child: Text(
                   '$step',
-                  style: TextStyle(
+                  style: AppTextStyles.subtitle.copyWith(
                     fontSize: isCompact ? 16 : 18,
-                    fontWeight: FontWeight.bold,
                     color: AppTheme.backgroundColor,
                   ),
                 ),
@@ -315,11 +310,11 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
               Container(
                 width: 2,
                 height: lineHeight,
-                color: AppTheme.accentColor.withOpacity(0.3),
+                color: AppTheme.primaryColor.withOpacity(0.3),
               ),
           ],
         ),
-        SizedBox(width: isCompact ? 12 : 16),
+        SizedBox(width: isCompact ? AppSpacing.sm + 4 : AppSpacing.md),
         // Content
         Expanded(
           child: Column(
@@ -327,30 +322,28 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
             children: [
               Text(
                 label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.accentColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: isCompact ? 11 : 12,
-                    ),
+                style: AppTextStyles.small.copyWith(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: isCompact ? 11 : 12,
+                ),
               ),
-              SizedBox(height: isCompact ? 2 : 4),
+              SizedBox(height: isCompact ? 2 : AppSpacing.xs),
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: isCompact ? 18 : 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.onSurfaceColor,
-                    ),
+                style: AppTextStyles.subtitle.copyWith(
+                  fontSize: isCompact ? 18 : 20,
+                ),
               ),
-              SizedBox(height: isCompact ? 2 : 4),
+              SizedBox(height: isCompact ? 2 : AppSpacing.xs),
               Text(
                 description,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: isCompact ? 13 : 14,
-                      color: AppTheme.onSurfaceColor.withOpacity(0.7),
-                    ),
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontSize: isCompact ? 13 : 14,
+                  color: AppTheme.onSurfaceColor.withOpacity(0.7),
+                ),
               ),
-              if (!isLast) SizedBox(height: isCompact ? 12 : 16),
+              if (!isLast) SizedBox(height: isCompact ? AppSpacing.sm + 4 : AppSpacing.md),
             ],
           ),
         ),
@@ -368,19 +361,19 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
             width: isCompact ? 5 : 6,
             height: isCompact ? 5 : 6,
             decoration: BoxDecoration(
-              color: AppTheme.accentColor,
+              color: AppTheme.primaryColor,
               shape: BoxShape.circle,
             ),
           ),
         ),
-        SizedBox(width: isCompact ? 10 : 12),
+        SizedBox(width: isCompact ? AppSpacing.sm + 2 : AppSpacing.sm + 4),
         Expanded(
           child: Text(
             text,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.onSurfaceColor.withOpacity(0.9),
-                  fontSize: isCompact ? 13 : 15,
-                ),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppTheme.onSurfaceColor.withOpacity(0.9),
+              fontSize: isCompact ? 13 : 15,
+            ),
           ),
         ),
       ],
@@ -401,10 +394,10 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
       builder: (context) => SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(
-            24.0,
-            24.0,
-            24.0,
-            24.0 + MediaQuery.of(context).viewInsets.bottom,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -413,51 +406,52 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
               children: [
                 Text(
                   'How it works',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontSize: isSmallScreen ? 22 : 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.onSurfaceColor,
-                      ),
+                  style: AppTextStyles.titleL.copyWith(
+                    fontSize: isSmallScreen ? 22 : 24,
+                  ),
                 ),
-                SizedBox(height: isSmallScreen ? 12 : 16),
+                SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                 Text(
                   'The Beast Cycle is designed to make you stronger, faster, and more explosive on the ice.',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: isSmallScreen ? 14 : 16,
-                        color: AppTheme.onSurfaceColor.withOpacity(0.9),
-                      ),
+                  style: AppTextStyles.body.copyWith(
+                    fontSize: isSmallScreen ? 14 : 16,
+                    color: AppTheme.onSurfaceColor.withOpacity(0.9),
+                  ),
                 ),
-                SizedBox(height: isSmallScreen ? 12 : 16),
+                SizedBox(height: isSmallScreen ? AppSpacing.sm + 4 : AppSpacing.md),
                 Text(
                   '• Weeks 1-2: Focus on heavy weights and low reps to build maximum strength',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: isSmallScreen ? 13 : 14,
-                        color: AppTheme.onSurfaceColor.withOpacity(0.8),
-                      ),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontSize: isSmallScreen ? 13 : 14,
+                    color: AppTheme.onSurfaceColor.withOpacity(0.8),
+                  ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 Text(
                   '• Weeks 3-4: Increase volume to build muscle while maintaining strength',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: isSmallScreen ? 13 : 14,
-                        color: AppTheme.onSurfaceColor.withOpacity(0.8),
-                      ),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontSize: isSmallScreen ? 13 : 14,
+                    color: AppTheme.onSurfaceColor.withOpacity(0.8),
+                  ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 Text(
                   '• Week 5: Test your limits with PR attempts and measure your progress',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: isSmallScreen ? 13 : 14,
-                        color: AppTheme.onSurfaceColor.withOpacity(0.8),
-                      ),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontSize: isSmallScreen ? 13 : 14,
+                    color: AppTheme.onSurfaceColor.withOpacity(0.8),
+                  ),
                 ),
-                SizedBox(height: isSmallScreen ? 20 : 24),
+                SizedBox(height: isSmallScreen ? AppSpacing.lg : AppSpacing.lg + 4),
                 SizedBox(
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Got it'),
+                    child: Text(
+                      'Got it',
+                      style: AppTextStyles.button,
+                    ),
                   ),
                 ),
               ],

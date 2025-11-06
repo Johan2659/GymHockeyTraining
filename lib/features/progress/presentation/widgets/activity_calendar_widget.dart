@@ -29,7 +29,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.card,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -37,11 +37,10 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
             Row(
               children: [
                 Icon(Icons.calendar_month, color: AppTheme.primaryColor, size: 24),
-                const SizedBox(width: 10),
+                SizedBox(width: AppSpacing.sm + 2),
                 Text(
                   'Activity',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  style: AppTextStyles.titleL.copyWith(
                         color: AppTheme.primaryColor,
                       ),
                 ),
@@ -55,7 +54,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
                 ),
                 Text(
                   _formatMonthYear(_selectedMonth),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: AppTextStyles.subtitle.copyWith(
                         fontWeight: FontWeight.w600,
                         color: Colors.grey[300],
                       ),
@@ -69,12 +68,12 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
 
             // Calendar grid
             _buildCalendar(),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
 
             // Legend
             _buildLegend(),
@@ -118,12 +117,12 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
           ],
         ),
         
-        const SizedBox(height: 8),
+        SizedBox(height: AppSpacing.sm),
 
         // Calendar grid
         ...List.generate(rows, (rowIndex) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: 4),
+            padding: EdgeInsets.only(bottom: AppSpacing.xs),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(7, (colIndex) {
@@ -160,8 +159,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
       child: Text(
         label,
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 12,
+        style: AppTextStyles.small.copyWith(
           fontWeight: FontWeight.w600,
           color: Colors.grey[500],
         ),
@@ -198,7 +196,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
       cellContent = Container(
         decoration: BoxDecoration(
           color: Colors.grey[900],
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppSpacing.sm),
           border: isToday
               ? Border.all(color: AppTheme.accentColor, width: 2)
               : null,
@@ -206,8 +204,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
         child: Center(
           child: Text(
             '$day',
-            style: TextStyle(
-              fontSize: 14,
+            style: AppTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.normal,
               color: textColor,
             ),
@@ -218,13 +215,13 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
       // Both program and extra - split diagonal
       cellContent = Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppSpacing.sm),
           border: isToday
               ? Border.all(color: AppTheme.accentColor, width: 2)
               : null,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(isToday ? 6 : 8),
+          borderRadius: BorderRadius.circular(isToday ? AppSpacing.xs + 2 : AppSpacing.sm),
           child: Stack(
             children: [
               // Bottom-left triangle (Program - Blue)
@@ -249,8 +246,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
               Center(
                 child: Text(
                   '$day',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: textColor,
                     shadows: const [
@@ -281,7 +277,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
       cellContent = Container(
         decoration: BoxDecoration(
           color: cellColor,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppSpacing.sm),
           border: isToday
               ? Border.all(color: AppTheme.accentColor, width: 2)
               : null,
@@ -289,8 +285,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
         child: Center(
           child: Text(
             '$day',
-            style: TextStyle(
-              fontSize: 14,
+            style: AppTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -311,7 +306,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
       cellContent = Container(
         decoration: BoxDecoration(
           color: cellColor,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppSpacing.sm),
           border: isToday
               ? Border.all(color: AppTheme.accentColor, width: 2)
               : null,
@@ -319,8 +314,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
         child: Center(
           child: Text(
             '$day',
-            style: TextStyle(
-              fontSize: 14,
+            style: AppTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -344,18 +338,17 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildLegendItem('Program', Colors.blue),
-            const SizedBox(width: 16),
+            SizedBox(width: AppSpacing.md),
             _buildLegendItem('Extra', Colors.purple),
-            const SizedBox(width: 16),
+            SizedBox(width: AppSpacing.md),
             _buildLegendItemSplit('Both', Colors.blue, Colors.purple),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         // Second row: Intensity
         Text(
           'Color intensity shows session count (lighter = less, brighter = more)',
-          style: TextStyle(
-            fontSize: 10,
+          style: AppTextStyles.labelXS.copyWith(
             color: Colors.grey[600],
             fontStyle: FontStyle.italic,
           ),
@@ -376,11 +369,10 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
             borderRadius: BorderRadius.circular(3),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: AppSpacing.xs),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 11,
+          style: AppTextStyles.labelXS.copyWith(
             color: Colors.grey[500],
           ),
         ),
@@ -418,11 +410,10 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
             ),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: AppSpacing.xs),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 11,
+          style: AppTextStyles.labelXS.copyWith(
             color: Colors.grey[500],
           ),
         ),

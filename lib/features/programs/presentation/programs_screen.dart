@@ -52,21 +52,21 @@ class ProgramsScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
-              color: Theme.of(context).colorScheme.error,
+              color: AppTheme.error,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Failed to load programs',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: AppTextStyles.titleL,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               error.toString(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+              style: AppTextStyles.bodyMedium.copyWith(
+                    color: Colors.grey[400],
                   ),
               textAlign: TextAlign.center,
             ),
@@ -85,12 +85,12 @@ class ProgramsScreen extends ConsumerWidget {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.card,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context, appState),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
           _buildRoleCards(context, ref, programs, appState),
         ],
       ),
@@ -104,14 +104,12 @@ class ProgramsScreen extends ConsumerWidget {
       children: [
         Text(
           'Choose Your Role',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: AppTextStyles.titleL,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Text(
           'Select a training program designed for your hockey position',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          style: AppTextStyles.body.copyWith(
                 color: Colors.grey[400],
               ),
         ),
@@ -122,7 +120,7 @@ class ProgramsScreen extends ConsumerWidget {
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -131,17 +129,15 @@ class ProgramsScreen extends ConsumerWidget {
               size: 64,
               color: Colors.grey[600],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'No Programs Available',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: AppTextStyles.titleL,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'Training programs are currently being loaded. Please try again later.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: AppTextStyles.body.copyWith(
                     color: Colors.grey[400],
                   ),
               textAlign: TextAlign.center,
@@ -195,7 +191,7 @@ class ProgramsScreen extends ConsumerWidget {
         final rolePrograms = programsByRole[role] ?? [];
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.only(bottom: AppSpacing.md),
           child: _buildRoleCard(
             context,
             ref,
@@ -228,9 +224,9 @@ class ProgramsScreen extends ConsumerWidget {
         onTap: isAvailable && !hasActiveProgram
             ? () => _onRoleSelected(context, ref, role, rolePrograms.first)
             : null,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.card,
           child: Row(
             children: [
               Container(
@@ -240,7 +236,7 @@ class ProgramsScreen extends ConsumerWidget {
                   color: isAvailable
                       ? info.color.withOpacity(0.2)
                       : Colors.grey[800],
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm),
                 ),
                 child: Icon(
                   info.icon,
@@ -248,34 +244,30 @@ class ProgramsScreen extends ConsumerWidget {
                   color: isAvailable ? info.color : Colors.grey[600],
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       info.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: AppTextStyles.subtitle,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
                       info.description,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[400],
-                          ),
+                      style: AppTextStyles.small,
                       softWrap: true,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.sm),
                     if (isAvailable && rolePrograms.isNotEmpty) ...[
                       _buildProgramStats(context, rolePrograms.first),
                     ] else ...[
                       Text(
                         'Coming Soon',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: AppTextStyles.small.copyWith(
                               color: Colors.grey[500],
                               fontStyle: FontStyle.italic,
                             ),
@@ -284,21 +276,19 @@ class ProgramsScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.sm + 4),
               if (isActiveRole) ...[
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: AppTheme.accentColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                   ),
                   child: Text(
                     'ACTIVE',
-                    style: TextStyle(
+                    style: AppTextStyles.labelXS.copyWith(
                       color: AppTheme.accentColor,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -329,7 +319,7 @@ class ProgramsScreen extends ConsumerWidget {
     );
 
     return Wrap(
-      spacing: 12,
+      spacing: AppSpacing.sm + 4,
       children: [
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -339,12 +329,10 @@ class ProgramsScreen extends ConsumerWidget {
               size: 14,
               color: Colors.grey[400],
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: AppSpacing.xs),
             Text(
               '5 weeks',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                  ),
+              style: AppTextStyles.small,
             ),
           ],
         ),
@@ -356,12 +344,10 @@ class ProgramsScreen extends ConsumerWidget {
               size: 14,
               color: Colors.grey[400],
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: AppSpacing.xs),
             Text(
               '$totalSessions sessions',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
-                  ),
+              style: AppTextStyles.small,
             ),
           ],
         ),

@@ -456,9 +456,8 @@ class _ExtraSessionPlayerScreenState
                 Expanded(
                   child: Text(
                     extraTitle,
-                    style: const TextStyle(
+                    style: AppTextStyles.subtitle.copyWith(
                       fontSize: 17,
-                      fontWeight: FontWeight.w800,
                       letterSpacing: -0.3,
                       height: 1.1,
                     ),
@@ -466,20 +465,20 @@ class _ExtraSessionPlayerScreenState
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppSpacing.sm),
                     border: Border.all(color: AppTheme.primaryColor.withOpacity(0.5)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.timer, size: 14, color: AppTheme.primaryColor),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.xs),
                       Text(
                         _formatDuration(_elapsedSeconds),
-                        style: TextStyle(
+                        style: AppTextStyles.small.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: AppTheme.primaryColor,
@@ -491,10 +490,9 @@ class _ExtraSessionPlayerScreenState
               ],
             ),
             const SizedBox(height: 2),
-            const Text(
+            Text(
               'Extras Session',
-              style: TextStyle(
-                fontSize: 12,
+              style: AppTextStyles.small.copyWith(
                 fontWeight: FontWeight.w600,
                 height: 1,
               ),
@@ -569,7 +567,7 @@ class _ExtraSessionPlayerScreenState
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg - 4),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -627,7 +625,7 @@ class _ExtraSessionPlayerScreenState
                                 final isActive = index == _currentPage;
                                 return Container(
                                   margin:
-                                      const EdgeInsets.symmetric(horizontal: 4),
+                                      const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                                   width: isActive ? 10 : 8,
                                   height: isActive ? 10 : 8,
                                   decoration: BoxDecoration(
@@ -639,7 +637,7 @@ class _ExtraSessionPlayerScreenState
                               },
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AppSpacing.sm + 4),
                         ],
                       ),
                     ),
@@ -663,26 +661,25 @@ class _ExtraSessionPlayerScreenState
   Widget _buildPlaceholderWarning(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(12),
+      margin: AppSpacing.card,
+      padding: const EdgeInsets.all(AppSpacing.sm + 4),
       decoration: BoxDecoration(
-        color: Colors.amber.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.amber.shade300),
+        color: AppTheme.warning.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
+        border: Border.all(color: AppTheme.warning),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.warning_amber_rounded,
-              size: 18, color: Colors.amber),
-          const SizedBox(width: 8),
+          Icon(Icons.warning_amber_rounded,
+              size: 18, color: AppTheme.warning),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
               'Placeholder exercises are included. Follow the instructions provided or substitute with a similar movement.',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Colors.amber.shade200),
+              style: AppTextStyles.small.copyWith(
+                color: AppTheme.warning,
+              ),
             ),
           ),
         ],
@@ -981,25 +978,22 @@ class _ExtraSessionPlayerScreenState
   Widget _buildErrorState(BuildContext context, Object error) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.card,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline,
-                size: 48, color: Theme.of(context).colorScheme.error),
-            const SizedBox(height: 12),
+            const Icon(Icons.error_outline,
+                size: 48, color: AppTheme.error),
+            const SizedBox(height: AppSpacing.sm + 4),
             Text(
               'Failed to load session',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: AppTextStyles.subtitle,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               error.toString(),
               textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Colors.grey[400]),
+              style: AppTextStyles.small,
             ),
           ],
         ),
@@ -1010,29 +1004,28 @@ class _ExtraSessionPlayerScreenState
   Widget _buildNotFound(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.card,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.search_off, size: 64, color: Colors.grey.shade600),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Extra not found',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: AppTextStyles.titleL,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'Please return to the extras list and try again.',
               textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Colors.grey[500]),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: Colors.grey[500],
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             ElevatedButton(
               onPressed: () => context.go('/extras'),
-              child: const Text('Back to Extras'),
+              child: Text('Back to Extras', style: AppTextStyles.button),
             ),
           ],
         ),
@@ -1043,29 +1036,28 @@ class _ExtraSessionPlayerScreenState
   Widget _buildEmptySession(BuildContext context, ExtraItem extra) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.card,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.fitness_center, size: 64, color: Colors.grey.shade600),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Session coming soon',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: AppTextStyles.titleL,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'We are still building the exercise list for ${extra.title}. Check back shortly!',
               textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Colors.grey[500]),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: Colors.grey[500],
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             ElevatedButton(
               onPressed: () => context.go('/extras'),
-              child: const Text('Back to Extras'),
+              child: Text('Back to Extras', style: AppTextStyles.button),
             ),
           ],
         ),

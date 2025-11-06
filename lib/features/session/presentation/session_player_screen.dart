@@ -74,36 +74,35 @@ class _NumberPickerDialogState extends State<NumberPickerDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.lg - 4)),
       backgroundColor: AppTheme.surfaceColor,
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.card,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               widget.title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+              style: AppTextStyles.titleL.copyWith(
                     color: AppTheme.primaryColor,
                   ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.lg),
             Container(
               height: 200,
               decoration: BoxDecoration(
                 color: AppTheme.backgroundColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
               ),
               child: Stack(
                 children: [
                   // Selection highlight
                   Center(
-                    child: Container(
+                    child:                       Container(
                       height: 50,
                       decoration: BoxDecoration(
                         color: AppTheme.primaryColor.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(AppSpacing.sm),
                         border: Border.all(
                           color: AppTheme.primaryColor,
                           width: 2,
@@ -133,15 +132,9 @@ class _NumberPickerDialogState extends State<NumberPickerDialog> {
                             widget.isDecimal
                                 ? value.toStringAsFixed(1)
                                 : value.toInt().toString(),
-                            style: TextStyle(
-                              fontSize: isSelected ? 28 : 20,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: isSelected
-                                  ? AppTheme.primaryColor
-                                  : Colors.grey[400],
-                            ),
+                            style: isSelected 
+                                ? AppTextStyles.statValue.copyWith(fontSize: 28, color: AppTheme.primaryColor)
+                                : AppTextStyles.bodyMedium.copyWith(fontSize: 20, color: Colors.grey[400]),
                           ),
                         );
                       },
@@ -150,29 +143,29 @@ class _NumberPickerDialogState extends State<NumberPickerDialog> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.lg),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
                       side: BorderSide(color: Colors.grey[700]!),
                     ),
-                    child: const Text('Cancel'),
+                    child: Text('Cancel', style: AppTextStyles.button),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AppSpacing.sm + 4),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(_selectedValue),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryColor,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
                     ),
-                    child: const Text('Confirm'),
+                    child: Text('Confirm', style: AppTextStyles.button),
                   ),
                 ),
               ],
@@ -473,7 +466,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm + 4, vertical: AppSpacing.xs + 2),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
@@ -484,9 +477,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 AppTheme.primaryColor.withOpacity(0.05),
                 Colors.transparent,
               ],
-              stops: const [0.0, 0.4, 0.7, 1.0],
+            stops: const [0.0, 0.4, 0.7, 1.0],
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(AppSpacing.lg - 4),
             border: Border.all(
               color: AppTheme.primaryColor.withOpacity(0.25),
               width: 1,
@@ -500,12 +493,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 size: 18,
                 color: AppTheme.primaryColor,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: AppSpacing.sm),
               Text(
                 _formatDuration(_elapsedSeconds),
-                style: TextStyle(
+                style: AppTextStyles.subtitle.copyWith(
                   fontSize: 16,
-                  fontWeight: FontWeight.w800,
                   color: Colors.white,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
@@ -525,15 +517,15 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
             },
             itemBuilder: (context) => [
               const PopupMenuItem(
-                value: 'save_exit',
-                child: Row(
-                  children: [
-                    Icon(Icons.save_outlined, color: AppTheme.primaryColor),
-                    SizedBox(width: 12),
-                    Text('Pause & Save'),
-                  ],
+                  value: 'save_exit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.save_outlined, color: AppTheme.primaryColor),
+                      SizedBox(width: AppSpacing.sm + 4),
+                      Text('Pause & Save', style: AppTextStyles.bodyMedium),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         ],
@@ -553,14 +545,14 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              const Text('Failed to load session'),
-              Text(error.toString()),
-              const SizedBox(height: 16),
+              Icon(Icons.error_outline, size: 48, color: AppTheme.error),
+              SizedBox(height: AppSpacing.md),
+              Text('Failed to load session', style: AppTextStyles.subtitle),
+              Text(error.toString(), style: AppTextStyles.small),
+              SizedBox(height: AppSpacing.md),
               ElevatedButton(
                 onPressed: () => context.pop(),
-                child: const Text('Go Back'),
+                child: Text('Go Back', style: AppTextStyles.button),
               ),
             ],
           ),
@@ -583,7 +575,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           children: [
             // Session header breadcrumb
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg - 4, vertical: AppSpacing.sm),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: Colors.grey[850]!, width: 1),
@@ -591,9 +583,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               ),
               child: Text(
                 'Exercise ${_currentPage + 1} of $totalCount',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
+                style: AppTextStyles.small.copyWith(
                   color: Colors.grey[400],
                   letterSpacing: 0.8,
                 ),
@@ -625,7 +615,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
             if (isLastPage)
               SafeArea(
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                  padding: EdgeInsets.fromLTRB(AppSpacing.lg - 4, AppSpacing.sm + 4, AppSpacing.lg - 4, AppSpacing.md),
                   decoration: BoxDecoration(
                     color: AppTheme.backgroundColor,
                     border: Border(
@@ -639,7 +629,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                       if (isAllCompleted)
                         Container(
                           height: 1,
-                          margin: const EdgeInsets.only(bottom: 16),
+                          margin: EdgeInsets.only(bottom: AppSpacing.md),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
@@ -660,12 +650,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                isAllCompleted ? const Color(0xFF4CAF50) : Colors.grey[800],
+                                isAllCompleted ? AppTheme.success : Colors.grey[800],
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                             ),
                           ),
                           child: _isFinishing
@@ -682,9 +672,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                   isAllCompleted
                                       ? 'FINISH SESSION'
                                       : 'COMPLETE ALL EXERCISES',
-                                  style: const TextStyle(
+                                  style: AppTextStyles.button.copyWith(
                                     fontSize: 17,
-                                    fontWeight: FontWeight.w800,
                                     letterSpacing: 1,
                                   ),
                                 ),
@@ -714,7 +703,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         .watch(_sessionProvider(widget.programId, widget.week, widget.session));
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm + 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(count, (index) {
@@ -760,12 +749,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           }
 
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
             width: index == _currentPage ? 28 : 8,
             height: 8,
             decoration: BoxDecoration(
               color: dotColor,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(AppSpacing.xs),
             ),
           );
         }),
@@ -814,14 +803,14 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
             sessionAsync.value!.blocks.last.exerciseId == exercise.id;
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+          padding: EdgeInsets.fromLTRB(AppSpacing.lg - 4, AppSpacing.sm + 4, AppSpacing.lg - 4, AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Bonus badge (if applicable)
               if (isBonus) ...[
                 const BonusExerciseBadge(),
-                const SizedBox(height: 10),
+                SizedBox(height: AppSpacing.sm + 2),
               ],
 
               // Exercise header with integrated actions + Puck Drop animation
@@ -842,7 +831,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 child: _buildExerciseHeader(context, exercise),
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: AppSpacing.lg - 4),
 
               // Prescribed details (no border, just spacing) + Ice Flash animation
               AnimatedBuilder(
@@ -868,12 +857,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 error: (_, __) => const SizedBox.shrink(),
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.lg),
 
               // Performance input section
               _buildPerformanceInput(context, exercise),
 
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.lg),
 
               // Mark as done and go to next button - Hockey styled
               Builder(
@@ -885,7 +874,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
 
                   return Container(
                     width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 8),
+                    margin: EdgeInsets.only(bottom: AppSpacing.sm),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -893,7 +882,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                         if (!isCompleted)
                           Container(
                             height: 1,
-                            margin: const EdgeInsets.only(bottom: 16),
+                            margin: EdgeInsets.only(bottom: AppSpacing.md),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
@@ -930,21 +919,20 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                   : (allSetsCompleted
                                       ? 'NEXT EXERCISE ✓'
                                       : 'NEXT EXERCISE'),
-                              style: const TextStyle(
+                              style: AppTextStyles.button.copyWith(
                                 fontSize: 17,
-                                fontWeight: FontWeight.w800,
                                 letterSpacing: 1,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: (isCompleted || allSetsCompleted)
-                                  ? const Color(0xFF4CAF50)
+                                  ? AppTheme.success
                                   : AppTheme.primaryColor,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                               ),
                             ),
                           ),
@@ -1044,7 +1032,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
 
   Widget _buildPrescribedDetails(BuildContext context, Exercise exercise) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.lg - 4, horizontal: AppSpacing.xs),
       child: Row(
         children: [
           if (exercise.sets > 0)
@@ -1110,12 +1098,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
 
   Widget _buildDetailItem(BuildContext context, String label, String value, IconData icon) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
       child: Column(
         children: [
           // Icon with subtle glow
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
@@ -1132,19 +1120,17 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               color: AppTheme.primaryColor,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: AppSpacing.sm + 2),
           // Value with emphasis
           Text(
             value,
-            style: const TextStyle(
+            style: AppTextStyles.statValue.copyWith(
               fontSize: 32,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
               height: 1,
               letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: AppSpacing.xs + 2),
           // Underline accent
           Container(
             width: 30,
@@ -1160,13 +1146,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               borderRadius: BorderRadius.circular(1),
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: AppSpacing.xs + 2),
           // Label
           Text(
             label,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.labelXS.copyWith(
               color: Colors.grey[500],
               letterSpacing: 1.5,
             ),
@@ -1187,19 +1171,17 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           onTap: () {
             _showInstructionsDrawer(context, exercise, instructions);
           },
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppSpacing.sm),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
             child: Row(
               children: [
                 // Exercise name
                 Expanded(
                   child: Text(
                     exercise.name.toUpperCase(),
-                    style: const TextStyle(
+                    style: AppTextStyles.titleL.copyWith(
                       fontSize: 30,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
                       letterSpacing: 0.3,
                       height: 1.1,
                       shadows: [
@@ -1213,7 +1195,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   ),
                 ),
                 
-                const SizedBox(width: 16),
+                SizedBox(width: AppSpacing.md),
                 
                 // Info icon - elegant and intuitive
                 Icon(
@@ -1222,7 +1204,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   color: AppTheme.primaryColor,
                 ),
                 
-                const SizedBox(width: 16),
+                SizedBox(width: AppSpacing.md),
                 
                 // Thin classy line
                 Container(
@@ -1249,7 +1231,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         
         // Watch demo link (under title)
         if (exercise.youtubeQuery.isNotEmpty) ...[
-          const SizedBox(height: 12),
+          SizedBox(height: AppSpacing.sm + 4),
           InkWell(
             onTap: () async {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -1270,9 +1252,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 );
               }
             },
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppSpacing.sm),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm + 4, vertical: AppSpacing.sm),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.centerLeft,
@@ -1285,7 +1267,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   ],
                   stops: const [0.0, 0.35, 0.65, 1.0],
                 ),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(AppSpacing.sm),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -1295,12 +1277,10 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                     size: 20,
                     color: Colors.red[400],
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: AppSpacing.sm),
                   Text(
                     'Watch demo',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                    style: AppTextStyles.small.copyWith(
                       color: Colors.grey[300],
                       letterSpacing: 0.3,
                     ),
@@ -1652,11 +1632,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
   Widget _buildLastPerformance(
       BuildContext context, ExercisePerformance lastPerf) {
     return Container(
-      margin: const EdgeInsets.only(top: 20),
-      padding: const EdgeInsets.all(18),
+      margin: EdgeInsets.only(top: AppSpacing.lg - 4),
+      padding: EdgeInsets.all(AppSpacing.md + 2),
       decoration: BoxDecoration(
         color: Colors.blueGrey.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
         border: Border.all(
           color: Colors.blueGrey.withOpacity(0.2),
           width: 1,
@@ -1668,26 +1648,24 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: EdgeInsets.all(AppSpacing.xs + 2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.blueGrey.withOpacity(0.15),
                 ),
                 child: const Icon(Icons.history, size: 14, color: Colors.blueGrey),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: AppSpacing.sm + 2),
               Text(
                 'Last Performance',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                style: AppTextStyles.small.copyWith(
                   color: Colors.grey[300],
                   letterSpacing: 0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AppSpacing.sm + 4),
           Wrap(
             spacing: 10,
             runSpacing: 6,
@@ -1695,9 +1673,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               final weightStr = set.weight != null ? '${set.weight}kg' : '-';
               return Text(
                 'Set ${set.setNumber}: ${set.reps} reps @ $weightStr',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                style: AppTextStyles.small.copyWith(
                   color: Colors.grey[400],
                 ),
               );
