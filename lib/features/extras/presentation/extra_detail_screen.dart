@@ -61,7 +61,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
           children: [
             Text(
               extraTitle,
-              style: AppTextStyles.body,
+              style: AppTextStyles.subtitle,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
@@ -403,7 +403,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text('OK', style: AppTextStyles.button),
           ),
         ],
       ),

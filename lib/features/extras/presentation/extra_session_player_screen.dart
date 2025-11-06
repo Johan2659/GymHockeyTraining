@@ -406,7 +406,7 @@ class _ExtraSessionPlayerScreenState
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Continue'),
+              child: Text('Continue', style: AppTextStyles.button),
             ),
           ],
         ),
@@ -1184,24 +1184,24 @@ class _ExtraSessionPlayerScreenState
         vertical: (screenWidth * 0.022).clamp(8.0, 10.0),
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFA726).withOpacity(0.12),
+        color: AppTheme.warningLight.withOpacity(0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: const Color(0xFFFFA726).withOpacity(0.45), width: 1.5),
+            color: AppTheme.warningLight.withOpacity(0.45), width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: const Color(0xFFFFB74D),
+            color: AppTheme.warningMedium,
             size: (screenWidth * 0.042).clamp(15.0, 17.0),
           ),
           SizedBox(width: (screenWidth * 0.018).clamp(7.0, 8.0)),
           Text(
             'Placeholder exercise',
             style: TextStyle(
-              color: const Color(0xFFFFCC80),
+              color: AppTheme.warningLighter,
               fontSize: (screenWidth * 0.032).clamp(11.5, 13.0),
               fontWeight: FontWeight.w600,
               height: 1,
@@ -1259,7 +1259,7 @@ class _ExtraSessionPlayerScreenState
               icon: Icons.hourglass_bottom_rounded,
               value: '${exercise.rest}s',
               label: 'rest',
-              color: const Color(0xFFFF9800),
+              color: AppTheme.inProgress,
               screenWidth: screenWidth,
             ),
           ],

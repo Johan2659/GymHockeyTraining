@@ -72,8 +72,8 @@ class IntervalTimerWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: (isWorkPhase
-                          ? const Color(0xFF4CAF50)
-                          : const Color(0xFFFF9800))
+                          ? AppTheme.completed
+                          : AppTheme.inProgress)
                       .withOpacity(0.25),
                   width: 3,
                 ),
@@ -89,8 +89,8 @@ class IntervalTimerWidget extends StatelessWidget {
               border: Border.all(
                 color: isActive
                     ? (isWorkPhase
-                            ? const Color(0xFF4CAF50)
-                            : const Color(0xFFFF9800))
+                            ? AppTheme.completed
+                            : AppTheme.inProgress)
                         .withOpacity(0.5)
                     : Colors.white.withOpacity(0.1),
                 width: 1.5,
@@ -153,14 +153,14 @@ class IntervalTimerWidget extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: (isWorkPhase
-                    ? const Color(0xFF4CAF50)
-                    : const Color(0xFFFF9800))
+                    ? AppTheme.completed
+                    : AppTheme.inProgress)
                 .withOpacity(0.2),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isWorkPhase
-                  ? const Color(0xFF4CAF50)
-                  : const Color(0xFFFF9800),
+                  ? AppTheme.completed
+                  : AppTheme.inProgress,
               width: 2,
             ),
           ),
@@ -168,8 +168,8 @@ class IntervalTimerWidget extends StatelessWidget {
             isWorkPhase ? 'HOLD' : 'REST',
             style: TextStyle(
               color: isWorkPhase
-                  ? const Color(0xFF4CAF50)
-                  : const Color(0xFFFF9800),
+                  ? AppTheme.completed
+                  : AppTheme.inProgress,
               fontSize: labelSize,
               fontWeight: FontWeight.w900,
               letterSpacing: 2.5,
@@ -192,8 +192,8 @@ class IntervalTimerWidget extends StatelessWidget {
             shadows: [
               Shadow(
                 color: (isWorkPhase
-                        ? const Color(0xFF4CAF50)
-                        : const Color(0xFFFF9800))
+                        ? AppTheme.completed
+                        : AppTheme.inProgress)
                     .withOpacity(0.6),
                 blurRadius: 24,
               ),
@@ -266,7 +266,7 @@ class IntervalTimerWidget extends StatelessWidget {
         Text(
           'Interval Timer',
           style: TextStyle(
-            color: Colors.grey[500],
+            color: AppTheme.grey500,
             fontSize: subtitleSize,
             fontWeight: FontWeight.w600,
             height: 1,
@@ -352,7 +352,7 @@ class _TimerPainter extends CustomPainter {
 
     // Background track
     final trackPaint = Paint()
-      ..color = Colors.grey[850]!.withOpacity(0.3)
+      ..color = AppTheme.grey850.withOpacity(0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
@@ -363,7 +363,7 @@ class _TimerPainter extends CustomPainter {
     if (workProgress > 0 || restProgress > 0) {
       final activeProgress = isWorkPhase ? workProgress : restProgress;
       final activeColor =
-          isWorkPhase ? const Color(0xFF4CAF50) : const Color(0xFFFF9800);
+          isWorkPhase ? AppTheme.completed : AppTheme.inProgress;
 
       // Glow layer
       final glowPaint = Paint()

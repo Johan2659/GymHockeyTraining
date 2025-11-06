@@ -94,7 +94,7 @@ class _PlanPreviewScreenState extends ConsumerState<PlanPreviewScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Profile saved, but failed to start program: $e'),
-              backgroundColor: Colors.orange,
+              backgroundColor: AppTheme.warning,
             ),
           );
         }

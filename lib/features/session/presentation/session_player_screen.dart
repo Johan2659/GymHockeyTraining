@@ -658,7 +658,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                isAllCompleted ? AppTheme.success : Colors.grey[800],
+                                isAllCompleted ? AppTheme.success : AppTheme.grey800,
                             foregroundColor: AppTheme.onPrimaryColor,
                             padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2),
                             elevation: 0,
@@ -1265,9 +1265,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [
-                    Colors.red.withOpacity(0.18),
-                    Colors.red.withOpacity(0.12),
-                    Colors.red.withOpacity(0.06),
+                    AppTheme.danger.withOpacity(0.18),
+                    AppTheme.danger.withOpacity(0.12),
+                    AppTheme.danger.withOpacity(0.06),
                     Colors.transparent,
                   ],
                   stops: const [0.0, 0.35, 0.65, 1.0],
@@ -1433,9 +1433,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,
                               colors: [
-                                Colors.red.withOpacity(0.18),
-                                Colors.red.withOpacity(0.12),
-                                Colors.red.withOpacity(0.06),
+                                AppTheme.danger.withOpacity(0.18),
+                                AppTheme.danger.withOpacity(0.12),
+                                AppTheme.danger.withOpacity(0.06),
                                 Colors.transparent,
                               ],
                               stops: const [0.0, 0.35, 0.65, 1.0],
@@ -1796,10 +1796,10 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               color: AppTheme.onPrimaryColor,
                               height: 1,
                               fontFeatures: const [FontFeature.tabularFigures()],
-                              shadows: const [
+                              shadows: [
                                 Shadow(
-                                  color: Colors.black54,
-                                  offset: Offset(0, 2),
+                                  color: Colors.black.withOpacity(0.54),
+                                  offset: const Offset(0, 2),
                                   blurRadius: 4,
                                 ),
                               ],
@@ -2153,7 +2153,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   size: 12,
                   color: isActive 
                       ? AppTheme.primaryColor.withOpacity(0.7) 
-                      : Colors.grey[600],
+                      : AppTheme.grey600,
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -2162,7 +2162,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                     fontWeight: FontWeight.w600,
                     color: isActive 
                         ? AppTheme.primaryColor.withOpacity(0.7) 
-                        : Colors.grey[600],
+                        : AppTheme.grey600,
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -2184,7 +2184,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                       value,
                       style: AppTextStyles.titleL.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: isActive ? AppTheme.onPrimaryColor : Colors.grey[600],
+                        color: isActive ? AppTheme.onPrimaryColor : AppTheme.grey600,
                         height: 1,
                       ),
                     ),
@@ -2196,7 +2196,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           fontWeight: FontWeight.w600,
                           color: isActive 
                               ? AppTheme.primaryColor.withOpacity(0.6) 
-                              : Colors.grey[700],
+                              : AppTheme.grey700,
                         ),
                       ),
                     ],
@@ -2396,9 +2396,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               'Cancel',
-              style: TextStyle(
+              style: AppTextStyles.button.copyWith(
                 color: AppTheme.secondaryTextColor,
-                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -2411,9 +2410,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
+            child: Text(
               'Edit',
-              style: TextStyle(fontWeight: FontWeight.w700),
+              style: AppTextStyles.button,
             ),
           ),
         ],
@@ -2564,7 +2563,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   Navigator.of(context).pop(); // Close dialog
                   context.go('/'); // Navigate to hub screen
                 },
-                child: const Text('Continue'),
+                child: Text('Continue', style: AppTextStyles.button),
               ),
             ],
           ),
@@ -2655,7 +2654,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text('Close', style: AppTextStyles.button),
           ),
         ],
       ),

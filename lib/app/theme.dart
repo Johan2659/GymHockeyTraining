@@ -95,6 +95,32 @@ class AppTheme {
   static const Color timerRest = Color(0xFF00B4FF);
   
   // ============================================================================
+  // EXTENDED SEMANTIC COLORS (2025 Enhancement)
+  // ============================================================================
+  
+  /// Info blue - for informational elements and links
+  static const Color info = Color(0xFF42A5F5);
+  
+  /// Warning orange shades - for emphasis and warnings
+  static const Color warningLight = Color(0xFFFFA726);
+  static const Color warningMedium = Color(0xFFFFB74D);
+  static const Color warningLighter = Color(0xFFFFCC80);
+  
+  /// Chart colors - consistent palette for data visualization
+  static const Color chartRed = Color(0xFFFF5252);
+  static const Color chartBlue = Color(0xFF448AFF);
+  static const Color chartIndigo = Color(0xFF536DFE);
+  static const Color chartTeal = Color(0xFF1DE9B6);
+  static const Color chartPink = Color(0xFFFF4081);
+  static const Color chartAmber = Color(0xFFFFD740);
+  static const Color chartLightGreen = Color(0xFF69F0AE);
+  static const Color chartDeepOrange = Color(0xFFFF6E40);
+  static const Color chartCyan = Color(0xFF18FFFF);
+  
+  /// Standard delete/danger red
+  static const Color danger = Color(0xFFFF3B30);
+  
+  // ============================================================================
   // GLASSMORPHISM COLORS
   // ============================================================================
   
@@ -705,6 +731,19 @@ class AppSpacing {
   
   /// Extra Extra Large - 48px
   static const double xxl = 48.0;
+  
+  // ============================================================================
+  // ADDITIONAL SPACING VALUES (2025 Enhancement)
+  // ============================================================================
+  
+  /// Tiny - 6px (for compact spacing)
+  static const double tiny = 6.0;
+  
+  /// Medium-Small - 12px (between sm and md)
+  static const double ms = 12.0;
+  
+  /// Medium-Large - 20px (between md and lg)
+  static const double ml = 20.0;
   
   // ============================================================================
   // PADDING SHORTCUTS

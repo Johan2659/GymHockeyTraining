@@ -20,7 +20,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Extras'),
+        title: Text('Extras', style: AppTextStyles.subtitle),
         backgroundColor: AppTheme.surfaceColor,
         foregroundColor: AppTheme.onSurfaceColor,
       ),
@@ -53,7 +53,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
             subtitle: '15-20 minute circuits',
             description: 'Quick training sessions when time is limited',
             icon: Icons.timer,
-            color: Colors.orange,
+            color: AppTheme.inProgress,
             category: ExtraType.expressWorkout,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -313,7 +313,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
                     Icon(
                       Icons.inbox_outlined,
                       size: 64,
-                      color: Colors.grey[600],
+                      color: AppTheme.grey600,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
@@ -341,7 +341,7 @@ class _ExtrasScreenState extends ConsumerState<ExtrasScreen> {
           title: 'Express Workouts',
           subtitle: '15-20 minute circuits',
           icon: Icons.timer,
-          color: Colors.orange,
+          color: AppTheme.inProgress,
         );
       case ExtraType.bonusChallenge:
         return _CategoryInfo(
@@ -412,7 +412,7 @@ class _SectionHeader extends StatelessWidget {
         Text(
           subtitle,
           style: AppTextStyles.body.copyWith(
-                color: Colors.grey[400],
+                color: AppTheme.grey400,
               ),
         ),
       ],
@@ -453,7 +453,7 @@ class _ExtraCard extends StatelessWidget {
                         Text(
                           extra.description,
                           style: AppTextStyles.bodyMedium.copyWith(
-                                    color: Colors.grey[400],
+                                    color: AppTheme.grey400,
                                   ),
                           softWrap: true,
                           maxLines: 2,
@@ -508,7 +508,7 @@ class _ExtraCard extends StatelessWidget {
                   Icon(
                     Icons.schedule,
                     size: 16,
-                    color: Colors.grey[400],
+                    color: AppTheme.grey400,
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
@@ -519,7 +519,7 @@ class _ExtraCard extends StatelessWidget {
                   Icon(
                     Icons.fitness_center,
                     size: 16,
-                    color: Colors.grey[400],
+                    color: AppTheme.grey400,
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Flexible(
@@ -547,13 +547,13 @@ class _ExtraCard extends StatelessWidget {
   Color _getDifficultyColor(String difficulty) {
     switch (difficulty.toLowerCase()) {
       case 'easy':
-        return Colors.green;
+        return AppTheme.success;
       case 'medium':
-        return Colors.orange;
+        return AppTheme.warning;
       case 'hard':
-        return Colors.red;
+        return AppTheme.danger;
       default:
-        return Colors.grey;
+        return AppTheme.grey500;
     }
   }
 }

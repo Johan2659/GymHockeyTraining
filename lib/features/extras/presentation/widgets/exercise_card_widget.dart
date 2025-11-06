@@ -195,7 +195,7 @@ class ExerciseCardWidget extends StatelessWidget {
           height: badgeSize,
           decoration: BoxDecoration(
             color:
-                isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
+                isCompleted ? AppTheme.completed : AppTheme.primaryColor,
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.white.withOpacity(0.2),
@@ -204,7 +204,7 @@ class ExerciseCardWidget extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: (isCompleted
-                        ? const Color(0xFF4CAF50)
+                        ? AppTheme.completed
                         : AppTheme.primaryColor)
                     .withOpacity(0.3),
                 blurRadius: 12,
@@ -251,7 +251,7 @@ class ExerciseCardWidget extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.play_circle_outline,
-                color: const Color(0xFF42A5F5),
+                color: AppTheme.info,
                 size: (screenWidth * 0.08).clamp(28.0, 34.0),
               ),
               onPressed: exercise.youtubeQuery.isNotEmpty
@@ -284,7 +284,7 @@ class ExerciseCardWidget extends StatelessWidget {
             Text(
               'Watch demo',
               style: TextStyle(
-                color: const Color(0xFF42A5F5),
+                color: AppTheme.info,
                 fontSize: (screenWidth * 0.028).clamp(10.0, 11.0),
                 fontWeight: FontWeight.w600,
               ),
@@ -305,10 +305,10 @@ class ExerciseCardWidget extends StatelessWidget {
         vertical: (screenWidth * 0.022).clamp(8.0, 10.0),
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFA726).withOpacity(0.12),
+        color: AppTheme.warningLight.withOpacity(0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFFFA726).withOpacity(0.45),
+          color: AppTheme.warningLight.withOpacity(0.45),
           width: 1.5,
         ),
       ),
@@ -317,14 +317,14 @@ class ExerciseCardWidget extends StatelessWidget {
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: const Color(0xFFFFB74D),
+            color: AppTheme.warningMedium,
             size: (screenWidth * 0.042).clamp(15.0, 17.0),
           ),
           SizedBox(width: (screenWidth * 0.018).clamp(7.0, 8.0)),
           Text(
             'Placeholder exercise',
             style: TextStyle(
-              color: const Color(0xFFFFCC80),
+              color: AppTheme.warningLighter,
               fontSize: (screenWidth * 0.032).clamp(11.5, 13.0),
               fontWeight: FontWeight.w600,
               height: 1,
@@ -348,7 +348,7 @@ class ExerciseCardWidget extends StatelessWidget {
         color: AppTheme.surfaceColor.withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.grey[800]!,
+          color: AppTheme.grey800,
           width: 1.5,
         ),
       ),
@@ -365,7 +365,7 @@ class ExerciseCardWidget extends StatelessWidget {
           Container(
             width: 1.5,
             height: (screenWidth * 0.08).clamp(30.0, 34.0),
-            color: Colors.grey[800],
+            color: AppTheme.grey800,
           ),
           _InfoChip(
             icon: Icons.fitness_center,
@@ -373,20 +373,20 @@ class ExerciseCardWidget extends StatelessWidget {
                 ? '${exercise.duration}s'
                 : '${exercise.reps}',
             label: exercise.duration != null ? 'hold' : 'reps',
-            color: const Color(0xFF4CAF50),
+            color: AppTheme.completed,
             screenWidth: screenWidth,
           ),
           if (exercise.rest != null) ...[
             Container(
               width: 1.5,
               height: (screenWidth * 0.08).clamp(30.0, 34.0),
-              color: Colors.grey[800],
+              color: AppTheme.grey800,
             ),
             _InfoChip(
               icon: Icons.hourglass_bottom_rounded,
               value: '${exercise.rest}s',
               label: 'rest',
-              color: const Color(0xFFFF9800),
+              color: AppTheme.inProgress,
               screenWidth: screenWidth,
             ),
           ],

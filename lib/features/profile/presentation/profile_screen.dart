@@ -82,16 +82,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text('Logout', style: AppTextStyles.subtitle),
+        content: Text('Are you sure you want to logout?', style: AppTextStyles.body),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: AppTextStyles.button),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Logout'),
+            child: Text('Logout', style: AppTextStyles.button),
           ),
         ],
       ),
@@ -276,7 +276,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             title: 'Export Logs',
             subtitle: 'Download training data as JSON file',
             icon: Icons.download,
-            color: Colors.blue,
+            color: AppTheme.info,
             onTap: _isLoading ? null : () => _exportLogs(),
           ),
 
@@ -285,7 +285,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             title: 'Delete Account',
             subtitle: 'Permanently delete all data (cannot be undone)',
             icon: Icons.delete_forever,
-            color: Colors.red,
+            color: AppTheme.danger,
             onTap: _isLoading ? null : () => _deleteAccount(),
           ),
 
@@ -409,7 +409,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: AppTextStyles.button),
           ),
         ],
       ),
@@ -442,7 +442,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: AppTextStyles.button),
           ),
         ],
       ),
@@ -474,7 +474,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: AppTextStyles.button),
           ),
         ],
       ),
@@ -506,7 +506,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: AppTextStyles.button),
           ),
         ],
       ),
@@ -529,7 +529,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Logs exported to: ${filePath.split('/').last}'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppTheme.success,
               action: SnackBarAction(
                 label: 'Copy Path',
                 onPressed: () {
@@ -543,9 +543,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         logWarning('Log export failed - no file path returned');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to export logs'),
-              backgroundColor: Colors.red,
+            SnackBar(
+              content: const Text('Failed to export logs'),
+              backgroundColor: AppTheme.danger,
             ),
           );
         }
@@ -555,9 +555,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           error: e, stackTrace: stackTrace);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to export logs'),
-            backgroundColor: Colors.red,
+          SnackBar(
+            content: const Text('Failed to export logs'),
+            backgroundColor: AppTheme.danger,
           ),
         );
       }
@@ -584,12 +584,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: AppTextStyles.button),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.danger),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete Account'),
+            child: Text('Delete Account', style: AppTextStyles.button),
           ),
         ],
       ),
@@ -608,12 +608,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              child: Text('Cancel', style: AppTextStyles.button),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.danger),
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Yes, Delete Everything'),
+              child: Text('Yes, Delete Everything', style: AppTextStyles.button),
             ),
           ],
         ),
@@ -627,9 +627,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           if (success) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Account deleted successfully'),
-                  backgroundColor: Colors.green,
+                SnackBar(
+                  content: const Text('Account deleted successfully'),
+                  backgroundColor: AppTheme.success,
                 ),
               );
               // Navigate back to main screen or login
@@ -638,9 +638,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           } else {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Failed to delete account'),
-                  backgroundColor: Colors.red,
+                SnackBar(
+                  content: const Text('Failed to delete account'),
+                  backgroundColor: AppTheme.danger,
                 ),
               );
             }

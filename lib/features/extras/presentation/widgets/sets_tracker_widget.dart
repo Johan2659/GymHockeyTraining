@@ -54,7 +54,7 @@ class SetsTrackerWidget extends StatelessWidget {
               Text(
                 'Sets',
                 style: TextStyle(
-                  color: Colors.grey[400],
+                  color: AppTheme.grey400,
                   fontSize: (screenWidth * 0.035).clamp(13.0, 14.5),
                   fontWeight: FontWeight.w700,
                   height: 1,
@@ -65,7 +65,7 @@ class SetsTrackerWidget extends StatelessWidget {
                 '$completedCount',
                 style: TextStyle(
                   color: completedCount == totalSets
-                      ? const Color(0xFF4CAF50)
+                      ? AppTheme.completed
                       : AppTheme.accentColor,
                   fontSize: (screenWidth * 0.042).clamp(15.0, 17.0),
                   fontWeight: FontWeight.w800,
@@ -75,7 +75,7 @@ class SetsTrackerWidget extends StatelessWidget {
               Text(
                 '/$totalSets',
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: AppTheme.grey600,
                   fontSize: (screenWidth * 0.035).clamp(13.0, 14.0),
                   fontWeight: FontWeight.w700,
                   height: 1,
@@ -169,22 +169,22 @@ class _SetPillState extends State<_SetPill>
     IconData? icon;
 
     if (widget.isCompleted) {
-      backgroundColor = const Color(0xFF4CAF50).withOpacity(0.2);
-      textColor = const Color(0xFF4CAF50);
+      backgroundColor = AppTheme.completed.withOpacity(0.2);
+      textColor = AppTheme.completed;
       icon = Icons.check_circle;
     } else if (widget.isActive) {
       if (widget.isWorkPhase) {
-        backgroundColor = const Color(0xFF4CAF50).withOpacity(0.2);
-        textColor = const Color(0xFF4CAF50);
+        backgroundColor = AppTheme.completed.withOpacity(0.2);
+        textColor = AppTheme.completed;
         icon = Icons.play_circle_filled;
       } else {
-        backgroundColor = const Color(0xFFFF9800).withOpacity(0.2);
-        textColor = const Color(0xFFFF9800);
+        backgroundColor = AppTheme.inProgress.withOpacity(0.2);
+        textColor = AppTheme.inProgress;
         icon = Icons.pause_circle_filled;
       }
     } else {
-      backgroundColor = Colors.grey[800]!.withOpacity(0.3);
-      textColor = Colors.grey[500]!;
+      backgroundColor = AppTheme.grey800.withOpacity(0.3);
+      textColor = AppTheme.grey500;
       icon = null;
     }
 

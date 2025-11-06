@@ -1167,14 +1167,15 @@ class HubScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Discard Session?'),
-        content: const Text(
+        title: Text('Discard Session?', style: AppTextStyles.subtitle),
+        content: Text(
           'Are you sure you want to discard this session in progress? All unsaved progress will be lost.',
+          style: AppTextStyles.body,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: AppTextStyles.button),
           ),
           TextButton(
             onPressed: () async {
@@ -1189,9 +1190,9 @@ class HubScreen extends ConsumerWidget {
                 );
               }
             },
-            child: const Text(
+            child: Text(
               'Discard',
-              style: TextStyle(color: Colors.red),
+              style: AppTextStyles.button.copyWith(color: Colors.red),
             ),
           ),
         ],

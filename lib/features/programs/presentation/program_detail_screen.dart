@@ -562,11 +562,11 @@ class ProgramDetailScreen extends ConsumerWidget {
       case UserRole.attacker:
         return AppTheme.error;
       case UserRole.defender:
-        return Colors.blue;
+        return AppTheme.chartBlue;
       case UserRole.goalie:
-        return Colors.green;
+        return AppTheme.completed;
       case UserRole.referee:
-        return Colors.orange;
+        return AppTheme.inProgress;
     }
   }
 }

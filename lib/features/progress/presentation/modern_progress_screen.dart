@@ -16,7 +16,7 @@ class ModernProgressScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PROGRESS'),
+        title: Text('PROGRESS', style: AppTextStyles.subtitle),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.onSurfaceColor,
         elevation: 0,
@@ -140,8 +140,9 @@ class ModernProgressScreen extends ConsumerWidget {
             const SizedBox(width: AppSpacing.sm),
             Text(
               'SEASON OVERVIEW',
-              style: AppTextStyles.labelMedium.copyWith(
+              style: AppTextStyles.caption.copyWith(
                 color: AppTheme.primaryColor,
+                fontWeight: FontWeight.bold,
                 letterSpacing: 1.5,
               ),
             ),
@@ -502,7 +503,7 @@ class ModernProgressScreen extends ConsumerWidget {
                 child: Text(
                   'Complete sessions to see your training volume',
                   style: AppTextStyles.small.copyWith(
-                    color: Colors.grey[600],
+                    color: AppTheme.grey600,
                     fontStyle: FontStyle.italic,
                   ),
                   textAlign: TextAlign.center,
@@ -586,7 +587,7 @@ class ModernProgressScreen extends ConsumerWidget {
                     child: Text(
                       'Complete training sessions to build your profile',
                       style: AppTextStyles.small.copyWith(
-                        color: Colors.grey[600],
+                        color: AppTheme.grey600,
                         fontStyle: FontStyle.italic,
                       ),
                       textAlign: TextAlign.center,
@@ -943,14 +944,14 @@ class ModernProgressScreen extends ConsumerWidget {
               Text(
                 'Each session is distributed proportionally across categories based on exercises completed. For example, a session with 6 Strength + 2 Power + 2 Conditioning = 60% Strength + 20% Power + 20% Conditioning.',
                 style: AppTextStyles.small.copyWith(
-                  color: Colors.grey[300],
+                  color: AppTheme.grey300,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'Compare your actual distribution to the ideal:',
                 style: AppTextStyles.small.copyWith(
-                  color: Colors.grey[300],
+                  color: AppTheme.grey300,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -969,7 +970,7 @@ class ModernProgressScreen extends ConsumerWidget {
                 '• Conditioning: 15%\n'
                 '• Agility: 10%',
                 style: AppTextStyles.small.copyWith(
-                  color: Colors.grey[300],
+                  color: AppTheme.grey300,
                   height: 1.6,
                 ),
               ),
@@ -1032,29 +1033,29 @@ class ModernProgressScreen extends ConsumerWidget {
   Color _getCategoryColor(ExerciseCategory category) {
     switch (category) {
       case ExerciseCategory.strength:
-        return Colors.red;
+        return AppTheme.chartRed;
       case ExerciseCategory.power:
         return AppTheme.inProgress;
       case ExerciseCategory.speed:
-        return Colors.blue;
+        return AppTheme.chartBlue;
       case ExerciseCategory.agility:
         return AppTheme.completed;
       case ExerciseCategory.conditioning:
         return AppTheme.extras;
       case ExerciseCategory.technique:
-        return Colors.indigo;
+        return AppTheme.chartIndigo;
       case ExerciseCategory.balance:
-        return Colors.teal;
+        return AppTheme.chartTeal;
       case ExerciseCategory.flexibility:
-        return Colors.pink;
+        return AppTheme.chartPink;
       case ExerciseCategory.warmup:
-        return Colors.amber;
+        return AppTheme.chartAmber;
       case ExerciseCategory.recovery:
-        return Colors.lightGreen;
+        return AppTheme.chartLightGreen;
       case ExerciseCategory.stickSkills:
-        return Colors.deepOrange;
+        return AppTheme.chartDeepOrange;
       case ExerciseCategory.gameSituation:
-        return Colors.cyan;
+        return AppTheme.chartCyan;
     }
   }
 

@@ -16,7 +16,7 @@ class ProgramsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Training Programs'),
+        title: Text('Training Programs', style: AppTextStyles.subtitle),
         backgroundColor: AppTheme.surfaceColor,
         foregroundColor: AppTheme.onSurfaceColor,
       ),
@@ -168,19 +168,19 @@ class ProgramsScreen extends ConsumerWidget {
         title: 'Defender',
         description: 'Defensive positioning and strength',
         icon: Icons.shield,
-        color: Colors.blue,
+        color: AppTheme.chartBlue,
       ),
       UserRole.goalie: _RoleInfo(
         title: 'Goalie',
         description: 'Reflexes and positioning training',
         icon: Icons.sports_baseball,
-        color: Colors.green,
+        color: AppTheme.completed,
       ),
       UserRole.referee: _RoleInfo(
         title: 'Referee',
         description: 'Conditioning and mobility training',
         icon: Icons.sports,
-        color: Colors.orange,
+        color: AppTheme.inProgress,
       ),
     };
 

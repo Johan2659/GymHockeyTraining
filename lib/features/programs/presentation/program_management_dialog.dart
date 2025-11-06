@@ -180,7 +180,7 @@ class _ProgramManagementDialogState
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text('Cancel', style: AppTextStyles.button),
         ),
         ElevatedButton(
           onPressed: _isLoading ? null : _handleStopProgram,

@@ -584,7 +584,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text('OK', style: AppTextStyles.button),
           ),
         ],
       ),

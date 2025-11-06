@@ -470,7 +470,7 @@ class HubScreen extends ConsumerWidget {
                           children: [
                             Icon(
                               Icons.stop_circle_outlined,
-                              color: Colors.orange,
+                              color: AppTheme.inProgress,
                             ),
                             SizedBox(width: 8),
                             Text('Stop Program'),
@@ -569,7 +569,7 @@ class HubScreen extends ConsumerWidget {
                     Container(
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Colors.grey[850],
+                        color: AppTheme.grey850,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -644,13 +644,13 @@ class HubScreen extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.orange.withOpacity(0.08),
-            Colors.orange.withOpacity(0.04),
+            AppTheme.inProgress.withOpacity(0.08),
+            AppTheme.inProgress.withOpacity(0.04),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.orange.withOpacity(0.2),
+          color: AppTheme.inProgress.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -662,8 +662,8 @@ class HubScreen extends ConsumerWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Colors.orange.withOpacity(0.25),
-                  Colors.orange.withOpacity(0.1),
+                  AppTheme.inProgress.withOpacity(0.25),
+                  AppTheme.inProgress.withOpacity(0.1),
                   Colors.transparent,
                 ],
               ),
@@ -693,7 +693,7 @@ class HubScreen extends ConsumerWidget {
                       margin: const EdgeInsets.symmetric(horizontal: 6),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.orange.withOpacity(0.5),
+                        color: AppTheme.inProgress.withOpacity(0.5),
                       ),
                     ),
                     Flexible(
@@ -946,7 +946,7 @@ class HubScreen extends ConsumerWidget {
                   value: '${data.currentStreak}',
                   label: 'STREAK',
                   valueColor:
-                      data.currentStreak > 0 ? Colors.orange : null,
+                      data.currentStreak > 0 ? AppTheme.inProgress : null,
                 ),
               ),
             ],
@@ -983,7 +983,7 @@ class HubScreen extends ConsumerWidget {
               child: _QuickActionCard(
                 title: 'EXPRESS\nWORKOUT',
                 icon: Icons.flash_on,
-                color: Colors.orange,
+                color: AppTheme.inProgress,
                 onTap: () => context.go('/extras'),
               ),
             ),
@@ -1124,14 +1124,15 @@ class HubScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Discard Session?'),
-        content: const Text(
+        title: Text('Discard Session?', style: AppTextStyles.subtitle),
+        content: Text(
           'Are you sure you want to discard this session in progress? All unsaved progress will be lost.',
+          style: AppTextStyles.body,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: AppTextStyles.button),
           ),
           TextButton(
             onPressed: () async {
@@ -1141,16 +1142,16 @@ class HubScreen extends ConsumerWidget {
               if (context.mounted) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Text('Session discarded'),
-                    backgroundColor: Colors.orange,
+                    backgroundColor: AppTheme.inProgress,
                   ),
                 );
               }
             },
-            child: const Text(
+            child: Text(
               'Discard',
-              style: TextStyle(color: Colors.red),
+              style: AppTextStyles.button.copyWith(color: Colors.red),
             ),
           ),
         ],
@@ -1200,7 +1201,7 @@ class _LevelRingWidget extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: 1.0,
                   strokeWidth: 6,
-                  backgroundColor: Colors.grey[850],
+                  backgroundColor: AppTheme.grey850,
                   valueColor: AlwaysStoppedAnimation(AppTheme.grey850),
                 ),
               ),
@@ -1331,8 +1332,8 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
             gradient: LinearGradient(
               colors: hasStreak
                   ? [
-                      Colors.orange.withOpacity(0.2),
-                      Colors.orange.withOpacity(0.1),
+                      AppTheme.inProgress.withOpacity(0.2),
+                      AppTheme.inProgress.withOpacity(0.1),
                     ]
                   : [
                       Colors.grey.withOpacity(0.15),
@@ -1342,7 +1343,7 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: hasStreak
-                  ? Colors.orange.withOpacity(0.4)
+                  ? AppTheme.inProgress.withOpacity(0.4)
                   : Colors.grey.withOpacity(0.25),
               width: 2,
             ),
@@ -1352,7 +1353,7 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
             children: [
               Icon(
                 Icons.local_fire_department,
-                color: hasStreak ? Colors.orange : AppTheme.grey600,
+                color: hasStreak ? AppTheme.inProgress : AppTheme.grey600,
                 size: 16,
               ),
               const SizedBox(width: 6),
@@ -1361,7 +1362,7 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
                     ? '${widget.streak} WEEKS BEAST MODE'
                     : 'START YOUR STREAK',
                 style: AppTextStyles.caption.copyWith(
-                  color: hasStreak ? Colors.orange : AppTheme.grey600,
+                  color: hasStreak ? AppTheme.inProgress : AppTheme.grey600,
                 ),
               ),
             ],
