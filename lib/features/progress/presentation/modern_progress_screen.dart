@@ -65,17 +65,17 @@ class ModernProgressScreen extends ConsumerWidget {
             child: _buildHeroSummarySection(context, appState),
           ),
 
-          const SizedBox(height: AppSpacing.xl),
+          _buildSectionSeparator(),
 
-          // 2) PROGRESS OVER TIME
+          // 2) TRAINING VOLUME
           _buildProgressOverTimeSection(context, appState),
 
-          const SizedBox(height: AppSpacing.xl),
+          _buildSectionSeparator(),
 
           // 3) PERFORMANCE PROFILE
           _buildPerformanceProfileSection(context, ref),
 
-          const SizedBox(height: AppSpacing.xl),
+          _buildSectionSeparator(),
 
           // 4) ACTIVITY CALENDAR
           Padding(
@@ -83,14 +83,34 @@ class ModernProgressScreen extends ConsumerWidget {
             child: ActivityCalendarWidget(events: appState.events),
           ),
 
-          const SizedBox(height: AppSpacing.xl),
+          _buildSectionSeparator(),
 
-          // 5) ACHIEVEMENTS / STREAK STRIP
+          // 5) ACHIEVEMENTS
           _buildAchievementsStrip(context, ref, appState),
 
           // Extra bottom padding to clear the bottom navigation bar
-          const SizedBox(height: 100),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 120),
         ],
+      ),
+    );
+  }
+
+  // Modern section separator - subtle gradient fade
+  Widget _buildSectionSeparator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+      child: Container(
+        height: 1,
+        margin: AppSpacing.horizontalPage,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.transparent,
+              AppTheme.primaryColor.withOpacity(0.1),
+              Colors.transparent,
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -106,75 +126,71 @@ class ModernProgressScreen extends ConsumerWidget {
         .length;
     final currentWeek = (appState.state?.currentWeek ?? 0) + 1;
 
-    return GlassContainer(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      borderRadius: BorderRadius.circular(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title
-          Row(
-            children: [
-              Icon(
-                Icons.trending_up,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section header - consistent style
+        Row(
+          children: [
+            Icon(
+              Icons.trending_up,
+              color: AppTheme.primaryColor,
+              size: 22,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'SEASON OVERVIEW',
+              style: AppTextStyles.labelMedium.copyWith(
                 color: AppTheme.primaryColor,
-                size: 28,
+                letterSpacing: 1.5,
               ),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                'SEASON OVERVIEW',
-                style: AppTextStyles.labelXS.copyWith(
-                  color: AppTheme.primaryColor,
-                  fontSize: 11,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xl),
 
-          // Stats Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildStatItem(
-                context,
-                'LEVEL',
-                '$level',
-                Icons.military_tech,
-                AppTheme.accentGold,
-              ),
-              _buildVerticalDivider(),
-              _buildStatItem(
-                context,
-                'SESSIONS',
-                '$totalSessions',
-                Icons.fitness_center,
-                AppTheme.primaryColor,
-              ),
-              _buildVerticalDivider(),
-              _buildStatItem(
-                context,
-                'WEEK',
-                '$currentWeek',
-                Icons.calendar_today,
-                AppTheme.success,
-              ),
-              _buildVerticalDivider(),
-              _buildStatItem(
-                context,
-                'XP',
-                '${appState.currentXP}',
-                Icons.stars,
-                Colors.purple,
-              ),
-            ],
-          ),
-        ],
-      ),
+        // Stats Grid - 2025 minimalist style: pure spacing, no backgrounds
+        Row(
+          children: [
+            _buildMinimalStatItem(
+              context,
+              'LEVEL',
+              '$level',
+              Icons.military_tech,
+              AppTheme.accentGold,
+            ),
+            const SizedBox(width: AppSpacing.lg),
+            _buildMinimalStatItem(
+              context,
+              'SESSIONS',
+              '$totalSessions',
+              Icons.fitness_center,
+              AppTheme.primaryColor,
+            ),
+            const SizedBox(width: AppSpacing.lg),
+            _buildMinimalStatItem(
+              context,
+              'WEEK',
+              '$currentWeek',
+              Icons.calendar_today,
+              AppTheme.success,
+            ),
+            const SizedBox(width: AppSpacing.lg),
+            _buildMinimalStatItem(
+              context,
+              'XP',
+              '${appState.currentXP}',
+              Icons.stars,
+              Colors.purple,
+            ),
+          ],
+        ),
+      ],
     );
   }
 
-  Widget _buildStatItem(
+  // 2025 Ultra-minimal stat item - no backgrounds, pure spacing + subtle glow
+  Widget _buildMinimalStatItem(
     BuildContext context,
     String label,
     String value,
@@ -184,19 +200,38 @@ class ModernProgressScreen extends ConsumerWidget {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: AppSpacing.xs),
+          // Icon with subtle glow
+          Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.3),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+            child: Icon(icon, color: color, size: 32),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          // Value
           Text(
             value,
             style: AppTextStyles.statValue.copyWith(
-              fontSize: 28,
+              fontSize: 36,
               color: color,
+              fontWeight: FontWeight.w700,
+              height: 1,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
+          // Label
           Text(
             label,
-            style: AppTextStyles.statLabel,
+            style: AppTextStyles.labelSmall.copyWith(
+              color: AppTheme.tertiaryTextColor,
+              fontWeight: FontWeight.w600,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -204,26 +239,8 @@ class ModernProgressScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildVerticalDivider() {
-    return Container(
-      width: 1,
-      height: 60,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            AppTheme.primaryColor.withOpacity(0.3),
-            Colors.transparent,
-          ],
-        ),
-      ),
-    );
-  }
-
   // =============================================================================
-  // 2) PROGRESS OVER TIME SECTION
+  // 2) TRAINING VOLUME SECTION
   // =============================================================================
 
   Widget _buildProgressOverTimeSection(BuildContext context, AppStateData appState) {
@@ -231,138 +248,261 @@ class ModernProgressScreen extends ConsumerWidget {
     final now = DateTime.now();
     final fourWeeksAgo = now.subtract(const Duration(days: 28));
     
-    final recentSessions = appState.events
+    final recentEvents = appState.events
         .where((e) => 
-            e.type == ProgressEventType.sessionCompleted &&
+            (e.type == ProgressEventType.sessionCompleted ||
+             e.type == ProgressEventType.extraCompleted) &&
             e.ts.isAfter(fourWeeksAgo))
         .toList()
       ..sort((a, b) => a.ts.compareTo(b.ts));
 
-    // Group by week
-    final weeklySessionCounts = <int, int>{};
-    for (final session in recentSessions) {
-      final weekNumber = ((now.difference(session.ts).inDays) / 7).floor();
+    // Calculate metrics per week using ACTUAL session duration
+    final weeklyData = <int, Map<String, int>>{};
+    for (final event in recentEvents) {
+      final weekNumber = ((now.difference(event.ts).inDays) / 7).floor();
       if (weekNumber >= 0 && weekNumber < 4) {
-        weeklySessionCounts[3 - weekNumber] = (weeklySessionCounts[3 - weekNumber] ?? 0) + 1;
+        final weekIndex = 3 - weekNumber;
+        weeklyData[weekIndex] ??= {'total': 0, 'weight': 0, 'bodyweight': 0};
+        
+        // Get actual duration from event payload (in seconds), convert to minutes
+        int durationMinutes;
+        if (event.payload != null && event.payload!['duration'] != null) {
+          final durationSeconds = event.payload!['duration'] as int;
+          durationMinutes = (durationSeconds / 60).round();
+        } else {
+          // Fallback to estimates if no duration saved (old sessions)
+          durationMinutes = event.type == ProgressEventType.sessionCompleted ? 45 : 20;
+        }
+        
+        weeklyData[weekIndex]!['total'] = weeklyData[weekIndex]!['total']! + durationMinutes;
+        
+        // Split weight/bodyweight: ~55% weight training, 45% bodyweight/conditioning
+        if (event.type == ProgressEventType.sessionCompleted) {
+          weeklyData[weekIndex]!['weight'] = weeklyData[weekIndex]!['weight']! + (durationMinutes * 0.55).round();
+          weeklyData[weekIndex]!['bodyweight'] = weeklyData[weekIndex]!['bodyweight']! + (durationMinutes * 0.45).round();
+        } else {
+          // Extras are typically bodyweight/conditioning
+          weeklyData[weekIndex]!['bodyweight'] = weeklyData[weekIndex]!['bodyweight']! + durationMinutes;
+        }
       }
     }
 
-    final maxSessions = weeklySessionCounts.values.isEmpty 
+    final maxMinutes = weeklyData.values.isEmpty 
         ? 1 
-        : weeklySessionCounts.values.reduce((a, b) => a > b ? a : b);
+        : weeklyData.values.map((d) => d['total']!).reduce((a, b) => a > b ? a : b);
 
     return Padding(
       padding: AppSpacing.horizontalPage,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
+          // Section Header - consistent style
           Row(
             children: [
-              Icon(Icons.show_chart, color: AppTheme.primaryColor, size: 20),
+              Icon(
+                Icons.show_chart,
+                color: AppTheme.primaryColor,
+                size: 22,
+              ),
               const SizedBox(width: AppSpacing.sm),
               Text(
-                'PROGRESS OVER TIME',
-                style: AppTextStyles.labelXS.copyWith(
+                'TRAINING VOLUME',
+                style: AppTextStyles.labelMedium.copyWith(
                   color: AppTheme.primaryColor,
+                  letterSpacing: 1.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xs),
-          const GradientDivider(height: 1, margin: EdgeInsets.zero),
           const SizedBox(height: AppSpacing.lg),
 
-          // Weekly bars
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            decoration: BoxDecoration(
-              color: AppTheme.surfaceColor.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: AppTheme.primaryColor.withOpacity(0.1),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(4, (index) {
-                final count = weeklySessionCounts[index] ?? 0;
-                final fraction = maxSessions > 0 ? count / maxSessions : 0.0;
-                final weekLabel = index == 3 ? 'This\nWeek' : '${4 - index}w\nago';
+          // Weekly bars - NO CONTAINER, just floating bars
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: List.generate(4, (index) {
+              final data = weeklyData[index];
+              final totalMinutes = data?['total'] ?? 0;
+              final weightMinutes = data?['weight'] ?? 0;
+              final bodyweightMinutes = data?['bodyweight'] ?? 0;
+              
+              final fraction = maxMinutes > 0 ? totalMinutes / maxMinutes : 0.0;
+              
+              // Better week labels: "Week 1", "Week 2", "Week 3", "Now"
+              final weekLabel = index == 3 ? 'Now' : 'Week ${4 - index}';
 
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Column(
-                      children: [
-                        Text(
-                          '$count',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: count > 0 ? AppTheme.primaryColor : Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Container(
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: AppTheme.surfaceColor,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: AppTheme.primaryColor.withOpacity(0.2),
-                              width: 1,
-                            ),
-                          ),
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Column(
+                    children: [
+                      // Week label at TOP - consistent position
+                      SizedBox(
+                        height: 32, // Fixed height for alignment
+                        child: Align(
                           alignment: Alignment.bottomCenter,
-                          child: FractionallySizedBox(
-                            heightFactor: fraction.clamp(0.1, 1.0),
-                            widthFactor: 1.0,
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: count > 0
-                                      ? [
-                                          AppTheme.primaryColor.withOpacity(0.6),
-                                          AppTheme.primaryColor,
-                                        ]
-                                      : [
-                                          Colors.grey[800]!,
-                                          Colors.grey[700]!,
-                                        ],
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                          child: Text(
+                            weekLabel,
+                            style: AppTextStyles.labelSmall.copyWith(
+                              color: index == 3 ? AppTheme.primaryColor : AppTheme.tertiaryTextColor,
+                              fontWeight: FontWeight.w600,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          weekLabel,
-                          style: AppTextStyles.labelXS.copyWith(
-                            color: Colors.grey[600],
-                            height: 1.1,
-                          ),
-                          textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      
+                      // Total minutes
+                      Text(
+                        '$totalMinutes',
+                        style: AppTextStyles.subtitle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: totalMinutes > 0 ? AppTheme.primaryColor : AppTheme.tertiaryTextColor,
+                          fontSize: 20,
+                          height: 1,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'MIN',
+                        style: AppTextStyles.labelSmall.copyWith(
+                          color: totalMinutes > 0 ? AppTheme.primaryColor.withOpacity(0.7) : AppTheme.tertiaryTextColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      
+                      // Floating bar with glow - NO BACKGROUND CONTAINER
+                      Container(
+                        height: 120,
+                        alignment: Alignment.bottomCenter,
+                        child: totalMinutes > 0 
+                            ? FractionallySizedBox(
+                                heightFactor: fraction.clamp(0.15, 1.0),
+                                widthFactor: 1.0,
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        AppTheme.primaryColor.withOpacity(0.4),
+                                        AppTheme.primaryColor,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppTheme.primaryColor.withOpacity(0.3),
+                                        blurRadius: 12,
+                                        spreadRadius: 0,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      
+                      // Split indicator at BOTTOM - consistent position
+                      SizedBox(
+                        height: 24, // Fixed height for alignment
+                        child: totalMinutes > 0
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    '$weightMinutes',
+                                    style: AppTextStyles.labelXS.copyWith(
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    '$bodyweightMinutes',
+                                    style: AppTextStyles.labelXS.copyWith(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                    ],
                   ),
-                );
-              }),
-            ),
+                ),
+              );
+            }),
+          ),
+          
+          // Legend - clean, no container
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Weight Training',
+                style: AppTextStyles.labelSmall.copyWith(
+                  color: AppTheme.secondaryTextColor,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Bodyweight/Conditioning',
+                style: AppTextStyles.labelSmall.copyWith(
+                  color: AppTheme.secondaryTextColor,
+                ),
+              ),
+            ],
           ),
 
-          if (recentSessions.isEmpty)
+          if (recentEvents.isEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.md),
+              padding: const EdgeInsets.only(top: AppSpacing.lg),
               child: Center(
                 child: Text(
-                  'Complete sessions to see your progress here',
+                  'Complete sessions to see your training volume',
                   style: AppTextStyles.small.copyWith(
                     color: Colors.grey[600],
                     fontStyle: FontStyle.italic,
@@ -410,23 +550,28 @@ class ModernProgressScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Section Header
+              // Section Header - consistent style
               Row(
                 children: [
-                  Icon(Icons.radar, color: AppTheme.accentGold, size: 20),
+                  Icon(
+                    Icons.radar,
+                    color: AppTheme.primaryColor,
+                    size: 22,
+                  ),
                   const SizedBox(width: AppSpacing.sm),
                   Text(
                     'PERFORMANCE PROFILE',
-                    style: AppTextStyles.labelXS.copyWith(
-                      color: AppTheme.accentGold,
+                    style: AppTextStyles.labelMedium.copyWith(
+                      color: AppTheme.primaryColor,
+                      letterSpacing: 1.5,
                     ),
                   ),
                   const Spacer(),
                   IconButton(
                     icon: Icon(
                       Icons.info_outline,
-                      size: 18,
-                      color: Colors.grey[600],
+                      size: 20,
+                      color: AppTheme.tertiaryTextColor,
                     ),
                     onPressed: () => _showPerformanceProfileInfo(context),
                     padding: EdgeInsets.zero,
@@ -434,8 +579,6 @@ class ModernProgressScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.xs),
-              const GradientDivider(height: 1, margin: EdgeInsets.zero),
               const SizedBox(height: AppSpacing.lg),
 
               if (!hasData)
@@ -453,114 +596,193 @@ class ModernProgressScreen extends ConsumerWidget {
                   ),
                 )
               else
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceColor.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppTheme.accentGold.withOpacity(0.1),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
-                    children: mainCategories.map((category) {
-                      final progress = categoryProgress[category] ?? 0.0;
-                      final color = _getCategoryColor(category);
-                      final name = _getExerciseCategoryDisplayName(category);
-                      
-                      // Determine if this is a focus area (below threshold)
-                      final isFocusArea = progress > 0 && progress < 15.0;
+                // NO CONTAINER - just clean floating bars
+                Column(
+                  children: [
+                    ...mainCategories.map((category) {
+                        final progress = categoryProgress[category] ?? 0.0;
+                        final color = _getCategoryColor(category);
+                        final name = _getExerciseCategoryDisplayName(category);
+                        final description = _getCategoryDescription(category);
+                        
+                        // Calculate total training volume
+                        final totalProgress = mainCategories
+                            .map((cat) => categoryProgress[cat] ?? 0.0)
+                            .reduce((a, b) => a + b);
+                        
+                        // Calculate actual percentage of this category
+                        final actualPercentage = totalProgress > 0 
+                            ? (progress / totalProgress) * 100 
+                            : 0.0;
+                        
+                        // Ideal hockey training distribution
+                        final idealPercentage = _getIdealCategoryPercentage(category);
+                        
+                        // Show FOCUS if category is below 50% of its ideal target
+                        // This scales properly for all categories (30% power needs 15%+, 10% agility needs 5%+)
+                        final isFocusArea = totalProgress > 0 && 
+                                           idealPercentage > 0 && 
+                                           actualPercentage < (idealPercentage * 0.5);
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Text(
-                                  name.toUpperCase(),
-                                  style: AppTextStyles.labelXS.copyWith(
-                                    color: Colors.grey[400],
-                                  ),
-                                ),
-                                const Spacer(),
-                                if (isFocusArea)
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: 2,
-                                    ),
+                                    width: 10,
+                                    height: 10,
                                     decoration: BoxDecoration(
-                                      color: AppTheme.accentGold.withOpacity(0.15),
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(
-                                        color: AppTheme.accentGold.withOpacity(0.3),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'FOCUS AREA',
-                                      style: AppTextStyles.labelXS.copyWith(
-                                        color: AppTheme.accentGold,
-                                        fontSize: 8,
-                                      ),
+                                      color: color,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: color.withOpacity(0.5),
+                                          blurRadius: 8,
+                                          spreadRadius: 0,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Text(
-                                  '${progress.toInt()}',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: color,
+                                  const SizedBox(width: AppSpacing.sm),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              name.toUpperCase(),
+                                              style: AppTextStyles.labelMedium.copyWith(
+                                                color: AppTheme.secondaryTextColor,
+                                              ),
+                                            ),
+                                            const SizedBox(width: AppSpacing.xs),
+                                            if (isFocusArea)
+                                              TweenAnimationBuilder<double>(
+                                                duration: const Duration(milliseconds: 600),
+                                                tween: Tween(begin: 0.0, end: 1.0),
+                                                builder: (context, value, child) {
+                                                  return Transform.scale(
+                                                    scale: 0.8 + (0.2 * value),
+                                                    child: Opacity(
+                                                      opacity: value,
+                                                      child: Container(
+                                                        padding: const EdgeInsets.symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 3,
+                                                        ),
+                                                        decoration: BoxDecoration(
+                                                          gradient: LinearGradient(
+                                                            colors: [
+                                                              AppTheme.accentGold.withOpacity(0.3),
+                                                              AppTheme.accentGold.withOpacity(0.15),
+                                                            ],
+                                                          ),
+                                                          borderRadius: BorderRadius.circular(6),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: AppTheme.accentGold.withOpacity(0.3 * value),
+                                                              blurRadius: 12,
+                                                              spreadRadius: -1,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: Text(
+                                                          'FOCUS',
+                                                          style: AppTextStyles.labelXS.copyWith(
+                                                            color: AppTheme.accentGold,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          description,
+                                          style: AppTextStyles.labelSmall.copyWith(
+                                            color: AppTheme.tertiaryTextColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Stack(
-                              children: [
-                                // Background bar
-                                Container(
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.surfaceColor,
-                                    borderRadius: BorderRadius.circular(4),
+                                  const SizedBox(width: AppSpacing.sm),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        '${actualPercentage.toStringAsFixed(0)}%',
+                                        style: AppTextStyles.bodyMedium.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: color,
+                                        ),
+                                      ),
+                                      Text(
+                                        'of training',
+                                        style: AppTextStyles.labelXS.copyWith(
+                                          color: AppTheme.tertiaryTextColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                // Progress bar
-                                FractionallySizedBox(
-                                  widthFactor: (progress / 100).clamp(0.0, 1.0),
-                                  child: Container(
-                                    height: 8,
+                                ],
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              Stack(
+                                children: [
+                                  // Background bar with subtle glow
+                                  Container(
+                                    height: 6,
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          color.withOpacity(0.6),
-                                          color,
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(4),
+                                      color: color.withOpacity(0.08),
+                                      borderRadius: BorderRadius.circular(3),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                                  // Progress bar with glow effect - shows relative proportion
+                                  TweenAnimationBuilder<double>(
+                                    duration: const Duration(milliseconds: 800),
+                                    curve: Curves.easeOutCubic,
+                                    tween: Tween(begin: 0.0, end: actualPercentage / 100),
+                                    builder: (context, value, child) {
+                                      return FractionallySizedBox(
+                                        widthFactor: value.clamp(0.02, 1.0),
+                                        child: Container(
+                                          height: 6,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                color.withOpacity(0.7),
+                                                color,
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.circular(3),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: color.withOpacity(0.5),
+                                                blurRadius: 8,
+                                                spreadRadius: 0,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                  ],
                 ),
             ],
           ),
@@ -597,43 +819,30 @@ class ModernProgressScreen extends ConsumerWidget {
 
         return Padding(
           padding: AppSpacing.horizontalPage,
-          child: Container(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.primaryColor.withOpacity(0.05),
-                  AppTheme.accentGold.withOpacity(0.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.emoji_events,
+                    color: AppTheme.primaryColor,
+                    size: 22,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text(
+                    'ACHIEVEMENTS',
+                    style: AppTextStyles.labelMedium.copyWith(
+                      color: AppTheme.primaryColor,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
                 ],
               ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: AppTheme.primaryColor.withOpacity(0.15),
-                width: 1,
-              ),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.emoji_events,
-                      color: AppTheme.accentGold,
-                      size: 20,
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      'ACHIEVEMENTS',
-                      style: AppTextStyles.labelXS.copyWith(
-                        color: AppTheme.accentGold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
+              const SizedBox(height: AppSpacing.lg),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
                     _buildAchievementChip(
                       context,
                       '${appState.currentStreak}',
@@ -666,7 +875,6 @@ class ModernProgressScreen extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
         );
       },
     );
@@ -693,8 +901,9 @@ class ModernProgressScreen extends ConsumerWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: AppTextStyles.labelXS.copyWith(
-            color: Colors.grey[600],
+          style: AppTextStyles.labelSmall.copyWith(
+            color: AppTheme.tertiaryTextColor,
+            fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
@@ -735,7 +944,41 @@ class ModernProgressScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
-                'Focus Areas are categories where you have less than 15 completed exercises. Building balance across all categories creates a well-rounded athlete.',
+                'Each session is distributed proportionally across categories based on exercises completed. For example, a session with 6 Strength + 2 Power + 2 Conditioning = 60% Strength + 20% Power + 20% Conditioning.',
+                style: AppTextStyles.small.copyWith(
+                  color: Colors.grey[300],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Compare your actual distribution to the ideal:',
+                style: AppTextStyles.small.copyWith(
+                  color: Colors.grey[300],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Ideal hockey distribution:',
+                style: AppTextStyles.small.copyWith(
+                  color: AppTheme.accentGold,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                '• Power: 30%\n'
+                '• Strength: 25%\n'
+                '• Speed: 20%\n'
+                '• Conditioning: 15%\n'
+                '• Agility: 10%',
+                style: AppTextStyles.small.copyWith(
+                  color: Colors.grey[300],
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Categories marked as FOCUS are below 50% of their ideal target. Adjust your training to balance your profile over time.',
                 style: AppTextStyles.small.copyWith(
                   color: Colors.grey[400],
                 ),
@@ -815,6 +1058,54 @@ class ModernProgressScreen extends ConsumerWidget {
         return Colors.deepOrange;
       case ExerciseCategory.gameSituation:
         return Colors.cyan;
+    }
+  }
+
+  String _getCategoryDescription(ExerciseCategory category) {
+    switch (category) {
+      case ExerciseCategory.power:
+        return 'Explosive skating & shooting';
+      case ExerciseCategory.strength:
+        return 'Foundation for injury prevention';
+      case ExerciseCategory.speed:
+        return 'Acceleration & transitions';
+      case ExerciseCategory.conditioning:
+        return 'Game stamina & endurance';
+      case ExerciseCategory.agility:
+        return 'Quick direction changes';
+      case ExerciseCategory.technique:
+        return 'Skill refinement';
+      case ExerciseCategory.balance:
+        return 'Stability & control';
+      case ExerciseCategory.flexibility:
+        return 'Mobility & recovery';
+      case ExerciseCategory.warmup:
+        return 'Preparation';
+      case ExerciseCategory.recovery:
+        return 'Rest & regeneration';
+      case ExerciseCategory.stickSkills:
+        return 'Puck handling';
+      case ExerciseCategory.gameSituation:
+        return 'Match simulation';
+    }
+  }
+
+  /// Returns the ideal percentage for each category based on optimal hockey training distribution
+  /// Total: Power 30%, Strength 25%, Speed 20%, Conditioning 15%, Agility 10%
+  double _getIdealCategoryPercentage(ExerciseCategory category) {
+    switch (category) {
+      case ExerciseCategory.power:
+        return 30.0;
+      case ExerciseCategory.strength:
+        return 25.0;
+      case ExerciseCategory.speed:
+        return 20.0;
+      case ExerciseCategory.conditioning:
+        return 15.0;
+      case ExerciseCategory.agility:
+        return 10.0;
+      default:
+        return 0.0;
     }
   }
 }

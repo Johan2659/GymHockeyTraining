@@ -293,29 +293,19 @@ class PerformanceAnalyticsRepositoryImpl
               (sessionCategoryCounts[exercise.category] ?? 0) + 1;
         }
 
-        // Find the dominant category in this session (category with most exercises)
-        ExerciseCategory? dominantCategory;
-        int maxCount = 0;
-        
-        for (final entry in sessionCategoryCounts.entries) {
-          if (entry.value > maxCount) {
-            maxCount = entry.value;
-            dominantCategory = entry.key;
-          }
-        }
+        // Calculate total exercises in this session
+        final totalExercisesInSession = sessionCategoryCounts.values
+            .fold(0, (sum, count) => sum + count);
 
-        // Award session points based on exercises done
-        // Dominant category gets bonus to reflect session focus
-        if (dominantCategory != null) {
+        // Distribute 1.0 session point proportionally across categories
+        // Example: 6 Strength + 2 Power + 2 Conditioning = 10 total
+        // → Strength gets 0.6, Power gets 0.2, Conditioning gets 0.2
+        if (totalExercisesInSession > 0) {
           for (final entry in sessionCategoryCounts.entries) {
             if (entry.value > 0) {
-              // Dominant category gets 50% bonus, others get base points
-              final isDominant = entry.key == dominantCategory;
-              final basePoints = entry.value.toDouble();
-              final bonusMultiplier = isDominant ? 1.5 : 1.0;
-              
+              final proportion = entry.value / totalExercisesInSession;
               categoryVolumes[entry.key] = 
-                  (categoryVolumes[entry.key] ?? 0.0) + (basePoints * bonusMultiplier);
+                  (categoryVolumes[entry.key] ?? 0.0) + proportion;
             }
           }
         }

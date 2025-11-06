@@ -36,6 +36,12 @@ class AppTheme {
   /// White for text on primary color
   static const Color onPrimaryColor = Color(0xFFFFFFFF);
   
+  /// Secondary text color - better contrast
+  static const Color secondaryTextColor = Color(0xFFB0B0B0);
+  
+  /// Tertiary text color - subtle text
+  static const Color tertiaryTextColor = Color(0xFF7A7A7A);
+  
   /// Secondary accent (keeping backward compatibility)
   static const Color accentColor = primaryColor;
   
@@ -264,10 +270,10 @@ class AppTextStyles {
   
   /// Small Text
   static const TextStyle small = TextStyle(
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.2,
-    color: Color(0xFF8A8A8A),
+    color: Color(0xFF9A9A9A),
     height: 1.4,
   );
 
@@ -275,12 +281,30 @@ class AppTextStyles {
   // LABEL STYLES
   // ============================================================================
   
-  /// Extra Small Label - Uppercase tags
+  /// Label Small - For descriptions and secondary info (GYM-optimized)
+  static const TextStyle labelSmall = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.3,
+    color: Color(0xFF9A9A9A),
+    height: 1.3,
+  );
+  
+  /// Label Medium - For category names and tags (GYM-optimized)
+  static const TextStyle labelMedium = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 1.0,
+    color: Color(0xFF9A9A9A),
+    height: 1.2,
+  );
+  
+  /// Extra Small Label - Uppercase micro tags
   static const TextStyle labelXS = TextStyle(
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: FontWeight.bold,
     letterSpacing: 1.2,
-    color: Color(0xFF8A8A8A),
+    color: Color(0xFF9A9A9A),
     height: 1.2,
   );
   

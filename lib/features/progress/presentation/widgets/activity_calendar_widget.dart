@@ -27,59 +27,64 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: AppSpacing.card,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header with title and navigation
+        Row(
           children: [
-            // Header with title and navigation
-            Row(
-              children: [
-                Icon(Icons.calendar_month, color: AppTheme.primaryColor, size: 24),
-                SizedBox(width: AppSpacing.sm + 2),
-                Text(
-                  'Activity',
-                  style: AppTextStyles.titleL.copyWith(
-                        color: AppTheme.primaryColor,
-                      ),
-                ),
-                const Spacer(),
-                // Month navigation
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
-                  iconSize: 28,
-                  color: Colors.grey[400],
-                  onPressed: _previousMonth,
-                ),
-                Text(
-                  _formatMonthYear(_selectedMonth),
-                  style: AppTextStyles.subtitle.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[300],
-                      ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  iconSize: 28,
-                  color: Colors.grey[400],
-                  onPressed: _nextMonth,
-                ),
-              ],
+            Icon(
+              Icons.calendar_month,
+              color: AppTheme.primaryColor,
+              size: 22,
             ),
-
-            const SizedBox(height: AppSpacing.md),
-
-            // Calendar grid
-            _buildCalendar(),
-
-            const SizedBox(height: AppSpacing.md),
-
-            // Legend
-            _buildLegend(),
-          ],
-        ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'ACTIVITY CALENDAR',
+              style: AppTextStyles.labelMedium.copyWith(
+                color: AppTheme.primaryColor,
+                letterSpacing: 1.5,
+              ),
+            ),
+            const Spacer(),
+            // Month navigation - constrained to prevent overflow
+            IconButton(
+              icon: const Icon(Icons.chevron_left),
+              iconSize: 24,
+              color: Colors.grey[400],
+              onPressed: _previousMonth,
+              padding: const EdgeInsets.all(4),
+            ),
+            Flexible(
+              child: Text(
+                _formatMonthYear(_selectedMonth),
+                style: AppTextStyles.labelSmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[300],
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.chevron_right),
+              iconSize: 24,
+              color: Colors.grey[400],
+              onPressed: _nextMonth,
+              padding: const EdgeInsets.all(4),
+            ),
+        ],
       ),
+      const SizedBox(height: AppSpacing.lg),
+
+      // Calendar grid
+      _buildCalendar(),
+
+      const SizedBox(height: AppSpacing.md),
+
+      // Legend
+      _buildLegend(),
+      ],
     );
   }
 

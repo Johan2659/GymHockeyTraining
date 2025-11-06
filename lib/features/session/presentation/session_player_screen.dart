@@ -382,6 +382,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           if (sessionInProgress.lastWeightUsed != null) {
             _lastWeightUsed.addAll(sessionInProgress.lastWeightUsed!);
           }
+          
+          // Restore elapsed time
+          if (sessionInProgress.elapsedSeconds != null) {
+            _elapsedSeconds = sessionInProgress.elapsedSeconds!;
+          }
         });
 
         // Jump to the saved page
@@ -391,7 +396,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           }
         });
 
-        debugPrint('Session state restored from saved progress');
+        debugPrint('Session state restored from saved progress (elapsed: $_elapsedSeconds seconds)');
       }
     } catch (error) {
       debugPrint('Failed to restore session state: $error');
@@ -400,6 +405,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
 
   Future<void> _saveSessionStateAndExit() async {
     try {
+      // Stop the duration timer when pausing
+      _durationTimer?.cancel();
+      
       // Convert exercise performances to JSON-serializable format
       final Map<String, dynamic> performancesJson = {};
       _exercisePerformances.forEach((key, value) {
@@ -415,6 +423,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         exercisePerformances: performancesJson,
         lastWeightUsed: Map<String, double>.from(_lastWeightUsed),
         pausedAt: DateTime.now(),
+        elapsedSeconds: _elapsedSeconds, // Save current elapsed time
       );
 
       final success = await ref

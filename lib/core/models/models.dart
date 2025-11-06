@@ -267,6 +267,7 @@ class SessionInProgress {
     required this.exercisePerformances,
     this.lastWeightUsed,
     required this.pausedAt,
+    this.elapsedSeconds,
   });
 
   final String programId;
@@ -277,6 +278,7 @@ class SessionInProgress {
   final Map<String, dynamic> exercisePerformances; // Stored as dynamic JSON
   final Map<String, double>? lastWeightUsed;
   final DateTime pausedAt;
+  final int? elapsedSeconds; // Track duration when paused
 
   factory SessionInProgress.fromJson(Map<String, dynamic> json) =>
       _$SessionInProgressFromJson(json);
@@ -291,6 +293,7 @@ class SessionInProgress {
     Map<String, dynamic>? exercisePerformances,
     Map<String, double>? lastWeightUsed,
     DateTime? pausedAt,
+    int? elapsedSeconds,
   }) {
     return SessionInProgress(
       programId: programId ?? this.programId,
@@ -301,6 +304,7 @@ class SessionInProgress {
       exercisePerformances: exercisePerformances ?? this.exercisePerformances,
       lastWeightUsed: lastWeightUsed ?? this.lastWeightUsed,
       pausedAt: pausedAt ?? this.pausedAt,
+      elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
     );
   }
 }

@@ -124,6 +124,7 @@ SessionInProgress _$SessionInProgressFromJson(Map<String, dynamic> json) =>
         (k, e) => MapEntry(k, (e as num).toDouble()),
       ),
       pausedAt: DateTime.parse(json['pausedAt'] as String),
+      elapsedSeconds: (json['elapsedSeconds'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$SessionInProgressToJson(SessionInProgress instance) =>
@@ -136,6 +137,7 @@ Map<String, dynamic> _$SessionInProgressToJson(SessionInProgress instance) =>
       'exercisePerformances': instance.exercisePerformances,
       'lastWeightUsed': instance.lastWeightUsed,
       'pausedAt': instance.pausedAt.toIso8601String(),
+      'elapsedSeconds': instance.elapsedSeconds,
     };
 
 ProgramState _$ProgramStateFromJson(Map<String, dynamic> json) => ProgramState(
