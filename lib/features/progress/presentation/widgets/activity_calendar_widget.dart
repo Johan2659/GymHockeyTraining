@@ -51,7 +51,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
             IconButton(
               icon: const Icon(Icons.chevron_left),
               iconSize: 24,
-              color: Colors.grey[400],
+              color: AppTheme.secondaryTextColor,
               onPressed: _previousMonth,
               padding: const EdgeInsets.all(4),
             ),
@@ -60,7 +60,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
                 _formatMonthYear(_selectedMonth),
                 style: AppTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[300],
+                  color: AppTheme.grey300,
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -69,7 +69,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
             IconButton(
               icon: const Icon(Icons.chevron_right),
               iconSize: 24,
-              color: Colors.grey[400],
+              color: AppTheme.secondaryTextColor,
               onPressed: _nextMonth,
               padding: const EdgeInsets.all(4),
             ),
@@ -166,7 +166,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
         textAlign: TextAlign.center,
         style: AppTextStyles.small.copyWith(
           fontWeight: FontWeight.w600,
-          color: Colors.grey[500],
+          color: AppTheme.grey500,
         ),
       ),
     );
@@ -189,9 +189,9 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
     Color textColor;
     
     if (hasTraining) {
-      textColor = Colors.white;
+      textColor = AppTheme.onPrimaryColor;
     } else {
-      textColor = Colors.grey[600]!;
+      textColor = AppTheme.grey600;
     }
 
     Widget cellContent;
@@ -200,7 +200,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
       // No training - simple grey cell
       cellContent = Container(
         decoration: BoxDecoration(
-          color: Colors.grey[900],
+          color: AppTheme.grey900,
           borderRadius: BorderRadius.circular(AppSpacing.sm),
           border: isToday
               ? Border.all(color: AppTheme.accentColor, width: 2)
@@ -233,7 +233,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
               Positioned.fill(
                 child: CustomPaint(
                   painter: _TrianglePainter(
-                    color: Colors.blue,
+                    color: AppTheme.programs,
                     isBottomLeft: true,
                   ),
                 ),
@@ -242,7 +242,7 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
               Positioned.fill(
                 child: CustomPaint(
                   painter: _TrianglePainter(
-                    color: Colors.purple,
+                    color: AppTheme.extras,
                     isBottomLeft: false,
                   ),
                 ),
@@ -254,11 +254,11 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: textColor,
-                    shadows: const [
+                    shadows: [
                       Shadow(
                         offset: Offset(0, 1),
                         blurRadius: 2,
-                        color: Colors.black45,
+                        color: Colors.black.withOpacity(0.3),
                       ),
                     ],
                   ),
@@ -272,11 +272,11 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
       // Only program sessions - Blue with intensity
       Color cellColor;
       if (sessionTypes['program']! >= 3) {
-        cellColor = Colors.blue;
+        cellColor = AppTheme.programs;
       } else if (sessionTypes['program']! == 2) {
-        cellColor = Colors.blue.withOpacity(0.7);
+        cellColor = AppTheme.programs.withOpacity(0.7);
       } else {
-        cellColor = Colors.blue.withOpacity(0.5);
+        cellColor = AppTheme.programs.withOpacity(0.5);
       }
       
       cellContent = Container(
@@ -301,11 +301,11 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
       // Only extra sessions - Purple with intensity
       Color cellColor;
       if (sessionTypes['extra']! >= 3) {
-        cellColor = Colors.purple;
+        cellColor = AppTheme.extras;
       } else if (sessionTypes['extra']! == 2) {
-        cellColor = Colors.purple.withOpacity(0.7);
+        cellColor = AppTheme.extras.withOpacity(0.7);
       } else {
-        cellColor = Colors.purple.withOpacity(0.5);
+        cellColor = AppTheme.extras.withOpacity(0.5);
       }
       
       cellContent = Container(
@@ -342,19 +342,19 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildLegendItem('Program', Colors.blue),
+            _buildLegendItem('Program', AppTheme.programs),
             SizedBox(width: AppSpacing.md),
-            _buildLegendItem('Extra', Colors.purple),
+            _buildLegendItem('Extra', AppTheme.extras),
             SizedBox(width: AppSpacing.md),
-            _buildLegendItemSplit('Both', Colors.blue, Colors.purple),
+            _buildLegendItemSplit('Both', AppTheme.programs, AppTheme.extras),
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
         // Second row: Intensity
         Text(
           'Color intensity shows session count (lighter = less, brighter = more)',
-          style: AppTextStyles.labelXS.copyWith(
-            color: Colors.grey[600],
+          style: AppTextStyles.labelMicro.copyWith(
+            color: AppTheme.grey600,
             fontStyle: FontStyle.italic,
           ),
           textAlign: TextAlign.center,
@@ -377,8 +377,8 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
         const SizedBox(width: AppSpacing.xs),
         Text(
           label,
-          style: AppTextStyles.labelXS.copyWith(
-            color: Colors.grey[500],
+          style: AppTextStyles.labelMicro.copyWith(
+            color: AppTheme.grey500,
           ),
         ),
       ],
@@ -418,8 +418,8 @@ class _ActivityCalendarWidgetState extends State<ActivityCalendarWidget> {
         const SizedBox(width: AppSpacing.xs),
         Text(
           label,
-          style: AppTextStyles.labelXS.copyWith(
-            color: Colors.grey[500],
+          style: AppTextStyles.labelMicro.copyWith(
+            color: AppTheme.grey500,
           ),
         ),
       ],

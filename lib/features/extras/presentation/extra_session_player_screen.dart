@@ -419,7 +419,7 @@ class _ExtraSessionPlayerScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to complete session: $error'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.error,
         ),
       );
     } finally {
@@ -629,7 +629,7 @@ class _ExtraSessionPlayerScreenState
                                   width: isActive ? 10 : 8,
                                   height: isActive ? 10 : 8,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey
+                                    color: AppTheme.notStarted
                                         .withOpacity(isActive ? 0.6 : 0.3),
                                     shape: BoxShape.circle,
                                   ),
@@ -718,7 +718,7 @@ class _ExtraSessionPlayerScreenState
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: AppTheme.shadowColor,
               blurRadius: 20,
               offset: const Offset(0, 6),
             ),
@@ -791,7 +791,7 @@ class _ExtraSessionPlayerScreenState
               Text(
                 'Exercises Progress',
                 style: TextStyle(
-                  color: Colors.grey[500],
+                  color: AppTheme.grey500,
                   fontSize: (screenWidth * 0.029).clamp(10.5, 12.0),
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.4,
@@ -813,16 +813,16 @@ class _ExtraSessionPlayerScreenState
                     Color segmentColor;
                     if (isCurrent) {
                       // Current exercise - solid blue
-                      segmentColor = const Color(0xFF42A5F5);
+                      segmentColor = AppTheme.programs;
                     } else if (isFullyCompleted) {
                       // Fully completed - green
-                      segmentColor = const Color(0xFF4CAF50);
+                      segmentColor = AppTheme.completed;
                     } else if (isPartiallyDone) {
                       // Skipped/partially done - orange (attention but not negative)
-                      segmentColor = Colors.orange;
+                      segmentColor = AppTheme.inProgress;
                     } else {
                       // Future exercise - low opacity blue
-                      segmentColor = const Color(0xFF42A5F5).withOpacity(0.25);
+                      segmentColor = AppTheme.programs.withOpacity(0.25);
                     }
 
                     return Expanded(
@@ -893,7 +893,7 @@ class _ExtraSessionPlayerScreenState
 
     return Container(
       decoration: BoxDecoration(
-        color: isPrimary ? AppTheme.primaryColor : Colors.grey[800],
+        color: isPrimary ? AppTheme.primaryColor : AppTheme.grey800,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isPrimary
@@ -935,14 +935,14 @@ class _ExtraSessionPlayerScreenState
                         if (icon == Icons.arrow_back_ios_new_rounded) ...[
                           Icon(icon,
                               size: (screenWidth * 0.045).clamp(16.0, 18.0),
-                              color: Colors.white),
+                              color: AppTheme.onPrimaryColor),
                           SizedBox(
                               width: (screenWidth * 0.018).clamp(6.5, 8.0)),
                         ],
                         Text(
                           label,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppTheme.onPrimaryColor,
                             fontSize: (screenWidth * 0.04).clamp(14.5, 16.0),
                             fontWeight: FontWeight.w700,
                             height: 1,
@@ -954,7 +954,7 @@ class _ExtraSessionPlayerScreenState
                               width: (screenWidth * 0.018).clamp(6.5, 8.0)),
                           Icon(icon,
                               size: (screenWidth * 0.045).clamp(16.0, 18.0),
-                              color: Colors.white),
+                              color: AppTheme.onPrimaryColor),
                         ],
                       ],
                     ),
@@ -1008,7 +1008,7 @@ class _ExtraSessionPlayerScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey.shade600),
+            Icon(Icons.search_off, size: 64, color: AppTheme.notStarted),
             const SizedBox(height: AppSpacing.md),
             Text(
               'Extra not found',
@@ -1019,7 +1019,7 @@ class _ExtraSessionPlayerScreenState
               'Please return to the extras list and try again.',
               textAlign: TextAlign.center,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: Colors.grey[500],
+                color: AppTheme.grey500,
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -1040,7 +1040,7 @@ class _ExtraSessionPlayerScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.fitness_center, size: 64, color: Colors.grey.shade600),
+            Icon(Icons.fitness_center, size: 64, color: AppTheme.notStarted),
             const SizedBox(height: AppSpacing.md),
             Text(
               'Session coming soon',
@@ -1051,7 +1051,7 @@ class _ExtraSessionPlayerScreenState
               'We are still building the exercise list for ${extra.title}. Check back shortly!',
               textAlign: TextAlign.center,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: Colors.grey[500],
+                color: AppTheme.grey500,
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -1083,13 +1083,13 @@ class _ExtraSessionPlayerScreenState
           height: badgeSize,
           decoration: BoxDecoration(
             color:
-                isCompleted ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
+                isCompleted ? AppTheme.completed : AppTheme.primaryColor,
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
             boxShadow: [
               BoxShadow(
                 color: (isCompleted
-                        ? const Color(0xFF4CAF50)
+                        ? AppTheme.completed
                         : AppTheme.primaryColor)
                     .withOpacity(0.3),
                 blurRadius: 12,
@@ -1100,11 +1100,11 @@ class _ExtraSessionPlayerScreenState
           child: Center(
             child: isCompleted
                 ? Icon(Icons.check_rounded,
-                    color: Colors.white, size: badgeSize * 0.5)
+                    color: AppTheme.onPrimaryColor, size: badgeSize * 0.5)
                 : Text(
                     '${_currentPage + 1}',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppTheme.onPrimaryColor,
                       fontSize: badgeSize * 0.44,
                       fontWeight: FontWeight.bold,
                       height: 1,
@@ -1117,7 +1117,7 @@ class _ExtraSessionPlayerScreenState
           child: Text(
             exercise.name,
             style: TextStyle(
-              color: Colors.white,
+              color: AppTheme.onPrimaryColor,
               fontWeight: FontWeight.w800,
               fontSize: titleSize,
               height: 1.15,
@@ -1133,7 +1133,7 @@ class _ExtraSessionPlayerScreenState
             IconButton(
               icon: Icon(
                 Icons.play_circle_outline,
-                color: const Color(0xFF42A5F5),
+                color: AppTheme.programs,
                 size: (screenWidth * 0.08).clamp(28.0, 34.0),
               ),
               onPressed: exercise.youtubeQuery.isNotEmpty
@@ -1151,7 +1151,7 @@ class _ExtraSessionPlayerScreenState
                           const SnackBar(
                             content: Text(
                                 'Unable to open YouTube. Please check your internet connection.'),
-                            backgroundColor: Colors.red,
+                            backgroundColor: AppTheme.error,
                           ),
                         );
                       }
@@ -1166,7 +1166,7 @@ class _ExtraSessionPlayerScreenState
             Text(
               'Watch demo',
               style: TextStyle(
-                color: const Color(0xFF42A5F5),
+                color: AppTheme.programs,
                 fontSize: (screenWidth * 0.028).clamp(10.0, 11.0),
                 fontWeight: FontWeight.w600,
               ),
@@ -1225,7 +1225,7 @@ class _ExtraSessionPlayerScreenState
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor.withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[800]!, width: 1.5),
+        border: Border.all(color: AppTheme.grey800, width: 1.5),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1240,7 +1240,7 @@ class _ExtraSessionPlayerScreenState
           Container(
             width: 1.5,
             height: (screenWidth * 0.08).clamp(30.0, 34.0),
-            color: Colors.grey[800],
+            color: AppTheme.grey800,
           ),
           _buildInfoChip(
             icon: Icons.fitness_center,
@@ -1248,14 +1248,14 @@ class _ExtraSessionPlayerScreenState
                 ? '${exercise.duration}s'
                 : '${exercise.reps}',
             label: exercise.duration != null ? 'hold' : 'reps',
-            color: const Color(0xFF4CAF50),
+            color: AppTheme.completed,
             screenWidth: screenWidth,
           ),
           if (exercise.rest != null) ...[
             Container(
               width: 1.5,
               height: (screenWidth * 0.08).clamp(30.0, 34.0),
-              color: Colors.grey[800],
+              color: AppTheme.grey800,
             ),
             _buildInfoChip(
               icon: Icons.hourglass_bottom_rounded,

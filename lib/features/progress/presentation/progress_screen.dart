@@ -25,7 +25,7 @@ class ProgressScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error, size: 48, color: Colors.red),
+              const Icon(Icons.error, size: 48, color: AppTheme.error),
               const SizedBox(height: 16),
               Text(
                 'Error loading progress data',
@@ -126,14 +126,14 @@ class ProgressScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             LinearProgressIndicator(
               value: progressToNextLevel,
-              backgroundColor: Colors.grey[700],
+              backgroundColor: AppTheme.grey700,
               valueColor: AlwaysStoppedAnimation(AppTheme.accentColor),
             ),
             const SizedBox(height: 4),
             Text(
               '${Selectors.xpPerLevel - xpInCurrentLevel} XP to Level ${level + 1}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
+                    color: AppTheme.secondaryTextColor,
                   ),
             ),
             if (appState.todayXP > 0) ...[
@@ -147,7 +147,7 @@ class ProgressScreen extends ConsumerWidget {
                 child: Text(
                   '+${appState.todayXP} today',
                   style: const TextStyle(
-                    color: Colors.green,
+                    color: AppTheme.completed,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -172,7 +172,7 @@ class ProgressScreen extends ConsumerWidget {
                 Icon(
                   Icons.local_fire_department,
                   color:
-                      appState.currentStreak > 0 ? Colors.orange : Colors.grey,
+                      appState.currentStreak > 0 ? AppTheme.inProgress : AppTheme.notStarted,
                   size: 20,
                 ),
                 const SizedBox(width: 6),
@@ -187,15 +187,15 @@ class ProgressScreen extends ConsumerWidget {
               '${appState.currentStreak} days',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: appState.currentStreak > 0
-                        ? Colors.orange
-                        : Colors.grey,
+                        ? AppTheme.inProgress
+                        : AppTheme.notStarted,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
               _getStreakMessage(appState.currentStreak),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[400],
+                    color: AppTheme.secondaryTextColor,
                   ),
             ),
             if (appState.xpMultiplier > 1.0) ...[
@@ -209,7 +209,7 @@ class ProgressScreen extends ConsumerWidget {
                 child: Text(
                   '${((appState.xpMultiplier - 1) * 100).toInt()}% XP Bonus',
                   style: const TextStyle(
-                    color: Colors.orange,
+                    color: AppTheme.inProgress,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -259,7 +259,7 @@ class ProgressScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               LinearProgressIndicator(
                 value: appState.percentCycle,
-                backgroundColor: Colors.grey[700],
+                backgroundColor: AppTheme.grey700,
                 valueColor: AlwaysStoppedAnimation(AppTheme.primaryColor),
                 minHeight: 8,
               ),
@@ -267,21 +267,21 @@ class ProgressScreen extends ConsumerWidget {
               Text(
                 _getCycleProgressMessage(appState.percentCycle),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[400],
+                      color: AppTheme.secondaryTextColor,
                     ),
               ),
             ] else ...[
               Text(
                 'No active program',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[400],
+                      color: AppTheme.secondaryTextColor,
                     ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Start a program to track your progress',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[500],
+                      color: AppTheme.grey500,
                     ),
               ),
             ],
@@ -341,8 +341,8 @@ class ProgressScreen extends ConsumerWidget {
                   Text(
                     _formatWeekday(day),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[400],
-                          fontSize: 10,
+                          color: AppTheme.secondaryTextColor,
+                          fontSize: 12,
                         ),
                   ),
                   const SizedBox(height: 6),
@@ -352,7 +352,7 @@ class ProgressScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color:
-                          hasActivity ? AppTheme.accentColor : Colors.grey[700],
+                          hasActivity ? AppTheme.accentColor : AppTheme.grey700,
                       border: isToday
                           ? Border.all(color: AppTheme.primaryColor, width: 2)
                           : null,
@@ -371,10 +371,10 @@ class ProgressScreen extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: isToday
                               ? AppTheme.primaryColor
-                              : Colors.grey[400],
+                              : AppTheme.secondaryTextColor,
                           fontWeight:
                               isToday ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 11,
+                          fontSize: 12,
                         ),
                   ),
                 ],
@@ -468,20 +468,20 @@ class ProgressScreen extends ConsumerWidget {
                     Icon(
                       Icons.fitness_center,
                       size: 48,
-                      color: Colors.grey[600],
+                      color: AppTheme.grey600,
                     ),
                     const SizedBox(height: 12),
                     Text(
                       'No performance records yet',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.grey[400],
+                            color: AppTheme.secondaryTextColor,
                           ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Complete strength exercises to track your max lifts!',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[500],
+                            color: AppTheme.grey500,
                           ),
                       textAlign: TextAlign.center,
                     ),
@@ -525,20 +525,20 @@ class ProgressScreen extends ConsumerWidget {
                     Icon(
                       Icons.timeline,
                       size: 48,
-                      color: Colors.grey[600],
+                      color: AppTheme.grey600,
                     ),
                     const SizedBox(height: 12),
                     Text(
                       'No milestones yet',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.grey[400],
+                            color: AppTheme.secondaryTextColor,
                           ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Complete sessions and challenges to see your achievements here',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[500],
+                            color: AppTheme.grey500,
                           ),
                       textAlign: TextAlign.center,
                     ),
@@ -640,7 +640,7 @@ class ProgressScreen extends ConsumerWidget {
         border: isLast
             ? null
             : Border(
-                bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
+                bottom: BorderSide(color: AppTheme.grey800, width: 0.5),
               ),
       ),
       child: Row(
@@ -684,13 +684,13 @@ class ProgressScreen extends ConsumerWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.star, color: Colors.orange, size: 12),
+                            Icon(Icons.star, color: AppTheme.inProgress, size: 12),
                             const SizedBox(width: 2),
                             Text(
                               'BONUS',
                               style: TextStyle(
-                                color: Colors.orange,
-                                fontSize: 10,
+                                color: AppTheme.inProgress,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -704,7 +704,7 @@ class ProgressScreen extends ConsumerWidget {
                 Text(
                   _getSessionSubtitle(sessionEvent, bonusEvent),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[400],
+                        color: AppTheme.secondaryTextColor,
                       ),
                 ),
               ],
@@ -713,7 +713,7 @@ class ProgressScreen extends ConsumerWidget {
           Text(
             _formatTime(sessionEvent.ts),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[500],
+                  color: AppTheme.grey500,
                 ),
           ),
         ],
@@ -731,7 +731,7 @@ class ProgressScreen extends ConsumerWidget {
         border: isLast
             ? null
             : Border(
-                bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
+                bottom: BorderSide(color: AppTheme.grey800, width: 0.5),
               ),
       ),
       child: Row(
@@ -743,7 +743,7 @@ class ProgressScreen extends ConsumerWidget {
               shape: BoxShape.circle,
               color: Colors.purple.withOpacity(0.2),
             ),
-            child: Icon(Icons.bolt, color: Colors.purple, size: 20),
+            child: Icon(Icons.bolt, color: AppTheme.extras, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -758,7 +758,7 @@ class ProgressScreen extends ConsumerWidget {
                 Text(
                   _getEventSubtitle(event),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[400],
+                        color: AppTheme.secondaryTextColor,
                       ),
                 ),
               ],
@@ -767,7 +767,7 @@ class ProgressScreen extends ConsumerWidget {
           Text(
             _formatTime(event.ts),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[500],
+                  color: AppTheme.grey500,
                 ),
           ),
         ],
@@ -928,15 +928,15 @@ class ProgressScreen extends ConsumerWidget {
 
         if (balanceScore >= 80) {
           balanceQuality = 'Excellent';
-          balanceColor = Colors.green;
+          balanceColor = AppTheme.completed;
           balanceIcon = Icons.check_circle;
         } else if (balanceScore >= 60) {
           balanceQuality = 'Good';
-          balanceColor = Colors.orange;
+          balanceColor = AppTheme.inProgress;
           balanceIcon = Icons.warning;
         } else {
           balanceQuality = 'Needs Improvement';
-          balanceColor = Colors.red;
+          balanceColor = AppTheme.error;
           balanceIcon = Icons.error;
         }
 
@@ -1061,14 +1061,14 @@ class ProgressScreen extends ConsumerWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.lightbulb, color: Colors.blue, size: 16),
+                        Icon(Icons.lightbulb, color: AppTheme.programs, size: 16),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Tip: Try to balance your training across all categories for optimal development',
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.blue,
+                                      color: AppTheme.programs,
                                     ),
                           ),
                         ),
@@ -1150,7 +1150,7 @@ class ProgressScreen extends ConsumerWidget {
                         'Training Time',
                         '${weeklyStats.totalTrainingTime}min',
                         Icons.timer,
-                        Colors.orange,
+                        AppTheme.inProgress,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -1160,7 +1160,7 @@ class ProgressScreen extends ConsumerWidget {
                         'XP Earned',
                         '+${weeklyStats.xpEarned}',
                         Icons.star,
-                        Colors.amber,
+                        AppTheme.bonus,
                       ),
                     ),
                   ],
@@ -1201,7 +1201,7 @@ class ProgressScreen extends ConsumerWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppTheme.grey600,
                 ),
           ),
         ],
@@ -1245,23 +1245,23 @@ class ProgressScreen extends ConsumerWidget {
   Color _getCategoryColor(ExerciseCategory category) {
     switch (category) {
       case ExerciseCategory.strength:
-        return Colors.red;
+        return AppTheme.error;
       case ExerciseCategory.power:
-        return Colors.orange;
+        return AppTheme.inProgress;
       case ExerciseCategory.speed:
-        return Colors.blue;
+        return AppTheme.programs;
       case ExerciseCategory.agility:
-        return Colors.green;
+        return AppTheme.completed;
       case ExerciseCategory.conditioning:
-        return Colors.purple;
+        return AppTheme.extras;
       case ExerciseCategory.technique:
         return Colors.indigo;
       case ExerciseCategory.balance:
         return Colors.teal;
       case ExerciseCategory.flexibility:
-        return Colors.pink;
+        return AppTheme.error;
       case ExerciseCategory.warmup:
-        return Colors.amber;
+        return AppTheme.bonus;
       case ExerciseCategory.recovery:
         return Colors.lightGreen;
       case ExerciseCategory.stickSkills:
@@ -1280,15 +1280,15 @@ class ProgressScreen extends ConsumerWidget {
     // Set icon, color and subtitle based on exercise type
     if (personalBest.unit == 'kg' || personalBest.unit == 'lbs') {
       icon = Icons.fitness_center;
-      iconColor = Colors.orange;
+      iconColor = AppTheme.inProgress;
       subtitle = 'Max Weight • ${_formatShortDate(personalBest.achievedAt)}';
     } else if (personalBest.unit == 'reps') {
       icon = Icons.repeat;
-      iconColor = Colors.blue;
+      iconColor = AppTheme.programs;
       subtitle = 'Max Reps • ${_formatShortDate(personalBest.achievedAt)}';
     } else {
       icon = Icons.timer;
-      iconColor = Colors.green;
+      iconColor = AppTheme.completed;
       subtitle = 'Best Time • ${_formatShortDate(personalBest.achievedAt)}';
     }
 
@@ -1319,7 +1319,7 @@ class ProgressScreen extends ConsumerWidget {
         subtitle: Text(
           subtitle,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
+                color: AppTheme.grey600,
               ),
         ),
         trailing: Column(

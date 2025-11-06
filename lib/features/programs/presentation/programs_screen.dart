@@ -66,7 +66,7 @@ class ProgramsScreen extends ConsumerWidget {
             Text(
               error.toString(),
               style: AppTextStyles.bodyMedium.copyWith(
-                    color: Colors.grey[400],
+                    color: AppTheme.secondaryTextColor,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -110,7 +110,7 @@ class ProgramsScreen extends ConsumerWidget {
         Text(
           'Select a training program designed for your hockey position',
           style: AppTextStyles.body.copyWith(
-                color: Colors.grey[400],
+                color: AppTheme.secondaryTextColor,
               ),
         ),
       ],
@@ -127,7 +127,7 @@ class ProgramsScreen extends ConsumerWidget {
             Icon(
               Icons.sports_hockey,
               size: 64,
-              color: Colors.grey[600],
+              color: AppTheme.grey600,
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
@@ -138,7 +138,7 @@ class ProgramsScreen extends ConsumerWidget {
             Text(
               'Training programs are currently being loaded. Please try again later.',
               style: AppTextStyles.body.copyWith(
-                    color: Colors.grey[400],
+                    color: AppTheme.secondaryTextColor,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -162,7 +162,7 @@ class ProgramsScreen extends ConsumerWidget {
         title: 'Attacker',
         description: 'Offensive skills and speed training',
         icon: Icons.sports_hockey,
-        color: Colors.red,
+        color: AppTheme.error,
       ),
       UserRole.defender: _RoleInfo(
         title: 'Defender',
@@ -235,13 +235,13 @@ class ProgramsScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: isAvailable
                       ? info.color.withOpacity(0.2)
-                      : Colors.grey[800],
+                      : AppTheme.grey800,
                   borderRadius: BorderRadius.circular(AppSpacing.sm),
                 ),
                 child: Icon(
                   info.icon,
                   size: 24,
-                  color: isAvailable ? info.color : Colors.grey[600],
+                  color: isAvailable ? info.color : AppTheme.grey600,
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -268,7 +268,7 @@ class ProgramsScreen extends ConsumerWidget {
                       Text(
                         'Coming Soon',
                         style: AppTextStyles.small.copyWith(
-                              color: Colors.grey[500],
+                              color: AppTheme.grey500,
                               fontStyle: FontStyle.italic,
                             ),
                       ),
@@ -287,7 +287,7 @@ class ProgramsScreen extends ConsumerWidget {
                   ),
                   child: Text(
                     'ACTIVE',
-                    style: AppTextStyles.labelXS.copyWith(
+                    style: AppTextStyles.labelMicro.copyWith(
                       color: AppTheme.accentColor,
                     ),
                   ),
@@ -295,7 +295,7 @@ class ProgramsScreen extends ConsumerWidget {
               ] else if (hasActiveProgram) ...[
                 Icon(
                   Icons.lock,
-                  color: Colors.grey[600],
+                  color: AppTheme.grey600,
                   size: 20,
                 ),
               ] else if (isAvailable) ...[
@@ -327,7 +327,7 @@ class ProgramsScreen extends ConsumerWidget {
             Icon(
               Icons.schedule,
               size: 14,
-              color: Colors.grey[400],
+              color: AppTheme.secondaryTextColor,
             ),
             const SizedBox(width: AppSpacing.xs),
             Text(
@@ -342,7 +342,7 @@ class ProgramsScreen extends ConsumerWidget {
             Icon(
               Icons.fitness_center,
               size: 14,
-              color: Colors.grey[400],
+              color: AppTheme.secondaryTextColor,
             ),
             const SizedBox(width: AppSpacing.xs),
             Text(

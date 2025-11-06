@@ -30,9 +30,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
               // Title
               Text(
                 'Hockey Gym Training',
-                style: AppTextStyles.titleXL.copyWith(
-                      color: Colors.white,
-                    ),
+                style: AppTextStyles.titleXL,
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: AppSpacing.sm + 4),
@@ -41,7 +39,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
               Text(
                 'Your complete hockey training companion',
                 style: AppTextStyles.body.copyWith(
-                      color: Colors.grey[400],
+                      color: AppTheme.secondaryTextColor,
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -70,7 +68,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
                       child: Text(
                         'All data saved locally on your device',
                         style: AppTextStyles.small.copyWith(
-                              color: Colors.grey[400],
+                              color: AppTheme.secondaryTextColor,
                             ),
                         textAlign: TextAlign.center,
                       ),
@@ -83,9 +81,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
               // Main question
               Text(
                 'What is your username?',
-                style: AppTextStyles.titleL.copyWith(
-                      color: Colors.white,
-                    ),
+                style: AppTextStyles.titleL,
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: AppSpacing.lg),
@@ -95,7 +91,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
                 onPressed: () => context.push('/auth/signup'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppTheme.onPrimaryColor,
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
@@ -117,7 +113,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
                   style: AppTextStyles.bodyMedium,
                 ),
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.grey[400],
+                  foregroundColor: AppTheme.secondaryTextColor,
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.sm + 4, horizontal: AppSpacing.md),
                 ),
               ),
@@ -160,7 +156,7 @@ class AuthWelcomeScreen extends ConsumerWidget {
         Text(
           text,
           style: AppTextStyles.bodyMedium.copyWith(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
               ),
         ),
       ],

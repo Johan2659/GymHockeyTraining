@@ -133,8 +133,8 @@ class _NumberPickerDialogState extends State<NumberPickerDialog> {
                                 ? value.toStringAsFixed(1)
                                 : value.toInt().toString(),
                             style: isSelected 
-                                ? AppTextStyles.statValue.copyWith(fontSize: 28, color: AppTheme.primaryColor)
-                                : AppTextStyles.bodyMedium.copyWith(fontSize: 20, color: Colors.grey[400]),
+                                ? AppTextStyles.displayMedium.copyWith(color: AppTheme.primaryColor)
+                                : AppTextStyles.headlineSmall.copyWith(color: AppTheme.secondaryTextColor),
                           ),
                         );
                       },
@@ -151,7 +151,7 @@ class _NumberPickerDialogState extends State<NumberPickerDialog> {
                     onPressed: () => Navigator.of(context).pop(),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
-                      side: BorderSide(color: Colors.grey[700]!),
+                      side: BorderSide(color: AppTheme.grey700),
                     ),
                     child: Text('Cancel', style: AppTextStyles.button),
                   ),
@@ -162,7 +162,7 @@ class _NumberPickerDialogState extends State<NumberPickerDialog> {
                     onPressed: () => Navigator.of(context).pop(_selectedValue),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryColor,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppTheme.onPrimaryColor,
                       padding: EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
                     ),
                     child: Text('Confirm', style: AppTextStyles.button),
@@ -434,12 +434,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           const SnackBar(
             content: Row(
               children: [
-                Icon(Icons.save, color: Colors.white),
+                Icon(Icons.save, color: AppTheme.onPrimaryColor),
                 SizedBox(width: 8),
                 Text('Session saved! You can resume later.'),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppTheme.completed,
             duration: Duration(seconds: 2),
           ),
         );
@@ -455,7 +455,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to save session: $error'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.error,
           ),
         );
       }
@@ -507,7 +507,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 _formatDuration(_elapsedSeconds),
                 style: AppTextStyles.subtitle.copyWith(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: AppTheme.onPrimaryColor,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
@@ -587,13 +587,13 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg - 4, vertical: AppSpacing.sm),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: Colors.grey[850]!, width: 1),
+                  bottom: BorderSide(color: AppTheme.grey850, width: 1),
                 ),
               ),
               child: Text(
                 'Exercise ${_currentPage + 1} of $totalCount',
                 style: AppTextStyles.small.copyWith(
-                  color: Colors.grey[400],
+                  color: AppTheme.secondaryTextColor,
                   letterSpacing: 0.8,
                 ),
               ),
@@ -628,7 +628,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   decoration: BoxDecoration(
                     color: AppTheme.backgroundColor,
                     border: Border(
-                      top: BorderSide(color: Colors.grey[850]!, width: 1),
+                      top: BorderSide(color: AppTheme.grey850, width: 1),
                     ),
                   ),
                   child: Column(
@@ -643,7 +643,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                             gradient: LinearGradient(
                               colors: [
                                 Colors.transparent,
-                                const Color(0xFF4CAF50).withOpacity(0.4),
+                                AppTheme.completed.withOpacity(0.4),
                                 Colors.transparent,
                               ],
                             ),
@@ -660,7 +660,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 isAllCompleted ? AppTheme.success : Colors.grey[800],
-                            foregroundColor: Colors.white,
+                            foregroundColor: AppTheme.onPrimaryColor,
                             padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -674,7 +674,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     valueColor:
-                                        AlwaysStoppedAnimation(Colors.white),
+                                        AlwaysStoppedAnimation(AppTheme.onPrimaryColor),
                                   ),
                                 )
                               : Text(
@@ -724,7 +724,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 sessionAsync.value!.blocks.last.exerciseId == exerciseId;
 
             if (isBonus) {
-              dotColor = Colors.amber;
+              dotColor = AppTheme.bonus;
             } else {
               final isCompleted = _completedExercises.contains(exerciseId);
               final hasPerformance =
@@ -732,29 +732,29 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               final allSetsCompleted = _areAllSetsCompleted(exerciseId);
 
               if (isCompleted || allSetsCompleted) {
-                dotColor = const Color(0xFF4CAF50);
+                dotColor = AppTheme.completed;
               } else if (hasPerformance) {
                 final sets = _exercisePerformances[exerciseId] ?? [];
                 final hasCompletedSets =
                     sets.any((set) => set['completed'] as bool);
 
                 if (hasCompletedSets) {
-                  dotColor = Colors.orange;
+                  dotColor = AppTheme.inProgress;
                 } else if (index == _currentPage) {
                   dotColor = AppTheme.primaryColor;
                 } else {
-                  dotColor = Colors.grey[800]!;
+                  dotColor = AppTheme.grey800;
                 }
               } else if (index == _currentPage) {
                 dotColor = AppTheme.primaryColor;
               } else {
-                dotColor = Colors.grey[800]!;
+                dotColor = AppTheme.grey800;
               }
             }
           } else {
             dotColor = index == _currentPage
                 ? AppTheme.primaryColor
-                : Colors.grey[800]!;
+                : AppTheme.grey800;
           }
 
           return Container(
@@ -897,7 +897,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                 colors: [
                                   Colors.transparent,
                                   (allSetsCompleted
-                                          ? const Color(0xFF4CAF50)
+                                          ? AppTheme.completed
                                           : AppTheme.primaryColor)
                                       .withOpacity(0.3),
                                   Colors.transparent,
@@ -937,7 +937,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               backgroundColor: (isCompleted || allSetsCompleted)
                                   ? AppTheme.success
                                   : AppTheme.primaryColor,
-                              foregroundColor: Colors.white,
+                              foregroundColor: AppTheme.onPrimaryColor,
                               padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -1159,8 +1159,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           // Label
           Text(
             label,
-            style: AppTextStyles.labelXS.copyWith(
-              color: Colors.grey[500],
+            style: AppTextStyles.labelMicro.copyWith(
+              color: AppTheme.grey500,
               letterSpacing: 1.5,
             ),
           ),
@@ -1195,7 +1195,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                       height: 1.1,
                       shadows: [
                         Shadow(
-                          color: Colors.black26,
+                          color: AppTheme.shadowColor,
                           offset: Offset(0, 2),
                           blurRadius: 4,
                         ),
@@ -1256,7 +1256,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   const SnackBar(
                     content: Text(
                         'Unable to open YouTube. Please check your internet connection.'),
-                    backgroundColor: Colors.red,
+                    backgroundColor: AppTheme.error,
                   ),
                 );
               }
@@ -1284,13 +1284,13 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   Icon(
                     Icons.play_circle_outline,
                     size: 20,
-                    color: Colors.red[400],
+                    color: AppTheme.error,
                   ),
                   SizedBox(width: AppSpacing.sm),
                   Text(
                     'Watch demo',
                     style: AppTextStyles.small.copyWith(
-                      color: Colors.grey[300],
+                      color: AppTheme.grey300,
                       letterSpacing: 0.3,
                     ),
                   ),
@@ -1308,7 +1308,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Instructions',
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: AppTheme.overlayBackground,
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation, secondaryAnimation) {
         return Align(
@@ -1329,7 +1329,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: AppTheme.shadowColor,
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -1366,7 +1366,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w800,
-                                  color: Colors.white,
+                                  color: AppTheme.onPrimaryColor,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -1385,7 +1385,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                         IconButton(
                           onPressed: () => Navigator.pop(context),
                           icon: const Icon(Icons.close, size: 22),
-                          color: Colors.grey[400],
+                          color: AppTheme.secondaryTextColor,
                         ),
                       ],
                     ),
@@ -1425,7 +1425,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               const SnackBar(
                                 content: Text(
                                     'Unable to open YouTube. Please check your internet connection.'),
-                                backgroundColor: Colors.red,
+                                backgroundColor: AppTheme.error,
                               ),
                             );
                           }
@@ -1454,7 +1454,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               Icon(
                                 Icons.play_circle_outline,
                                 size: 20,
-                                color: Colors.red[400],
+                                color: AppTheme.error,
                               ),
                               const SizedBox(width: 10),
                               Text(
@@ -1462,7 +1462,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.grey[300],
+                                  color: AppTheme.grey300,
                                   letterSpacing: 0.3,
                                 ),
                               ),
@@ -1522,7 +1522,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.grey[300],
+                                      color: AppTheme.grey300,
                                       height: 1.5,
                                     ),
                                   ),
@@ -1644,10 +1644,10 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
       margin: EdgeInsets.only(top: AppSpacing.lg - 4),
       padding: EdgeInsets.all(AppSpacing.md + 2),
       decoration: BoxDecoration(
-        color: Colors.blueGrey.withOpacity(0.1),
+        color: AppTheme.grey600.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
         border: Border.all(
-          color: Colors.blueGrey.withOpacity(0.2),
+          color: AppTheme.grey600.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -1660,15 +1660,15 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 padding: EdgeInsets.all(AppSpacing.xs + 2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.blueGrey.withOpacity(0.15),
+                  color: AppTheme.grey600.withOpacity(0.15),
                 ),
-                child: const Icon(Icons.history, size: 14, color: Colors.blueGrey),
+                child: const Icon(Icons.history, size: 14, color: AppTheme.grey600),
               ),
               SizedBox(width: AppSpacing.sm + 2),
               Text(
                 'Last Performance',
                 style: AppTextStyles.small.copyWith(
-                  color: Colors.grey[300],
+                  color: AppTheme.grey300,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -1683,7 +1683,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               return Text(
                 'Set ${set.setNumber}: ${set.reps} reps @ $weightStr',
                 style: AppTextStyles.small.copyWith(
-                  color: Colors.grey[400],
+                  color: AppTheme.secondaryTextColor,
                 ),
               );
             }).toList(),
@@ -1725,7 +1725,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   letterSpacing: 0.3,
                 )),
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.grey[400],
+                  foregroundColor: AppTheme.secondaryTextColor,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
               ),
@@ -1759,11 +1759,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         width: double.infinity,
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         decoration: BoxDecoration(
-          color: const Color(0xFFFF6B35),
+          color: AppTheme.timerWork,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B35).withOpacity(0.5),
+              color: AppTheme.timerWork.withOpacity(0.5),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -1777,8 +1777,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               // Progress bar
               LinearProgressIndicator(
                 value: progress,
-                backgroundColor: Colors.white.withOpacity(0.15),
-                valueColor: const AlwaysStoppedAnimation(Colors.white),
+                backgroundColor: AppTheme.onPrimaryColor.withOpacity(0.15),
+                valueColor: const AlwaysStoppedAnimation(AppTheme.onPrimaryColor),
                 minHeight: 3,
               ),
 
@@ -1795,8 +1795,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           Text(
                             'REST TIME',
                             style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 12,
+                              color: AppTheme.onPrimaryColor.withOpacity(0.9),
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.5,
                             ),
@@ -1807,12 +1807,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                             style: const TextStyle(
                               fontSize: 36,
                               fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                              color: AppTheme.onPrimaryColor,
                               height: 1,
                               fontFeatures: [FontFeature.tabularFigures()],
-                              shadows: [
+                              shadows: const [
                                 Shadow(
-                                  color: Colors.black26,
+                                  color: Colors.black54,
                                   offset: Offset(0, 2),
                                   blurRadius: 4,
                                 ),
@@ -1831,8 +1831,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           onPressed: _restartRestTimer,
                           icon: const Icon(Icons.restart_alt, size: 24),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.15),
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppTheme.onPrimaryColor.withOpacity(0.15),
+                            foregroundColor: AppTheme.onPrimaryColor,
                             padding: const EdgeInsets.all(12),
                           ),
                           tooltip: 'Restart',
@@ -1849,8 +1849,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                             size: 24,
                           ),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.15),
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppTheme.onPrimaryColor.withOpacity(0.15),
+                            foregroundColor: AppTheme.onPrimaryColor,
                             padding: const EdgeInsets.all(12),
                           ),
                           tooltip: _isRestTimerPaused ? 'Resume' : 'Pause',
@@ -1862,8 +1862,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           onPressed: _skipRestTimer,
                           icon: const Icon(Icons.close, size: 24),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.15),
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppTheme.onPrimaryColor.withOpacity(0.15),
+                            foregroundColor: AppTheme.onPrimaryColor,
                             padding: const EdgeInsets.all(12),
                           ),
                           tooltip: 'End Rest',
@@ -1925,9 +1925,9 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           end: Alignment.bottomCenter,
                           colors: completed
                               ? [
-                                  const Color(0xFF4CAF50),
-                                  const Color(0xFF4CAF50).withOpacity(0.8),
-                                  const Color(0xFF4CAF50).withOpacity(0.3),
+                                  AppTheme.completed,
+                                  AppTheme.completed.withOpacity(0.8),
+                                  AppTheme.completed.withOpacity(0.3),
                                 ]
                               : [
                                   AppTheme.primaryColor,
@@ -1952,8 +1952,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           end: Alignment.bottomCenter,
                           colors: completed
                               ? [
-                                  const Color(0xFF4CAF50).withOpacity(0.6),
-                                  const Color(0xFF4CAF50).withOpacity(0.2),
+                                  AppTheme.completed.withOpacity(0.6),
+                                  AppTheme.completed.withOpacity(0.2),
                                   Colors.transparent,
                                 ]
                               : [
@@ -1982,7 +1982,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        completed ? const Color(0xFF4CAF50).withOpacity(0.3) : AppTheme.primaryColor.withOpacity(0.2),
+                        completed ? AppTheme.completed.withOpacity(0.3) : AppTheme.primaryColor.withOpacity(0.2),
                         Colors.transparent,
                       ],
                     ),
@@ -2003,15 +2003,15 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                         shape: BoxShape.circle,
                         gradient: completed
                             ? const LinearGradient(
-                                colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+                                colors: [AppTheme.completed, AppTheme.completed],
                               )
                             : LinearGradient(
-                                colors: [Colors.grey[850]!, Colors.grey[800]!],
+                                colors: [AppTheme.grey850, AppTheme.grey800],
                               ),
                         boxShadow: completed
                             ? [
                                 BoxShadow(
-                                  color: const Color(0xFF4CAF50).withOpacity(0.4),
+                                  color: AppTheme.completed.withOpacity(0.4),
                                   blurRadius: 8,
                                   spreadRadius: 0,
                                 ),
@@ -2020,11 +2020,11 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                       ),
                       child: Center(
                         child: completed
-                            ? const Icon(Icons.check, color: Colors.white, size: 20)
+                            ? const Icon(Icons.check, color: AppTheme.onPrimaryColor, size: 20)
                             : Text(
                                 '$setNumber',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: AppTheme.onPrimaryColor,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                 ),
@@ -2101,17 +2101,17 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: completed 
-                                ? const Color(0xFF4CAF50) 
+                                ? AppTheme.completed 
                                 : AppTheme.primaryColor.withOpacity(0.3),
                             width: 2,
                           ),
                           color: completed 
-                              ? const Color(0xFF4CAF50).withOpacity(0.1)
+                              ? AppTheme.completed.withOpacity(0.1)
                               : Colors.transparent,
                         ),
                         child: Icon(
                           completed ? Icons.check_circle : Icons.check_circle_outline,
-                          color: completed ? const Color(0xFF4CAF50) : AppTheme.primaryColor,
+                          color: completed ? AppTheme.completed : AppTheme.primaryColor,
                           size: 28,
                         ),
                       ),
@@ -2128,7 +2128,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        completed ? const Color(0xFF4CAF50).withOpacity(0.3) : AppTheme.primaryColor.withOpacity(0.2),
+                        completed ? AppTheme.completed.withOpacity(0.3) : AppTheme.primaryColor.withOpacity(0.2),
                         Colors.transparent,
                       ],
                     ),
@@ -2174,7 +2174,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: isActive 
                         ? AppTheme.primaryColor.withOpacity(0.7) 
@@ -2201,7 +2201,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
-                        color: isActive ? Colors.white : Colors.grey[600],
+                        color: isActive ? AppTheme.onPrimaryColor : Colors.grey[600],
                         height: 1,
                       ),
                     ),
@@ -2234,8 +2234,8 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                               AppTheme.primaryColor.withOpacity(0.3),
                             ]
                           : [
-                              Colors.grey[800]!,
-                              Colors.grey[850]!,
+                              AppTheme.grey800,
+                              AppTheme.grey850,
                             ],
                     ),
                     borderRadius: BorderRadius.circular(1),
@@ -2399,7 +2399,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: AppTheme.onPrimaryColor,
               ),
             ),
           ],
@@ -2408,7 +2408,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           'Do you want to modify this completed set?',
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey[400],
+            color: AppTheme.secondaryTextColor,
           ),
         ),
         actions: [
@@ -2417,7 +2417,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
             child: Text(
               'Cancel',
               style: TextStyle(
-                color: Colors.grey[400],
+                color: AppTheme.secondaryTextColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -2426,7 +2426,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.white,
+              foregroundColor: AppTheme.onPrimaryColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -2460,7 +2460,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Please complete all sets first'),
-              backgroundColor: Colors.orange,
+              backgroundColor: AppTheme.inProgress,
               duration: Duration(seconds: 2),
             ),
           );
@@ -2509,12 +2509,12 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.check_circle, color: Colors.white),
+                const Icon(Icons.check_circle, color: AppTheme.onPrimaryColor),
                 const SizedBox(width: 8),
                 Text('${exercise.name} completed!'),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppTheme.completed,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -2524,7 +2524,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to save performance: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.error,
           ),
         );
       }
@@ -2595,7 +2595,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to complete session: $error'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.error,
           ),
         );
       }
@@ -2620,7 +2620,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('🏆 Bonus challenge completed! Extra XP earned!'),
-            backgroundColor: Colors.orange,
+            backgroundColor: AppTheme.inProgress,
           ),
         );
       }
@@ -2629,7 +2629,7 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to complete bonus challenge: $error'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.error,
           ),
         );
       }
@@ -2660,14 +2660,14 @@ class _SessionPlayerScreenState extends ConsumerState<SessionPlayerScreen>
                   '• Bonus Challenge Available! 🏆',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                    color: AppTheme.inProgress,
                   ),
                 ),
               ],
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Complete all exercises to finish the session and earn XP!',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: AppTextStyles.caption.copyWith(color: AppTheme.grey500),
               ),
             ],
           ),

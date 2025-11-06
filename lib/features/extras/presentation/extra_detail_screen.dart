@@ -106,7 +106,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
               Text(
                 error.toString(),
                 style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.grey[400],
+                      color: AppTheme.secondaryTextColor,
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -121,7 +121,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                     Icon(
                       Icons.search_off,
                       size: 64,
-                      color: Colors.grey[600],
+                      color: AppTheme.grey600,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
@@ -132,7 +132,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                     Text(
                       'The requested extra could not be found.',
                       style: AppTextStyles.bodyMedium.copyWith(
-                            color: Colors.grey[400],
+                            color: AppTheme.secondaryTextColor,
                           ),
                       textAlign: TextAlign.center,
                     ),
@@ -201,7 +201,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                       Icon(
                         Icons.schedule,
                         size: 16,
-                        color: Colors.grey[400],
+                        color: AppTheme.secondaryTextColor,
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       Text(
@@ -257,7 +257,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                         Icon(
                           Icons.fitness_center,
                           size: 64,
-                          color: Colors.grey[700],
+                          color: AppTheme.grey700,
                         ),
                         const SizedBox(height: AppSpacing.md),
                         Text(
@@ -268,7 +268,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                         Text(
                           'Start the session to see exercises',
                           style: AppTextStyles.bodyMedium.copyWith(
-                                    color: Colors.grey[400],
+                                    color: AppTheme.secondaryTextColor,
                                   ),
                           textAlign: TextAlign.center,
                         ),
@@ -297,7 +297,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
               color: AppTheme.surfaceColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppTheme.shadowColor.withOpacity(0.33),
                   blurRadius: 8,
                   offset: const Offset(0, -2),
                 ),
@@ -310,9 +310,9 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                     _isCompleting ? null : () => _startSession(session.extra),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppTheme.onPrimaryColor,
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                  disabledBackgroundColor: Colors.grey[800],
+                  disabledBackgroundColor: AppTheme.grey800,
                 ),
                 child: _isCompleting
                     ? const SizedBox(
@@ -321,7 +321,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                              AlwaysStoppedAnimation<Color>(AppTheme.onPrimaryColor),
                         ),
                       )
                     : Text(
@@ -353,7 +353,7 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to start session: $error'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.error,
           ),
         );
       }
@@ -369,13 +369,13 @@ class _ExtraDetailScreenState extends ConsumerState<ExtraDetailScreen> {
   Color _getDifficultyColor(String difficulty) {
     switch (difficulty.toLowerCase()) {
       case 'easy':
-        return Colors.green;
+        return AppTheme.completed;
       case 'medium':
-        return Colors.orange;
+        return AppTheme.inProgress;
       case 'hard':
-        return Colors.red;
+        return AppTheme.error;
       default:
-        return Colors.grey;
+        return AppTheme.notStarted;
     }
   }
 

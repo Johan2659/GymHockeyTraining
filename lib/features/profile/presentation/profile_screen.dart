@@ -372,7 +372,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         subtitle: Text(
           subtitle,
           style: AppTextStyles.small.copyWith(
-            fontSize: 11,
+            fontSize: 12,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
           ),
         ),

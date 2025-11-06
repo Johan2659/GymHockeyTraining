@@ -493,7 +493,7 @@ class _ExtraCard extends StatelessWidget {
                           ),
                           child: Text(
                             extra.difficulty!.toUpperCase(),
-                            style: AppTextStyles.labelXS.copyWith(
+                            style: AppTextStyles.labelMicro.copyWith(
                               color: _getDifficultyColor(extra.difficulty!),
                             ),
                           ),

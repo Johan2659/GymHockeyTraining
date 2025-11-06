@@ -84,7 +84,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                 Text(
                   error.toString(),
                   style: AppTextStyles.small.copyWith(
-                    color: Colors.grey[400],
+                    color: AppTheme.secondaryTextColor,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -115,7 +115,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         child: Icon(
                           Icons.search_off,
                           size: 64,
-                          color: Colors.grey[600],
+                          color: AppTheme.grey600,
                         ),
                       ),
                       SizedBox(height: AppSpacing.lg),
@@ -127,7 +127,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                       Text(
                         'The requested session could not be found.',
                         style: AppTextStyles.small.copyWith(
-                          color: Colors.grey[400],
+                          color: AppTheme.secondaryTextColor,
                           height: 1.5,
                         ),
                         textAlign: TextAlign.center,
@@ -186,7 +186,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                           height: 1.1,
                           shadows: [
                             Shadow(
-                              color: Colors.black26,
+                              color: AppTheme.shadowColor,
                               offset: Offset(0, 2),
                               blurRadius: 4,
                             ),
@@ -339,7 +339,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                           child: Icon(
                             Icons.fitness_center,
                             size: 64,
-                            color: Colors.grey[700],
+                            color: AppTheme.grey700,
                           ),
                         ),
                         SizedBox(height: AppSpacing.lg),
@@ -351,7 +351,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                         Text(
                           'Start the session to see exercises',
                           style: AppTextStyles.small.copyWith(
-                            color: Colors.grey[400],
+                            color: AppTheme.secondaryTextColor,
                             height: 1.5,
                           ),
                           textAlign: TextAlign.center,
@@ -383,7 +383,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
             color: AppTheme.backgroundColor,
             border: Border(
               top: BorderSide(
-                color: Colors.grey[850]!,
+                color: AppTheme.grey850,
                 width: 1,
               ),
             ),
@@ -416,10 +416,10 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                   onPressed: _isStarting ? null : _startSession,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppTheme.onPrimaryColor,
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.md + 2),
                     elevation: 0,
-                    disabledBackgroundColor: Colors.grey[800],
+                    disabledBackgroundColor: AppTheme.grey800,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
                     ),
@@ -437,7 +437,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                                AlwaysStoppedAnimation<Color>(AppTheme.onPrimaryColor),
                           ),
                         )
                       : Text(
@@ -474,7 +474,7 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to start session: $error'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.error,
           ),
         );
       }
@@ -556,8 +556,8 @@ class _SessionDetailScreenState extends ConsumerState<SessionDetailScreen> {
           // Label
           Text(
             label,
-            style: AppTextStyles.labelXS.copyWith(
-              color: Colors.grey[500],
+            style: AppTextStyles.labelMicro.copyWith(
+              color: AppTheme.grey500,
               letterSpacing: 1.5,
             ),
           ),
@@ -612,7 +612,7 @@ class _ExercisePreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Colors based on bonus status
-    final accentColor = isBonus ? Colors.amber : AppTheme.primaryColor;
+    final accentColor = isBonus ? AppTheme.bonus : AppTheme.primaryColor;
     
     return Container(
       margin: EdgeInsets.only(bottom: AppSpacing.sm + 2),
@@ -687,7 +687,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                             ? Icon(
                                 Icons.star,
                                 size: 16,
-                                color: Colors.amber,
+                                color: AppTheme.bonus,
                               )
                               : Text(
                                 '${index + 1}',
@@ -717,7 +717,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                                 SizedBox(width: AppSpacing.xs),
                                 Text(
                                   'BONUS CHALLENGE',
-                                  style: AppTextStyles.labelXS.copyWith(
+                                  style: AppTextStyles.labelMicro.copyWith(
                                     color: AppTheme.accentColor,
                                     letterSpacing: 1.0,
                                   ),
@@ -751,7 +751,7 @@ class _ExercisePreviewCard extends StatelessWidget {
                                 SizedBox(width: AppSpacing.xs),
                                 Text(
                                   'Placeholder',
-                                  style: AppTextStyles.labelXS.copyWith(
+                                  style: AppTextStyles.labelMicro.copyWith(
                                     color: AppTheme.warning,
                                   ),
                                 ),
@@ -853,7 +853,7 @@ class _ExercisePreviewCard extends StatelessWidget {
         Text(
           '$value${label.isNotEmpty ? ' $label' : ''}',
           style: AppTextStyles.bodyMedium.copyWith(
-            color: Colors.grey[400],
+            color: AppTheme.secondaryTextColor,
             letterSpacing: 0.3,
           ),
         ),

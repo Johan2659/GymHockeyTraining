@@ -115,16 +115,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 // Title
                 Text(
                   'What is your username?',
-                  style: AppTextStyles.titleL.copyWith(
-                        color: Colors.white,
-                      ),
+                  style: AppTextStyles.titleL,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: AppSpacing.sm),
                 Text(
                   'Choose a unique username to get started',
                   style: AppTextStyles.body.copyWith(
-                        color: Colors.grey[400],
+                        color: AppTheme.secondaryTextColor,
                       ),
                   textAlign: TextAlign.center,
                 ),
@@ -194,7 +192,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       : _handleSignUp,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppTheme.onPrimaryColor,
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
@@ -207,7 +205,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                                AlwaysStoppedAnimation<Color>(AppTheme.onPrimaryColor),
                           ),
                         )
                       : Text(
@@ -223,7 +221,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: AppTextStyles.small.copyWith(color: Colors.grey[400]),
+                      style: AppTextStyles.small.copyWith(color: AppTheme.secondaryTextColor),
                     ),
                     TextButton(
                       onPressed: _isLoading

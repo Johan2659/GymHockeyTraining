@@ -53,7 +53,7 @@ class _ProgramManagementDialogState
                         Text(
                           'Current Program:',
                           style: AppTextStyles.small.copyWith(
-                                    color: Colors.grey[400],
+                                    color: AppTheme.secondaryTextColor,
                                   ),
                         ),
                         const SizedBox(height: AppSpacing.xs),
@@ -69,7 +69,7 @@ class _ProgramManagementDialogState
                           data: (count) => Text(
                             '$count progress events recorded',
                             style: AppTextStyles.small.copyWith(
-                                      color: Colors.grey[400],
+                                      color: AppTheme.secondaryTextColor,
                                     ),
                           ),
                         ),

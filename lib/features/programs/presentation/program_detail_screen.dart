@@ -105,7 +105,7 @@ class ProgramDetailScreen extends ConsumerWidget {
             Icon(
               Icons.search_off,
               size: 48,
-              color: Colors.grey[600],
+              color: AppTheme.grey600,
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
@@ -205,7 +205,7 @@ class ProgramDetailScreen extends ConsumerWidget {
         Text(
           _getRoleDescription(program.role),
           style: AppTextStyles.body.copyWith(
-                color: Colors.grey[400],
+                color: AppTheme.secondaryTextColor,
               ),
         ),
       ],
@@ -319,7 +319,7 @@ class ProgramDetailScreen extends ConsumerWidget {
           '${week.sessions.length} sessions',
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[400],
+            color: AppTheme.secondaryTextColor,
           ),
         ),
         children: [
@@ -349,8 +349,8 @@ class ProgramDetailScreen extends ConsumerWidget {
                       Text(
                         sessionId.split('_').last,
                         style: AppTextStyles.small.copyWith(
-                              color: Colors.grey[500],
-                              fontSize: 11,
+                              color: AppTheme.grey500,
+                              fontSize: 12,
                             ),
                       ),
                     ],
@@ -373,7 +373,7 @@ class ProgramDetailScreen extends ConsumerWidget {
           onPressed: () => _resumeProgram(context, ref),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
+            foregroundColor: AppTheme.onPrimaryColor,
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
           ),
           child: Text(
@@ -432,7 +432,7 @@ class ProgramDetailScreen extends ConsumerWidget {
         onPressed: () => _startProgram(context, ref, program.id),
         style: ElevatedButton.styleFrom(
           backgroundColor: _getRoleColor(program.role),
-          foregroundColor: Colors.white,
+          foregroundColor: AppTheme.onPrimaryColor,
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         ),
         child: Text(
@@ -564,7 +564,7 @@ class ProgramDetailScreen extends ConsumerWidget {
   Color _getRoleColor(UserRole role) {
     switch (role) {
       case UserRole.attacker:
-        return Colors.red;
+        return AppTheme.error;
       case UserRole.defender:
         return Colors.blue;
       case UserRole.goalie:

@@ -39,7 +39,7 @@ class ModernProgressScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   error.toString(),
-                  style: AppTextStyles.small.copyWith(color: Colors.grey[400]),
+                  style: AppTextStyles.small.copyWith(color: AppTheme.secondaryTextColor),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -181,7 +181,7 @@ class ModernProgressScreen extends ConsumerWidget {
               'XP',
               '${appState.currentXP}',
               Icons.stars,
-              Colors.purple,
+              AppTheme.extras,
             ),
           ],
         ),
@@ -418,15 +418,15 @@ class ModernProgressScreen extends ConsumerWidget {
                                     width: 6,
                                     height: 6,
                                     decoration: BoxDecoration(
-                                      color: Colors.orange,
+                                      color: AppTheme.inProgress,
                                       shape: BoxShape.circle,
                                     ),
                                   ),
                                   const SizedBox(width: 3),
                                   Text(
                                     '$weightMinutes',
-                                    style: AppTextStyles.labelXS.copyWith(
-                                      color: Colors.orange,
+                                    style: AppTextStyles.labelMicro.copyWith(
+                                      color: AppTheme.inProgress,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -435,15 +435,15 @@ class ModernProgressScreen extends ConsumerWidget {
                                     width: 6,
                                     height: 6,
                                     decoration: BoxDecoration(
-                                      color: Colors.green,
+                                      color: AppTheme.completed,
                                       shape: BoxShape.circle,
                                     ),
                                   ),
                                   const SizedBox(width: 3),
                                   Text(
                                     '$bodyweightMinutes',
-                                    style: AppTextStyles.labelXS.copyWith(
-                                      color: Colors.green,
+                                    style: AppTextStyles.labelMicro.copyWith(
+                                      color: AppTheme.completed,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -467,7 +467,7 @@ class ModernProgressScreen extends ConsumerWidget {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: Colors.orange,
+                  color: AppTheme.inProgress,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -483,7 +483,7 @@ class ModernProgressScreen extends ConsumerWidget {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: AppTheme.completed,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -692,7 +692,7 @@ class ModernProgressScreen extends ConsumerWidget {
                                                         ),
                                                         child: Text(
                                                           'FOCUS',
-                                                          style: AppTextStyles.labelXS.copyWith(
+                                                          style: AppTextStyles.labelMicro.copyWith(
                                                             color: AppTheme.accentGold,
                                                             fontWeight: FontWeight.bold,
                                                           ),
@@ -727,7 +727,7 @@ class ModernProgressScreen extends ConsumerWidget {
                                       ),
                                       Text(
                                         'of training',
-                                        style: AppTextStyles.labelXS.copyWith(
+                                        style: AppTextStyles.labelMicro.copyWith(
                                           color: AppTheme.tertiaryTextColor,
                                         ),
                                       ),
@@ -848,7 +848,7 @@ class ModernProgressScreen extends ConsumerWidget {
                       '${appState.currentStreak}',
                       'Day Streak',
                       Icons.local_fire_department,
-                      Colors.orange,
+                      AppTheme.inProgress,
                     ),
                     _buildAchievementChip(
                       context,
@@ -869,7 +869,7 @@ class ModernProgressScreen extends ConsumerWidget {
                       '$totalBonuses',
                       'Bonuses',
                       Icons.add_circle,
-                      Colors.purple,
+                      AppTheme.extras,
                     ),
                   ],
                 ),
@@ -980,7 +980,7 @@ class ModernProgressScreen extends ConsumerWidget {
               Text(
                 'Categories marked as FOCUS are below 50% of their ideal target. Adjust your training to balance your profile over time.',
                 style: AppTextStyles.small.copyWith(
-                  color: Colors.grey[400],
+                  color: AppTheme.secondaryTextColor,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -1037,13 +1037,13 @@ class ModernProgressScreen extends ConsumerWidget {
       case ExerciseCategory.strength:
         return Colors.red;
       case ExerciseCategory.power:
-        return Colors.orange;
+        return AppTheme.inProgress;
       case ExerciseCategory.speed:
         return Colors.blue;
       case ExerciseCategory.agility:
-        return Colors.green;
+        return AppTheme.completed;
       case ExerciseCategory.conditioning:
-        return Colors.purple;
+        return AppTheme.extras;
       case ExerciseCategory.technique:
         return Colors.indigo;
       case ExerciseCategory.balance:

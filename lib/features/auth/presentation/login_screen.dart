@@ -96,16 +96,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Title
                 Text(
                   'Welcome Back!',
-                  style: AppTextStyles.titleL.copyWith(
-                        color: Colors.white,
-                      ),
+                  style: AppTextStyles.titleL,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: AppSpacing.sm),
                 Text(
                   'Login to continue your training',
                   style: AppTextStyles.body.copyWith(
-                        color: Colors.grey[400],
+                        color: AppTheme.secondaryTextColor,
                       ),
                   textAlign: TextAlign.center,
                 ),
@@ -165,7 +163,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppTheme.onPrimaryColor,
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.sm + 4),
@@ -178,7 +176,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                                AlwaysStoppedAnimation<Color>(AppTheme.onPrimaryColor),
                           ),
                         )
                       : Text(
@@ -194,7 +192,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     Text(
                       "Don't have an account? ",
-                      style: AppTextStyles.small.copyWith(color: Colors.grey[400]),
+                      style: AppTextStyles.small.copyWith(color: AppTheme.secondaryTextColor),
                     ),
                     TextButton(
                       onPressed: _isLoading

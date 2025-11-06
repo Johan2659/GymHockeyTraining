@@ -277,7 +277,7 @@ class HubScreen extends ConsumerWidget {
                                 'Welcome back, ',
                                 style: AppTextStyles.body.copyWith(
                                   fontSize: 14,
-                                  color: Colors.grey[400],
+                                  color: AppTheme.secondaryTextColor,
                                 ),
                               ),
                               Flexible(
@@ -297,8 +297,8 @@ class HubScreen extends ConsumerWidget {
                           Text(
                             'Season 1 • Rank: $rankName',
                             style: AppTextStyles.small.copyWith(
-                              fontSize: 11,
-                              color: Colors.grey[500],
+                              fontSize: 12,
+                              color: AppTheme.grey500,
                             ),
                           ),
                         ],
@@ -355,7 +355,7 @@ class HubScreen extends ConsumerWidget {
       '  –  ${data.currentXP} XP',
       style: AppTextStyles.body.copyWith(
         fontSize: 14,
-        color: Colors.grey[400],
+        color: AppTheme.secondaryTextColor,
       ),
     ),
   ],
@@ -365,8 +365,8 @@ class HubScreen extends ConsumerWidget {
                 Text(
                   '$xpNeeded XP TO NEXT RANK: $rankName',
                   style: AppTextStyles.small.copyWith(
-                    fontSize: 11,
-                    color: Colors.grey[500],
+                    fontSize: 12,
+                    color: AppTheme.grey500,
                   ),
                 ),
                 SizedBox(height: AppSpacing.md),
@@ -453,16 +453,16 @@ class HubScreen extends ConsumerWidget {
                   SizedBox(width: AppSpacing.sm),
                   Text(
                     'CURRENT PROGRAM',
-                    style: AppTextStyles.labelXS.copyWith(
-                      fontSize: 11,
-                      color: Colors.grey[400],
+                    style: AppTextStyles.labelMicro.copyWith(
+                      fontSize: 12,
+                      color: AppTheme.secondaryTextColor,
                     ),
                   ),
                   const Spacer(),
                   PopupMenuButton<String>(
                     icon: Icon(
                       Icons.more_vert,
-                      color: Colors.grey[400],
+                      color: AppTheme.secondaryTextColor,
                       size: 20,
                     ),
                     onSelected: (value) {
@@ -525,8 +525,8 @@ class HubScreen extends ConsumerWidget {
                     ),
                     child: Text(
                       role,
-                      style: AppTextStyles.labelXS.copyWith(
-                        fontSize: 9,
+                      style: AppTextStyles.labelMicro.copyWith(
+                        fontSize: 12,
                         color: AppTheme.primaryColor,
                       ),
                     ),
@@ -541,7 +541,7 @@ class HubScreen extends ConsumerWidget {
                     style: AppTextStyles.small.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: Colors.grey[400],
+                      color: AppTheme.secondaryTextColor,
                     ),
                   ),
                   Container(
@@ -559,7 +559,7 @@ class HubScreen extends ConsumerWidget {
                     style: AppTextStyles.small.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: Colors.grey[400],
+                      color: AppTheme.secondaryTextColor,
                     ),
                   ),
                   const Spacer(),
@@ -607,7 +607,7 @@ class HubScreen extends ConsumerWidget {
                 _buildSessionInProgressBanner(
                   context,
                   ref,
-                  sessionInProgress!,
+                  sessionInProgress,
                   data,
                 ),
               if (hasSessionInProgress) SizedBox(height: AppSpacing.md),
@@ -681,7 +681,7 @@ class HubScreen extends ConsumerWidget {
             ),
             child: Icon(
               Icons.play_circle_filled,
-              color: Colors.amber.shade200,
+              color: AppTheme.bonus.withOpacity(0.3),
               size: 20,
             ),
           ),
@@ -694,8 +694,8 @@ class HubScreen extends ConsumerWidget {
                   children: [
                     Text(
                       'IN PROGRESS',
-                      style: AppTextStyles.labelXS.copyWith(
-                        color: Colors.amber.shade200,
+                      style: AppTextStyles.labelMicro.copyWith(
+                        color: AppTheme.bonus.withOpacity(0.3),
                       ),
                     ),
                     Container(
@@ -711,8 +711,8 @@ class HubScreen extends ConsumerWidget {
                       child: Text(
                         'Paused $timeAgoText',
                         style: AppTextStyles.small.copyWith(
-                          fontSize: 10,
-                          color: Colors.grey[400],
+                          fontSize: 12,
+                          color: AppTheme.secondaryTextColor,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -724,7 +724,7 @@ class HubScreen extends ConsumerWidget {
                   Text(
                     '$completedCount exercises completed',
                     style: AppTextStyles.small.copyWith(
-                      fontSize: 11,
+                      fontSize: 12,
                       color: AppTheme.success,
                     ),
                   ),
@@ -734,7 +734,7 @@ class HubScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.close, size: 16),
             onPressed: () => _showDiscardSessionDialog(context, ref),
-            color: Colors.grey[400],
+            color: AppTheme.secondaryTextColor,
             tooltip: 'Discard session',
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -782,14 +782,14 @@ class HubScreen extends ConsumerWidget {
             : null,
         style: ElevatedButton.styleFrom(
           backgroundColor:
-              isSessionAvailable ? AppTheme.primaryColor : Colors.grey[800],
-          foregroundColor: Colors.white,
+              isSessionAvailable ? AppTheme.primaryColor : AppTheme.grey800,
+          foregroundColor: AppTheme.onPrimaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
-          disabledBackgroundColor: Colors.grey[800],
-          disabledForegroundColor: Colors.grey[600],
+          disabledBackgroundColor: AppTheme.grey800,
+          disabledForegroundColor: AppTheme.grey600,
         ),
         icon: Icon(
           isSessionAvailable ? Icons.sports_hockey : Icons.emoji_events,
@@ -836,7 +836,7 @@ class HubScreen extends ConsumerWidget {
           'Choose a training program that matches your hockey position and goals.',
           style: AppTextStyles.body.copyWith(
             fontSize: 15,
-            color: Colors.grey[400],
+            color: AppTheme.secondaryTextColor,
           ),
           textAlign: TextAlign.center,
         ),
@@ -892,9 +892,9 @@ class HubScreen extends ConsumerWidget {
             SizedBox(width: AppSpacing.sm),
             Text(
               'THIS WEEK',
-              style: AppTextStyles.labelXS.copyWith(
-                fontSize: 11,
-                color: Colors.grey[400],
+              style: AppTextStyles.labelMicro.copyWith(
+                fontSize: 12,
+                color: AppTheme.secondaryTextColor,
               ),
             ),
           ],
@@ -985,9 +985,9 @@ class HubScreen extends ConsumerWidget {
             SizedBox(width: AppSpacing.sm),
             Text(
               'QUICK ACTIONS',
-              style: AppTextStyles.labelXS.copyWith(
-                fontSize: 11,
-                color: Colors.grey[400],
+              style: AppTextStyles.labelMicro.copyWith(
+                fontSize: 12,
+                color: AppTheme.secondaryTextColor,
               ),
             ),
           ],
@@ -1037,9 +1037,9 @@ class HubScreen extends ConsumerWidget {
             SizedBox(width: AppSpacing.sm),
             Text(
               'DAILY MOTIVATION',
-              style: AppTextStyles.labelXS.copyWith(
-                fontSize: 11,
-                color: Colors.grey[400],
+              style: AppTextStyles.labelMicro.copyWith(
+                fontSize: 12,
+                color: AppTheme.secondaryTextColor,
               ),
             ),
           ],
@@ -1088,7 +1088,7 @@ class HubScreen extends ConsumerWidget {
                 child: Text(
                   message,
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     fontStyle: FontStyle.italic,
                     height: 1.5,
                   ),
@@ -1218,7 +1218,7 @@ class _LevelRingWidget extends StatelessWidget {
                   value: 1.0,
                   strokeWidth: 6,
                   backgroundColor: Colors.grey[850],
-                  valueColor: AlwaysStoppedAnimation(Colors.grey[850]!),
+                  valueColor: AlwaysStoppedAnimation(AppTheme.grey850),
                 ),
               ),
               SizedBox(
@@ -1243,9 +1243,9 @@ class _LevelRingWidget extends StatelessWidget {
                   ),
                   Text(
                     'LEVEL',
-                    style: AppTextStyles.labelXS.copyWith(
-                      fontSize: 8,
-                      color: Colors.grey[500],
+                    style: AppTextStyles.labelMicro.copyWith(
+                      fontSize: 12,
+                      color: AppTheme.grey500,
                     ),
                   ),
                 ],
@@ -1371,7 +1371,7 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
             children: [
               Icon(
                 Icons.local_fire_department,
-                color: hasStreak ? Colors.orange : Colors.grey[600],
+                color: hasStreak ? Colors.orange : AppTheme.grey600,
                 size: 16,
               ),
               const SizedBox(width: 6),
@@ -1379,9 +1379,9 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
                 hasStreak
                     ? '${widget.streak} WEEKS BEAST MODE'
                     : 'START YOUR STREAK',
-                style: AppTextStyles.labelXS.copyWith(
-                  fontSize: 10,
-                  color: hasStreak ? Colors.orange : Colors.grey[600],
+                style: AppTextStyles.labelMicro.copyWith(
+                  fontSize: 12,
+                  color: hasStreak ? Colors.orange : AppTheme.grey600,
                 ),
               ),
             ],
@@ -1407,14 +1407,14 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
             Text(
               'Your current streak: ${widget.streak} weeks',
               style: AppTextStyles.body.copyWith(
-                color: Colors.grey[400],
+                color: AppTheme.secondaryTextColor,
               ),
             ),
             SizedBox(height: AppSpacing.lg),
             Text(
               'Keep training weekly to maintain your streak and earn XP bonuses!',
               style: AppTextStyles.small.copyWith(
-                color: Colors.grey[500],
+                color: AppTheme.grey500,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1462,9 +1462,9 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: AppTextStyles.labelXS.copyWith(
-            fontSize: 9,
-            color: Colors.grey[500],
+          style: AppTextStyles.labelMicro.copyWith(
+            fontSize: 12,
+            color: AppTheme.grey500,
           ),
         ),
       ],
@@ -1535,7 +1535,7 @@ class _QuickActionCard extends StatelessWidget {
                   style: AppTextStyles.small.copyWith(
                     fontWeight: FontWeight.w800,
                     fontSize: 12,
-                    color: Colors.white,
+                    color: AppTheme.onPrimaryColor,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,

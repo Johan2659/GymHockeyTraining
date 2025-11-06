@@ -46,6 +46,55 @@ class AppTheme {
   static const Color accentColor = primaryColor;
   
   // ============================================================================
+  // SEMANTIC UI COLORS
+  // ============================================================================
+  
+  /// Subtle border color for UI elements
+  static Color borderColor = const Color(0xFF2A2A2A);
+  
+  /// Divider color for separating content
+  static Color dividerColor = const Color(0xFF1F1F1F);
+  
+  /// Disabled state color
+  static Color disabledColor = const Color(0xFF4A4A4A);
+  
+  /// Overlay/barrier background
+  static Color overlayBackground = Colors.black.withOpacity(0.5);
+  
+  /// Shadow color for cards and elevated elements
+  static Color shadowColor = Colors.black.withOpacity(0.3);
+  
+  /// Shimmer/loading background
+  static Color shimmerBase = const Color(0xFF1A1A1A);
+  static Color shimmerHighlight = const Color(0xFF2A2A2A);
+  
+  // Greys - for various UI states
+  static const Color grey900 = Color(0xFF0F0F0F);
+  static const Color grey850 = Color(0xFF1A1A1A);
+  static const Color grey800 = Color(0xFF2A2A2A);
+  static const Color grey700 = Color(0xFF3A3A3A);
+  static const Color grey600 = Color(0xFF5A5A5A);
+  static const Color grey500 = Color(0xFF7A7A7A);
+  static const Color grey400 = Color(0xFF9A9A9A);
+  static const Color grey300 = Color(0xFFB0B0B0);
+  
+  // Semantic colors for various categories
+  static const Color programs = Color(0xFF00B4FF);
+  static const Color extras = Color(0xFF9C27B0);
+  static const Color warmup = Color(0xFFFF9500);
+  static const Color cooldown = Color(0xFF00BCD4);
+  
+  // Status colors  
+  static const Color bonus = Color(0xFFFFB84D);
+  static const Color completed = Color(0xFF4CAF50);
+  static const Color inProgress = Color(0xFFFF9500);
+  static const Color notStarted = grey600;
+  
+  // Timer colors
+  static const Color timerWork = Color(0xFFFF6B35);
+  static const Color timerRest = Color(0xFF00B4FF);
+  
+  // ============================================================================
   // GLASSMORPHISM COLORS
   // ============================================================================
   
@@ -398,7 +447,7 @@ class AppTextStyles {
     height: 1.1,
   );
   
-  /// Stat Label - Small labels under stats
+  /// Stat Label - Small labels under stats (2025 Best Practice: 12sp minimum)
   static const TextStyle statLabel = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w600,
@@ -408,10 +457,10 @@ class AppTextStyles {
   );
 
   // ============================================================================
-  // BODY STYLES
+  // BODY STYLES - 2025 UX Standards
   // ============================================================================
   
-  /// Body Text - Main content
+  /// Body Text - Main content (Premium readability)
   static const TextStyle body = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
@@ -420,16 +469,16 @@ class AppTextStyles {
     height: 1.5,
   );
   
-  /// Body Medium
+  /// Body Medium (Optimal for mobile reading)
   static const TextStyle bodyMedium = TextStyle(
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.3,
     color: AppTheme.onSurfaceColor,
     height: 1.5,
   );
   
-  /// Small Text
+  /// Small Text (Minimum comfortable reading size)
   static const TextStyle small = TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w500,
@@ -439,10 +488,10 @@ class AppTextStyles {
   );
 
   // ============================================================================
-  // LABEL STYLES
+  // LABEL STYLES - 2025 Accessibility Standards
   // ============================================================================
   
-  /// Label Small - For descriptions and secondary info (GYM-optimized)
+  /// Label Small - For descriptions and secondary info (12sp minimum)
   static const TextStyle labelSmall = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w500,
@@ -451,7 +500,7 @@ class AppTextStyles {
     height: 1.3,
   );
   
-  /// Label Medium - For category names and tags (GYM-optimized)
+  /// Label Medium - For category names and tags (Enhanced readability)
   static const TextStyle labelMedium = TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w700,
@@ -460,16 +509,16 @@ class AppTextStyles {
     height: 1.2,
   );
   
-  /// Extra Small Label - Uppercase micro tags
-  static const TextStyle labelXS = TextStyle(
-    fontSize: 11,
+  /// Label Micro - Compact labels, uppercase recommended (12sp minimum for 2025)
+  static const TextStyle labelMicro = TextStyle(
+    fontSize: 12,
     fontWeight: FontWeight.bold,
-    letterSpacing: 1.2,
+    letterSpacing: 1.4,
     color: Color(0xFF9A9A9A),
     height: 1.2,
   );
   
-  /// Button Text
+  /// Button Text (Premium tap target)
   static const TextStyle button = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.bold,
@@ -477,14 +526,134 @@ class AppTextStyles {
     color: AppTheme.onPrimaryColor,
   );
   
-  /// Button Text Small
+  /// Button Text Small (Minimum for comfort)
   static const TextStyle buttonSmall = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.bold,
     letterSpacing: 0.5,
     color: AppTheme.onPrimaryColor,
   );
+  
+  /// Caption - Smallest readable text for metadata (12sp for 2025)
+  static const TextStyle caption = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.3,
+    color: Color(0xFF9A9A9A),
+    height: 1.3,
+  );
+  
+  // ============================================================================
+  // SPECIALIZED STYLES - Context-Specific (2025 Best Practice)
+  // ============================================================================
+  
+  /// Display Large - Extra large numbers and heroes (stats, countdowns)
+  static const TextStyle displayLarge = TextStyle(
+    fontSize: 36,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.5,
+    color: AppTheme.onSurfaceColor,
+    height: 1.1,
+  );
+  
+  /// Display Medium - Large numbers (30-32sp)
+  static const TextStyle displayMedium = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.5,
+    color: AppTheme.onSurfaceColor,
+    height: 1.1,
+  );
+  
+  /// Headline Small - Smaller section headers (20sp)
+  static const TextStyle headlineSmall = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.5,
+    color: AppTheme.onSurfaceColor,
+    height: 1.3,
+  );
+  
+  /// Body Large+ - Emphasized body text (17sp)
+  static const TextStyle bodyLargePlus = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.3,
+    color: AppTheme.onSurfaceColor,
+    height: 1.5,
+  );
+  
+  /// Subtitle Large - Larger secondary headers (18sp)
+  static const TextStyle subtitleLarge = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.5,
+    color: AppTheme.onSurfaceColor,
+    height: 1.4,
+  );
+  
+  /// Button Large - Prominent CTA buttons (18sp)
+  static const TextStyle buttonLarge = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.8,
+    color: AppTheme.onPrimaryColor,
+  );
 }
+
+/// =============================================================================
+/// TYPOGRAPHY USAGE GUIDE (2025 Best Practices)
+/// =============================================================================
+/// 
+/// HIERARCHY (Use these, don't override fontSize):
+/// 
+/// Display:
+///   displayLarge (36sp)  - Hero numbers, main stats, timers
+///   displayMedium (30sp) - Secondary large numbers
+///   statValue (36sp)     - Athletic stat displays
+/// 
+/// Titles:
+///   titleXL (32sp)       - Page titles, hero sections
+///   titleL (24sp)        - Main section headers
+///   headlineSmall (20sp) - Sub-section headers
+///   subtitle (18sp)      - Secondary headers
+///   subtitleLarge (18sp) - Emphasized secondary headers
+/// 
+/// Body:
+///   body (16sp)          - Main readable content
+///   bodyLargePlus (17sp) - Emphasized content
+///   bodyMedium (15sp)    - Standard secondary content
+///   small (13sp)         - Supporting information
+/// 
+/// Labels & Captions:
+///   labelMedium (13sp)   - Category names, tags (bold)
+///   labelSmall (12sp)    - Descriptions, metadata
+///   labelMicro (12sp)    - Compact uppercase labels
+///   caption (12sp)       - Timestamps, footnotes
+///   statLabel (12sp)     - Labels under statistics
+/// 
+/// Buttons:
+///   buttonLarge (18sp)   - Primary CTAs
+///   button (16sp)        - Standard buttons
+///   buttonSmall (14sp)   - Compact buttons
+/// 
+/// ✅ DO:
+///   - Use theme styles directly: AppTextStyles.titleL
+///   - Only modify color/weight: .copyWith(color: AppTheme.primaryColor)
+///   - Add new semantic styles when needed
+/// 
+/// ❌ DON'T:
+///   - Override fontSize: .copyWith(fontSize: 22) 
+///   - Use raw TextStyle() with hardcoded sizes
+///   - Mix theme styles with manual sizing
+/// 
+/// BENEFITS:
+///   ✨ Change theme.dart → entire app updates
+///   ✨ Consistent visual hierarchy
+///   ✨ Easy to add responsive scaling
+///   ✨ Accessibility-friendly (system font scaling)
+///   ✨ Maintainable and professional
+/// =============================================================================
 
 /// Spacing Constants for Hockey Gym V2
 /// Consistent spacing system for layouts
