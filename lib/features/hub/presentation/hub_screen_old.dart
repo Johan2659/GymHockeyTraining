@@ -1,19 +1,19 @@
-import 'dart:math' as math;
 import 'dart:ui';
-
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/theme.dart';
 import '../../../core/models/models.dart';
-import '../../../core/utils/selectors.dart';
 import '../../application/app_state_provider.dart';
-import '../../auth/application/auth_controller.dart';
+import '../../../core/utils/selectors.dart';
 import '../../programs/presentation/program_management_dialog.dart';
+import '../../auth/application/auth_controller.dart';
 
 /// BEAST LEAGUE Dashboard - Hockey Gym V2
 /// Modern, fluid design inspired by Fitbod × EA Sports × Apple Fitness
+/// Completely rewritten for 2025 pro gym/gaming aesthetic
 
 class HubScreen extends ConsumerWidget {
   const HubScreen({super.key});
@@ -28,12 +28,12 @@ class HubScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(
           child: Padding(
-            padding: AppSpacing.horizontalPage,
+            padding: AppSpacing.page,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: EdgeInsets.all(AppSpacing.lg),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -50,12 +50,12 @@ class HubScreen extends ConsumerWidget {
                     color: AppTheme.error,
                   ),
                 ),
-                SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.lg),
                 Text(
                   'Error loading app state',
                   style: AppTextStyles.titleL,
                 ),
-                SizedBox(height: AppSpacing.md),
+                const SizedBox(height: AppSpacing.md),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(appStateProvider),
                   child: Text(
@@ -73,10 +73,7 @@ class HubScreen extends ConsumerWidget {
   }
 
   Widget _buildDashboard(
-    BuildContext context,
-    WidgetRef ref,
-    AppStateData data,
-  ) {
+      BuildContext context, WidgetRef ref, AppStateData data) {
     final sessionInProgressAsync = ref.watch(sessionInProgressProvider);
     final weeklyStatsAsync = ref.watch(weeklyStatsProvider);
     final userProfileAsync = ref.watch(currentUserProfileProvider);
@@ -86,96 +83,98 @@ class HubScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Hero Header with BEAST LEAGUE title
           _buildBeastLeagueHeroHeader(context, ref, data, userProfileAsync),
-          SizedBox(height: AppSpacing.lg),
-
-          // Level + XP ring
+          
+          const SizedBox(height: AppSpacing.lg),
+          
+          // Level + XP Ring (glassmorphism hero section)
           Padding(
             padding: AppSpacing.horizontalPage,
             child: _buildLevelRingSection(context, data),
           ),
-
-          SizedBox(height: AppSpacing.xl),
-
-          // Current program
+          
+          const SizedBox(height: AppSpacing.xl),
+          
+          // Current Program Section
           Padding(
             padding: AppSpacing.horizontalPage,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (data.hasActiveProgram)
+                if (data.hasActiveProgram) ...[
                   sessionInProgressAsync.when(
-                    data: (sessionInProgress) =>
-                        _buildCurrentProgramSection(
+                    data: (sessionInProgress) => _buildCurrentProgramSection(
                       context,
                       ref,
                       data,
                       sessionInProgress,
                     ),
-                    loading: () =>
-                        _buildCurrentProgramSection(context, ref, data, null),
+                    loading: () => _buildCurrentProgramSection(context, ref, data, null),
                     error: (_, __) =>
                         _buildCurrentProgramSection(context, ref, data, null),
-                  )
-                else
+                  ),
+                ] else ...[
                   _buildNoProgramState(context),
+                ],
               ],
             ),
           ),
-
-          SizedBox(height: AppSpacing.xl),
+          
+          const SizedBox(height: AppSpacing.xl),
+          
+          // Thin gradient divider
           Padding(
             padding: AppSpacing.horizontalPage,
             child: const GradientDivider(margin: EdgeInsets.zero),
           ),
-          SizedBox(height: AppSpacing.xl),
-
-          // Quick stats
+          
+          const SizedBox(height: AppSpacing.xl),
+          
+          // Quick Stats Strip
           Padding(
             padding: AppSpacing.horizontalPage,
-            child: _buildQuickStatsStrip(
-              context,
-              data,
-              weeklyStatsAsync,
-            ),
+            child: _buildQuickStatsStrip(context, data, weeklyStatsAsync),
           ),
-
-          SizedBox(height: AppSpacing.xl),
+          
+          const SizedBox(height: AppSpacing.xl),
+          
           Padding(
             padding: AppSpacing.horizontalPage,
             child: const GradientDivider(margin: EdgeInsets.zero),
           ),
-          SizedBox(height: AppSpacing.xl),
-
-          // Quick actions
+          
+          const SizedBox(height: AppSpacing.xl),
+          
+          // Quick Actions
           Padding(
             padding: AppSpacing.horizontalPage,
             child: _buildQuickActions(context),
           ),
-
-          SizedBox(height: AppSpacing.xl),
+          
+          const SizedBox(height: AppSpacing.xl),
+          
           Padding(
             padding: AppSpacing.horizontalPage,
             child: const GradientDivider(margin: EdgeInsets.zero),
           ),
-          SizedBox(height: AppSpacing.xl),
-
-          // Motivation
+          
+          const SizedBox(height: AppSpacing.xl),
+          
+          // Motivational Section
           Padding(
             padding: AppSpacing.horizontalPage,
             child: _buildMotivationalSection(context, data),
           ),
 
-          const SizedBox(height: 100),
+          const SizedBox(height: 100), // Bottom padding for nav bar
         ],
       ),
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // HERO HEADER
-  // ---------------------------------------------------------------------------
-
+  /// HERO HEADER - BEAST LEAGUE
+  /// Full width hero section with title, welcome, and background effects
   Widget _buildBeastLeagueHeroHeader(
     BuildContext context,
     WidgetRef ref,
@@ -185,14 +184,11 @@ class HubScreen extends ConsumerWidget {
     final userProfile = userProfileAsync.valueOrNull;
     final userName = userProfile?.username.toUpperCase() ?? 'ATHLETE';
 
-    final level = Selectors.calculateLevel(data.currentXP);
-    final rankName = _mapLevelToRank(level);
-
     return SafeArea(
       bottom: false,
       child: Stack(
         children: [
-          // Background blobs
+          // Subtle background gradient blobs (ice dust effect)
           Positioned(
             top: -50,
             right: -30,
@@ -229,22 +225,18 @@ class HubScreen extends ConsumerWidget {
               ),
             ),
           ),
-
+          
           // Content
           Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.lg,
-              AppSpacing.lg,
-              AppSpacing.lg,
-              AppSpacing.xl,
-            ),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xl),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title row with accent line
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Vertical accent line
+                    // Vertical accent line (2px gradient)
                     Container(
                       width: 2,
                       height: 40,
@@ -261,16 +253,18 @@ class HubScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(1),
                       ),
                     ),
-                    SizedBox(width: AppSpacing.md),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // BEAST LEAGUE title
                           Text(
                             'BEAST LEAGUE',
                             style: AppTextStyles.titleXL,
                           ),
-                          SizedBox(height: AppSpacing.xs),
+                          const SizedBox(height: AppSpacing.xs),
+                          // Welcome back subtitle
                           Row(
                             children: [
                               Text(
@@ -293,14 +287,6 @@ class HubScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Season 1 • Rank: $rankName',
-                            style: AppTextStyles.small.copyWith(
-                              fontSize: 11,
-                              color: Colors.grey[500],
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -314,10 +300,8 @@ class HubScreen extends ConsumerWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // LEVEL RING + STREAK
-  // ---------------------------------------------------------------------------
-
+  /// LEVEL RING WIDGET + STREAK BADGE
+  /// Single glassmorphism hero block with animated XP ring
   Widget _buildLevelRingSection(BuildContext context, AppStateData data) {
     final level = Selectors.calculateLevel(data.currentXP);
     final xpInCurrentLevel = data.currentXP % Selectors.xpPerLevel;
@@ -327,41 +311,48 @@ class HubScreen extends ConsumerWidget {
     final rankName = _mapLevelToRank(level);
 
     return GlassContainer(
-      padding: AppSpacing.card,
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
         children: [
+          // Animated XP Ring
           _LevelRingWidget(
             level: level,
             progress: progressToNextLevel,
             size: 100,
           ),
-          SizedBox(width: AppSpacing.lg),
+          
+          const SizedBox(width: AppSpacing.lg),
+          
+          // Text info + Streak badge
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Level and XP line
                 Row(
-  crossAxisAlignment: CrossAxisAlignment.baseline,
-  textBaseline: TextBaseline.alphabetic,
-  children: [
-    Text(
-      'LEVEL $level',
-      style: AppTextStyles.subtitle.copyWith(
-        fontSize: 20,
-        color: AppTheme.primaryColor,
-      ),
-    ),
-    Text(
-      '  –  ${data.currentXP} XP',
-      style: AppTextStyles.body.copyWith(
-        fontSize: 14,
-        color: Colors.grey[400],
-      ),
-    ),
-  ],
-),
-
-                SizedBox(height: AppSpacing.xs),
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      'LEVEL $level',
+                      style: AppTextStyles.subtitle.copyWith(
+                        fontSize: 20,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                    Text(
+                      '  –  ${data.currentXP} XP',
+                      style: AppTextStyles.body.copyWith(
+                        fontSize: 14,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: AppSpacing.xs),
+                
+                // XP to next rank
                 Text(
                   '$xpNeeded XP TO NEXT RANK: $rankName',
                   style: AppTextStyles.small.copyWith(
@@ -369,7 +360,10 @@ class HubScreen extends ConsumerWidget {
                     color: Colors.grey[500],
                   ),
                 ),
-                SizedBox(height: AppSpacing.md),
+                
+                const SizedBox(height: AppSpacing.md),
+                
+                // Streak Badge (inline)
                 _StreakBadgeWidget(streak: data.currentStreak),
               ],
             ),
@@ -379,6 +373,7 @@ class HubScreen extends ConsumerWidget {
     );
   }
 
+  /// Map level to cool hockey/gym rank names
   String _mapLevelToRank(int level) {
     if (level < 5) return 'ICE ROOKIE';
     if (level < 10) return 'ICE WARRIOR';
@@ -388,10 +383,8 @@ class HubScreen extends ConsumerWidget {
     return 'APEX BEAST';
   }
 
-  // ---------------------------------------------------------------------------
-  // CURRENT PROGRAM
-  // ---------------------------------------------------------------------------
-
+  /// CURRENT PROGRAM SECTION
+  /// Full width, fluid layout with left accent line
   Widget _buildCurrentProgramSection(
     BuildContext context,
     WidgetRef ref,
@@ -401,12 +394,11 @@ class HubScreen extends ConsumerWidget {
     final currentWeek = (data.state?.currentWeek ?? 0) + 1;
     final currentSession = (data.state?.currentSession ?? 0) + 1;
     final hasSessionInProgress = sessionInProgress != null;
-    final programName =
-        (data.activeProgram?.title ?? 'Unknown Program').toUpperCase();
-
+    final programName = (data.activeProgram?.title ?? 'Unknown Program').toUpperCase();
+    
+    // Infer role from program name (simple heuristic)
     String role = 'HOCKEY';
-    if (programName.contains('ATTACKER') ||
-        programName.contains('FORWARD')) {
+    if (programName.contains('ATTACKER') || programName.contains('FORWARD')) {
       role = 'ATTACKER';
     } else if (programName.contains('DEFENSE')) {
       role = 'DEFENSE';
@@ -416,6 +408,7 @@ class HubScreen extends ConsumerWidget {
 
     return Stack(
       children: [
+        // Left accent line (2px gradient)
         Positioned(
           left: 0,
           top: 0,
@@ -435,14 +428,18 @@ class HubScreen extends ConsumerWidget {
                 ],
                 stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
               ),
+              borderRadius: BorderRadius.circular(1),
             ),
           ),
         ),
+        
+        // Content
         Padding(
-          padding: EdgeInsets.only(left: AppSpacing.md),
+          padding: const EdgeInsets.only(left: AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Section header
               Row(
                 children: [
                   Icon(
@@ -450,7 +447,7 @@ class HubScreen extends ConsumerWidget {
                     color: AppTheme.primaryColor,
                     size: 18,
                   ),
-                  SizedBox(width: AppSpacing.sm),
+                  const SizedBox(width: AppSpacing.sm),
                   Text(
                     'CURRENT PROGRAM',
                     style: AppTextStyles.labelXS.copyWith(
@@ -470,15 +467,12 @@ class HubScreen extends ConsumerWidget {
                         _showStopProgramDialog(context);
                       }
                     },
-                    itemBuilder: (context) => const [
-                      PopupMenuItem(
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
                         value: 'stop',
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.stop_circle_outlined,
-                              color: Colors.orange,
-                            ),
+                            Icon(Icons.stop_circle_outlined, color: Colors.orange),
                             SizedBox(width: 8),
                             Text('Stop Program'),
                           ],
@@ -488,7 +482,10 @@ class HubScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              SizedBox(height: AppSpacing.sm),
+              
+              const SizedBox(height: AppSpacing.sm),
+              
+              // Thin horizontal divider
               Container(
                 height: 1,
                 decoration: BoxDecoration(
@@ -501,17 +498,23 @@ class HubScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              SizedBox(height: AppSpacing.md),
+              
+              const SizedBox(height: AppSpacing.md),
+              
+              // Program name + role chip
               Row(
                 children: [
                   Expanded(
                     child: Text(
                       programName,
-                      style: AppTextStyles.subtitle.copyWith(fontSize: 20),
+                      style: AppTextStyles.subtitle.copyWith(
+                        fontSize: 20,
+                      ),
                     ),
                   ),
+                  // Role chip
                   Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.sm + 2,
                       vertical: 4,
                     ),
@@ -533,7 +536,10 @@ class HubScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              SizedBox(height: AppSpacing.md),
+              
+              const SizedBox(height: AppSpacing.md),
+              
+              // Progress info row
               Row(
                 children: [
                   Text(
@@ -547,8 +553,7 @@ class HubScreen extends ConsumerWidget {
                   Container(
                     width: 3,
                     height: 3,
-                    margin:
-                        EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                    margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppTheme.primaryColor.withOpacity(0.5),
@@ -572,7 +577,10 @@ class HubScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              SizedBox(height: AppSpacing.sm),
+              
+              const SizedBox(height: AppSpacing.sm),
+              
+              // Progress bar
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Stack(
@@ -602,21 +610,18 @@ class HubScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              SizedBox(height: AppSpacing.lg),
+              
+              const SizedBox(height: AppSpacing.lg),
+              
+              // Session in progress banner (if exists)
               if (hasSessionInProgress)
-                _buildSessionInProgressBanner(
-                  context,
-                  ref,
-                  sessionInProgress!,
-                  data,
-                ),
-              if (hasSessionInProgress) SizedBox(height: AppSpacing.md),
-              _buildProgramActionButton(
-                context,
-                data,
-                hasSessionInProgress,
-                sessionInProgress,
-              ),
+                _buildSessionInProgressBanner(context, ref, sessionInProgress, data),
+              
+              if (hasSessionInProgress)
+                const SizedBox(height: AppSpacing.md),
+              
+              // Main CTA button
+              _buildProgramActionButton(context, data, hasSessionInProgress, sessionInProgress),
             ],
           ),
         ),
@@ -624,14 +629,14 @@ class HubScreen extends ConsumerWidget {
     );
   }
 
+  /// Session in progress banner
   Widget _buildSessionInProgressBanner(
     BuildContext context,
     WidgetRef ref,
     SessionInProgress sessionInProgress,
     AppStateData data,
   ) {
-    final timeSincePause =
-        DateTime.now().difference(sessionInProgress.pausedAt);
+    final timeSincePause = DateTime.now().difference(sessionInProgress.pausedAt);
     final hoursSincePause = timeSincePause.inHours;
     final minutesSincePause = timeSincePause.inMinutes;
 
@@ -649,7 +654,7 @@ class HubScreen extends ConsumerWidget {
     final completedCount = sessionInProgress.completedExercises.length;
 
     return Container(
-      padding: EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -667,8 +672,9 @@ class HubScreen extends ConsumerWidget {
       ),
       child: Row(
         children: [
+          // Icon
           Container(
-            padding: EdgeInsets.all(AppSpacing.sm),
+            padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
@@ -685,7 +691,7 @@ class HubScreen extends ConsumerWidget {
               size: 20,
             ),
           ),
-          SizedBox(width: AppSpacing.sm + 4),
+          const SizedBox(width: AppSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -744,6 +750,7 @@ class HubScreen extends ConsumerWidget {
     );
   }
 
+  /// Program action button (resume or start next)
   Widget _buildProgramActionButton(
     BuildContext context,
     AppStateData data,
@@ -757,17 +764,18 @@ class HubScreen extends ConsumerWidget {
         child: ElevatedButton.icon(
           onPressed: () {
             context.go(
-              '/session/${sessionInProgress.programId}/${sessionInProgress.week}/${sessionInProgress.session}/play',
-            );
+                '/session/${sessionInProgress.programId}/${sessionInProgress.week}/${sessionInProgress.session}/play');
           },
           icon: const Icon(Icons.play_arrow, size: 22),
-          label: Text('RESUME SESSION', style: AppTextStyles.button),
+          label: Text(
+            'RESUME SESSION',
+            style: AppTextStyles.button,
+          ),
         ),
       );
     }
 
     final isSessionAvailable = data.nextSession != null;
-
     return SizedBox(
       width: double.infinity,
       height: 52,
@@ -781,8 +789,7 @@ class HubScreen extends ConsumerWidget {
               }
             : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isSessionAvailable ? AppTheme.primaryColor : Colors.grey[800],
+          backgroundColor: isSessionAvailable ? AppTheme.primaryColor : Colors.grey[800],
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -803,12 +810,15 @@ class HubScreen extends ConsumerWidget {
     );
   }
 
+  /// No program state
   Widget _buildNoProgramState(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: AppSpacing.xl),
+        const SizedBox(height: AppSpacing.xl),
+        
+        // Icon with glow
         Container(
-          padding: EdgeInsets.all(AppSpacing.xl),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: RadialGradient(
@@ -819,19 +829,25 @@ class HubScreen extends ConsumerWidget {
               ],
             ),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.sports_hockey,
             size: 64,
             color: AppTheme.primaryColor,
           ),
         ),
-        SizedBox(height: AppSpacing.lg),
+        
+        const SizedBox(height: AppSpacing.lg),
+        
         Text(
           'READY TO START TRAINING?',
-          style: AppTextStyles.subtitle.copyWith(fontSize: 22),
+          style: AppTextStyles.subtitle.copyWith(
+            fontSize: 22,
+          ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: AppSpacing.sm),
+        
+        const SizedBox(height: AppSpacing.sm),
+        
         Text(
           'Choose a training program that matches your hockey position and goals.',
           style: AppTextStyles.body.copyWith(
@@ -840,7 +856,10 @@ class HubScreen extends ConsumerWidget {
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: AppSpacing.lg),
+        
+        const SizedBox(height: AppSpacing.lg),
+        
+        // Accent line
         Container(
           height: 1,
           width: 80,
@@ -856,24 +875,28 @@ class HubScreen extends ConsumerWidget {
             ),
           ),
         ),
-        SizedBox(height: AppSpacing.lg),
+        
+        const SizedBox(height: AppSpacing.lg),
+        
         SizedBox(
           width: double.infinity,
           height: 52,
           child: ElevatedButton(
             onPressed: () => context.go('/programs'),
-            child: Text('CHOOSE YOUR PROGRAM', style: AppTextStyles.button),
+            child: Text(
+              'CHOOSE YOUR PROGRAM',
+              style: AppTextStyles.button,
+            ),
           ),
         ),
-        SizedBox(height: AppSpacing.xl),
+        
+        const SizedBox(height: AppSpacing.xl),
       ],
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // QUICK STATS
-  // ---------------------------------------------------------------------------
-
+  /// QUICK STATS STRIP
+  /// Single row with stats, separated by thin vertical dividers
   Widget _buildQuickStatsStrip(
     BuildContext context,
     AppStateData data,
@@ -886,10 +909,15 @@ class HubScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Section header
         Row(
           children: [
-            Icon(Icons.insights, color: AppTheme.primaryColor, size: 18),
-            SizedBox(width: AppSpacing.sm),
+            Icon(
+              Icons.insights,
+              color: AppTheme.primaryColor,
+              size: 18,
+            ),
+            const SizedBox(width: AppSpacing.sm),
             Text(
               'THIS WEEK',
               style: AppTextStyles.labelXS.copyWith(
@@ -899,18 +927,19 @@ class HubScreen extends ConsumerWidget {
             ),
           ],
         ),
-        SizedBox(height: AppSpacing.md),
+        
+        const SizedBox(height: AppSpacing.md),
+        
+        // Stats row
         Container(
-          padding: EdgeInsets.symmetric(
-            vertical: AppSpacing.md,
-            horizontal: AppSpacing.sm,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.sm),
           decoration: BoxDecoration(
             color: AppTheme.primaryColor.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
+              // Sessions stat
               Expanded(
                 child: _StatItem(
                   icon: Icons.fitness_center,
@@ -918,6 +947,8 @@ class HubScreen extends ConsumerWidget {
                   label: 'SESSIONS',
                 ),
               ),
+              
+              // Vertical divider
               Container(
                 width: 1,
                 height: 40,
@@ -933,6 +964,8 @@ class HubScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+              
+              // Time stat
               Expanded(
                 child: _StatItem(
                   icon: Icons.timer,
@@ -940,6 +973,8 @@ class HubScreen extends ConsumerWidget {
                   label: 'TIME',
                 ),
               ),
+              
+              // Vertical divider
               Container(
                 width: 1,
                 height: 40,
@@ -955,13 +990,14 @@ class HubScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+              
+              // Streak stat
               Expanded(
                 child: _StatItem(
                   icon: Icons.local_fire_department,
                   value: '${data.currentStreak}',
                   label: 'STREAK',
-                  valueColor:
-                      data.currentStreak > 0 ? Colors.orange : null,
+                  valueColor: data.currentStreak > 0 ? Colors.orange : null,
                 ),
               ),
             ],
@@ -971,18 +1007,20 @@ class HubScreen extends ConsumerWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // QUICK ACTIONS
-  // ---------------------------------------------------------------------------
-
+  /// QUICK ACTIONS
   Widget _buildQuickActions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Section header
         Row(
           children: [
-            Icon(Icons.flash_on, color: AppTheme.primaryColor, size: 18),
-            SizedBox(width: AppSpacing.sm),
+            Icon(
+              Icons.flash_on,
+              color: AppTheme.primaryColor,
+              size: 18,
+            ),
+            const SizedBox(width: AppSpacing.sm),
             Text(
               'QUICK ACTIONS',
               style: AppTextStyles.labelXS.copyWith(
@@ -992,7 +1030,9 @@ class HubScreen extends ConsumerWidget {
             ),
           ],
         ),
-        SizedBox(height: AppSpacing.md),
+        
+        const SizedBox(height: AppSpacing.md),
+        
         Row(
           children: [
             Expanded(
@@ -1003,7 +1043,7 @@ class HubScreen extends ConsumerWidget {
                 onTap: () => context.go('/extras'),
               ),
             ),
-            SizedBox(width: AppSpacing.md),
+            const SizedBox(width: AppSpacing.md),
             Expanded(
               child: _QuickActionCard(
                 title: 'TRAINING\nFOCUS',
@@ -1018,23 +1058,22 @@ class HubScreen extends ConsumerWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // MOTIVATION
-  // ---------------------------------------------------------------------------
-
-  Widget _buildMotivationalSection(
-    BuildContext context,
-    AppStateData data,
-  ) {
+  /// MOTIVATIONAL SECTION
+  Widget _buildMotivationalSection(BuildContext context, AppStateData data) {
     final message = _getMotivationalMessage(data);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Section header
         Row(
           children: [
-            Icon(Icons.psychology, color: AppTheme.primaryColor, size: 18),
-            SizedBox(width: AppSpacing.sm),
+            Icon(
+              Icons.psychology,
+              color: AppTheme.primaryColor,
+              size: 18,
+            ),
+            const SizedBox(width: AppSpacing.sm),
             Text(
               'DAILY MOTIVATION',
               style: AppTextStyles.labelXS.copyWith(
@@ -1044,9 +1083,11 @@ class HubScreen extends ConsumerWidget {
             ),
           ],
         ),
-        SizedBox(height: AppSpacing.md),
+        
+        const SizedBox(height: AppSpacing.md),
+        
         Container(
-          padding: EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -1065,8 +1106,9 @@ class HubScreen extends ConsumerWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Icon
               Container(
-                padding: EdgeInsets.all(AppSpacing.sm),
+                padding: const EdgeInsets.all(AppSpacing.sm),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
@@ -1083,7 +1125,7 @@ class HubScreen extends ConsumerWidget {
                   size: 20,
                 ),
               ),
-              SizedBox(width: AppSpacing.md),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(
                   message,
@@ -1103,7 +1145,7 @@ class HubScreen extends ConsumerWidget {
 
   String _getMotivationalMessage(AppStateData data) {
     if (!data.hasActiveProgram) {
-      return 'Every champion started with a single decision. Choose your program and begin your journey!';
+      return "Every champion started with a single decision. Choose your program and begin your journey!";
     }
 
     if (data.currentStreak >= Selectors.streakWeekThreshold) {
@@ -1127,11 +1169,11 @@ class HubScreen extends ConsumerWidget {
     }
 
     final messages = [
-      'Hockey is a game of speed, skill, and heart. Train all three today!',
+      "Hockey is a game of speed, skill, and heart. Train all three today!",
       "Champions aren't made in comfort zones. Push your limits today!",
-      'Every pro started as a beginner. Every expert was once a rookie. Keep training!',
+      "Every pro started as a beginner. Every expert was once a rookie. Keep training!",
       "The ice doesn't care about excuses. Show up and give your best!",
-      'Skill is built through repetition. Greatness through persistence.',
+      "Skill is built through repetition. Greatness through persistence.",
     ];
 
     return messages[data.currentXP % messages.length];
@@ -1152,9 +1194,7 @@ class HubScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () async {
-              await ref
-                  .read(clearSessionInProgressActionProvider.future)
-                  .then((_) {});
+              await ref.read(clearSessionInProgressActionProvider.future);
               if (context.mounted) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -1187,6 +1227,8 @@ class HubScreen extends ConsumerWidget {
 // EXTRACTED WIDGETS
 // ============================================================================
 
+/// LEVEL RING WIDGET
+/// Animated circular progress ring with level in center
 class _LevelRingWidget extends StatelessWidget {
   final int level;
   final double progress;
@@ -1211,6 +1253,7 @@ class _LevelRingWidget extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
+              // Background ring
               SizedBox(
                 width: size,
                 height: size,
@@ -1221,6 +1264,8 @@ class _LevelRingWidget extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation(Colors.grey[850]!),
                 ),
               ),
+              
+              // Progress ring with gradient
               SizedBox(
                 width: size,
                 height: size,
@@ -1231,6 +1276,8 @@ class _LevelRingWidget extends StatelessWidget {
                   ),
                 ),
               ),
+              
+              // Level number
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -1258,6 +1305,7 @@ class _LevelRingWidget extends StatelessWidget {
   }
 }
 
+/// Custom painter for gradient ring
 class _GradientRingPainter extends CustomPainter {
   final double progress;
   final double strokeWidth;
@@ -1303,6 +1351,8 @@ class _GradientRingPainter extends CustomPainter {
   }
 }
 
+/// STREAK BADGE WIDGET
+/// Pill-shaped badge with pulsing animation
 class _StreakBadgeWidget extends StatefulWidget {
   final int streak;
 
@@ -1324,7 +1374,7 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     )..repeat(reverse: true);
-
+    
     _scaleAnimation = Tween<double>(begin: 0.96, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
@@ -1339,7 +1389,7 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
   @override
   Widget build(BuildContext context) {
     final hasStreak = widget.streak > 0;
-
+    
     return ScaleTransition(
       scale: _scaleAnimation,
       child: GestureDetector(
@@ -1376,9 +1426,7 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
               ),
               const SizedBox(width: 6),
               Text(
-                hasStreak
-                    ? '${widget.streak} WEEKS BEAST MODE'
-                    : 'START YOUR STREAK',
+                hasStreak ? '${widget.streak} WEEKS BEAST MODE' : 'START YOUR STREAK',
                 style: AppTextStyles.labelXS.copyWith(
                   fontSize: 10,
                   color: hasStreak ? Colors.orange : Colors.grey[600],
@@ -1396,21 +1444,23 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => GlassContainer(
-        borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(20)),
-        padding: EdgeInsets.all(AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('STREAK CALENDAR', style: AppTextStyles.subtitle),
-            SizedBox(height: AppSpacing.md),
+            Text(
+              'STREAK CALENDAR',
+              style: AppTextStyles.subtitle,
+            ),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Your current streak: ${widget.streak} weeks',
               style: AppTextStyles.body.copyWith(
                 color: Colors.grey[400],
               ),
             ),
-            SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               'Keep training weekly to maintain your streak and earn XP bonuses!',
               style: AppTextStyles.small.copyWith(
@@ -1418,7 +1468,7 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -1433,6 +1483,8 @@ class _StreakBadgeWidgetState extends State<_StreakBadgeWidget>
   }
 }
 
+/// STAT ITEM
+/// Individual stat display for quick stats strip
 class _StatItem extends StatelessWidget {
   final IconData icon;
   final String value;
@@ -1450,8 +1502,12 @@ class _StatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: AppTheme.primaryColor, size: 18),
-        SizedBox(height: AppSpacing.xs),
+        Icon(
+          icon,
+          color: AppTheme.primaryColor,
+          size: 18,
+        ),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           value,
           style: AppTextStyles.statValue.copyWith(
@@ -1472,6 +1528,8 @@ class _StatItem extends StatelessWidget {
   }
 }
 
+/// QUICK ACTION CARD
+/// Card for quick action buttons
 class _QuickActionCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -1493,30 +1551,28 @@ class _QuickActionCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withOpacity(0.10),
+            color.withOpacity(0.08),
             color.withOpacity(0.04),
           ],
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.15),
-          width: 0.8,
+          color: color.withOpacity(0.2),
+          width: 1,
         ),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(14),
           onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: AppSpacing.lg,
-              horizontal: AppSpacing.md,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: AppSpacing.md),
             child: Column(
               children: [
+                // Icon with glow
                 Container(
-                  padding: EdgeInsets.all(AppSpacing.sm + 4),
+                  padding: const EdgeInsets.all(AppSpacing.sm + 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -1529,7 +1585,7 @@ class _QuickActionCard extends StatelessWidget {
                   ),
                   child: Icon(icon, color: color, size: 28),
                 ),
-                SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.sm),
                 Text(
                   title,
                   style: AppTextStyles.small.copyWith(
