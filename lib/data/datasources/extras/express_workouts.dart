@@ -11,6 +11,25 @@ class ExpressWorkoutsData {
   // =============================================================================
 
   static const Map<String, String> _expressWorkouts = {
+    // Adapted from hockey_gym's Strength Stack using this engine's exercise IDs.
+    'express_strength_30': '''
+{
+  "id": "express_strength_30",
+  "title": "30-Min Strength Stack",
+  "description": "A focused full-body strength session for hockey. Duration is an estimate; allow time for warmup and rest.",
+  "type": "express_workout",
+  "xpReward": 90,
+  "duration": 30,
+  "difficulty": "medium",
+  "blocks": [
+    {"exerciseId": "dynamic_warmup_ramp"},
+    {"exerciseId": "goblet_squat"},
+    {"exerciseId": "bench_press"},
+    {"exerciseId": "chest_supported_row"},
+    {"exerciseId": "pallof_press"}
+  ]
+}
+''',
     'express_cardio_15': '''
 {
   "id": "express_cardio_15",

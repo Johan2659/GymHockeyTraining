@@ -1,202 +1,76 @@
-# 🏒 Hockey Gym Training App
+# HockeyForge Base
 
-A comprehensive Flutter application designed for hockey players to track their training progress, manage workout programs, and monitor performance analytics.
+Projet Flutter dérivé de GymHockeyTraining, avec la direction visuelle de HockeyForge et une séance express adaptée de hockey_gym. Les dépôts d'origine n'ont pas été modifiés.
 
-## 🎯 Features
+## Démarrer
 
-### Core Functionality
-- **Program Management**: Start, pause, and stop training programs
-- **Progress Tracking**: Real-time tracking of exercises, sessions, and achievements
-- **Performance Analytics**: Detailed insights into training progress and statistics
-- **User Profiles**: Personalized settings and role-based program recommendations
-- **Session Player**: Interactive workout sessions with exercise tracking
-- **Hub Dashboard**: Centralized view of active programs and progress
+Ouvrir ce dossier dans VS Code. Installer Flutter **3.35.7**, puis :
 
-### Security & Data Protection
-- **AES Encryption**: All local data is encrypted with secure key management
-- **Platform Security**: Android encrypted SharedPreferences and iOS keychain integration
-- **Data Persistence**: Robust storage with fallback mechanisms and migration support
-- **Privacy First**: All data stored locally, no external data transmission
-
-### Architecture Highlights
-- **Clean Architecture**: Well-structured codebase with clear separation of concerns
-- **State Management**: Riverpod-based reactive state management
-- **Repository Pattern**: Clean abstraction between data sources and business logic
-- **Stream-based Updates**: Real-time UI updates through stream providers
-- **Dependency Injection**: Proper DI with code generation
-
-## 🏗️ Architecture
-
-```
-lib/
-├── app/                    # App configuration and DI
-├── core/                   # Core utilities and models
-│   ├── errors/            # Custom exceptions and failures
-│   ├── models/            # Data models and entities
-│   ├── persistence/       # Data persistence services
-│   ├── repositories/      # Repository interfaces
-│   ├── services/         # Core services (logging, etc.)
-│   ├── storage/          # Storage implementations
-│   └── utils/            # Utility functions
-├── data/                  # Data layer implementation
-│   ├── datasources/      # Local data sources
-│   └── repositories_impl/ # Repository implementations
-└── features/              # Feature modules
-    ├── application/       # App state and providers
-    ├── extras/           # Bonus workouts and challenges
-    ├── hub/              # Main dashboard
-    ├── programs/         # Training programs
-    ├── progress/         # Progress tracking
-    ├── profile/          # User profile management
-    └── session/          # Workout session player
+```sh
+flutter pub get
+flutter run
 ```
 
-## 🚀 Getting Started
+Sur macOS : Xcode et CocoaPods sont nécessaires pour iOS. Ouvrir `ios/Runner.xcworkspace`, choisir l'équipe Apple et confirmer l'identifiant `com.johantoso.hockeyforgebase` avant de signer une application sur appareil.
 
-### Prerequisites
-- Flutter SDK (>=3.0.0)
-- Dart SDK (>=3.0.0)
-- Android Studio / VS Code
-- Android device/emulator or iOS simulator
+Le nom Dart `gymhockeytraining` est conservé pour les imports et le code généré. Le nom visible devient HockeyForge. Android est conservé mais son identité et sa publication restent à préparer.
 
-### Installation
+## Ce qui a été intégré
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd GymHockeyTraining
-   ```
+- Moteur Flutter/Riverpod/GoRouter et repositories de GymHockeyTraining.
+- Accueil HockeyForge : thème Dark Ice Arena, cartes plates, appel principal à l'action, accès aux séances express et statistiques issues des providers existants.
+- Démarrage direct du prochain entraînement et reprise prioritaire d'une séance sauvegardée.
+- Palette réelle de HockeyForge dans `lib/core/theme/app_colors.dart`, adaptée au thème historique sans casser ses références.
+- Programmes, lecteur de séance, timer de récupération, performances, historique, extras et profils locaux conservés.
+- Séances express existantes de 15–20 minutes et nouvelle Strength Stack de 30 minutes avec IDs d'exercices compatibles. Les durées sont des estimations.
+- Recherche YouTube déjà présente dans le moteur, conservée.
+- Structure native iOS, Podfile, iOS 13 minimum, identifiant propre au nouveau projet.
+- CI fournie : analyse du code applicatif, tests ciblés et compilation iOS simulateur sur macOS.
 
-2. **Install dependencies**
-   ```bash
-   flutter pub get
-   ```
+## Ce qui reste à construire
 
-3. **Generate code**
-   ```bash
-   flutter packages pub run build_runner build
-   ```
+| Fonction | État réel |
+|---|---|
+| Onboarding position/objectif | Hérité ; âge, niveau, équipement et disponibilités restent à ajouter |
+| Alternatives gym/home | Données héritées ; parcours de substitution à vérifier et compléter |
+| Alternatives selon douleurs/contraintes | À développer ; aucune personnalisation médicale implémentée |
+| Streak/progression | Calculs hérités ; audit des règles et du stockage nécessaire |
+| Challenges | Extras hérités ; système mensuel non implémenté |
+| Builder premium | À développer |
+| RevenueCat, achats, cloud sync | Non intégrés |
+| Skater/Goalie | Programmes hérités ; adaptation produit à approfondir |
+| Design complet | Nouvel accueil et palette intégrés ; autres écrans à harmoniser |
 
-4. **Run the app**
-   ```bash
-   flutter run
-   ```
+L'authentification héritée sélectionne des **profils locaux par nom d'utilisateur**. Elle ne constitue pas une authentification serveur et ne fournit pas de synchronisation entre appareils. Le stockage utilise Hive avec une clé sécurisée, mais des mécanismes de fallback existent : ne pas promettre un chiffrement intégral sans audit.
 
-### Development Setup
+## Vérification
 
-1. **Enable linting**
-   ```bash
-   # Uncomment custom_lint in analysis_options.yaml
-   flutter packages pub run build_runner build
-   ```
+Effectué le 5 octobre 2026 : parsing Dart des 122 fichiers applicatifs et des deux nouveaux fichiers de tests ; validation des imports locaux, des property lists iOS et des références d'exercices des quatre séances express.
 
-2. **Run tests**
-   ```bash
-   flutter test
-   ```
+Les tests Flutter, l'analyse avec résolution des packages et la compilation n'ont **pas** été exécutés jusqu'au bout : l'initialisation du SDK a été bloquée par la validation automatique pour une connexion vers un endpoint de métadonnées cloud. Les workflows sont fournis mais n'ont pas été déclenchés sur GitHub. Aucun build iOS réussi n'est revendiqué.
 
-3. **Run integration tests**
-   ```bash
-   flutter test integration_test/
-   ```
-
-## 🧪 Testing
-
-The app includes comprehensive testing:
-
-- **Unit Tests**: Core functionality and business logic
-- **Integration Tests**: End-to-end user flows
-- **Crash Tests**: Error handling and recovery
-- **Repository Tests**: Data persistence and retrieval
-
-Run all tests:
-```bash
-flutter test
+```sh
+flutter analyze lib --no-fatal-infos --no-fatal-warnings
+flutter test test/forge_home_test.dart test/forge_catalog_test.dart test/unit/models_test.dart
+flutter build ios --simulator --debug
 ```
 
-## 🔒 Security
+Les tests historiques sont conservés. La CI cible les nouveaux parcours et la sérialisation ; elle ne certifie pas toute la suite héritée. Avant publication, exécuter aussi `flutter test`, corriger les anciens tests et vérifier le démarrage à froid, la persistance, les interruptions du timer, les changements de profil et la suppression de données sur un appareil réel.
 
-- **Data Encryption**: All user data encrypted with AES-256
-- **Secure Storage**: Platform-specific secure storage mechanisms
-- **Key Management**: Cryptographically secure key generation and storage
-- **Privacy**: No external data transmission, all data stored locally
+## Priorité iOS
 
-## 📱 Platform Support
+1. Faire passer les builds et tests sur macOS, puis tester une séance entière sur iPhone.
+2. Harmoniser les autres écrans, compléter l'onboarding et les substitutions.
+3. Auditer le stockage et la gestion du timer lorsque l'app passe en arrière-plan.
+4. Préparer les vrais assets, politique de confidentialité, déclarations App Store et signature Apple.
+5. Ajouter et tester les achats premium seulement après stabilisation du parcours gratuit.
 
-- **Android**: API level 21+ (Android 5.0+)
-- **iOS**: iOS 11.0+
-- **Features**: Full feature parity across platforms
+Ce livrable est une **base de développement**, pas une version certifiée prête à publier sur l'App Store.
 
-## 🛠️ Development
+## Provenance
 
-### Code Generation
-The app uses code generation for:
-- Riverpod providers
-- JSON serialization
-- Repository implementations
+- GymHockeyTraining : https://github.com/Johan2659/GymHockeyTraining — commit `82d6eb325e17bc0a505fab8b9975e2f0fc508360`.
+- HockeyForge : https://github.com/Johan2659/hockeyforge — palette et spécification consultées via le dépôt connecté.
+- hockey_gym : https://github.com/Johan2659/hockey_gym — `assets/data/express_workouts.json` sur `master`, concept Strength Stack adapté au catalogue du moteur.
 
-Run code generation:
-```bash
-flutter packages pub run build_runner build --delete-conflicting-outputs
-```
-
-### State Management
-Built with Riverpod for:
-- Reactive state management
-- Dependency injection
-- Provider composition
-- Stream-based updates
-
-### Data Persistence
-- **Hive**: Encrypted local database
-- **SharedPreferences**: Fallback storage
-- **Migration**: Schema versioning and data migration
-
-## 📊 Performance
-
-- **Startup Time**: Optimized app initialization
-- **Memory Usage**: Efficient state management
-- **Storage**: Compressed and encrypted data storage
-- **UI**: Smooth 60fps animations and transitions
-
-## 🚀 Deployment
-
-### Store Requirements
-- [x] Security implementation
-- [x] Error handling
-- [x] Performance optimization
-- [x] Platform compliance
-- [ ] App store listings
-- [ ] Privacy policy
-- [ ] Terms of service
-
-### Release Process
-1. Update version in `pubspec.yaml`
-2. Run tests: `flutter test`
-3. Build release: `flutter build apk --release`
-4. Test on physical devices
-5. Submit to app stores
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Run the test suite
-6. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🏒 About Hockey Training
-
-This app is designed specifically for hockey players who want to:
-- Track their off-ice training progress
-- Follow structured workout programs
-- Monitor performance improvements
-- Maintain training consistency
-- Achieve their hockey goals
-
-Built with ❤️ for the hockey community.
+Les documents historiques déclarant le projet « production ready » n'ont pas été repris comme garanties.

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/models/models.dart';
-import '../features/hub/presentation/hub_screen.dart';
+import '../features/hub/presentation/forge_home_screen.dart';
 import '../features/programs/presentation/programs_screen.dart';
 import '../features/programs/presentation/program_detail_screen.dart';
 import '../features/extras/presentation/extras_screen.dart';
@@ -82,7 +82,7 @@ GoRouter router(Ref ref) {
           GoRoute(
             path: '/',
             name: 'hub',
-            builder: (context, state) => const HubScreen(),
+            builder: (context, state) => const ForgeHomeScreen(),
           ),
           GoRoute(
             path: '/programs',

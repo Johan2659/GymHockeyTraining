@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import '../core/theme/app_colors.dart';
 
 /// Hockey Gym Global Style V2
 /// Modern, athletic design inspired by Fitbod × EA Sports × Apple Fitness
@@ -10,16 +11,16 @@ class AppTheme {
   // ============================================================================
   
   /// Deep dark background - primary app background
-  static const Color backgroundColor = Color(0xFF050B18);
+  static const Color backgroundColor = AppColors.background;
   
   /// Slightly lighter surface color for cards and containers
-  static const Color surfaceColor = Color(0xFF0D1323);
+  static const Color surfaceColor = AppColors.surface;
   
   /// Hockey ice blue - primary brand color
-  static const Color primaryColor = Color(0xFF00B4FF);
+  static const Color primaryColor = AppColors.primary;
   
-  /// Gold accent for highlights and achievements
-  static const Color accentGold = Color(0xFFFFB84D);
+  /// Legacy name kept for compatibility; hockey red for achievements
+  static const Color accentGold = AppColors.accent;
   
   /// Success green
   static const Color success = Color(0xFF4CAF50);
@@ -28,19 +29,19 @@ class AppTheme {
   static Color warning = Colors.amber.shade300;
   
   /// Error red
-  static const Color error = Colors.red;
+  static const Color error = AppColors.danger;
   
   /// White for text on dark backgrounds
-  static const Color onSurfaceColor = Color(0xFFFFFFFF);
+  static const Color onSurfaceColor = AppColors.textPrimary;
   
   /// White for text on primary color
-  static const Color onPrimaryColor = Color(0xFFFFFFFF);
+  static const Color onPrimaryColor = AppColors.background;
   
   /// Secondary text color - better contrast
-  static const Color secondaryTextColor = Color(0xFFB0B0B0);
+  static const Color secondaryTextColor = AppColors.textSecondary;
   
   /// Tertiary text color - subtle text
-  static const Color tertiaryTextColor = Color(0xFF7A7A7A);
+  static const Color tertiaryTextColor = AppColors.textMuted;
   
   /// Secondary accent (keeping backward compatibility)
   static const Color accentColor = primaryColor;
@@ -74,12 +75,12 @@ class AppTheme {
   static const Color grey800 = Color(0xFF2A2A2A);
   static const Color grey700 = Color(0xFF3A3A3A);
   static const Color grey600 = Color(0xFF5A5A5A);
-  static const Color grey500 = Color(0xFF7A7A7A);
+  static const Color grey500 = AppColors.textMuted;
   static const Color grey400 = Color(0xFF9A9A9A);
-  static const Color grey300 = Color(0xFFB0B0B0);
+  static const Color grey300 = AppColors.textSecondary;
   
   // Semantic colors for various categories
-  static const Color programs = Color(0xFF00B4FF);
+  static const Color programs = AppColors.primary;
   static const Color extras = Color(0xFF9C27B0);
   static const Color warmup = Color(0xFFFF9500);
   static const Color cooldown = Color(0xFF00BCD4);
@@ -92,7 +93,7 @@ class AppTheme {
   
   // Timer colors
   static const Color timerWork = Color(0xFFFF6B35);
-  static const Color timerRest = Color(0xFF00B4FF);
+  static const Color timerRest = AppColors.primary;
   
   // ============================================================================
   // EXTENDED SEMANTIC COLORS (2025 Enhancement)
@@ -144,7 +145,7 @@ class AppTheme {
   static const Color lightBackgroundColor = Color(0xFFFAFAFA);
   
   /// Light surface color for cards and containers
-  static const Color lightSurfaceColor = Color(0xFFFFFFFF);
+  static const Color lightSurfaceColor = AppColors.textPrimary;
   
   /// Darker primary for better contrast on light background
   static const Color lightPrimaryColor = Color(0xFF0096D6);
@@ -156,7 +157,7 @@ class AppTheme {
   static const Color lightOnSurfaceColor = Color(0xFF1A1A1A);
   
   /// Text on primary color (light mode)
-  static const Color lightOnPrimaryColor = Color(0xFFFFFFFF);
+  static const Color lightOnPrimaryColor = AppColors.textPrimary;
   
   /// Secondary text for light mode
   static const Color lightSecondaryTextColor = Color(0xFF5A5A5A);

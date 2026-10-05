@@ -1,8 +1,8 @@
 name: gymhockeytraining
-description: "Hockey Gym training app with progress tracking."
+description: "HockeyForge foundation: off-ice workouts and progress tracking."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 0.1.0+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

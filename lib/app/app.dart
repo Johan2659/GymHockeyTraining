@@ -15,7 +15,7 @@ class HockeyGymApp extends ConsumerWidget {
 
     return themeModeAsync.when(
       data: (themeMode) => MaterialApp.router(
-        title: 'Hockey Gym',
+        title: 'HockeyForge',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,
@@ -23,7 +23,7 @@ class HockeyGymApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
       ),
       loading: () => MaterialApp(
-        title: 'Hockey Gym',
+        title: 'HockeyForge',
         theme: AppTheme.darkTheme,
         home: const Scaffold(
           body: Center(
@@ -33,7 +33,7 @@ class HockeyGymApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
       ),
       error: (_, __) => MaterialApp.router(
-        title: 'Hockey Gym',
+        title: 'HockeyForge',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.dark,

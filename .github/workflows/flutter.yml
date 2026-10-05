@@ -1,0 +1,29 @@
+name: Flutter foundation
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze lib --no-fatal-infos --no-fatal-warnings
+      - run: flutter test test/forge_home_test.dart test/forge_catalog_test.dart test/unit/models_test.dart
+  ios-simulator:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          cache: true
+      - run: flutter pub get
+      - run: flutter build ios --simulator --debug
