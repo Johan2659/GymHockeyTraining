@@ -6,6 +6,14 @@ import 'package:gymhockeytraining/core/models/models.dart';
 import 'package:gymhockeytraining/features/application/app_state_provider.dart';
 import 'package:gymhockeytraining/features/hub/presentation/forge_home_screen.dart';
 
+class TestAppState extends AppState {
+  TestAppState(this.data);
+  final AppStateData data;
+
+  @override
+  Future<AppStateData> build() async => data;
+}
+
 AppStateData dashboard({bool active = false}) => AppStateData(
   programs: const [],
   events: const [],
@@ -60,7 +68,7 @@ void main() {
       ProviderScope(
         overrides: [
           appStateProvider.overrideWith(
-            (ref) async => dashboard(active: active),
+            () => TestAppState(dashboard(active: active)),
           ),
           sessionInProgressProvider.overrideWith((ref) async => resume),
           expressWorkoutsProvider.overrideWith((ref) async => <ExtraItem>[]),

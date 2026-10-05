@@ -54,6 +54,7 @@ void main() {
       test('should serialize and deserialize correctly', () {
         // Arrange
         const programState = ProgramState(
+          userId: 'test-user-1',
           activeProgramId: 'hockey_attacker_v1',
           currentWeek: 2,
           currentSession: 1,
@@ -65,18 +66,26 @@ void main() {
         final deserializedState = ProgramState.fromJson(json);
 
         // Assert
-        expect(deserializedState.activeProgramId,
-            equals(programState.activeProgramId));
+        expect(deserializedState.userId, equals(programState.userId));
+        expect(
+          deserializedState.activeProgramId,
+          equals(programState.activeProgramId),
+        );
         expect(deserializedState.currentWeek, equals(programState.currentWeek));
-        expect(deserializedState.currentSession,
-            equals(programState.currentSession));
-        expect(deserializedState.completedExerciseIds,
-            equals(programState.completedExerciseIds));
+        expect(
+          deserializedState.currentSession,
+          equals(programState.currentSession),
+        );
+        expect(
+          deserializedState.completedExerciseIds,
+          equals(programState.completedExerciseIds),
+        );
       });
 
       test('should handle empty completed exercises list', () {
         // Arrange
         const programState = ProgramState(
+          userId: 'test-user-1',
           activeProgramId: 'test_program',
           currentWeek: 0,
           currentSession: 0,
@@ -94,6 +103,7 @@ void main() {
       test('should handle null activeProgramId', () {
         // Arrange
         const programState = ProgramState(
+          userId: 'test-user-1',
           activeProgramId: null,
           currentWeek: 0,
           currentSession: 0,
@@ -112,6 +122,7 @@ void main() {
         // Arrange
         final pausedTime = DateTime(2025, 8, 31, 12, 0, 0);
         final programState = ProgramState(
+          userId: 'test-user-1',
           activeProgramId: 'test',
           currentWeek: 1,
           currentSession: 2,
@@ -132,6 +143,7 @@ void main() {
       test('should serialize and deserialize sessionStarted event', () {
         // Arrange
         final event = ProgressEvent(
+          userId: 'test-user-1',
           ts: DateTime(2025, 8, 31, 12, 0, 0),
           type: ProgressEventType.sessionStarted,
           programId: 'hockey_attacker_v1',
@@ -144,6 +156,7 @@ void main() {
         final deserializedEvent = ProgressEvent.fromJson(json);
 
         // Assert
+        expect(deserializedEvent.userId, equals(event.userId));
         expect(deserializedEvent.ts, equals(event.ts));
         expect(deserializedEvent.type, equals(event.type));
         expect(deserializedEvent.programId, equals(event.programId));
@@ -152,31 +165,37 @@ void main() {
       });
 
       test(
-          'should serialize and deserialize exerciseDone event with exerciseId',
-          () {
-        // Arrange
-        final event = ProgressEvent(
-          ts: DateTime(2025, 8, 31, 12, 30, 0),
-          type: ProgressEventType.exerciseDone,
-          programId: 'hockey_defender_v1',
-          week: 0,
-          session: 1,
-          exerciseId: 'sprint_30m',
-        );
+        'should serialize and deserialize exerciseDone event with exerciseId',
+        () {
+          // Arrange
+          final event = ProgressEvent(
+            userId: 'test-user-1',
+            ts: DateTime(2025, 8, 31, 12, 30, 0),
+            type: ProgressEventType.exerciseDone,
+            programId: 'hockey_defender_v1',
+            week: 0,
+            session: 1,
+            exerciseId: 'sprint_30m',
+          );
 
-        // Act
-        final json = event.toJson();
-        final deserializedEvent = ProgressEvent.fromJson(json);
+          // Act
+          final json = event.toJson();
+          final deserializedEvent = ProgressEvent.fromJson(json);
 
-        // Assert
-        expect(deserializedEvent.exerciseId, equals(event.exerciseId));
-        expect(deserializedEvent.type, equals(ProgressEventType.exerciseDone));
-      });
+          // Assert
+          expect(deserializedEvent.exerciseId, equals(event.exerciseId));
+          expect(
+            deserializedEvent.type,
+            equals(ProgressEventType.exerciseDone),
+          );
+        },
+      );
 
       test('should serialize all ProgressEventType values', () {
         // Test all enum values
         for (final eventType in ProgressEventType.values) {
           final event = ProgressEvent(
+            userId: 'test-user-1',
             ts: DateTime.now(),
             type: eventType,
             programId: 'test_program',
@@ -193,6 +212,7 @@ void main() {
       test('should handle optional payload field', () {
         // Arrange
         final event = ProgressEvent(
+          userId: 'test-user-1',
           ts: DateTime(2025, 8, 31),
           type: ProgressEventType.sessionCompleted,
           programId: 'test',
@@ -220,10 +240,7 @@ void main() {
           title: 'Hockey Attacker Program',
           role: UserRole.attacker,
           weeks: [
-            Week(
-              index: 0,
-              sessions: ['session_1', 'session_2'],
-            ),
+            Week(index: 0, sessions: ['session_1', 'session_2']),
           ],
         );
 
@@ -237,8 +254,10 @@ void main() {
         expect(deserializedProgram.role, equals(program.role));
         expect(deserializedProgram.weeks.length, equals(1));
         expect(deserializedProgram.weeks[0].sessions.length, equals(2));
-        expect(deserializedProgram.weeks[0].sessions,
-            equals(['session_1', 'session_2']));
+        expect(
+          deserializedProgram.weeks[0].sessions,
+          equals(['session_1', 'session_2']),
+        );
       });
 
       test('should handle empty weeks list', () {
@@ -282,7 +301,9 @@ void main() {
         expect(deserializedSession.blocks.length, equals(2));
         expect(deserializedSession.blocks[0].exerciseId, equals('exercise_1'));
         expect(
-            deserializedSession.bonusChallenge, equals(session.bonusChallenge));
+          deserializedSession.bonusChallenge,
+          equals(session.bonusChallenge),
+        );
       });
 
       test('should handle empty blocks list', () {
@@ -327,7 +348,9 @@ void main() {
         expect(deserializedExercise.duration, equals(exercise.duration));
         expect(deserializedExercise.rest, equals(exercise.rest));
         expect(
-            deserializedExercise.youtubeQuery, equals(exercise.youtubeQuery));
+          deserializedExercise.youtubeQuery,
+          equals(exercise.youtubeQuery),
+        );
       });
 
       test('should handle optional fields', () {
@@ -459,11 +482,7 @@ void main() {
 
       test('should handle empty rewards list', () {
         // Arrange
-        const xp = XP(
-          total: 0,
-          level: 1,
-          lastRewards: [],
-        );
+        const xp = XP(total: 0, level: 1, lastRewards: []);
 
         // Act
         final json = xp.toJson();
