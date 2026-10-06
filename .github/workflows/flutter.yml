@@ -1,10 +1,15 @@
-name: Flutter foundation
+name: HockeyForge CI + TestFlight
 on:
   push:
+    branches: [hockeyforge-base]
   pull_request:
+    branches: [hockeyforge-base]
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: hockeyforge-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   foundation:
     runs-on: ubuntu-latest
@@ -27,3 +32,99 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter build ios --simulator --debug
+
+  release:
+    needs: [foundation, ios-simulator]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/hockeyforge-base' && vars.TESTFLIGHT_ENABLED == 'true'
+    runs-on: macos-latest
+    timeout-minutes: 30
+    env:
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+      IOS_CERTIFICATE_PRIVATE_KEY: ${{ secrets.IOS_CERTIFICATE_PRIVATE_KEY }}
+
+    steps:
+      - name: Check required credentials
+        run: |
+          python3 - <<'PY'
+          import os
+          required = ['APP_STORE_CONNECT_ISSUER_ID', 'APP_STORE_CONNECT_KEY_IDENTIFIER', 'APP_STORE_CONNECT_PRIVATE_KEY', 'IOS_CERTIFICATE_PRIVATE_KEY']
+          missing = [name for name in required if not os.environ.get(name, '').strip()]
+          if missing:
+              raise SystemExit('Missing GitHub secrets: ' + ', '.join(missing))
+          PY
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install iOS signing tools in isolated Python environment
+        run: |
+          python3 -m venv "$RUNNER_TEMP/codemagic-venv"
+          source "$RUNNER_TEMP/codemagic-venv/bin/activate"
+          python -m pip install --upgrade pip
+          python -m pip install codemagic-cli-tools==0.69.0
+          echo "$RUNNER_TEMP/codemagic-venv/bin" >> "$GITHUB_PATH"
+
+      - name: Prepare Apple credentials securely
+        run: |
+          printf '%s' "$APP_STORE_CONNECT_PRIVATE_KEY" > "$RUNNER_TEMP/AuthKey.p8"
+          printf '%s' "$IOS_CERTIFICATE_PRIVATE_KEY" > "$RUNNER_TEMP/cert_key"
+          chmod 600 "$RUNNER_TEMP/AuthKey.p8" "$RUNNER_TEMP/cert_key"
+
+      - name: Initialize temporary keychain
+        run: keychain initialize
+
+      - name: Fetch Apple distribution certificate and provisioning profile
+        run: |
+          app-store-connect fetch-signing-files com.johantoso.hockeyforgebase \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key=@file:"$RUNNER_TEMP/AuthKey.p8" \
+            --platform IOS \
+            --type IOS_APP_STORE \
+            --certificate-key=@file:"$RUNNER_TEMP/cert_key" \
+            --strict-match-identifier \
+            --create
+
+      - name: Add signing certificate to temporary keychain
+        run: keychain add-certificates
+
+      - name: Apply provisioning profile to Xcode project
+        run: xcode-project use-profiles
+
+      - name: Install CocoaPods dependencies
+        working-directory: ios
+        run: pod install
+
+      - name: Build signed IPA
+        run: |
+          flutter build ipa --release \
+            --build-number="$((GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))" \
+            --export-options-plist="$HOME/export_options.plist"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hockeyforge-ipa
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: error
+
+      - name: Upload build to App Store Connect / TestFlight
+        run: |
+          app-store-connect publish \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key=@file:"$RUNNER_TEMP/AuthKey.p8" \
+            --path "$(find "$GITHUB_WORKSPACE/build/ios/ipa" -name '*.ipa' -print -quit)"
+
+      - name: Restore login keychain
+        if: always()
+        run: |
+          keychain use-login || true
+          rm -f "$RUNNER_TEMP/AuthKey.p8" "$RUNNER_TEMP/cert_key"
